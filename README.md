@@ -13,6 +13,9 @@ pnpm build
 pnpm start
 ```
 
+서버는 기본적으로 `0.0.0.0`에 바인딩합니다. 로컬 전용 실행은
+`HOST=127.0.0.1 pnpm start`를 사용하세요.
+
 개발 시에는 `pnpm dev:api`와 `pnpm dev:web`을 각각 실행합니다.
 
 ## 검증
