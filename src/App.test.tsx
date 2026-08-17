@@ -24,6 +24,15 @@ const homeStop: BusStop = {
   distanceMeters: 96,
 };
 
+const secondCompanyStop: BusStop = {
+  id: "124000455" as BusStop["id"],
+  arsId: "25015" as BusStop["arsId"],
+  name: "천호역현대백화점",
+  lat: 37.5384,
+  lng: 127.1249,
+  distanceMeters: 203,
+};
+
 vi.mock("./components/MapPicker", () => ({
   MapPicker: ({ onSave }: { onSave: (stop: BusStop) => void }) => (
     <>
@@ -32,6 +41,9 @@ vi.mock("./components/MapPicker", () => ({
       </button>
       <button type="button" onClick={() => onSave(homeStop)}>
         테스트 집 정류장 저장
+      </button>
+      <button type="button" onClick={() => onSave(secondCompanyStop)}>
+        테스트 두 번째 회사 정류장 저장
       </button>
     </>
   ),
@@ -94,7 +106,7 @@ describe("App company commute", () => {
       "aria-selected",
       "true",
     );
-    fireEvent.click(screen.getByRole("button", { name: "지도에서 정류장 선택" }));
+    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
 
     expect(await screen.findByText("천호역")).toBeInTheDocument();
@@ -107,13 +119,13 @@ describe("App company commute", () => {
   it("keeps the home-bound stop separate from the company-bound stop", async () => {
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "지도에서 정류장 선택" }));
+    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
     expect(await screen.findByText("천호역")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "집으로" }));
-    expect(screen.getByRole("button", { name: "지도에서 정류장 선택" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "지도에서 정류장 선택" }));
+    expect(screen.getByRole("button", { name: "정류장 추가" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 집 정류장 저장" }));
     expect(await screen.findByText("암사역")).toBeInTheDocument();
 
@@ -124,13 +136,60 @@ describe("App company commute", () => {
 
   it("restores selected commute stops on the next visit", async () => {
     const firstVisit = render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "지도에서 정류장 선택" }));
+    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
     expect(await screen.findByText("천호역")).toBeInTheDocument();
     firstVisit.unmount();
 
     render(<App />);
     expect(screen.getByText("천호역")).toBeInTheDocument();
+    await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith(companyStop.arsId));
+  });
+
+  it("adds multiple named company and home places", () => {
+    render(<App />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: "새 회사 이름" }), {
+      target: { value: "강남 사무실" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "회사 추가" }));
+    expect(
+      screen.getByRole("button", { name: "강남 사무실, 정류장 0개" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("save-announcement")).toHaveTextContent(
+      "강남 사무실 장소를 추가했습니다.",
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: "집으로" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "새 집 이름" }), {
+      target: { value: "부모님 집" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "집 추가" }));
+    expect(
+      screen.getByRole("button", { name: "부모님 집, 정류장 0개" }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("adds and switches between multiple stops in one place", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
+    expect(await screen.findByText("천호역")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "테스트 두 번째 회사 정류장 저장",
+      }),
+    );
+
+    expect(await screen.findByText("천호역현대백화점")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "통근 정류장 지도" })).toHaveAttribute(
+      "data-stop-count",
+      "2",
+    );
+    fireEvent.click(screen.getByRole("button", { name: /천호역 · ARS 25014/ }));
     await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith(companyStop.arsId));
   });
 });

@@ -7,8 +7,8 @@
 ## OVERVIEW
 
 Korean commute-bus web app: React 19/Vite frontend plus Bun/Hono server adapter.
-The server normalizes Seoul transit stop and arrival payloads; the browser stores only two
-direction-specific stop selections.
+The server normalizes Seoul transit stop and arrival payloads; the browser stores multiple
+named company/home places with multiple direction-specific stops per place.
 
 ## STRUCTURE
 
@@ -19,7 +19,7 @@ commute-bus-web/
 │   ├── api/                # Browser API response validation
 │   ├── components/         # UI, Leaflet map, picker, arrival presentation
 │   ├── domain/             # Shared browser/server schemas and normalization
-│   ├── hooks/              # Versioned localStorage persistence
+│   ├── hooks/              # Versioned multi-place localStorage persistence
 │   ├── App.tsx             # Browser orchestration root
 │   ├── main.tsx            # React/Vite entry point
 │   └── styles.css          # Global design system and responsive layout
@@ -35,8 +35,9 @@ commute-bus-web/
 | Change upstream request handling | `server/app.ts` | Hono routes, 8s timeout, 400/502 mapping |
 | Change production bind/static serving | `server/index.ts`, `server/config.ts` | Serves prebuilt `dist/` |
 | Change browser API calls | `src/api/client.ts` | Re-validates server JSON with Zod |
-| Change app state/refresh flow | `src/App.tsx` | Direction, picker, arrivals, announcements |
-| Change saved commute stops | `src/hooks/useCommuteStops.ts` | `commute-bus-web:stops:v1` |
+| Change app state/refresh flow | `src/App.tsx` | Direction, active place/stop, arrivals |
+| Change saved places/stops | `src/hooks/useCommuteStops.ts`, `src/hooks/commuteStopsStorage.ts` | v2 storage; migrates v1 |
+| Change place/stop controls | `src/components/CommutePlaceManager.tsx` | Add, rename, select, remove |
 | Change map behavior/accessibility | `src/components/MapCanvas.tsx` | Used by main view and picker |
 | Change stop search/selection modal | `src/components/MapPicker.tsx` | Explicit search and save |
 | Change global appearance | `DESIGN.md`, then `src/styles.css` | CSS is global, not component-scoped |
@@ -50,11 +51,12 @@ commute-bus-web/
 | `App` | function | `src/App.tsx` | 9 | Frontend composition and arrival lifecycle |
 | `createApp` | function | `server/app.ts` | 7 | API router and upstream adapter |
 | `fetchArrivals` | function | `src/api/client.ts` | 7 | Browser arrival transport boundary |
+| `CommutePlaceManager` | function | `src/components/CommutePlaceManager.tsx` | 3 | Named places and multi-stop controls |
 | `MapPicker` | function | `src/components/MapPicker.tsx` | 7 | Search, candidate selection, modal focus |
 | `MapCanvas` | function | `src/components/MapCanvas.tsx` | 5 | Leaflet rendering and marker keyboard adapter |
 | `normalizeNearbyStops` | function | `src/domain/bus.ts` | 5 | Official stop payload normalization |
 | `normalizeArrivals` | function | `src/domain/bus.ts` | 5 | BIS payload normalization and ETA sorting |
-| `useCommuteStops` | hook | `src/hooks/useCommuteStops.ts` | 3 | Two-direction persisted stop state |
+| `useCommuteStops` | hook | `src/hooks/useCommuteStops.ts` | 5 | Multi-place state mutations and persistence |
 | `fetchNearbyStops` | function | `src/api/client.ts` | 3 | Explicit map-center stop lookup |
 
 ## CONVENTIONS
@@ -63,6 +65,7 @@ commute-bus-web/
 - Browser and server share `src/domain/bus.ts`; `src/` is not frontend-only.
 - Parse untrusted values with Zod at every boundary: upstream, route input, browser JSON,
   and localStorage.
+- Persist named place collections under `commute-bus-web:stops:v2`; preserve v1 migration.
 - Preserve branded `StopId`, `ArsId`, and `RouteId`; ARS IDs are five-digit strings.
 - Relative imports only; no path aliases, barrels, or separate package boundaries.
 - Tests live beside implementations. Server tests call Hono in memory with injected upstream
@@ -89,7 +92,8 @@ commute-bus-web/
 
 - Urban-utility visual language: high-contrast black/white, lime `--signal`, blue map focus.
 - Desktop is a 400px control rail plus full map; below 960px it becomes map plus bottom sheet.
-- Stop selection uses synchronized marker/list state and an explicit commit action.
+- Place selection uses compact horizontal controls; each active place exposes its stop list.
+- Stop selection uses synchronized marker/list state and an explicit add action.
 - Arrival rows prioritize route number and numeric ETA; inactive routes sort after active routes.
 - Motion is restrained and collapses to 1ms under `prefers-reduced-motion`.
 

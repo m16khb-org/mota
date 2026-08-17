@@ -3,8 +3,9 @@
 ## Product brief
 
 `내 버스`는 출근 직전 또는 퇴근 직전, 사용자가 지도에서 정확한 서울 버스 정류장을
-고르고 가장 먼저 오는 버스를 확인하는 단일 목적 웹앱이다. Hermes의 `bus_company`
-(집 → 회사)와 `bus_home`(회사 → 집)을 화면의 두 방향으로 보존한다.
+고르고 가장 먼저 오는 버스를 확인하는 단일 목적 웹앱이다. 여러 회사와 집을 이름으로
+구분하고 각 장소에 여러 정류장을 저장하며, `회사로`(집 → 회사)와 `집으로`
+(회사 → 집)을 화면의 두 방향으로 보존한다.
 
 ### Primary persona
 
@@ -14,9 +15,10 @@
 
 ### Success criteria
 
-1. 첫 사용자가 30초 안에 지도에서 정확한 ARS 정류장을 두 방향에 저장한다.
-2. 재방문 사용자는 한 번의 탭으로 현재 방향의 도착정보를 새로고침한다.
-3. 정류장명, ARS 번호, 지도 위치가 항상 함께 보여 반대편 정류장 오선택을 줄인다.
+1. 첫 사용자가 30초 안에 지도에서 정확한 ARS 정류장을 장소별로 저장한다.
+2. 사용자는 회사와 집을 각각 여러 개 만들고 각 장소에 여러 정류장을 저장한다.
+3. 재방문 사용자는 장소와 정류장을 한 번의 탭으로 전환하고 도착정보를 새로고침한다.
+4. 정류장명, ARS 번호, 지도 위치가 항상 함께 보여 반대편 정류장 오선택을 줄인다.
 
 ## Visual direction
 
@@ -69,7 +71,7 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 
 - Full-height shell.
 - 400px control rail on the left; map fills the remaining viewport.
-- Brand/direction controls stay at top; selected stop and arrivals scroll independently.
+- Brand/direction controls stay at top; place, stop, and arrival controls scroll together.
 - Map picker results appear as an anchored tray over the lower map edge.
 
 ### Mobile (`< 960px`)
@@ -84,14 +86,17 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 ### Commute switch
 
 - Exactly two options: `회사로` and `집으로`.
-- Selection changes the active saved stop and arrival list without destroying the other direction.
+- Selection changes the active place collection and arrival list without destroying the other direction.
 - Keyboard arrow keys and tab navigation work.
 
-### Stop card
+### Place and stop collection
 
-- Always renders stop name, five-digit ARS ID, and direction label.
-- Empty state is a direct action: `지도에서 정류장 선택`.
-- Selected card uses a 3px signal strip, not a full colored background.
+- Each direction stores multiple named places and keeps one active place.
+- Each place stores multiple stops and keeps one active stop for arrivals.
+- Adding, renaming, selecting, and deleting a place always has an equivalent button or form control.
+- Every stop row renders the stop name and five-digit ARS ID.
+- Active place and stop use `aria-pressed`, a border, and a 3px signal strip.
+- Removing an active place or stop selects the first remaining sibling; an empty collection stays valid.
 
 ### Map picker
 
@@ -99,7 +104,8 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - `이 위치에서 찾기` fetches official nearby stops at the map center.
 - Every result has a corresponding marker and row with name, ARS ID, and distance.
 - Marker selection and row selection remain synchronized.
-- Saving is explicit; closing does not overwrite the previous stop.
+- Saving is explicit and adds the stop to the active place without duplicating it.
+- Closing does not overwrite or remove previously saved stops.
 
 ### Arrival row
 
@@ -137,7 +143,8 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 
 ## Responsive and failure states
 
-- No stop selected: explain that two commute directions are stored separately.
+- No active place: ask the user to add a company or home before choosing stops.
+- No stop selected: keep the active place and explain that arrivals require a selected stop.
 - Permission denied: keep the default Seoul center and offer manual map movement.
 - API timeout/error: preserve the last saved stop, show retry, never clear arrivals silently.
 - No nearby stops: suggest zooming out or moving the map.

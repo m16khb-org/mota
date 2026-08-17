@@ -2,12 +2,16 @@ import { BusFront, CircleDot, Info, Navigation } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { fetchArrivals } from "./api/client";
 import { ArrivalList } from "./components/ArrivalList";
+import { CommutePlaceManager } from "./components/CommutePlaceManager";
 import { CommuteSwitch } from "./components/CommuteSwitch";
 import { MapCanvas } from "./components/MapCanvas";
 import { MapPicker } from "./components/MapPicker";
-import { StopSummary } from "./components/StopSummary";
 import type { BusArrival, BusStop, CommuteDirection } from "./domain/bus";
-import { useCommuteStops } from "./hooks/useCommuteStops";
+import {
+  getActivePlace,
+  getActiveStop,
+  useCommuteStops,
+} from "./hooks/useCommuteStops";
 
 interface ArrivalState {
   readonly arrivals: readonly BusArrival[];
@@ -27,11 +31,22 @@ const ignoreMapCenterChange = () => {};
 
 export function App() {
   const [direction, setDirection] = useState<CommuteDirection>("company");
-  const { stops, setStop } = useCommuteStops();
+  const {
+    commutes,
+    addPlace,
+    renamePlace,
+    removePlace,
+    selectPlace,
+    addStop,
+    removeStop,
+    selectStop,
+  } = useCommuteStops();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [arrivalState, setArrivalState] = useState<ArrivalState>(EMPTY_ARRIVALS);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
-  const selectedStop = stops[direction];
+  const collection = commutes[direction];
+  const activePlace = getActivePlace(collection);
+  const selectedStop = getActiveStop(activePlace);
   const mapCenter = selectedStop
     ? { lat: selectedStop.lat, lng: selectedStop.lng }
     : DEFAULT_MAP_CENTER;
@@ -68,9 +83,12 @@ export function App() {
   }, [refreshArrivals, selectedStop]);
 
   const saveStop = (stop: BusStop) => {
-    setStop(direction, stop);
+    if (!activePlace) {
+      return;
+    }
+    addStop(direction, activePlace.id, stop);
     setSaveAnnouncement(
-      `${stop.name} 정류장을 ${direction === "company" ? "회사로" : "집으로"} 가는 정류장으로 저장했습니다.`,
+      `${stop.name} 정류장을 ${activePlace.name}에 저장했습니다.`,
     );
     setPickerOpen(false);
   };
@@ -103,10 +121,37 @@ export function App() {
           role="tabpanel"
           aria-labelledby={`commute-tab-${direction}`}
         >
-          <StopSummary
+          <CommutePlaceManager
+            key={`${direction}-${activePlace?.id ?? "empty"}`}
             direction={direction}
-            stop={selectedStop}
-            onEdit={() => setPickerOpen(true)}
+            collection={collection}
+            activePlace={activePlace}
+            onAddPlace={(name) => {
+              addPlace(direction, name);
+              setSaveAnnouncement(`${name} 장소를 추가했습니다.`);
+            }}
+            onRenamePlace={(placeId, name) => {
+              renamePlace(direction, placeId, name);
+              setSaveAnnouncement(`${name}으로 장소 이름을 변경했습니다.`);
+            }}
+            onRemovePlace={(placeId) => {
+              removePlace(direction, placeId);
+              setSaveAnnouncement(`${activePlace?.name ?? "선택한 장소"}를 삭제했습니다.`);
+            }}
+            onSelectPlace={(placeId) => selectPlace(direction, placeId)}
+            onAddStop={() => setPickerOpen(true)}
+            onRemoveStop={(stopId) => {
+              const stop = activePlace?.stops.find((item) => item.id === stopId);
+              if (activePlace) {
+                removeStop(direction, activePlace.id, stopId);
+                setSaveAnnouncement(
+                  `${stop?.name ?? "선택한 정류장"} 정류장을 삭제했습니다.`,
+                );
+              }
+            }}
+            onSelectStop={(stopId) =>
+              activePlace && selectStop(direction, activePlace.id, stopId)
+            }
           />
           <ArrivalList
             arrivals={arrivalState.arrivals}
@@ -123,10 +168,12 @@ export function App() {
         <div className="stage-live-map">
           <MapCanvas
             center={mapCenter}
-            stops={selectedStop ? [selectedStop] : []}
+            stops={activePlace?.stops ?? []}
             selectedStop={selectedStop}
             onCenterChange={ignoreMapCenterChange}
-            onSelect={() => setPickerOpen(true)}
+            onSelect={(stop) =>
+              activePlace && selectStop(direction, activePlace.id, stop.id)
+            }
           />
         </div>
         <div className="stage-copy">
@@ -139,9 +186,14 @@ export function App() {
             <br />
             놓치지 않는 버스.
           </h2>
-          <button className="stage-action" type="button" onClick={() => setPickerOpen(true)}>
+          <button
+            className="stage-action"
+            type="button"
+            disabled={!activePlace}
+            onClick={() => setPickerOpen(true)}
+          >
             <Navigation aria-hidden="true" />
-            {selectedStop ? "지도에서 정류장 변경" : "지도 열기"}
+            지도에서 정류장 추가
           </button>
         </div>
         <div className="data-note">
@@ -153,9 +205,9 @@ export function App() {
         </div>
       </section>
 
-      {pickerOpen ? (
+      {pickerOpen && activePlace ? (
         <MapPicker
-          initialStop={selectedStop}
+          initialStop={null}
           onClose={() => setPickerOpen(false)}
           onSave={saveStop}
         />

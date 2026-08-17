@@ -1,48 +1,191 @@
 import { useCallback, useEffect, useState } from "react";
-import { z } from "zod";
+import type { BusStop, CommuteDirection } from "../domain/bus";
 import {
-  busStopSchema,
-  type BusStop,
-  type CommuteDirection,
-} from "../domain/bus";
+  createPlaceId,
+  loadCommutes,
+  saveCommutes,
+  type CommutePlace,
+  type CommuteStops,
+} from "./commuteStopsStorage";
 
-const STORAGE_KEY = "commute-bus-web:stops:v1";
+export {
+  getActivePlace,
+  getActiveStop,
+  type CommutePlace,
+  type DirectionCollection,
+} from "./commuteStopsStorage";
 
-const commuteStopsSchema = z.object({
-  company: busStopSchema.nullable(),
-  home: busStopSchema.nullable(),
-});
-
-export type CommuteStops = Record<CommuteDirection, BusStop | null>;
-
-const EMPTY_STOPS: CommuteStops = { company: null, home: null };
-
-function loadStops(): CommuteStops {
-  if (typeof window === "undefined") {
-    return EMPTY_STOPS;
-  }
-
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    return EMPTY_STOPS;
-  }
-
-  try {
-    return commuteStopsSchema.parse(JSON.parse(stored));
-  } catch {
-    return EMPTY_STOPS;
-  }
-}
 export function useCommuteStops() {
-  const [stops, setStops] = useState<CommuteStops>(loadStops);
+  const [commutes, setCommutes] = useState<CommuteStops>(loadCommutes);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stops));
-  }, [stops]);
+    saveCommutes(commutes);
+  }, [commutes]);
 
-  const setStop = useCallback((direction: CommuteDirection, stop: BusStop) => {
-    setStops((current) => ({ ...current, [direction]: stop }));
-  }, []);
+  const addPlace = useCallback(
+    (direction: CommuteDirection, name: string) => {
+      const trimmedName = name.trim();
+      if (!trimmedName) {
+        return;
+      }
+      const place: CommutePlace = {
+        id: createPlaceId(direction),
+        name: trimmedName,
+        stops: [],
+        selectedStopId: null,
+      };
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          places: [...current[direction].places, place],
+          activePlaceId: place.id,
+        },
+      }));
+    },
+    [],
+  );
 
-  return { stops, setStop } as const;
+  const renamePlace = useCallback(
+    (direction: CommuteDirection, placeId: string, name: string) => {
+      const trimmedName = name.trim();
+      if (!trimmedName) {
+        return;
+      }
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          ...current[direction],
+          places: current[direction].places.map((place) =>
+            place.id === placeId ? { ...place, name: trimmedName } : place,
+          ),
+        },
+      }));
+    },
+    [],
+  );
+
+  const removePlace = useCallback(
+    (direction: CommuteDirection, placeId: string) => {
+      setCommutes((current) => {
+        const collection = current[direction];
+        const places = collection.places.filter((place) => place.id !== placeId);
+        return {
+          ...current,
+          [direction]: {
+            places,
+            activePlaceId:
+              collection.activePlaceId === placeId
+                ? (places[0]?.id ?? null)
+                : collection.activePlaceId,
+          },
+        };
+      });
+    },
+    [],
+  );
+
+  const selectPlace = useCallback(
+    (direction: CommuteDirection, placeId: string) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          ...current[direction],
+          activePlaceId: current[direction].places.some(
+            (place) => place.id === placeId,
+          )
+            ? placeId
+            : current[direction].activePlaceId,
+        },
+      }));
+    },
+    [],
+  );
+
+  const addStop = useCallback(
+    (direction: CommuteDirection, placeId: string, stop: BusStop) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          activePlaceId: placeId,
+          places: current[direction].places.map((place) => {
+            if (place.id !== placeId) {
+              return place;
+            }
+            const alreadySaved = place.stops.some(
+              (savedStop) => savedStop.id === stop.id,
+            );
+            return {
+              ...place,
+              stops: alreadySaved ? place.stops : [...place.stops, stop],
+              selectedStopId: stop.id,
+            };
+          }),
+        },
+      }));
+    },
+    [],
+  );
+
+  const removeStop = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      stopId: BusStop["id"],
+    ) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          ...current[direction],
+          places: current[direction].places.map((place) => {
+            if (place.id !== placeId) {
+              return place;
+            }
+            const stops = place.stops.filter((stop) => stop.id !== stopId);
+            return {
+              ...place,
+              stops,
+              selectedStopId:
+                place.selectedStopId === stopId
+                  ? (stops[0]?.id ?? null)
+                  : place.selectedStopId,
+            };
+          }),
+        },
+      }));
+    },
+    [],
+  );
+
+  const selectStop = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      stopId: BusStop["id"],
+    ) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          activePlaceId: placeId,
+          places: current[direction].places.map((place) =>
+            place.id === placeId &&
+            place.stops.some((stop) => stop.id === stopId)
+              ? { ...place, selectedStopId: stopId }
+              : place,
+          ),
+        },
+      }));
+    },
+    [],
+  );
+
+  return {
+    commutes,
+    addPlace,
+    renamePlace,
+    removePlace,
+    selectPlace,
+    addStop,
+    removeStop,
+    selectStop,
+  } as const;
 }
