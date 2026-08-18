@@ -4,6 +4,7 @@ import {
   type BusStop,
   type CommuteDirection,
 } from "../domain/bus";
+import { subwayStationSchema } from "../domain/subway";
 
 const STORAGE_KEY = "commute-bus-web:stops:v2";
 const LEGACY_STORAGE_KEY = "commute-bus-web:stops:v1";
@@ -12,6 +13,7 @@ const commutePlaceSchema = z.object({
   id: z.string().min(1),
   name: z.string().trim().min(1),
   stops: z.array(busStopSchema),
+  subwayStations: z.array(subwayStationSchema).default([]),
   selectedStopId: busStopSchema.shape.id.nullable(),
 });
 
@@ -49,6 +51,7 @@ function createDefaultPlace(
     id: `${direction}-1`,
     name: `${PLACE_COPY[direction]} 1`,
     stops: stop ? [stop] : [],
+    subwayStations: [],
     selectedStopId: stop?.id ?? null,
   };
 }

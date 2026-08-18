@@ -77,6 +77,49 @@ describe("bus API adapter", () => {
     );
   });
 
+  it("adds nearby subway stations as route points", async () => {
+    const upstream = vi.fn().mockResolvedValue(
+      Response.json({
+        elements: [
+          {
+            type: "node",
+            id: 5801572034,
+            lat: 37.5385225,
+            lon: 127.1234021,
+            tags: {
+              name: "천호",
+              network: "수도권 전철",
+            },
+          },
+        ],
+      }),
+    );
+    const response = await createApp(upstream).request(
+      "/api/subway/nearby?lat=37.5366&lng=127.1253&radius=3000",
+    );
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      stations: [
+        {
+          id: "osm-node-5801572034",
+          name: "천호",
+          line: "수도권 전철",
+          lat: 37.5385225,
+          lng: 127.1234021,
+        },
+      ],
+    });
+    expect(upstream).toHaveBeenCalledWith(
+      "https://overpass-api.de/api/interpreter",
+      expect.objectContaining({
+        method: "POST",
+        body: expect.any(URLSearchParams),
+        signal: expect.any(AbortSignal),
+      }),
+    );
+  });
+
   it("rejects coordinates outside the Seoul service boundary", async () => {
     const upstream = vi.fn();
     const response = await createApp(upstream).request(

@@ -8,7 +8,7 @@
 
 Korean commute-bus web app: React 19/Vite frontend plus Bun/Hono server adapter.
 The server normalizes Seoul transit stop and arrival payloads; the browser stores multiple
-named company/home places with multiple direction-specific stops per place.
+named company/home places with multiple bus stops and subway route points per place.
 
 ## STRUCTURE
 
@@ -31,15 +31,17 @@ commute-bus-web/
 
 | Task | Location | Notes |
 |------|----------|-------|
-| Change stop/arrival data contracts | `src/domain/bus.ts` | Shared by browser and server |
+| Change bus stop/arrival contracts | `src/domain/bus.ts` | Shared by browser and server |
+| Change subway station contracts | `src/domain/subway.ts` | OSM station normalization |
 | Change upstream request handling | `server/app.ts` | Hono routes, 8s timeout, 400/502 mapping |
 | Change production bind/static serving | `server/index.ts`, `server/config.ts` | Serves prebuilt `dist/` |
 | Change browser API calls | `src/api/client.ts` | Re-validates server JSON with Zod |
 | Change app state/refresh flow | `src/App.tsx` | Direction, active place/stop, arrivals |
 | Change saved places/stops | `src/hooks/useCommuteStops.ts`, `src/hooks/commuteStopsStorage.ts` | v2 storage; migrates v1 |
-| Change place/stop controls | `src/components/CommutePlaceManager.tsx` | Add, rename, select, remove |
+| Change place/route controls | `src/components/CommutePlaceManager.tsx`, `src/components/RoutePointList.tsx` | Bus and subway points |
 | Change map behavior/accessibility | `src/components/MapCanvas.tsx` | Used by main view and picker |
-| Change stop search/selection modal | `src/components/MapPicker.tsx` | Explicit search and save |
+| Change bus marker picker | `src/components/MapPicker.tsx` | Explicit multi-select search |
+| Change subway marker picker | `src/components/SubwayPicker.tsx` | Overpass multi-select search |
 | Change global appearance | `DESIGN.md`, then `src/styles.css` | CSS is global, not component-scoped |
 | Change tests | Colocated `*.test.ts(x)` | jsdom declared per React test file |
 
@@ -52,7 +54,8 @@ commute-bus-web/
 | `createApp` | function | `server/app.ts` | 7 | API router and upstream adapter |
 | `fetchArrivals` | function | `src/api/client.ts` | 7 | Browser arrival transport boundary |
 | `CommutePlaceManager` | function | `src/components/CommutePlaceManager.tsx` | 3 | Named places and multi-stop controls |
-| `MapPicker` | function | `src/components/MapPicker.tsx` | 7 | Search, candidate selection, modal focus |
+| `MapPicker` | function | `src/components/MapPicker.tsx` | 7 | Bus marker multi-selection and modal focus |
+| `SubwayPicker` | function | `src/components/SubwayPicker.tsx` | 3 | Nearby subway multi-select |
 | `MapCanvas` | function | `src/components/MapCanvas.tsx` | 5 | Leaflet rendering and marker keyboard adapter |
 | `normalizeNearbyStops` | function | `src/domain/bus.ts` | 5 | Official stop payload normalization |
 | `normalizeArrivals` | function | `src/domain/bus.ts` | 5 | BIS payload normalization and ETA sorting |
@@ -72,6 +75,7 @@ commute-bus-web/
   fetch; React tests opt into jsdom with a file directive.
 - Async UI tests await rendered state (`findBy*`/`waitFor`); no sleeps or live transit calls.
 - Both browser and server network paths use `AbortSignal.timeout(8_000)`.
+- Subway route points come from OpenStreetMap Overpass; they do not expose live arrivals.
 - User-facing copy is short Korean task language. Keep technical upstream details out of errors.
 - Treat `DESIGN.md` as the contract for layout, motion, accessibility, and content.
 
@@ -79,6 +83,7 @@ commute-bus-web/
 
 - Do not fetch nearby stops continuously while the map moves; search only from
   `이 위치에서 찾기`.
+- Do not fetch subway stations continuously or imply that route points include live arrivals.
 - Do not overwrite a saved stop until explicit save; closing the picker preserves it.
 - Do not identify a stop by name alone. Keep name, five-digit ARS ID, and map/direction context.
 - Do not clear saved stops or arrivals silently on timeout/error; preserve state and expose retry.
@@ -93,7 +98,8 @@ commute-bus-web/
 - Urban-utility visual language: high-contrast black/white, lime `--signal`, blue map focus.
 - Desktop is a 400px control rail plus full map; below 960px it becomes map plus bottom sheet.
 - Place selection uses compact horizontal controls; each active place exposes its stop list.
-- Stop selection uses synchronized marker/list state and an explicit add action.
+- Bus and subway selection uses synchronized multi-marker/list state and an explicit add action.
+- Map zoom stays center-anchored so repeated gestures cannot drift the search area.
 - Arrival rows prioritize route number and numeric ETA; inactive routes sort after active routes.
 - Motion is restrained and collapses to 1ms under `prefers-reduced-motion`.
 
@@ -109,6 +115,8 @@ pnpm test
 pnpm build
 pnpm start                # Requires dist/; run from repository root
 HOST=127.0.0.1 pnpm start # Local-only production bind
+docker compose up -d --build
+docker compose logs -f web tunnel
 ```
 
 ## NOTES

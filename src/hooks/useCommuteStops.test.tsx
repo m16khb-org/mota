@@ -3,6 +3,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { BusStop } from "../domain/bus";
+import type { SubwayStation } from "../domain/subway";
 import { useCommuteStops } from "./useCommuteStops";
 
 const companyStop: BusStop = {
@@ -30,6 +31,15 @@ const homeStop: BusStop = {
   lat: 37.5509,
   lng: 127.1274,
   distanceMeters: 96,
+};
+
+const subwayStation: SubwayStation = {
+  id: "osm-node-5801572034" as SubwayStation["id"],
+  name: "천호",
+  line: "수도권 전철",
+  lat: 37.5385225,
+  lng: 127.1234021,
+  distanceMeters: 228,
 };
 
 describe("useCommuteStops", () => {
@@ -130,5 +140,41 @@ describe("useCommuteStops", () => {
     });
 
     expect(result.current.commutes.company.activePlaceId).toBe(initialPlace.id);
+  });
+
+  it("persists deduplicated subway stations in each place route", async () => {
+    const { result } = renderHook(() => useCommuteStops());
+    const companyPlace = result.current.commutes.company.places[0];
+    if (!companyPlace) {
+      throw new Error("Expected the default company place");
+    }
+
+    act(() => {
+      result.current.addSubwayStations("company", companyPlace.id, [
+        subwayStation,
+        subwayStation,
+      ]);
+    });
+
+    expect(
+      result.current.commutes.company.places[0]?.subwayStations,
+    ).toEqual([subwayStation]);
+    await waitFor(() => {
+      const stored = localStorage.getItem("commute-bus-web:stops:v2");
+      expect(JSON.parse(stored ?? "{}").company.places[0].subwayStations).toEqual(
+        [subwayStation],
+      );
+    });
+
+    act(() => {
+      result.current.removeSubwayStation(
+        "company",
+        companyPlace.id,
+        subwayStation.id,
+      );
+    });
+    expect(
+      result.current.commutes.company.places[0]?.subwayStations,
+    ).toEqual([]);
   });
 });

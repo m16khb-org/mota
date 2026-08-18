@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import { fetchArrivals } from "./api/client";
 import type { BusStop } from "./domain/bus";
+import type { SubwayStation } from "./domain/subway";
 
 const companyStop: BusStop = {
   id: "124000454" as BusStop["id"],
@@ -33,27 +34,71 @@ const secondCompanyStop: BusStop = {
   distanceMeters: 203,
 };
 
+const subwayStation: SubwayStation = {
+  id: "osm-node-5801572034" as SubwayStation["id"],
+  name: "천호",
+  line: "수도권 전철",
+  lat: 37.5385225,
+  lng: 127.1234021,
+  distanceMeters: 228,
+};
+
+const scrollIntoView = vi.fn();
+const resizeCallbacks: ResizeObserverCallback[] = [];
+class TestResizeObserver {
+  constructor(callback: ResizeObserverCallback) {
+    resizeCallbacks.push(callback);
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+  configurable: true,
+  value: scrollIntoView,
+});
+vi.stubGlobal("ResizeObserver", TestResizeObserver);
+
 vi.mock("./components/MapPicker", () => ({
-  MapPicker: ({ onSave }: { onSave: (stop: BusStop) => void }) => (
+  MapPicker: ({ onSave }: { onSave: (stops: readonly BusStop[]) => void }) => (
     <>
-      <button type="button" onClick={() => onSave(companyStop)}>
+      <button type="button" onClick={() => onSave([companyStop])}>
         테스트 회사 정류장 저장
       </button>
-      <button type="button" onClick={() => onSave(homeStop)}>
+      <button type="button" onClick={() => onSave([homeStop])}>
         테스트 집 정류장 저장
       </button>
-      <button type="button" onClick={() => onSave(secondCompanyStop)}>
+      <button type="button" onClick={() => onSave([secondCompanyStop])}>
         테스트 두 번째 회사 정류장 저장
       </button>
     </>
   ),
 }));
 
+vi.mock("./components/SubwayPicker", () => ({
+  SubwayPicker: ({
+    onSave,
+  }: {
+    onSave: (stations: readonly SubwayStation[]) => void;
+  }) => (
+    <button type="button" onClick={() => onSave([subwayStation])}>
+      테스트 지하철역 저장
+    </button>
+  ),
+}));
+
 vi.mock("./components/MapCanvas", () => ({
-  MapCanvas: ({ stops }: { stops: readonly BusStop[] }) => (
+  MapCanvas: ({
+    stops,
+    subwayStations = [],
+  }: {
+    stops: readonly BusStop[];
+    subwayStations?: readonly SubwayStation[];
+  }) => (
     <section
       aria-label="통근 정류장 지도"
       data-stop-count={stops.length}
+      data-subway-count={subwayStations.length}
     />
   ),
 }));
@@ -69,6 +114,7 @@ vi.mock("./api/client", async (importOriginal) => {
 describe("App company commute", () => {
   beforeEach(() => {
     localStorage.clear();
+    scrollIntoView.mockClear();
     vi.mocked(fetchArrivals).mockResolvedValue({
       arrivals: [
         {
@@ -106,7 +152,7 @@ describe("App company commute", () => {
       "aria-selected",
       "true",
     );
-    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
 
     expect(await screen.findByText("천호역")).toBeInTheDocument();
@@ -119,13 +165,15 @@ describe("App company commute", () => {
   it("keeps the home-bound stop separate from the company-bound stop", async () => {
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
     expect(await screen.findByText("천호역")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "집으로" }));
-    expect(screen.getByRole("button", { name: "정류장 추가" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    expect(
+      screen.getByRole("button", { name: "버스 정류장 추가" }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 집 정류장 저장" }));
     expect(await screen.findByText("암사역")).toBeInTheDocument();
 
@@ -136,7 +184,7 @@ describe("App company commute", () => {
 
   it("restores selected commute stops on the next visit", async () => {
     const firstVisit = render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
     expect(await screen.findByText("천호역")).toBeInTheDocument();
     firstVisit.unmount();
@@ -154,7 +202,7 @@ describe("App company commute", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "회사 추가" }));
     expect(
-      screen.getByRole("button", { name: "강남 사무실, 정류장 0개" }),
+      screen.getByRole("button", { name: "강남 사무실, 경로 0개" }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByTestId("save-announcement")).toHaveTextContent(
       "강남 사무실 장소를 추가했습니다.",
@@ -166,18 +214,63 @@ describe("App company commute", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "집 추가" }));
     expect(
-      screen.getByRole("button", { name: "부모님 집, 정류장 0개" }),
+      screen.getByRole("button", { name: "부모님 집, 경로 0개" }),
     ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("keeps the third and later company and home places visible", () => {
+    render(<App />);
+
+    for (const name of ["회사 2", "회사 3", "회사 4"]) {
+      fireEvent.change(screen.getByRole("textbox", { name: "새 회사 이름" }), {
+        target: { value: name },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "회사 추가" }));
+    }
+    expect(
+      screen.getByRole("button", { name: "회사 4, 경로 0개" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(scrollIntoView).toHaveBeenLastCalledWith({
+      block: "nearest",
+      inline: "nearest",
+    });
+    scrollIntoView.mockClear();
+    resizeCallbacks.at(-1)?.([], new TestResizeObserver(() => {}));
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      block: "nearest",
+      inline: "nearest",
+    });
+    scrollIntoView.mockClear();
+    window.dispatchEvent(new Event("resize"));
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      block: "nearest",
+      inline: "nearest",
+    });
+
+    fireEvent.click(screen.getByRole("tab", { name: "집으로" }));
+    for (const name of ["집 2", "집 3", "집 4"]) {
+      fireEvent.change(screen.getByRole("textbox", { name: "새 집 이름" }), {
+        target: { value: name },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "집 추가" }));
+    }
+    expect(
+      screen.getByRole("button", { name: "집 4, 경로 0개" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(scrollIntoView).toHaveBeenLastCalledWith({
+      block: "nearest",
+      inline: "nearest",
+    });
   });
 
   it("adds and switches between multiple stops in one place", async () => {
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 회사 정류장 저장" }));
     expect(await screen.findByText("천호역")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "정류장 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
     fireEvent.click(
       screen.getByRole("button", {
         name: "테스트 두 번째 회사 정류장 저장",
@@ -191,5 +284,21 @@ describe("App company commute", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /천호역 · ARS 25014/ }));
     await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith(companyStop.arsId));
+  });
+
+  it("adds a subway station to the active commute route", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "지하철역 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 지하철역 저장" }));
+
+    expect(screen.getByText("천호")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "통근 정류장 지도" })).toHaveAttribute(
+      "data-subway-count",
+      "1",
+    );
+    expect(screen.getByTestId("save-announcement")).toHaveTextContent(
+      "천호 1개 지하철역",
+    );
   });
 });

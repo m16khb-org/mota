@@ -256,6 +256,9 @@ button:disabled {
   padding: 0 0 4px;
   overflow-x: auto;
   border: 0;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  scrollbar-width: thin;
 }
 
 .place-selector button {
@@ -269,6 +272,7 @@ button:disabled {
   text-align: left;
   background: var(--surface);
   cursor: pointer;
+  scroll-snap-align: nearest;
   transition: border-color 180ms ease, background-color 180ms ease;
 }
 
@@ -382,6 +386,10 @@ button:disabled {
   box-shadow: inset 3px 0 0 var(--signal);
 }
 
+.saved-stop-row.is-subway {
+  box-shadow: inset 3px 0 0 #7c3aed;
+}
+
 .saved-stop-choice {
   display: grid;
   min-width: 0;
@@ -394,6 +402,10 @@ button:disabled {
   text-align: left;
   background: transparent;
   cursor: pointer;
+}
+
+.saved-stop-row.is-subway .saved-stop-choice {
+  cursor: default;
 }
 
 .saved-stop-choice svg {
@@ -429,9 +441,15 @@ button:disabled {
   margin: 12px 0 0;
 }
 
-.add-stop-button {
-  width: 100%;
+.route-add-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
   margin-top: 14px;
+}
+
+.route-add-actions > button {
+  width: 100%;
 }
 
 .primary-button {
@@ -1047,7 +1065,8 @@ button:disabled {
 
 @media (max-width: 480px) {
   .place-add-form,
-  .place-detail-heading form {
+  .place-detail-heading form,
+  .route-add-actions {
     grid-template-columns: 1fr;
   }
 

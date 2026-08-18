@@ -6,12 +6,10 @@ import { CommutePlaceManager } from "./components/CommutePlaceManager";
 import { CommuteSwitch } from "./components/CommuteSwitch";
 import { MapCanvas } from "./components/MapCanvas";
 import { MapPicker } from "./components/MapPicker";
+import { SubwayPicker } from "./components/SubwayPicker";
 import type { BusArrival, BusStop, CommuteDirection } from "./domain/bus";
-import {
-  getActivePlace,
-  getActiveStop,
-  useCommuteStops,
-} from "./hooks/useCommuteStops";
+import type { SubwayStation } from "./domain/subway";
+import { getActivePlace, getActiveStop, useCommuteStops } from "./hooks/useCommuteStops";
 
 interface ArrivalState {
   readonly arrivals: readonly BusArrival[];
@@ -25,7 +23,6 @@ const EMPTY_ARRIVALS: ArrivalState = {
   error: null,
   updatedAt: null,
 };
-
 const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
 const ignoreMapCenterChange = () => {};
 
@@ -40,16 +37,17 @@ export function App() {
     addStop,
     removeStop,
     selectStop,
+    addSubwayStations,
+    removeSubwayStation,
   } = useCommuteStops();
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerMode, setPickerMode] = useState<"bus" | "subway" | null>(null);
   const [arrivalState, setArrivalState] = useState<ArrivalState>(EMPTY_ARRIVALS);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
   const collection = commutes[direction];
   const activePlace = getActivePlace(collection);
   const selectedStop = getActiveStop(activePlace);
-  const mapCenter = selectedStop
-    ? { lat: selectedStop.lat, lng: selectedStop.lng }
-    : DEFAULT_MAP_CENTER;
+  const mapAnchor = selectedStop ?? activePlace?.subwayStations[0] ?? null;
+  const mapCenter = mapAnchor ? { lat: mapAnchor.lat, lng: mapAnchor.lng } : DEFAULT_MAP_CENTER;
 
   const refreshArrivals = useCallback(async () => {
     if (!selectedStop) {
@@ -82,15 +80,32 @@ export function App() {
     }
   }, [refreshArrivals, selectedStop]);
 
-  const saveStop = (stop: BusStop) => {
+  const saveStops = (stops: readonly BusStop[]) => {
     if (!activePlace) {
       return;
     }
-    addStop(direction, activePlace.id, stop);
+    for (const stop of stops) {
+      addStop(direction, activePlace.id, stop);
+    }
     setSaveAnnouncement(
-      `${stop.name} 정류장을 ${activePlace.name}에 저장했습니다.`,
+      `${stops.map((stop) => stop.name).join(", ")} ${stops.length}개 정류장을 ${
+        activePlace.name
+      }에 저장했습니다.`,
     );
-    setPickerOpen(false);
+    setPickerMode(null);
+  };
+
+  const saveSubwayStations = (stations: readonly SubwayStation[]) => {
+    if (!activePlace) {
+      return;
+    }
+    addSubwayStations(direction, activePlace.id, stations);
+    setSaveAnnouncement(
+      `${stations.map((station) => station.name).join(", ")} ${
+        stations.length
+      }개 지하철역을 ${activePlace.name} 경로에 저장했습니다.`,
+    );
+    setPickerMode(null);
   };
 
   return (
@@ -139,7 +154,8 @@ export function App() {
               setSaveAnnouncement(`${activePlace?.name ?? "선택한 장소"}를 삭제했습니다.`);
             }}
             onSelectPlace={(placeId) => selectPlace(direction, placeId)}
-            onAddStop={() => setPickerOpen(true)}
+            onAddStop={() => setPickerMode("bus")}
+            onAddSubway={() => setPickerMode("subway")}
             onRemoveStop={(stopId) => {
               const stop = activePlace?.stops.find((item) => item.id === stopId);
               if (activePlace) {
@@ -152,6 +168,12 @@ export function App() {
             onSelectStop={(stopId) =>
               activePlace && selectStop(direction, activePlace.id, stopId)
             }
+            onRemoveSubway={(stationId) => {
+              if (activePlace) {
+                removeSubwayStation(direction, activePlace.id, stationId);
+                setSaveAnnouncement("지하철역을 경로에서 삭제했습니다.");
+              }
+            }}
           />
           <ArrivalList
             arrivals={arrivalState.arrivals}
@@ -170,9 +192,13 @@ export function App() {
             center={mapCenter}
             stops={activePlace?.stops ?? []}
             selectedStop={selectedStop}
+            subwayStations={activePlace?.subwayStations ?? []}
             onCenterChange={ignoreMapCenterChange}
             onSelect={(stop) =>
               activePlace && selectStop(direction, activePlace.id, stop.id)
+            }
+            onSelectSubway={(station) =>
+              setSaveAnnouncement(`${station.name} 지하철역 경로 지점입니다.`)
             }
           />
         </div>
@@ -190,7 +216,7 @@ export function App() {
             className="stage-action"
             type="button"
             disabled={!activePlace}
-            onClick={() => setPickerOpen(true)}
+            onClick={() => setPickerMode("bus")}
           >
             <Navigation aria-hidden="true" />
             지도에서 정류장 추가
@@ -205,11 +231,18 @@ export function App() {
         </div>
       </section>
 
-      {pickerOpen && activePlace ? (
+      {pickerMode === "bus" && activePlace ? (
         <MapPicker
           initialStop={null}
-          onClose={() => setPickerOpen(false)}
-          onSave={saveStop}
+          onClose={() => setPickerMode(null)}
+          onSave={saveStops}
+        />
+      ) : null}
+      {pickerMode === "subway" && activePlace ? (
+        <SubwayPicker
+          initialCenter={mapCenter}
+          onClose={() => setPickerMode(null)}
+          onSave={saveSubwayStations}
         />
       ) : null}
     </main>

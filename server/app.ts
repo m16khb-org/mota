@@ -5,6 +5,10 @@ import {
   normalizeArrivals,
   normalizeNearbyStops,
 } from "../src/domain/bus";
+import {
+  normalizeNearbySubwayStations,
+  subwaySearchSchema,
+} from "../src/domain/subway";
 
 type UpstreamFetch = (
   input: string | URL | Request,
@@ -13,10 +17,11 @@ type UpstreamFetch = (
 
 const NEARBY_STOPS_URL = "https://bus.go.kr/sbus/bus/selectNearStops.do";
 const ARRIVALS_URL = "http://m.bus.go.kr/mBus/bus/getStationByUid.bms";
+const SUBWAY_STATIONS_URL = "https://overpass-api.de/api/interpreter";
 
 const UPSTREAM_HEADERS = {
   Accept: "application/json",
-  "User-Agent": "commute-bus-web/0.1 (+https://bus.go.kr)",
+  "User-Agent": "commute-bus-web/0.1 (+https://bus.m16khb.xyz)",
 } as const;
 
 export function createApp(upstreamFetch: UpstreamFetch = globalThis.fetch) {
@@ -62,6 +67,56 @@ export function createApp(upstreamFetch: UpstreamFetch = globalThis.fetch) {
         {
           error: "UPSTREAM_UNAVAILABLE",
           message: "정류장 정보를 불러오지 못했습니다.",
+          detail,
+        },
+        502,
+      );
+    }
+  });
+
+  app.get("/api/subway/nearby", async (context) => {
+    const query = subwaySearchSchema.safeParse(context.req.query());
+    if (!query.success) {
+      return context.json(
+        {
+          error: "INVALID_LOCATION",
+          message: "서울 서비스 범위의 위도, 경도, 반경을 입력해 주세요.",
+        },
+        400,
+      );
+    }
+
+    const overpassQuery = [
+      "[out:json][timeout:12];",
+      `nwr["railway"="station"]["station"="subway"](around:${query.data.radius},${query.data.lat},${query.data.lng});`,
+      "out center tags;",
+    ].join("");
+
+    try {
+      const response = await upstreamFetch(SUBWAY_STATIONS_URL, {
+        method: "POST",
+        headers: {
+          ...UPSTREAM_HEADERS,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ data: overpassQuery }),
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!response.ok) {
+        throw new Error(`Subway stations upstream returned ${response.status}`);
+      }
+
+      const stations = normalizeNearbySubwayStations(await response.json(), {
+        lat: query.data.lat,
+        lng: query.data.lng,
+      });
+      return context.json({ stations });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "Unknown upstream failure";
+      return context.json(
+        {
+          error: "UPSTREAM_UNAVAILABLE",
+          message: "지하철역 정보를 불러오지 못했습니다.",
           detail,
         },
         502,

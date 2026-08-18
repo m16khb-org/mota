@@ -12,6 +12,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import type { BusStop } from "../domain/bus";
+import type { SubwayStation } from "../domain/subway";
 
 interface Point {
   readonly lat: number;
@@ -21,11 +22,15 @@ interface MapCanvasProps {
   readonly center: Point;
   readonly stops: readonly BusStop[];
   readonly selectedStop: BusStop | null;
+  readonly selectedStopIds?: readonly BusStop["id"][];
+  readonly subwayStations?: readonly SubwayStation[];
+  readonly selectedSubwayStationIds?: readonly SubwayStation["id"][];
   readonly onCenterChange: (center: Point) => void;
   readonly onSelect: (stop: BusStop) => void;
+  readonly onSelectSubway?: (station: SubwayStation) => void;
 }
 
-function makeMarkerAccessible(stop: BusStop, onSelect: (stop: BusStop) => void) {
+function makeMarkerAccessible(label: string, onSelect: () => void) {
   return (event: LeafletEvent) => {
     const marker = event.target as LeafletCircleMarker;
     const element = marker.getElement();
@@ -35,17 +40,14 @@ function makeMarkerAccessible(stop: BusStop, onSelect: (stop: BusStop) => void) 
 
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
-    element.setAttribute(
-      "aria-label",
-      `${stop.name} 정류장, ARS ${stop.arsId}, 중심에서 ${Math.round(stop.distanceMeters)}미터`,
-    );
+    element.setAttribute("aria-label", label);
     element.addEventListener("keydown", (event) => {
       const keyboardEvent = event as KeyboardEvent;
       if (keyboardEvent.key !== "Enter" && keyboardEvent.key !== " ") {
         return;
       }
       keyboardEvent.preventDefault();
-      onSelect(stop);
+      onSelect();
       marker.openPopup();
     });
   };
@@ -83,8 +85,12 @@ export function MapCanvas({
   center,
   stops,
   selectedStop,
+  selectedStopIds = [],
+  subwayStations = [],
+  selectedSubwayStationIds = [],
   onCenterChange,
   onSelect,
+  onSelectSubway,
 }: MapCanvasProps) {
   return (
     <section className="picker-map-frame" aria-label="서울 버스 정류장 지도">
@@ -93,7 +99,9 @@ export function MapCanvas({
         zoom={15}
         minZoom={11}
         maxZoom={19}
-        scrollWheelZoom
+        scrollWheelZoom="center"
+        touchZoom="center"
+        doubleClickZoom="center"
         className="picker-map"
       >
         <TileLayer
@@ -102,7 +110,8 @@ export function MapCanvas({
         />
         <CenterObserver center={center} onCenterChange={onCenterChange} />
         {stops.map((stop) => {
-          const active = selectedStop?.id === stop.id;
+          const active =
+            selectedStop?.id === stop.id || selectedStopIds.includes(stop.id);
           return (
             <CircleMarker
               key={stop.id}
@@ -115,7 +124,12 @@ export function MapCanvas({
                 weight: active ? 4 : 3,
               }}
               eventHandlers={{
-                add: makeMarkerAccessible(stop, onSelect),
+                add: makeMarkerAccessible(
+                  `${stop.name} 정류장, ARS ${stop.arsId}, 중심에서 ${Math.round(
+                    stop.distanceMeters,
+                  )}미터`,
+                  () => onSelect(stop),
+                ),
                 click: () => onSelect(stop),
               }}
             >
@@ -123,6 +137,37 @@ export function MapCanvas({
                 <strong>{stop.name}</strong>
                 <br />
                 ARS {stop.arsId}
+              </Popup>
+            </CircleMarker>
+          );
+        })}
+        {subwayStations.map((station) => {
+          const active = selectedSubwayStationIds.includes(station.id);
+          return (
+            <CircleMarker
+              key={`subway-${station.id}`}
+              center={{ lat: station.lat, lng: station.lng }}
+              radius={active ? 11 : 9}
+              pathOptions={{
+                color: active ? "#0b0b0b" : "#7c3aed",
+                fillColor: active ? "#c7f000" : "#ffffff",
+                fillOpacity: 1,
+                weight: active ? 4 : 3,
+              }}
+              eventHandlers={{
+                add: makeMarkerAccessible(
+                  `${station.name} 지하철역, ${station.line}, 중심에서 ${Math.round(
+                    station.distanceMeters,
+                  )}미터`,
+                  () => onSelectSubway?.(station),
+                ),
+                click: () => onSelectSubway?.(station),
+              }}
+            >
+              <Popup>
+                <strong>{station.name}</strong>
+                <br />
+                {station.line}
               </Popup>
             </CircleMarker>
           );

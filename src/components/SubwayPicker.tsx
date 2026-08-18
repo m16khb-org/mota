@@ -1,45 +1,52 @@
-import { Crosshair, LocateFixed, MapPin, Search, X } from "lucide-react";
+import { Crosshair, LocateFixed, Search, TrainFront, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { fetchNearbyStops } from "../api/client";
-import type { BusStop } from "../domain/bus";
+import { fetchNearbySubwayStations } from "../api/client";
+import type { SubwayStation } from "../domain/subway";
 import { MapCanvas } from "./MapCanvas";
 
-const DEFAULT_CENTER = { lat: 37.5366, lng: 127.1253 };
-
-interface MapPickerProps {
-  readonly initialStop: BusStop | null;
+interface Point {
+  readonly lat: number;
+  readonly lng: number;
+}
+interface SubwayPickerProps {
+  readonly initialCenter: Point;
   readonly onClose: () => void;
-  readonly onSave: (stops: readonly BusStop[]) => void;
+  readonly onSave: (stations: readonly SubwayStation[]) => void;
 }
 
-export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
+export function SubwayPicker({
+  initialCenter,
+  onClose,
+  onSave,
+}: SubwayPickerProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const [center, setCenter] = useState(
-    initialStop ? { lat: initialStop.lat, lng: initialStop.lng } : DEFAULT_CENTER,
-  );
-  const [stops, setStops] = useState<BusStop[]>(initialStop ? [initialStop] : []);
-  const [selectedStops, setSelectedStops] = useState<BusStop[]>([]);
+  const [center, setCenter] = useState(initialCenter);
+  const [stations, setStations] = useState<SubwayStation[]>([]);
+  const [selectedStations, setSelectedStations] = useState<SubwayStation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const mapStops = [
-    ...selectedStops,
-    ...stops.filter(
-      (stop) => !selectedStops.some((selected) => selected.id === stop.id),
+  const mapStations = [
+    ...selectedStations,
+    ...stations.filter(
+      (station) =>
+        !selectedStations.some((selected) => selected.id === station.id),
     ),
   ];
 
-  const toggleStop = (stop: BusStop) => {
-    setSelectedStops((current) =>
-      current.some((selected) => selected.id === stop.id)
-        ? current.filter((selected) => selected.id !== stop.id)
-        : [...current, stop],
+  const toggleStation = (station: SubwayStation) => {
+    setSelectedStations((current) =>
+      current.some((selected) => selected.id === station.id)
+        ? current.filter((selected) => selected.id !== station.id)
+        : [...current, station],
     );
   };
 
   useEffect(() => {
     const previousFocus =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
@@ -49,18 +56,15 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
         onClose();
         return;
       }
-
       if (event.key !== "Tab") {
         return;
       }
-
       const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
         'button:not(:disabled), [href], input:not(:disabled), [tabindex]:not([tabindex="-1"])',
       );
       if (!focusable || focusable.length === 0) {
         return;
       }
-
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (event.shiftKey && document.activeElement === first) {
@@ -84,13 +88,13 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
     setLoading(true);
     setError(null);
     try {
-      const nextStops = await fetchNearbyStops(center);
-      setStops(nextStops);
-      if (nextStops.length === 0) {
-        setError("이 주변에서 정류장을 찾지 못했습니다. 지도를 옮기거나 확대해 보세요.");
+      const nextStations = await fetchNearbySubwayStations(center);
+      setStations(nextStations);
+      if (nextStations.length === 0) {
+        setError("이 주변에서 지하철역을 찾지 못했습니다.");
       }
     } catch {
-      setError("정류장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      setError("지하철역을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
     } finally {
       setLoading(false);
     }
@@ -101,11 +105,14 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
       setError("이 브라우저에서는 현재 위치를 사용할 수 없습니다.");
       return;
     }
-
     setError(null);
     navigator.geolocation.getCurrentPosition(
-      ({ coords }) => setCenter({ lat: coords.latitude, lng: coords.longitude }),
-      () => setError("현재 위치를 확인하지 못했습니다. 지도를 직접 옮겨 주세요."),
+      (position) =>
+        setCenter({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }),
+      () => setError("현재 위치를 확인하지 못했습니다."),
       { enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000 },
     );
   };
@@ -116,13 +123,13 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
       className="picker-overlay"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="picker-title"
+      aria-labelledby="subway-picker-title"
     >
       <div className="picker-shell">
         <header className="picker-header">
           <div>
-            <span className="eyebrow">정확한 ARS 정류장</span>
-            <h2 id="picker-title">지도에서 정류장 선택</h2>
+            <span className="eyebrow">지하철 경로 지점</span>
+            <h2 id="subway-picker-title">지도에서 지하철역 선택</h2>
           </div>
           <button
             ref={closeButtonRef}
@@ -138,16 +145,24 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
         <div className="picker-map-wrap">
           <MapCanvas
             center={center}
-            stops={mapStops}
+            stops={[]}
             selectedStop={null}
-            selectedStopIds={selectedStops.map((stop) => stop.id)}
+            subwayStations={mapStations}
+            selectedSubwayStationIds={selectedStations.map(
+              (station) => station.id,
+            )}
             onCenterChange={setCenter}
-            onSelect={toggleStop}
+            onSelect={() => undefined}
+            onSelectSubway={toggleStation}
           />
           <div className="map-center-pin" aria-hidden="true">
             <Crosshair />
           </div>
-          <button className="locate-button" type="button" onClick={useCurrentLocation}>
+          <button
+            className="locate-button"
+            type="button"
+            onClick={useCurrentLocation}
+          >
             <LocateFixed aria-hidden="true" />
             현위치
           </button>
@@ -161,9 +176,13 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
                 {center.lat.toFixed(5)}, {center.lng.toFixed(5)}
               </span>
             </div>
-            <button className="primary-button compact" type="button" onClick={searchNearby}>
+            <button
+              className="primary-button compact"
+              type="button"
+              onClick={searchNearby}
+            >
               <Search aria-hidden="true" />
-              {loading ? "찾는 중…" : "이 위치에서 찾기"}
+              {loading ? "찾는 중…" : "이 위치에서 지하철역 찾기"}
             </button>
           </div>
 
@@ -173,38 +192,35 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
             </p>
           ) : null}
 
-          {stops.length > 0 ? (
-            <div
-              className="result-summary"
-              data-testid="stop-result-summary"
-              data-stop-count={stops.length}
-            >
-              <strong>주변 정류장 {stops.length}곳</strong>
-              <span>목록을 스크롤해 지도 핀과 ARS 번호를 비교하세요.</span>
+          {stations.length > 0 ? (
+            <div className="result-summary">
+              <strong>주변 지하철역 {stations.length}곳</strong>
+              <span>지도 마커나 목록을 눌러 여러 역을 선택하세요.</span>
             </div>
           ) : null}
 
           <div className="stop-result-list">
-            {stops.map((stop) => {
-              const active = selectedStops.some(
-                (selected) => selected.id === stop.id,
+            {stations.map((station) => {
+              const active = selectedStations.some(
+                (selected) => selected.id === station.id,
               );
               return (
                 <button
-                  key={stop.id}
+                  key={station.id}
                   className={`stop-result${active ? " is-active" : ""}`}
                   type="button"
-                  onClick={() => toggleStop(stop)}
-                  aria-label={`${stop.name} 정류장 ${stop.arsId}, 중심에서 ${Math.round(
-                    stop.distanceMeters,
+                  onClick={() => toggleStation(station)}
+                  aria-label={`${station.name} 지하철역 ${station.line}, 중심에서 ${Math.round(
+                    station.distanceMeters,
                   )}미터, 선택`}
                   aria-pressed={active}
                 >
-                  <MapPin aria-hidden="true" />
+                  <TrainFront aria-hidden="true" />
                   <span>
-                    <strong>{stop.name}</strong>
+                    <strong>{station.name}</strong>
                     <small>
-                      ARS {stop.arsId} · 중심에서 {Math.round(stop.distanceMeters)}m
+                      {station.line} · 중심에서{" "}
+                      {Math.round(station.distanceMeters)}m
                     </small>
                   </span>
                 </button>
@@ -215,23 +231,16 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
 
         <footer className="picker-footer">
           <div className="picker-selection">
-            <span>선택한 정류장</span>
-            <strong>
-              {selectedStops.length > 0
-                ? `${selectedStops.length}개 · ${selectedStops
-                    .slice(0, 2)
-                    .map((stop) => stop.name)
-                    .join(", ")}`
-                : "아직 없음"}
-            </strong>
+            <span>선택한 지하철역</span>
+            <strong>{selectedStations.length}개</strong>
           </div>
           <button
             className="primary-button"
             type="button"
-            disabled={selectedStops.length === 0}
-            onClick={() => onSave(selectedStops)}
+            disabled={selectedStations.length === 0}
+            onClick={() => onSave(selectedStations)}
           >
-            선택한 {selectedStops.length}개 저장
+            선택한 {selectedStations.length}개 저장
           </button>
         </footer>
       </div>

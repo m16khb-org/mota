@@ -2,10 +2,10 @@
 
 ## Product brief
 
-`내 버스`는 출근 직전 또는 퇴근 직전, 사용자가 지도에서 정확한 서울 버스 정류장을
-고르고 가장 먼저 오는 버스를 확인하는 단일 목적 웹앱이다. 여러 회사와 집을 이름으로
-구분하고 각 장소에 여러 정류장을 저장하며, `회사로`(집 → 회사)와 `집으로`
-(회사 → 집)을 화면의 두 방향으로 보존한다.
+`내 버스`는 출근 직전 또는 퇴근 직전, 사용자가 지도에서 정확한 서울 버스 정류장과
+지하철역을 경로로 고르고 가장 먼저 오는 버스를 확인하는 웹앱이다. 여러 회사와 집을
+이름으로 구분하고 각 장소에 여러 경로 지점을 저장하며, `회사로`(집 → 회사)와
+`집으로`(회사 → 집)을 화면의 두 방향으로 보존한다.
 
 ### Primary persona
 
@@ -15,10 +15,11 @@
 
 ### Success criteria
 
-1. 첫 사용자가 30초 안에 지도에서 정확한 ARS 정류장을 장소별로 저장한다.
-2. 사용자는 회사와 집을 각각 여러 개 만들고 각 장소에 여러 정류장을 저장한다.
-3. 재방문 사용자는 장소와 정류장을 한 번의 탭으로 전환하고 도착정보를 새로고침한다.
-4. 정류장명, ARS 번호, 지도 위치가 항상 함께 보여 반대편 정류장 오선택을 줄인다.
+1. 첫 사용자가 30초 안에 지도에서 버스 정류장이나 지하철역을 장소별로 저장한다.
+2. 사용자는 회사와 집을 각각 제한 없이 만들고 각 장소에 여러 경로 지점을 저장한다.
+3. 지도 마커를 여러 개 선택해 한 번에 경로에 추가한다.
+4. 재방문 사용자는 장소와 버스 정류장을 한 번의 탭으로 전환하고 도착정보를 새로고침한다.
+5. 정류장명, ARS 번호, 역명, 지도 위치를 함께 보여 잘못된 지점 선택을 줄인다.
 
 ## Visual direction
 
@@ -89,22 +90,24 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Selection changes the active place collection and arrival list without destroying the other direction.
 - Keyboard arrow keys and tab navigation work.
 
-### Place and stop collection
+### Place and route-point collection
 
 - Each direction stores multiple named places and keeps one active place.
-- Each place stores multiple stops and keeps one active stop for arrivals.
+- Each place stores multiple bus stops and subway stations; one bus stop stays active for arrivals.
 - Adding, renaming, selecting, and deleting a place always has an equivalent button or form control.
-- Every stop row renders the stop name and five-digit ARS ID.
+- Every bus row renders the stop name and five-digit ARS ID; subway rows render station and line.
 - Active place and stop use `aria-pressed`, a border, and a 3px signal strip.
 - Removing an active place or stop selects the first remaining sibling; an empty collection stays valid.
+- Newly active place chips scroll into view instead of disappearing beyond the horizontal rail.
 
 ### Map picker
 
 - Moving the map does not trigger network requests continuously.
-- `이 위치에서 찾기` fetches official nearby stops at the map center.
+- Bus and subway pickers search only from their explicit `이 위치에서 찾기` action.
 - Every result has a corresponding marker and row with name, ARS ID, and distance.
-- Marker selection and row selection remain synchronized.
-- Saving is explicit and adds the stop to the active place without duplicating it.
+- Marker selection and row selection remain synchronized and allow multiple pressed items.
+- Wheel, touch, and double-click zoom stay anchored to the map center.
+- Saving is explicit and adds selected points to the active place without duplicating them.
 - Closing does not overwrite or remove previously saved stops.
 
 ### Arrival row
@@ -136,9 +139,10 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 
 ## Content
 
-- Short Korean task language: `정류장 선택`, `이 위치에서 찾기`, `새로고침`.
+- Short Korean task language: `버스 정류장 추가`, `지하철역 추가`, `이 위치에서 찾기`.
 - Avoid technical API wording in user-facing errors.
 - Use absolute stop identity (`천호역 · 25014`) rather than ambiguous labels.
+- Subway route points use OpenStreetMap Overpass station data and do not imply live arrivals.
 - Timestamps use local Korean time and explain freshness (`20:14 기준`).
 
 ## Responsive and failure states
@@ -148,4 +152,5 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Permission denied: keep the default Seoul center and offer manual map movement.
 - API timeout/error: preserve the last saved stop, show retry, never clear arrivals silently.
 - No nearby stops: suggest zooming out or moving the map.
+- No nearby subway stations: preserve saved route points and offer a new map-center search.
 - No active buses: show the route as `운행 정보 없음`, not a blank card.

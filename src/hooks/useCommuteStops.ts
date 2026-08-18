@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
+import type { SubwayStation } from "../domain/subway";
 import {
   createPlaceId,
   loadCommutes,
@@ -32,6 +33,7 @@ export function useCommuteStops() {
         id: createPlaceId(direction),
         name: trimmedName,
         stops: [],
+        subwayStations: [],
         selectedStopId: null,
       };
       setCommutes((current) => ({
@@ -178,6 +180,60 @@ export function useCommuteStops() {
     [],
   );
 
+  const addSubwayStations = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      stations: readonly SubwayStation[],
+    ) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          activePlaceId: placeId,
+          places: current[direction].places.map((place) => {
+            if (place.id !== placeId) {
+              return place;
+            }
+            const merged = new Map(
+              place.subwayStations.map((station) => [station.id, station]),
+            );
+            for (const station of stations) {
+              merged.set(station.id, station);
+            }
+            return { ...place, subwayStations: [...merged.values()] };
+          }),
+        },
+      }));
+    },
+    [],
+  );
+
+  const removeSubwayStation = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      stationId: SubwayStation["id"],
+    ) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          ...current[direction],
+          places: current[direction].places.map((place) =>
+            place.id === placeId
+              ? {
+                  ...place,
+                  subwayStations: place.subwayStations.filter(
+                    (station) => station.id !== stationId,
+                  ),
+                }
+              : place,
+          ),
+        },
+      }));
+    },
+    [],
+  );
+
   return {
     commutes,
     addPlace,
@@ -187,5 +243,7 @@ export function useCommuteStops() {
     addStop,
     removeStop,
     selectStop,
+    addSubwayStations,
+    removeSubwayStation,
   } as const;
 }

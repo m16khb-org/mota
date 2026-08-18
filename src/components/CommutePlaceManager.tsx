@@ -1,10 +1,12 @@
-import { MapPinned, Plus, Route, Trash2 } from "lucide-react";
-import { type SubmitEvent, useState } from "react";
+import { Plus, Route, Trash2 } from "lucide-react";
+import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
+import type { SubwayStation } from "../domain/subway";
 import type {
   CommutePlace,
   DirectionCollection,
 } from "../hooks/useCommuteStops";
+import { RoutePointList } from "./RoutePointList";
 
 interface CommutePlaceManagerProps {
   readonly direction: CommuteDirection;
@@ -15,7 +17,9 @@ interface CommutePlaceManagerProps {
   readonly onRemovePlace: (placeId: string) => void;
   readonly onSelectPlace: (placeId: string) => void;
   readonly onAddStop: () => void;
+  readonly onAddSubway: () => void;
   readonly onRemoveStop: (stopId: BusStop["id"]) => void;
+  readonly onRemoveSubway: (stationId: SubwayStation["id"]) => void;
   readonly onSelectStop: (stopId: BusStop["id"]) => void;
 }
 
@@ -43,12 +47,39 @@ export function CommutePlaceManager({
   onRemovePlace,
   onSelectPlace,
   onAddStop,
+  onAddSubway,
   onRemoveStop,
+  onRemoveSubway,
   onSelectStop,
 }: CommutePlaceManagerProps) {
   const copy = COPY[direction];
+  const activePlaceId = activePlace?.id ?? null;
+  const placeSelectorRef = useRef<HTMLFieldSetElement>(null);
+  const activePlaceButtonRef = useRef<HTMLButtonElement>(null);
   const [newPlaceName, setNewPlaceName] = useState("");
   const [draftName, setDraftName] = useState(activePlace?.name ?? "");
+
+  useEffect(() => {
+    if (!activePlaceId) {
+      return;
+    }
+    const revealActivePlace = () =>
+      activePlaceButtonRef.current?.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+      });
+    revealActivePlace();
+    window.addEventListener("resize", revealActivePlace);
+    if (!placeSelectorRef.current || typeof ResizeObserver === "undefined") {
+      return () => window.removeEventListener("resize", revealActivePlace);
+    }
+    const observer = new ResizeObserver(revealActivePlace);
+    observer.observe(placeSelectorRef.current);
+    return () => {
+      window.removeEventListener("resize", revealActivePlace);
+      observer.disconnect();
+    };
+  }, [activePlaceId]);
 
   const addPlace = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -96,19 +127,24 @@ export function CommutePlaceManager({
       </form>
 
       {collection.places.length > 0 ? (
-        <fieldset className="place-selector">
+        <fieldset ref={placeSelectorRef} className="place-selector">
           <legend className="sr-only">저장한 {copy.plural}</legend>
           {collection.places.map((place) => (
             <button
               key={place.id}
+              ref={place.id === activePlaceId ? activePlaceButtonRef : undefined}
               className={place.id === activePlace?.id ? "is-active" : ""}
               type="button"
               aria-pressed={place.id === activePlace?.id}
-              aria-label={`${place.name}, 정류장 ${place.stops.length}개`}
+              aria-label={`${place.name}, 경로 ${
+                place.stops.length + place.subwayStations.length
+              }개`}
               onClick={() => onSelectPlace(place.id)}
             >
               <strong>{place.name}</strong>
-              <span>정류장 {place.stops.length}개</span>
+              <span>
+                경로 {place.stops.length + place.subwayStations.length}개
+              </span>
             </button>
           ))}
         </fieldset>
@@ -141,53 +177,31 @@ export function CommutePlaceManager({
             </button>
           </div>
 
-          <div className="saved-stop-heading">
-            <h3>정류장</h3>
-            <span>{activePlace.stops.length}개 저장됨</span>
+          <RoutePointList
+            place={activePlace}
+            onSelectStop={onSelectStop}
+            onRemoveStop={onRemoveStop}
+            onRemoveSubway={onRemoveSubway}
+          />
+
+          <div className="route-add-actions">
+            <button
+              className="primary-button"
+              type="button"
+              onClick={onAddStop}
+            >
+              <Plus aria-hidden="true" />
+              버스 정류장 추가
+            </button>
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={onAddSubway}
+            >
+              <Plus aria-hidden="true" />
+              지하철역 추가
+            </button>
           </div>
-
-          {activePlace.stops.length > 0 ? (
-            <div className="saved-stop-list">
-              {activePlace.stops.map((stop) => {
-                const selected = stop.id === activePlace.selectedStopId;
-                return (
-                  <div
-                    key={stop.id}
-                    className={`saved-stop-row${selected ? " is-active" : ""}`}
-                  >
-                    <button
-                      className="saved-stop-choice"
-                      type="button"
-                      aria-pressed={selected}
-                      aria-label={`${stop.name} · ARS ${stop.arsId}`}
-                      onClick={() => onSelectStop(stop.id)}
-                    >
-                      <MapPinned aria-hidden="true" />
-                      <span>
-                        <strong>{stop.name}</strong>
-                        <small>ARS {stop.arsId}</small>
-                      </span>
-                    </button>
-                    <button
-                      className="icon-button danger"
-                      type="button"
-                      onClick={() => onRemoveStop(stop.id)}
-                      aria-label={`${stop.name} 정류장 삭제`}
-                    >
-                      <Trash2 aria-hidden="true" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="saved-stop-empty">등록한 정류장이 없습니다.</p>
-          )}
-
-          <button className="primary-button add-stop-button" type="button" onClick={onAddStop}>
-            <Plus aria-hidden="true" />
-            정류장 추가
-          </button>
         </div>
       ) : null}
     </section>

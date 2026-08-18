@@ -8,17 +8,31 @@ import { MapPicker } from "./MapPicker";
 vi.mock("./MapCanvas", () => ({
   MapCanvas: ({
     center,
+    stops,
     onCenterChange,
+    onSelect,
   }: {
     center: { lat: number; lng: number };
+    stops: readonly BusStop[];
     onCenterChange: (center: { lat: number; lng: number }) => void;
+    onSelect: (stop: BusStop) => void;
   }) => (
-    <button
-      type="button"
-      onClick={() => onCenterChange({ lat: center.lat + 0.001, lng: center.lng })}
-    >
-      테스트 지도 이동
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => onCenterChange({ lat: center.lat + 0.001, lng: center.lng })}
+      >
+        테스트 지도 이동
+      </button>
+      {stops.map((stop) => (
+        <button
+          key={stop.id}
+          type="button"
+          aria-label={`지도 마커 ${stop.name}`}
+          onClick={() => onSelect(stop)}
+        />
+      ))}
+    </>
   ),
 }));
 
@@ -29,6 +43,15 @@ const nearbyStop: BusStop = {
   lat: 37.5379482005,
   lng: 127.1255385876,
   distanceMeters: 151,
+};
+
+const secondNearbyStop: BusStop = {
+  id: "124000455" as BusStop["id"],
+  arsId: "25015" as BusStop["arsId"],
+  name: "천호역현대백화점",
+  lat: 37.5384,
+  lng: 127.1249,
+  distanceMeters: 203,
 };
 
 describe("MapPicker", () => {
@@ -54,9 +77,9 @@ describe("MapPicker", () => {
     expect(await screen.findByText("천호역")).toBeInTheDocument();
     expect(screen.getByTestId("stop-result-summary")).toHaveAttribute("data-stop-count", "1");
     fireEvent.click(screen.getByRole("button", { name: /천호역.*25014/ }));
-    fireEvent.click(screen.getByRole("button", { name: "이 정류장 저장" }));
+    fireEvent.click(screen.getByRole("button", { name: "선택한 1개 저장" }));
 
-    expect(onSave).toHaveBeenCalledWith(nearbyStop);
+    expect(onSave).toHaveBeenCalledWith([nearbyStop]);
     await waitFor(() =>
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining("lat=37.5376"),
@@ -75,6 +98,35 @@ describe("MapPicker", () => {
       "정류장을 불러오지 못했습니다",
     );
     expect(screen.getByRole("button", { name: "이 위치에서 찾기" })).toBeEnabled();
+  });
+
+  it("selects multiple stop markers before saving the route", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ stops: [nearbyStop, secondNearbyStop] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    const onSave = vi.fn();
+    render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={onSave} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "이 위치에서 찾기" }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: "지도 마커 천호역" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "지도 마커 천호역현대백화점" }),
+    );
+
+    expect(
+      screen.getByRole("button", { name: /천호역 정류장 25014/ }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.getByRole("button", { name: /천호역현대백화점 정류장 25015/ }),
+    ).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("button", { name: "선택한 2개 저장" }));
+
+    expect(onSave).toHaveBeenCalledWith([nearbyStop, secondNearbyStop]);
   });
 
   it("moves focus into the modal and closes with Escape", () => {

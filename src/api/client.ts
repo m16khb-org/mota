@@ -4,9 +4,17 @@ import {
   type BusStop,
   busStopSchema,
 } from "../domain/bus";
+import {
+  type SubwayStation,
+  subwayStationSchema,
+} from "../domain/subway";
 
 const nearbyResultSchema = z.object({
   stops: z.array(busStopSchema),
+});
+
+const nearbySubwayResultSchema = z.object({
+  stations: z.array(subwayStationSchema),
 });
 
 const arrivalsResultSchema = z.object({
@@ -64,4 +72,17 @@ export async function fetchArrivals(
     readonly arrivals: BusArrival[];
     readonly updatedAt: string;
   };
+}
+
+export async function fetchNearbySubwayStations(
+  center: { readonly lat: number; readonly lng: number },
+  radius = 3_000,
+): Promise<SubwayStation[]> {
+  const params = new URLSearchParams({
+    lat: center.lat.toFixed(6),
+    lng: center.lng.toFixed(6),
+    radius: String(radius),
+  });
+  const payload = await getJson(`/api/subway/nearby?${params}`);
+  return nearbySubwayResultSchema.parse(payload).stations;
 }
