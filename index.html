@@ -8,10 +8,17 @@
       content="지도에서 정확한 서울 버스 정류장을 고르고 출퇴근 버스 도착 정보를 확인하세요."
     />
     <meta name="theme-color" content="#0b0b0b" />
+    <meta name="application-name" content="내 버스" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/pwa-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/pwa-icon.svg" />
     <title>내 버스 — 출퇴근 버스 도착정보</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script src="/register-sw.js" defer></script>
   </body>
 </html>

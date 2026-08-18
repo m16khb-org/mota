@@ -20,6 +20,7 @@
 3. 지도 마커를 여러 개 선택해 한 번에 경로에 추가한다.
 4. 재방문 사용자는 장소와 버스 정류장을 한 번의 탭으로 전환하고 도착정보를 새로고침한다.
 5. 정류장명, ARS 번호, 역명, 지도 위치를 함께 보여 잘못된 지점 선택을 줄인다.
+6. 사용자는 브라우저의 설치 표면에서 앱을 설치하고 오프라인에서도 저장한 화면을 다시 연다.
 
 ## Visual direction
 
@@ -117,6 +118,13 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Direction and remaining-stop message stay visible.
 - Rows sort by numeric first ETA. Non-running routes move below active routes.
 - Refresh has loading, success timestamp, empty, and error states.
+
+### Install and offline surface
+
+- 브라우저의 네이티브 설치 표면을 사용하며 별도 설치 버튼을 중복 제공하지 않는다.
+- 설치 아이콘은 `--ink` 배경과 `--signal` 버스 기호를 사용하고 마스킹 안전 여백을 둔다.
+- 오프라인에서는 앱 셸과 브라우저에 저장한 장소·경로를 복원한다.
+- 실시간 도착정보, 새 정류장 검색, 지도 타일은 연결이 필요한 기능으로 유지한다.
 
 ## Interaction and motion
 

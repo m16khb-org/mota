@@ -1,0 +1,21 @@
+{
+  "id": "/",
+  "name": "내 버스 - 서울 출퇴근 버스",
+  "short_name": "내 버스",
+  "description": "지도에서 서울 버스 정류장과 지하철역을 경로로 저장하고 도착 정보를 확인합니다.",
+  "lang": "ko-KR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0b0b0b",
+  "background_color": "#f7f7f3",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

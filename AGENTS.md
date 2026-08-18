@@ -8,13 +8,15 @@
 
 Korean commute-bus web app: React 19/Vite frontend plus Bun/Hono server adapter.
 The server normalizes Seoul transit stop and arrival payloads; the browser stores multiple
-named company/home places with multiple bus stops and subway route points per place.
+named company/home places with multiple bus stops and subway route points per place. A web
+manifest and service worker make the production build installable with an offline app shell.
 
 ## STRUCTURE
 
 ```text
 commute-bus-web/
 ├── server/                 # Bun/Hono API adapter and production static server
+├── public/                 # PWA manifest, install icon, registration, offline worker
 ├── src/
 │   ├── api/                # Browser API response validation
 │   ├── components/         # UI, Leaflet map, picker, arrival presentation
@@ -42,6 +44,7 @@ commute-bus-web/
 | Change map behavior/accessibility | `src/components/MapCanvas.tsx` | Used by main view and picker |
 | Change bus marker picker | `src/components/MapPicker.tsx` | Explicit multi-select search |
 | Change subway marker picker | `src/components/SubwayPicker.tsx` | Overpass multi-select search |
+| Change install/offline behavior | `public/manifest.webmanifest`, `public/sw.js`, `index.html` | Shell-only PWA cache |
 | Change global appearance | `DESIGN.md`, then `src/styles.css` | CSS is global, not component-scoped |
 | Change tests | Colocated `*.test.ts(x)` | jsdom declared per React test file |
 
@@ -76,6 +79,7 @@ commute-bus-web/
 - Async UI tests await rendered state (`findBy*`/`waitFor`); no sleeps or live transit calls.
 - Both browser and server network paths use `AbortSignal.timeout(8_000)`.
 - Subway route points come from OpenStreetMap Overpass; they do not expose live arrivals.
+- The service worker precaches only the same-origin app shell; `/api/*` and map tiles stay live.
 - User-facing copy is short Korean task language. Keep technical upstream details out of errors.
 - Treat `DESIGN.md` as the contract for layout, motion, accessibility, and content.
 
@@ -90,6 +94,7 @@ commute-bus-web/
 - Do not bypass shared domain schemas or parse Seoul upstream payloads inside UI components.
 - Do not let color carry state alone or remove keyboard/list alternatives for map actions.
 - Do not announce every map movement to assistive technology.
+- Do not cache `/api/*` responses or imply that offline mode includes current transit data.
 - Do not add gradients, glass effects, nested cards, excessive rounding, decorative illustration,
   or large empty hero space.
 
@@ -123,6 +128,8 @@ docker compose logs -f web tunnel
 
 - Production defaults to `HOST=0.0.0.0`, `PORT=3000`.
 - Production needs outbound access to Seoul transit endpoints; the arrivals upstream is HTTP.
+- The production build is an installable PWA; offline mode restores the shell and saved local data,
+  while live arrivals and new stop searches still require a connection.
 - `pnpm test:e2e` is declared, but no Playwright config or E2E spec currently exists.
 - No repository CI/deploy configuration exists; validation and artifact creation are external.
 - `dist/` is ignored and must be built before `pnpm start`.
