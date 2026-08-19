@@ -129,4 +129,113 @@ describe("bus API adapter", () => {
     expect(response.status).toBe(400);
     expect(upstream).not.toHaveBeenCalled();
   });
+
+  it("serves repeated subway searches from cache without recalling Overpass", async () => {
+    const upstream = vi.fn().mockResolvedValue(
+      Response.json({
+        elements: [
+          {
+            type: "node",
+            id: 5801572034,
+            lat: 37.5385225,
+            lon: 127.1234021,
+            tags: { name: "천호", network: "수도권 전철" },
+          },
+        ],
+      }),
+    );
+    const app = createApp(upstream);
+    const url = "/api/subway/nearby?lat=37.5366&lng=127.1253&radius=3000";
+
+    const first = await app.request(url);
+    const second = await app.request(url);
+
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(1);
+    expect(await second.json()).toMatchObject({
+      stations: [{ name: "천호" }],
+    });
+  });
+
+  it("falls back to the next Overpass mirror when the primary fails", async () => {
+    const upstream = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("primary unavailable"))
+      .mockResolvedValueOnce(
+        Response.json({
+          elements: [
+            {
+              type: "node",
+              id: 5801572034,
+              lat: 37.5385225,
+              lon: 127.1234021,
+              tags: { name: "천호", network: "수도권 전철" },
+            },
+          ],
+        }),
+      );
+    const response = await createApp(upstream).request(
+      "/api/subway/nearby?lat=37.5366&lng=127.1253&radius=3000",
+    );
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      stations: [{ name: "천호" }],
+    });
+    expect(upstream).toHaveBeenNthCalledWith(
+      1,
+      "https://overpass-api.de/api/interpreter",
+      expect.objectContaining({ method: "POST" }),
+    );
+    expect(upstream).toHaveBeenNthCalledWith(
+      2,
+      "https://overpass.kumi.systems/api/interpreter",
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("serves stale cached stations when every mirror fails", async () => {
+    let now = 1_000_000;
+    const upstream = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({
+          elements: [
+            {
+              type: "node",
+              id: 5801572034,
+              lat: 37.5385225,
+              lon: 127.1234021,
+              tags: { name: "천호", network: "수도권 전철" },
+            },
+          ],
+        }),
+      )
+      .mockRejectedValue(new Error("overpass down"));
+    const app = createApp(upstream, { now: () => now });
+    const url = "/api/subway/nearby?lat=37.5366&lng=127.1253&radius=3000";
+
+    const first = await app.request(url);
+    now += 25 * 60 * 60 * 1_000;
+    const second = await app.request(url);
+
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect(await second.json()).toMatchObject({
+      stations: [{ name: "천호" }],
+    });
+  });
+
+  it("reports upstream failure when no cached stations exist", async () => {
+    const upstream = vi.fn().mockRejectedValue(new Error("overpass down"));
+    const response = await createApp(upstream, { now: () => 0 }).request(
+      "/api/subway/nearby?lat=37.5366&lng=127.1253&radius=3000",
+    );
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toMatchObject({
+      error: "UPSTREAM_UNAVAILABLE",
+    });
+  });
 });

@@ -6,6 +6,7 @@ import {
   normalizeNearbyStops,
 } from "../src/domain/bus";
 import {
+  type SubwayStation,
   normalizeNearbySubwayStations,
   subwaySearchSchema,
 } from "../src/domain/subway";
@@ -17,14 +18,37 @@ type UpstreamFetch = (
 
 const NEARBY_STOPS_URL = "https://bus.go.kr/sbus/bus/selectNearStops.do";
 const ARRIVALS_URL = "http://m.bus.go.kr/mBus/bus/getStationByUid.bms";
-const SUBWAY_STATIONS_URL = "https://overpass-api.de/api/interpreter";
+const OVERPASS_ENDPOINTS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+] as const;
+const SUBWAY_ATTEMPT_TIMEOUT_MS = 6_500;
+const SUBWAY_TOTAL_BUDGET_MS = 7_000;
+const SUBWAY_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
+const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;
 
 const UPSTREAM_HEADERS = {
   Accept: "application/json",
   "User-Agent": "commute-bus-web/0.1 (+https://bus.m16khb.xyz)",
 } as const;
 
-export function createApp(upstreamFetch: UpstreamFetch = globalThis.fetch) {
+interface SubwayCacheEntry {
+  readonly stations: SubwayStation[];
+  readonly savedAt: number;
+}
+
+interface AppDeps {
+  readonly now?: () => number;
+}
+
+export function createApp(
+  upstreamFetch: UpstreamFetch = globalThis.fetch,
+  deps: AppDeps = {},
+) {
+  const now = deps.now ?? Date.now;
+  const subwayCache = new Map<string, SubwayCacheEntry>();
+  const subwayMirrorFailedAt = new Map<string, number>();
   const app = new Hono();
 
   app.get("/api/health", (context) =>
@@ -86,32 +110,72 @@ export function createApp(upstreamFetch: UpstreamFetch = globalThis.fetch) {
       );
     }
 
+    const { lat, lng, radius } = query.data;
+    const cacheKey = `${lat.toFixed(3)}:${lng.toFixed(3)}:${radius}`;
+    const cached = subwayCache.get(cacheKey);
+    if (cached && now() - cached.savedAt < SUBWAY_CACHE_TTL_MS) {
+      return context.json({ stations: cached.stations });
+    }
+
     const overpassQuery = [
       "[out:json][timeout:12];",
-      `nwr["railway"="station"]["station"="subway"](around:${query.data.radius},${query.data.lat},${query.data.lng});`,
+      `nwr["railway"="station"]["station"="subway"](around:${radius},${lat},${lng});`,
       "out center tags;",
     ].join("");
 
-    try {
-      const response = await upstreamFetch(SUBWAY_STATIONS_URL, {
-        method: "POST",
-        headers: {
-          ...UPSTREAM_HEADERS,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ data: overpassQuery }),
-        signal: AbortSignal.timeout(8_000),
-      });
-      if (!response.ok) {
-        throw new Error(`Subway stations upstream returned ${response.status}`);
-      }
+    const availableMirrors = OVERPASS_ENDPOINTS.filter(
+      (endpoint) =>
+        now() - (subwayMirrorFailedAt.get(endpoint) ?? Number.NEGATIVE_INFINITY) >=
+        SUBWAY_MIRROR_COOLDOWN_MS,
+    );
+    const mirrors =
+      availableMirrors.length > 0 ? availableMirrors : [...OVERPASS_ENDPOINTS];
+    const deadline = now() + SUBWAY_TOTAL_BUDGET_MS;
 
-      const stations = normalizeNearbySubwayStations(await response.json(), {
-        lat: query.data.lat,
-        lng: query.data.lng,
-      });
+    try {
+      let stations: SubwayStation[] | null = null;
+      let lastError: unknown = null;
+      let attempted = false;
+      for (const endpoint of mirrors) {
+        if (attempted && now() > deadline - 1_000) {
+          break;
+        }
+        attempted = true;
+        try {
+          const response = await upstreamFetch(endpoint, {
+            method: "POST",
+            headers: {
+              ...UPSTREAM_HEADERS,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ data: overpassQuery }),
+            signal: AbortSignal.timeout(SUBWAY_ATTEMPT_TIMEOUT_MS),
+          });
+          if (!response.ok) {
+            throw new Error(
+              `Subway stations upstream returned ${response.status}`,
+            );
+          }
+          stations = normalizeNearbySubwayStations(await response.json(), {
+            lat,
+            lng,
+          });
+          subwayMirrorFailedAt.delete(endpoint);
+          break;
+        } catch (error) {
+          subwayMirrorFailedAt.set(endpoint, now());
+          lastError = error;
+        }
+      }
+      if (stations === null) {
+        throw lastError ?? new Error("Unknown upstream failure");
+      }
+      subwayCache.set(cacheKey, { stations, savedAt: now() });
       return context.json({ stations });
     } catch (error) {
+      if (cached) {
+        return context.json({ stations: cached.stations });
+      }
       const detail = error instanceof Error ? error.message : "Unknown upstream failure";
       return context.json(
         {
