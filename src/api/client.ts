@@ -44,8 +44,8 @@ const arrivalsResultSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-async function getJson(url: string): Promise<unknown> {
-  const response = await fetch(url, { signal: AbortSignal.timeout(8_000) });
+async function getJson(url: string, timeoutMs = 8_000): Promise<unknown> {
+  const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!response.ok) {
     throw new Error(`Request failed with ${response.status}`);
   }
@@ -83,6 +83,6 @@ export async function fetchNearbySubwayStations(
     lng: center.lng.toFixed(6),
     radius: String(radius),
   });
-  const payload = await getJson(`/api/subway/nearby?${params}`);
+  const payload = await getJson(`/api/subway/nearby?${params}`, 20_000);
   return nearbySubwayResultSchema.parse(payload).stations;
 }

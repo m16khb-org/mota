@@ -35,7 +35,7 @@ mota/
 |------|----------|-------|
 | Change bus stop/arrival contracts | `src/domain/bus.ts` | Shared by browser and server |
 | Change subway station contracts | `src/domain/subway.ts` | OSM station normalization |
-| Change upstream request handling | `server/app.ts` | Hono routes, 8s timeout, 400/502 mapping |
+| Change upstream request handling | `server/app.ts` | Hono routes, route timeouts (8s; subway mirrors race with 1.5s stagger in a 16s budget), 400/502 mapping |
 | Change production bind/static serving | `server/index.ts`, `server/config.ts` | Serves prebuilt `dist/` |
 | Change browser API calls | `src/api/client.ts` | Re-validates server JSON with Zod |
 | Change app state/refresh flow | `src/App.tsx` | Direction, active place/stop, arrivals |
@@ -79,7 +79,10 @@ mota/
 - Tests live beside implementations. Server tests call Hono in memory with injected upstream
   fetch; React tests opt into jsdom with a file directive.
 - Async UI tests await rendered state (`findBy*`/`waitFor`); no sleeps or live transit calls.
-- Both browser and server network paths use `AbortSignal.timeout(8_000)`.
+- Both browser and server network paths use `AbortSignal.timeout(8_000)`, except
+  nearby-subway search: static OSM station data tolerates a longer wait, so the
+  server races the four global Overpass mirrors (1.5s stagger, first response
+  wins) within a 16s budget and the browser allows 20s.
 - Subway route points come from OpenStreetMap Overpass; they do not expose live arrivals.
 - `commute-bus-web:stops:v3` stores explicit start-stop/optional-transfer route options.
 - Route comparison ranks only fresh first-bus boarding waits; it is not a total travel-time estimate.

@@ -19,12 +19,13 @@ type UpstreamFetch = (
 const NEARBY_STOPS_URL = "https://bus.go.kr/sbus/bus/selectNearStops.do";
 const ARRIVALS_URL = "http://m.bus.go.kr/mBus/bus/getStationByUid.bms";
 const OVERPASS_ENDPOINTS = [
-  "https://overpass-api.de/api/interpreter",
+  "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
   "https://overpass.private.coffee/api/interpreter",
+  "https://overpass-api.de/api/interpreter",
 ] as const;
-const SUBWAY_ATTEMPT_TIMEOUT_MS = 6_500;
-const SUBWAY_TOTAL_BUDGET_MS = 7_000;
+const SUBWAY_TOTAL_BUDGET_MS = 16_000;
+const SUBWAY_MIRROR_STAGGER_MS = 1_500;
 const SUBWAY_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
 const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;
 
@@ -40,6 +41,7 @@ interface SubwayCacheEntry {
 
 interface AppDeps {
   readonly now?: () => number;
+  readonly sleep?: (ms: number) => Promise<void>;
 }
 
 export function createApp(
@@ -47,6 +49,12 @@ export function createApp(
   deps: AppDeps = {},
 ) {
   const now = deps.now ?? Date.now;
+  const sleep =
+    deps.sleep ??
+    ((ms: number) =>
+      new Promise<void>((resolve) => {
+        setTimeout(resolve, ms);
+      }));
   const subwayCache = new Map<string, SubwayCacheEntry>();
   const subwayMirrorFailedAt = new Map<string, number>();
   const app = new Hono();
@@ -133,14 +141,25 @@ export function createApp(
     const deadline = now() + SUBWAY_TOTAL_BUDGET_MS;
 
     try {
-      let stations: SubwayStation[] | null = null;
-      let lastError: unknown = null;
-      let attempted = false;
-      for (const endpoint of mirrors) {
-        if (attempted && now() > deadline - 1_000) {
-          break;
+      let winnerFound = false;
+      const running = new Set<AbortController>();
+      const attempts = mirrors.map(async (endpoint, index) => {
+        if (index > 0) {
+          await sleep(SUBWAY_MIRROR_STAGGER_MS * index);
+          if (winnerFound) {
+            throw new Error(`Skipped ${endpoint} after another mirror won`);
+          }
         }
-        attempted = true;
+        const remainingBudget = deadline - now();
+        if (remainingBudget <= 0) {
+          throw new Error(`Subway mirror budget exhausted before ${endpoint}`);
+        }
+        const controller = new AbortController();
+        const abortTimer = setTimeout(
+          () => controller.abort(),
+          remainingBudget,
+        );
+        running.add(controller);
         try {
           const response = await upstreamFetch(endpoint, {
             method: "POST",
@@ -149,26 +168,34 @@ export function createApp(
               "Content-Type": "application/x-www-form-urlencoded",
             },
             body: new URLSearchParams({ data: overpassQuery }),
-            signal: AbortSignal.timeout(SUBWAY_ATTEMPT_TIMEOUT_MS),
+            signal: controller.signal,
           });
           if (!response.ok) {
             throw new Error(
               `Subway stations upstream returned ${response.status}`,
             );
           }
-          stations = normalizeNearbySubwayStations(await response.json(), {
+          const stations = normalizeNearbySubwayStations(await response.json(), {
             lat,
             lng,
           });
           subwayMirrorFailedAt.delete(endpoint);
-          break;
+          return stations;
         } catch (error) {
-          subwayMirrorFailedAt.set(endpoint, now());
-          lastError = error;
+          if (!winnerFound) {
+            subwayMirrorFailedAt.set(endpoint, now());
+          }
+          throw error;
+        } finally {
+          clearTimeout(abortTimer);
+          running.delete(controller);
         }
-      }
-      if (stations === null) {
-        throw lastError ?? new Error("Unknown upstream failure");
+      });
+
+      const stations = await Promise.any(attempts);
+      winnerFound = true;
+      for (const controller of running) {
+        controller.abort();
       }
       subwayCache.set(cacheKey, { stations, savedAt: now() });
       return context.json({ stations });
@@ -176,7 +203,12 @@ export function createApp(
       if (cached) {
         return context.json({ stations: cached.stations });
       }
-      const detail = error instanceof Error ? error.message : "Unknown upstream failure";
+      const failure =
+        error instanceof AggregateError
+          ? (error.errors.find((inner) => inner instanceof Error) ?? error)
+          : error;
+      const detail =
+        failure instanceof Error ? failure.message : "Unknown upstream failure";
       return context.json(
         {
           error: "UPSTREAM_UNAVAILABLE",
