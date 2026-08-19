@@ -11,6 +11,10 @@ services:
       PORT: 3000
     ports:
       - "127.0.0.1:3100:3000"
+    networks:
+      cloudflare-tunnel:
+        aliases:
+          - commute-bus-web
     healthcheck:
       test:
         - CMD
@@ -25,22 +29,6 @@ services:
     security_opt:
       - no-new-privileges:true
 
-  tunnel:
-    image: cloudflare/cloudflared:2026.8.2
-    restart: unless-stopped
-    command:
-      - tunnel
-      - --config
-      - /etc/cloudflared/config.yml
-      - --no-autoupdate
-      - --protocol
-      - http2
-      - run
-    volumes:
-      - "${HOME}/.cloudflared/commute-bus-web.yml:/etc/cloudflared/config.yml:ro"
-      - "${HOME}/.cloudflared/commute-bus-web.json:/etc/cloudflared/credentials.json:ro"
-    depends_on:
-      web:
-        condition: service_healthy
-    security_opt:
-      - no-new-privileges:true
+networks:
+  cloudflare-tunnel:
+    external: true
