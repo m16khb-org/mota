@@ -9,7 +9,7 @@ export function BrandHeader() {
       </div>
       <div className="brand-copy">
         <span>서울 출퇴근</span>
-        <h1>내 버스</h1>
+        <h1>곧 도착</h1>
       </div>
       <InstallPrompt />
     </header>

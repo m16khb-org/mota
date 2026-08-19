@@ -91,7 +91,31 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js?v=3");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=4");
+  });
+
+  it("keeps service-worker shell version consistent across assets", async () => {
+    const readRepoFile = async (relative: string) =>
+      readFile(new URL(relative, import.meta.url), "utf8");
+
+    const html = await readRepoFile("../index.html");
+    const register = await readRepoFile("../public/register-sw.js");
+    const worker = await readRepoFile("../public/sw.js");
+
+    const htmlVersion = html.match(/register-sw\.js\?v=(\d+)/)?.[1];
+    const registeredVersion = register.match(/sw\.js\?v=(\d+)/)?.[1];
+    const shellVersion = worker.match(/commute-bus-shell-v(\d+)/)?.[1];
+    const precachedRegister = worker.match(/register-sw\.js\?v=(\d+)/)?.[1];
+
+    expect(
+      new Set([
+        htmlVersion,
+        registeredVersion,
+        shellVersion,
+        precachedRegister,
+      ]).size,
+      "shell version must match in index.html, register-sw.js, and sw.js",
+    ).toBe(1);
   });
 
   it("installs lifecycle handlers for offline navigation", async () => {
