@@ -30,7 +30,7 @@ const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;
 
 const UPSTREAM_HEADERS = {
   Accept: "application/json",
-  "User-Agent": "mota/0.1 (+https://bus.m16khb.xyz)",
+  "User-Agent": "mota/0.1 (+https://mota.m16khb.xyz)",
 } as const;
 
 interface SubwayCacheEntry {

@@ -125,7 +125,7 @@ describe("PWA assets", () => {
 
     runInNewContext(worker, {
       self: {
-        location: { origin: "https://bus.m16khb.xyz" },
+        location: { origin: "https://mota.m16khb.xyz" },
         addEventListener: (type: string) => registeredEvents.push(type),
       },
     });
