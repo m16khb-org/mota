@@ -106,6 +106,7 @@ export function MapCanvas({
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          maxZoom={19}
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <CenterObserver center={center} onCenterChange={onCenterChange} />

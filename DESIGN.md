@@ -119,10 +119,18 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Rows sort by numeric first ETA. Non-running routes move below active routes.
 - Refresh has loading, success timestamp, empty, and error states.
 
+### Route comparison
+
+- 저장한 출발 정류장과 선택적 환승역을 목적지 장소에 연결해 명시적인 루트로 저장한다.
+- 비교 카드는 `정류장 → 환승역 → 목적지` 순서와 ARS 기반 실시간 버스 대기를 보여준다.
+- `버스 대기 1순위`는 현재 첫 버스 도착 대기만 비교하며 전체 통근시간으로 표현하지 않는다.
+- 로딩·실패·도착정보 없음 상태는 순위에서 제외하고 나머지 루트 비교는 유지한다.
+
 ### Install and offline surface
 
-- 브라우저의 네이티브 설치 표면을 사용하며 별도 설치 버튼을 중복 제공하지 않는다.
-- 설치 아이콘은 `--ink` 배경과 `--signal` 버스 기호를 사용하고 마스킹 안전 여백을 둔다.
+- 네이티브 설치 이벤트가 준비되거나 삼성 인터넷으로 접속하면 헤더에 `앱 설치`를 노출한다.
+- 설치 이벤트가 없으면 삼성 인터넷 메뉴의 `앱 화면에 설치` 경로를 짧게 안내한다.
+- 설치 아이콘은 `--ink` 배경과 `--signal` 버스 기호, 192px·512px PNG, 마스킹 안전 여백을 유지한다.
 - 오프라인에서는 앱 셸과 브라우저에 저장한 장소·경로를 복원한다.
 - 실시간 도착정보, 새 정류장 검색, 지도 타일은 연결이 필요한 기능으로 유지한다.
 

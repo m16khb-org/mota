@@ -202,7 +202,7 @@ describe("App company commute", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "회사 추가" }));
     expect(
-      screen.getByRole("button", { name: "강남 사무실, 경로 0개" }),
+      screen.getByRole("button", { name: "강남 사무실, 루트 0개" }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByTestId("save-announcement")).toHaveTextContent(
       "강남 사무실 장소를 추가했습니다.",
@@ -214,7 +214,7 @@ describe("App company commute", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "집 추가" }));
     expect(
-      screen.getByRole("button", { name: "부모님 집, 경로 0개" }),
+      screen.getByRole("button", { name: "부모님 집, 루트 0개" }),
     ).toHaveAttribute("aria-pressed", "true");
   });
 
@@ -228,7 +228,7 @@ describe("App company commute", () => {
       fireEvent.click(screen.getByRole("button", { name: "회사 추가" }));
     }
     expect(
-      screen.getByRole("button", { name: "회사 4, 경로 0개" }),
+      screen.getByRole("button", { name: "회사 4, 루트 0개" }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(scrollIntoView).toHaveBeenLastCalledWith({
       block: "nearest",
@@ -255,7 +255,7 @@ describe("App company commute", () => {
       fireEvent.click(screen.getByRole("button", { name: "집 추가" }));
     }
     expect(
-      screen.getByRole("button", { name: "집 4, 경로 0개" }),
+      screen.getByRole("button", { name: "집 4, 루트 0개" }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(scrollIntoView).toHaveBeenLastCalledWith({
       block: "nearest",

@@ -1,12 +1,14 @@
 import { Plus, Route, Trash2 } from "lucide-react";
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
+import type { CommuteRouteOptionId } from "../domain/commute";
 import type { SubwayStation } from "../domain/subway";
 import type {
   CommutePlace,
   DirectionCollection,
 } from "../hooks/useCommuteStops";
 import { RoutePointList } from "./RoutePointList";
+import { RouteComparison } from "./RouteComparison";
 
 interface CommutePlaceManagerProps {
   readonly direction: CommuteDirection;
@@ -21,6 +23,12 @@ interface CommutePlaceManagerProps {
   readonly onRemoveStop: (stopId: BusStop["id"]) => void;
   readonly onRemoveSubway: (stationId: SubwayStation["id"]) => void;
   readonly onSelectStop: (stopId: BusStop["id"]) => void;
+  readonly onAddRoute: (
+    stopId: BusStop["id"],
+    stationId: SubwayStation["id"] | null,
+  ) => void;
+  readonly onRemoveRoute: (optionId: CommuteRouteOptionId) => void;
+  readonly onSelectRoute: (optionId: CommuteRouteOptionId) => void;
 }
 
 const COPY = {
@@ -51,6 +59,9 @@ export function CommutePlaceManager({
   onRemoveStop,
   onRemoveSubway,
   onSelectStop,
+  onAddRoute,
+  onRemoveRoute,
+  onSelectRoute,
 }: CommutePlaceManagerProps) {
   const copy = COPY[direction];
   const activePlaceId = activePlace?.id ?? null;
@@ -136,15 +147,11 @@ export function CommutePlaceManager({
               className={place.id === activePlace?.id ? "is-active" : ""}
               type="button"
               aria-pressed={place.id === activePlace?.id}
-              aria-label={`${place.name}, 경로 ${
-                place.stops.length + place.subwayStations.length
-              }개`}
+              aria-label={`${place.name}, 루트 ${place.routeOptions.length}개`}
               onClick={() => onSelectPlace(place.id)}
             >
               <strong>{place.name}</strong>
-              <span>
-                경로 {place.stops.length + place.subwayStations.length}개
-              </span>
+              <span>루트 {place.routeOptions.length}개</span>
             </button>
           ))}
         </fieldset>
@@ -202,6 +209,13 @@ export function CommutePlaceManager({
               지하철역 추가
             </button>
           </div>
+
+          <RouteComparison
+            place={activePlace}
+            onAdd={onAddRoute}
+            onRemove={onRemoveRoute}
+            onSelect={onSelectRoute}
+          />
         </div>
       ) : null}
     </section>

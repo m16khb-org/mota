@@ -64,11 +64,62 @@ describe("useCommuteStops", () => {
     expect(result.current.commutes.company.activePlaceId).toBe(migratedPlace?.id);
 
     await waitFor(() => {
-      const stored = localStorage.getItem("commute-bus-web:stops:v2");
+      const stored = localStorage.getItem("commute-bus-web:stops:v3");
       expect(stored).not.toBeNull();
       expect(JSON.parse(stored ?? "{}").company.places[0].stops).toEqual([
         companyStop,
       ]);
+    });
+  });
+
+  it("migrates v2 stops into explicit bus-only route options", async () => {
+    localStorage.setItem(
+      "commute-bus-web:stops:v2",
+      JSON.stringify({
+        company: {
+          places: [
+            {
+              id: "company-legacy",
+              name: "회사",
+              stops: [companyStop, secondCompanyStop],
+              subwayStations: [subwayStation],
+              selectedStopId: secondCompanyStop.id,
+            },
+          ],
+          activePlaceId: "company-legacy",
+        },
+        home: { places: [], activePlaceId: null },
+      }),
+    );
+
+    const { result } = renderHook(() => useCommuteStops());
+    const migratedPlace = result.current.commutes.company.places[0] as unknown as {
+      routeOptions: Array<{
+        id: string;
+        startStopId: BusStop["id"];
+        transferStationId: SubwayStation["id"] | null;
+      }>;
+      activeRouteOptionId: string | null;
+    };
+
+    expect(migratedPlace.routeOptions).toEqual([
+      {
+        id: `migrated-${companyStop.id}`,
+        startStopId: companyStop.id,
+        transferStationId: null,
+      },
+      {
+        id: `migrated-${secondCompanyStop.id}`,
+        startStopId: secondCompanyStop.id,
+        transferStationId: null,
+      },
+    ]);
+    expect(migratedPlace.activeRouteOptionId).toBe(
+      `migrated-${secondCompanyStop.id}`,
+    );
+
+    await waitFor(() => {
+      expect(localStorage.getItem("commute-bus-web:stops:v3")).not.toBeNull();
     });
   });
 
@@ -160,7 +211,7 @@ describe("useCommuteStops", () => {
       result.current.commutes.company.places[0]?.subwayStations,
     ).toEqual([subwayStation]);
     await waitFor(() => {
-      const stored = localStorage.getItem("commute-bus-web:stops:v2");
+      const stored = localStorage.getItem("commute-bus-web:stops:v3");
       expect(JSON.parse(stored ?? "{}").company.places[0].subwayStations).toEqual(
         [subwayStation],
       );
@@ -175,6 +226,57 @@ describe("useCommuteStops", () => {
     });
     expect(
       result.current.commutes.company.places[0]?.subwayStations,
+    ).toEqual([]);
+  });
+
+  it("deduplicates explicit routes and removes routes with deleted points", () => {
+    const { result } = renderHook(() => useCommuteStops());
+    const companyPlace = result.current.commutes.company.places[0];
+    if (!companyPlace) {
+      throw new Error("Expected the default company place");
+    }
+
+    act(() => {
+      result.current.addStop("company", companyPlace.id, companyStop);
+      result.current.addSubwayStations("company", companyPlace.id, [
+        subwayStation,
+      ]);
+      result.current.addRouteOption(
+        "company",
+        companyPlace.id,
+        companyStop.id,
+        subwayStation.id,
+      );
+      result.current.addRouteOption(
+        "company",
+        companyPlace.id,
+        companyStop.id,
+        subwayStation.id,
+      );
+    });
+
+    const route = result.current.commutes.company.places[0]?.routeOptions[0];
+    expect(route).toMatchObject({
+      startStopId: companyStop.id,
+      transferStationId: subwayStation.id,
+    });
+    expect(
+      result.current.commutes.company.places[0]?.routeOptions,
+    ).toHaveLength(1);
+    expect(
+      result.current.commutes.company.places[0]?.activeRouteOptionId,
+    ).toBe(route?.id);
+
+    act(() => {
+      result.current.removeSubwayStation(
+        "company",
+        companyPlace.id,
+        subwayStation.id,
+      );
+    });
+
+    expect(
+      result.current.commutes.company.places[0]?.routeOptions,
     ).toEqual([]);
   });
 });

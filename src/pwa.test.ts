@@ -32,13 +32,33 @@ describe("PWA assets", () => {
     const manifest = WebManifestSchema.parse(JSON.parse(manifestText));
 
     expect(
-      manifest.icons.some(
-        (icon) =>
-          icon.type === "image/svg+xml" &&
-          icon.sizes === "any" &&
-          icon.purpose.split(" ").includes("maskable"),
+      manifest.icons.some((icon) =>
+        icon.purpose.split(" ").includes("maskable"),
       ),
     ).toBe(true);
+  });
+
+  it("provides raster icons required by Samsung Internet", async () => {
+    const manifestUrl = new URL("../public/manifest.webmanifest", import.meta.url);
+    const manifestText = await readFile(manifestUrl, "utf8");
+    const manifest = WebManifestSchema.parse(JSON.parse(manifestText));
+
+    for (const size of ["192x192", "512x512"]) {
+      const icon = manifest.icons.find(
+        (candidate) => candidate.type === "image/png" && candidate.sizes === size,
+      );
+      expect(icon, `missing ${size} PNG manifest icon`).toBeDefined();
+      if (!icon) {
+        throw new Error(`Missing ${size} PNG manifest icon`);
+      }
+
+      const iconUrl = new URL(`../public${icon.src}`, import.meta.url);
+      const png = await readFile(iconUrl);
+      const [expectedWidth, expectedHeight] = size.split("x").map(Number);
+      expect(png.subarray(1, 4).toString("ascii")).toBe("PNG");
+      expect(png.readUInt32BE(16)).toBe(expectedWidth);
+      expect(png.readUInt32BE(20)).toBe(expectedHeight);
+    }
   });
 
   it("registers the offline worker after the page loads", async () => {
@@ -61,7 +81,7 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=2");
   });
 
   it("installs lifecycle handlers for offline navigation", async () => {

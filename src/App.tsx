@@ -1,7 +1,8 @@
-import { BusFront, CircleDot, Info, Navigation } from "lucide-react";
+import { CircleDot, Info, Navigation } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { fetchArrivals } from "./api/client";
 import { ArrivalList } from "./components/ArrivalList";
+import { BrandHeader } from "./components/BrandHeader";
 import { CommutePlaceManager } from "./components/CommutePlaceManager";
 import { CommuteSwitch } from "./components/CommuteSwitch";
 import { MapCanvas } from "./components/MapCanvas";
@@ -39,6 +40,9 @@ export function App() {
     selectStop,
     addSubwayStations,
     removeSubwayStation,
+    addRouteOption,
+    removeRouteOption,
+    selectRouteOption,
   } = useCommuteStops();
   const [pickerMode, setPickerMode] = useState<"bus" | "subway" | null>(null);
   const [arrivalState, setArrivalState] = useState<ArrivalState>(EMPTY_ARRIVALS);
@@ -118,15 +122,7 @@ export function App() {
         {saveAnnouncement}
       </p>
       <aside className="control-rail">
-        <header className="brand-header">
-          <div className="brand-mark" aria-hidden="true">
-            <BusFront />
-          </div>
-          <div>
-            <span>서울 출퇴근</span>
-            <h1>내 버스</h1>
-          </div>
-        </header>
+        <BrandHeader />
 
         <CommuteSwitch value={direction} onChange={setDirection} />
 
@@ -174,6 +170,18 @@ export function App() {
                 setSaveAnnouncement("지하철역을 경로에서 삭제했습니다.");
               }
             }}
+            onAddRoute={(stopId, stationId) =>
+              activePlace &&
+              addRouteOption(direction, activePlace.id, stopId, stationId)
+            }
+            onRemoveRoute={(optionId) =>
+              activePlace &&
+              removeRouteOption(direction, activePlace.id, optionId)
+            }
+            onSelectRoute={(optionId) =>
+              activePlace &&
+              selectRouteOption(direction, activePlace.id, optionId)
+            }
           />
           <ArrivalList
             arrivals={arrivalState.arrivals}

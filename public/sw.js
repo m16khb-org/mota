@@ -1,5 +1,11 @@
-const SHELL_CACHE = "commute-bus-shell-v1";
-const REQUIRED_SHELL = ["/manifest.webmanifest", "/pwa-icon.svg", "/register-sw.js"];
+const SHELL_CACHE = "commute-bus-shell-v2";
+const REQUIRED_SHELL = [
+  "/manifest.webmanifest",
+  "/pwa-icon-192.png",
+  "/pwa-icon-512.png",
+  "/pwa-icon.svg",
+  "/register-sw.js?v=2",
+];
 
 const appAssetsFrom = async (response) => {
   const html = await response.clone().text();

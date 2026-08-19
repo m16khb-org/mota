@@ -10,6 +10,7 @@ interface MapContainerProps {
   readonly scrollWheelZoom?: boolean | "center";
   readonly touchZoom?: boolean | "center";
   readonly doubleClickZoom?: boolean | "center";
+  readonly maxZoom?: number;
 }
 
 vi.mock("react-leaflet", () => ({
@@ -18,17 +19,21 @@ vi.mock("react-leaflet", () => ({
     scrollWheelZoom,
     touchZoom,
     doubleClickZoom,
+    maxZoom,
   }: MapContainerProps) => (
     <div
       data-testid="leaflet-map"
       data-scroll-wheel-zoom={String(scrollWheelZoom)}
       data-touch-zoom={String(touchZoom)}
       data-double-click-zoom={String(doubleClickZoom)}
+      data-max-zoom={String(maxZoom)}
     >
       {children}
     </div>
   ),
-  TileLayer: () => null,
+  TileLayer: ({ maxZoom }: { readonly maxZoom?: number }) => (
+    <span data-testid="leaflet-tiles" data-max-zoom={String(maxZoom)} />
+  ),
   CircleMarker: ({ children }: { readonly children: ReactNode }) => children,
   Popup: ({ children }: { readonly children: ReactNode }) => children,
   useMap: () => ({
@@ -55,5 +60,26 @@ describe("MapCanvas", () => {
     expect(map).toHaveAttribute("data-scroll-wheel-zoom", "center");
     expect(map).toHaveAttribute("data-touch-zoom", "center");
     expect(map).toHaveAttribute("data-double-click-zoom", "center");
+  });
+
+  it("stops zooming at the final supported tile level", () => {
+    render(
+      <MapCanvas
+        center={{ lat: 37.5366, lng: 127.1253 }}
+        stops={[]}
+        selectedStop={null}
+        onCenterChange={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("leaflet-map")).toHaveAttribute(
+      "data-max-zoom",
+      "19",
+    );
+    expect(screen.getByTestId("leaflet-tiles")).toHaveAttribute(
+      "data-max-zoom",
+      "19",
+    );
   });
 });

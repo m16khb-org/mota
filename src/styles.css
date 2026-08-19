@@ -80,6 +80,7 @@ button:disabled {
 }
 
 .brand-header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -101,6 +102,12 @@ button:disabled {
   height: 26px;
 }
 
+.brand-copy {
+  min-width: 82px;
+  flex: 1;
+  white-space: nowrap;
+}
+
 .brand-header span,
 .eyebrow {
   display: block;
@@ -114,6 +121,48 @@ button:disabled {
   margin: 2px 0 0;
   font-size: 1.45rem;
   letter-spacing: -0.04em;
+}
+
+.install-prompt {
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+  margin-left: auto;
+}
+
+.install-prompt p {
+  position: absolute;
+  z-index: 6;
+  top: calc(100% + 8px);
+  right: 24px;
+  width: min(230px, calc(100% - 48px));
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.install-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--signal);
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.install-button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
 }
 
 .commute-switch {
@@ -450,6 +499,174 @@ button:disabled {
 
 .route-add-actions > button {
   width: 100%;
+}
+
+.route-options {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.route-options-heading {
+  align-items: end;
+}
+
+.route-options-heading h3 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+}
+
+.route-options-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.route-options-actions > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.route-options-actions .icon-button {
+  width: 38px;
+  height: 38px;
+}
+
+.route-option-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.route-option-form label,
+.route-destination {
+  display: grid;
+  gap: 6px;
+}
+
+.route-option-form label > span,
+.route-destination > span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 760;
+}
+
+.route-option-form select,
+.route-destination {
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.route-destination {
+  align-content: center;
+}
+
+.route-option-form > button {
+  align-self: end;
+}
+
+.route-option-empty {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.route-option-empty svg {
+  width: 18px;
+  height: 18px;
+}
+
+.route-option-empty p {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.route-option-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.route-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.route-option.is-active {
+  border-color: var(--ink);
+  box-shadow: inset 3px 0 0 var(--signal);
+}
+
+.route-option-main {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 0;
+  text-align: left;
+  background: transparent;
+}
+
+.route-path,
+.route-wait {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+
+.route-path {
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+}
+
+.route-path > span {
+  color: var(--muted);
+}
+
+.route-wait b {
+  padding: 3px 6px;
+  border: 1px solid var(--ink);
+  color: var(--signal-ink);
+  background: var(--signal);
+  font-size: 0.68rem;
+}
+
+.route-wait strong {
+  margin-left: auto;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.route-wait span,
+.route-wait small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.route-wait .is-error {
+  color: var(--danger);
+  font-weight: 760;
+}
+
+.route-option > .icon-button {
+  width: 44px;
+  height: 100%;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
 }
 
 .primary-button {
@@ -1066,7 +1283,8 @@ button:disabled {
 @media (max-width: 480px) {
   .place-add-form,
   .place-detail-heading form,
-  .route-add-actions {
+  .route-add-actions,
+  .route-option-form {
     grid-template-columns: 1fr;
   }
 
