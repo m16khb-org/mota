@@ -61,6 +61,16 @@ describe("PWA assets", () => {
     }
   });
 
+  it("omits orientation so the installed app follows the device rotation setting", async () => {
+    const manifestUrl = new URL("../public/manifest.webmanifest", import.meta.url);
+    const manifestText = await readFile(manifestUrl, "utf8");
+
+    expect(
+      "orientation" in JSON.parse(manifestText),
+      "manifest orientation overrides the OS rotation lock (chromium issues/40880635)",
+    ).toBe(false);
+  });
+
   it("registers the offline worker after the page loads", async () => {
     const scriptUrl = new URL("../public/register-sw.js", import.meta.url);
     const script = await readFile(scriptUrl, "utf8");
@@ -81,7 +91,7 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js?v=2");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=3");
   });
 
   it("installs lifecycle handlers for offline navigation", async () => {
