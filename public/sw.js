@@ -1,10 +1,10 @@
-const SHELL_CACHE = "commute-bus-shell-v4";
+const SHELL_CACHE = "mota-shell-v5";
 const REQUIRED_SHELL = [
   "/manifest.webmanifest",
   "/pwa-icon-192.png",
   "/pwa-icon-512.png",
   "/pwa-icon.svg",
-  "/register-sw.js?v=4",
+  "/register-sw.js?v=5",
 ];
 
 const appAssetsFrom = async (response) => {

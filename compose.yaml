@@ -1,4 +1,4 @@
-name: commute-bus-web
+name: mota
 
 services:
   web:
@@ -14,7 +14,7 @@ services:
     networks:
       cloudflare-tunnel:
         aliases:
-          - commute-bus-web
+          - mota
     healthcheck:
       test:
         - CMD

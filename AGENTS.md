@@ -14,7 +14,7 @@ manifest and service worker make the production build installable with an offlin
 ## STRUCTURE
 
 ```text
-commute-bus-web/
+mota/
 ├── server/                 # Bun/Hono API adapter and production static server
 ├── public/                 # PWA manifest, install icon, registration, offline worker
 ├── src/
@@ -127,7 +127,7 @@ pnpm build
 pnpm start                # Requires dist/; run from repository root
 HOST=127.0.0.1 pnpm start # Local-only production bind
 docker compose up -d --build
-docker compose logs -f web tunnel
+docker compose logs -f web
 ```
 
 ## NOTES

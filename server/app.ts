@@ -30,7 +30,7 @@ const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;
 
 const UPSTREAM_HEADERS = {
   Accept: "application/json",
-  "User-Agent": "commute-bus-web/0.1 (+https://bus.m16khb.xyz)",
+  "User-Agent": "mota/0.1 (+https://bus.m16khb.xyz)",
 } as const;
 
 interface SubwayCacheEntry {
@@ -52,7 +52,7 @@ export function createApp(
   const app = new Hono();
 
   app.get("/api/health", (context) =>
-    context.json({ status: "ok", service: "commute-bus-web" }),
+    context.json({ status: "ok", service: "mota" }),
   );
 
   app.get("/api/stops/nearby", async (context) => {

@@ -39,8 +39,7 @@ button {
 }
 
 button:focus-visible,
-a:focus-visible,
-input:focus-visible {
+a:focus-visible {
   outline: 3px solid var(--route-blue);
   outline-offset: 2px;
 }
@@ -274,9 +273,20 @@ button:disabled {
   color: var(--ink);
 }
 
+input:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--route-blue);
+  box-shadow: inset 0 0 0 2px var(--route-blue);
+}
+
 .route-option-form select {
   font-size: 1rem;
   font-family: inherit;
+}
+
+.route-option-form select:focus-visible {
+  border-color: var(--route-blue);
 }
 
 .secondary-button {
@@ -1370,21 +1380,8 @@ button:disabled {
 }
 
 @media (max-width: 480px) {
-  .place-add-form,
-  .place-detail-heading form,
-  .route-add-actions,
   .route-option-form {
     grid-template-columns: 1fr;
-  }
-
-  .place-detail-heading form button {
-    border: 1px solid var(--ink);
-    border-top: 0;
-    border-radius: 0 0 8px 8px;
-  }
-
-  .place-detail-heading input {
-    border-radius: 8px 8px 0 0;
   }
 
   .picker-footer {

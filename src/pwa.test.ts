@@ -91,7 +91,7 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js?v=4");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=5");
   });
 
   it("keeps service-worker shell version consistent across assets", async () => {
@@ -104,7 +104,7 @@ describe("PWA assets", () => {
 
     const htmlVersion = html.match(/register-sw\.js\?v=(\d+)/)?.[1];
     const registeredVersion = register.match(/sw\.js\?v=(\d+)/)?.[1];
-    const shellVersion = worker.match(/commute-bus-shell-v(\d+)/)?.[1];
+    const shellVersion = worker.match(/(?:commute-bus|mota)-shell-v(\d+)/)?.[1];
     const precachedRegister = worker.match(/register-sw\.js\?v=(\d+)/)?.[1];
 
     expect(
