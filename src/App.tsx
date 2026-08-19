@@ -216,7 +216,7 @@ export function App() {
           </span>
           <p>{direction === "company" ? "집에서 회사까지" : "회사에서 집까지"}</p>
           <h2>
-            정확한 정류장,
+            {"정확한 정류장, "}
             <br />
             놓치지 않는 버스.
           </h2>
@@ -233,7 +233,7 @@ export function App() {
         <div className="data-note">
           <Info aria-hidden="true" />
           <p>
-            정류장 ARS 번호와 좌표를 함께 확인하세요.
+            정류장 ARS 번호와 좌표를 함께 확인하세요.{" "}
             <span>반대편 정류장은 별개의 번호입니다.</span>
           </p>
         </div>

@@ -119,6 +119,7 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
       aria-labelledby="picker-title"
     >
       <div className="picker-shell">
+        <div className="sheet-handle" aria-hidden="true" />
         <header className="picker-header">
           <div>
             <span className="eyebrow">정확한 ARS 정류장</span>

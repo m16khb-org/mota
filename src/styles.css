@@ -120,7 +120,7 @@ button:disabled {
 .brand-header h1 {
   margin: 2px 0 0;
   font-size: 1.45rem;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
 .install-prompt {
@@ -222,7 +222,7 @@ button:disabled {
 .section-heading h2 {
   margin: 4px 0 0;
   font-size: 1.15rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 .section-heading h2 span {
@@ -269,6 +269,14 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--ink);
+}
+
+.route-option-form select {
+  font-size: 1rem;
+  font-family: inherit;
 }
 
 .secondary-button {
@@ -293,8 +301,44 @@ button:disabled {
 }
 
 .secondary-button svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
+}
+
+.secondary-button:active {
+  transform: translateY(1px);
+}
+
+.icon-button:active:not(:disabled),
+.install-button:active,
+.commute-switch button:active:not(.is-active),
+.stage-action:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.install-button:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.place-selector button:hover:not(.is-active) {
+  border-color: var(--ink);
+}
+
+.commute-switch button:hover:not(.is-active) {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.stage-action:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.saved-stop-row .saved-stop-choice:hover {
+  background: var(--paper);
+}
+
+.route-option-main:hover {
+  background: var(--paper);
 }
 
 .place-selector {
@@ -528,8 +572,8 @@ button:disabled {
 }
 
 .route-options-actions .icon-button {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
 }
 
 .route-option-form {
@@ -671,7 +715,7 @@ button:disabled {
 
 .primary-button {
   display: inline-flex;
-  min-height: 48px;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   gap: 9px;
@@ -749,7 +793,7 @@ button:disabled {
 .route-identity strong {
   display: block;
   font-size: 1.28rem;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .route-identity span {
@@ -802,7 +846,7 @@ button:disabled {
 .eta-block strong {
   font-size: 1.8rem;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.02em;
 }
 
 .eta-block span,
@@ -836,14 +880,22 @@ button:disabled {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  margin-top: 4px;
-  padding: 0 4px;
-  border: 0;
-  border-bottom: 1px solid currentColor;
-  color: inherit;
-  background: transparent;
-  font-weight: 700;
+  margin-top: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  color: var(--danger);
+  background: var(--surface);
+  font-weight: 720;
   cursor: pointer;
+}
+
+.arrival-error button:hover {
+  background: #fff2f0;
+}
+
+.arrival-row.is-inactive {
+  opacity: 0.55;
 }
 
 .map-stage {
@@ -906,7 +958,7 @@ button:disabled {
   margin: 0;
   font-size: clamp(2.4rem, 4.6vw, 4.6rem);
   line-height: 0.97;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.02em;
 }
 
 .stage-action {
@@ -926,8 +978,8 @@ button:disabled {
 }
 
 .stage-action svg {
-  width: 19px;
-  height: 19px;
+  width: 18px;
+  height: 18px;
 }
 
 .data-note {
@@ -952,6 +1004,7 @@ button:disabled {
 
 .data-note p {
   margin: 0;
+  color: #fff;
   font-size: 0.78rem;
   line-height: 1.45;
 }
@@ -979,12 +1032,20 @@ button:disabled {
   display: grid;
   width: min(1040px, 100%);
   height: min(780px, calc(100dvh - 24px));
-  grid-template-rows: auto minmax(280px, 1fr) minmax(150px, auto) auto;
+  grid-template-rows: auto auto minmax(280px, 1fr) minmax(150px, auto) auto;
   overflow: hidden;
   border: 1px solid var(--ink);
   border-radius: 14px 14px 0 0;
   background: var(--surface);
   box-shadow: 0 18px 80px rgb(0 0 0 / 30%);
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  margin: 10px auto 0;
+  border-radius: 999px;
+  background: var(--line);
 }
 
 .picker-header,
@@ -1004,7 +1065,7 @@ button:disabled {
 .picker-header h2 {
   margin: 4px 0 0;
   font-size: 1.35rem;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
 }
 
 .picker-map-wrap {
@@ -1020,6 +1081,33 @@ button:disabled {
 
 .picker-map {
   background: #e6e9e1;
+}
+
+.leaflet-bar,
+.leaflet-touch .leaflet-bar {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  overflow: hidden;
+}
+
+.leaflet-bar a,
+.leaflet-touch .leaflet-bar a {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.leaflet-bar a:last-child {
+  border-bottom: 0;
+}
+
+.leaflet-bar a:hover {
+  color: var(--ink);
+  background: var(--paper);
 }
 
 .leaflet-touch .leaflet-control-zoom a {
@@ -1074,7 +1162,7 @@ button:disabled {
   align-items: center;
   gap: 8px;
   padding: 0 13px;
-  border: 1px solid var(--ink);
+  border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
   font-weight: 700;
@@ -1083,8 +1171,8 @@ button:disabled {
 }
 
 .locate-button svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 
 .picker-results {
@@ -1270,9 +1358,10 @@ button:disabled {
     width: 100%;
     height: 100dvh;
     min-height: 100dvh;
-    grid-template-rows: auto minmax(120px, 38dvh) minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(120px, 38dvh) minmax(0, 1fr) auto;
     border-width: 1px 0 0;
     border-radius: 18px 18px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .stop-result-list {

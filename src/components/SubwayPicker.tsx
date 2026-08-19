@@ -126,6 +126,7 @@ export function SubwayPicker({
       aria-labelledby="subway-picker-title"
     >
       <div className="picker-shell">
+        <div className="sheet-handle" aria-hidden="true" />
         <header className="picker-header">
           <div>
             <span className="eyebrow">지하철 경로 지점</span>

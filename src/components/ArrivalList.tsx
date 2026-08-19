@@ -85,7 +85,12 @@ export function ArrivalList({
 
       <div className="arrival-list">
         {arrivals.map((arrival) => (
-          <article className="arrival-row" key={arrival.routeId}>
+          <article
+            className={`arrival-row${
+              arrival.first.seconds === null ? " is-inactive" : ""
+            }`}
+            key={arrival.routeId}
+          >
             <div className="route-identity">
               <strong>{arrival.routeName}</strong>
               <span>
