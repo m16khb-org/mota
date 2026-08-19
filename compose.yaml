@@ -33,6 +33,8 @@ services:
       - --config
       - /etc/cloudflared/config.yml
       - --no-autoupdate
+      - --protocol
+      - http2
       - run
     volumes:
       - "${HOME}/.cloudflared/commute-bus-web.yml:/etc/cloudflared/config.yml:ro"
