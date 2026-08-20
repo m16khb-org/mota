@@ -140,6 +140,8 @@ docker compose logs -f web
 
 - Production defaults to `HOST=0.0.0.0`, `PORT=3000`.
 - Production needs outbound access to Seoul transit endpoints; the arrivals upstream is HTTP.
+- Subway arrivals route through the personal k-skill proxy (holds the Seoul Open API
+  key); override with `SUBWAY_ARRIVAL_UPSTREAM` if that moves.
 - The production build is an installable PWA; offline mode restores the shell and saved local data,
   while live arrivals and new stop searches still require a connection.
 - `pnpm test:e2e` is declared, but no Playwright config or E2E spec currently exists.
