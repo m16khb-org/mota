@@ -46,7 +46,7 @@ mota/
 | Change subway marker picker | `src/components/SubwayPicker.tsx` | Overpass multi-select search |
 | Change explicit route options | `src/domain/commute.ts`, `src/hooks/useCommuteRouteOptions.ts` | v3 stop/station references |
 | Change route wait ranking | `src/domain/routeComparison.ts`, `src/components/RouteComparison.tsx` | Live boarding wait only |
-| Change install/offline behavior | `src/components/InstallPrompt.tsx`, `public/manifest.webmanifest`, `public/sw.js` | Samsung fallback, shell-only cache |
+| Change install/offline behavior | `public/manifest.webmanifest`, `public/register-sw.js`, `public/sw.js` | Browser-native address-bar install, shell-only cache |
 | Change global appearance | `DESIGN.md`, then `src/styles.css` | CSS is global, not component-scoped |
 | Change tests | Colocated `*.test.ts(x)` | jsdom declared per React test file |
 
@@ -88,6 +88,8 @@ mota/
 - `commute-bus-web:stops:v3` stores explicit start-stop/optional-transfer route options.
 - Route comparison ranks only fresh first-bus boarding waits; it is not a total travel-time estimate.
 - The service worker precaches only the same-origin app shell; `/api/*` and map tiles stay live.
+- Leave `beforeinstallprompt` to the browser; installation is exposed only through
+  the address bar or browser menu, never an in-app install button.
 - Samsung Internet needs explicit 192px and 512px PNG manifest icons; keep both raster assets.
 - User-facing copy is short Korean task language. Keep technical upstream details out of errors.
 - Treat `DESIGN.md` as the contract for layout, motion, accessibility, and content.

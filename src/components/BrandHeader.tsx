@@ -1,5 +1,4 @@
 import { BusFront } from "lucide-react";
-import { InstallPrompt } from "./InstallPrompt";
 
 export function BrandHeader() {
   return (
@@ -11,7 +10,6 @@ export function BrandHeader() {
         <span>서울 출퇴근</span>
         <h1>모타</h1>
       </div>
-      <InstallPrompt />
     </header>
   );
 }

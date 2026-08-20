@@ -122,48 +122,6 @@ button:disabled {
   letter-spacing: -0.02em;
 }
 
-.install-prompt {
-  display: grid;
-  gap: 6px;
-  justify-items: end;
-  margin-left: auto;
-}
-
-.install-prompt p {
-  position: absolute;
-  z-index: 6;
-  top: calc(100% + 8px);
-  right: 24px;
-  width: min(230px, calc(100% - 48px));
-  margin: 0;
-  padding: 10px 12px;
-  border: 1px solid var(--ink);
-  color: var(--ink);
-  background: var(--surface);
-  font-size: 0.72rem;
-  line-height: 1.35;
-  text-align: right;
-}
-
-.install-button {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  gap: 7px;
-  padding: 0 12px;
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-sm);
-  background: var(--signal);
-  color: var(--ink);
-  font-weight: 850;
-}
-
-.install-button svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 2.2;
-}
-
 .commute-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;

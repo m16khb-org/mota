@@ -75,12 +75,14 @@ describe("PWA assets", () => {
     const scriptUrl = new URL("../public/register-sw.js", import.meta.url);
     const script = await readFile(scriptUrl, "utf8");
     const loadCallbacks: Array<() => void> = [];
+    const registeredWindowEvents: string[] = [];
     const register = vi.fn().mockResolvedValue({});
 
     runInNewContext(script, {
       navigator: { serviceWorker: { register } },
       window: {
         addEventListener: (type: string, callback: () => void) => {
+          registeredWindowEvents.push(type);
           if (type === "load") {
             loadCallbacks.push(callback);
           }
@@ -92,6 +94,7 @@ describe("PWA assets", () => {
     });
 
     expect(register).toHaveBeenCalledWith("/sw.js?v=5");
+    expect(registeredWindowEvents).toEqual(["load"]);
   });
 
   it("keeps service-worker shell version consistent across assets", async () => {
