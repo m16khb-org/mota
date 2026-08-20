@@ -23,10 +23,12 @@ interface MapCanvasProps {
   readonly stops: readonly BusStop[];
   readonly selectedStop: BusStop | null;
   readonly selectedStopIds?: readonly BusStop["id"][];
+  readonly pendingStops?: readonly BusStop[];
   readonly subwayStations?: readonly SubwayStation[];
   readonly selectedSubwayStationIds?: readonly SubwayStation["id"][];
   readonly onCenterChange: (center: Point) => void;
   readonly onSelect: (stop: BusStop) => void;
+  readonly onAddPending?: (stop: BusStop) => void;
   readonly onSelectSubway?: (station: SubwayStation) => void;
 }
 
@@ -68,6 +70,7 @@ function CenterObserver({
     },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: primitive deps keep pan position stable across re-renders
   useEffect(() => {
     const current = map.getCenter();
     if (
@@ -76,7 +79,7 @@ function CenterObserver({
     ) {
       map.setView(center, map.getZoom(), { animate: false });
     }
-  }, [center, map]);
+  }, [center.lat, center.lng, map]);
 
   return null;
 }
@@ -86,12 +89,15 @@ export function MapCanvas({
   stops,
   selectedStop,
   selectedStopIds = [],
+  pendingStops = [],
   subwayStations = [],
   selectedSubwayStationIds = [],
   onCenterChange,
   onSelect,
+  onAddPending,
   onSelectSubway,
 }: MapCanvasProps) {
+  const savedStopIds = new Set(stops.map((stop) => stop.id));
   return (
     <section className="picker-map-frame" aria-label="서울 버스 정류장 지도">
       <MapContainer
@@ -142,6 +148,35 @@ export function MapCanvas({
             </CircleMarker>
           );
         })}
+        {pendingStops
+          .filter((stop) => !savedStopIds.has(stop.id))
+          .map((stop) => (
+            <CircleMarker
+              key={`pending-${stop.id}`}
+              center={{ lat: stop.lat, lng: stop.lng }}
+              radius={9}
+              pathOptions={{
+                color: "#155eef",
+                fillColor: "#ffffff",
+                fillOpacity: 1,
+                weight: 3,
+                dashArray: "4 4",
+              }}
+              eventHandlers={{
+                add: makeMarkerAccessible(
+                  `${stop.name} 정류장, ARS ${stop.arsId}, 눌러서 추가`,
+                  () => onAddPending?.(stop),
+                ),
+                click: () => onAddPending?.(stop),
+              }}
+            >
+              <Popup>
+                <strong>{stop.name}</strong>
+                <br />
+                ARS {stop.arsId} · 눌러서 경로에 추가
+              </Popup>
+            </CircleMarker>
+          ))}
         {subwayStations.map((station) => {
           const active = selectedSubwayStationIds.includes(station.id);
           return (

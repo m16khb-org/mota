@@ -44,10 +44,32 @@ const arrivalsResultSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+export class ApiError extends Error {
+  readonly status: number;
+  readonly code: string | null;
+
+  constructor(status: number, code: string | null) {
+    super(`Request failed with ${status}${code ? `: ${code}` : ""}`);
+    this.status = status;
+    this.code = code;
+  }
+}
+
+export function isServiceAreaError(error: unknown): boolean {
+  return error instanceof ApiError && error.code === "INVALID_LOCATION";
+}
+
 async function getJson(url: string, timeoutMs = 8_000): Promise<unknown> {
   const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!response.ok) {
-    throw new Error(`Request failed with ${response.status}`);
+    const code = await response
+      .json()
+      .then((payload) => {
+        const parsed = payload as { error?: unknown };
+        return typeof parsed.error === "string" ? parsed.error : null;
+      })
+      .catch(() => null);
+    throw new ApiError(response.status, code);
   }
   return response.json();
 }

@@ -100,6 +100,22 @@ describe("MapPicker", () => {
     expect(screen.getByRole("button", { name: "이 위치에서 찾기" })).toBeEnabled();
   });
 
+  it("explains when the search center is outside the Seoul service area", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "INVALID_LOCATION" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "이 위치에서 찾기" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "서울 서비스 범위 밖이에요",
+    );
+  });
+
   it("selects multiple stop markers before saving the route", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(JSON.stringify({ stops: [nearbyStop, secondNearbyStop] }), {

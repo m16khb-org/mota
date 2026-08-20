@@ -1,6 +1,6 @@
 import { Crosshair, LocateFixed, Search, TrainFront, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { fetchNearbySubwayStations } from "../api/client";
+import { fetchNearbySubwayStations, isServiceAreaError } from "../api/client";
 import type { SubwayStation } from "../domain/subway";
 import { MapCanvas } from "./MapCanvas";
 
@@ -93,8 +93,12 @@ export function SubwayPicker({
       if (nextStations.length === 0) {
         setError("이 주변에서 지하철역을 찾지 못했습니다.");
       }
-    } catch {
-      setError("지하철역을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    } catch (error) {
+      setError(
+        isServiceAreaError(error)
+          ? "서울 서비스 범위 밖이에요. 지도를 서울 근처로 옮겨 주세요."
+          : "지하철역을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      );
     } finally {
       setLoading(false);
     }

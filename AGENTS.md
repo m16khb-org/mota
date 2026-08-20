@@ -111,6 +111,8 @@ mota/
 
 - Urban-utility visual language: high-contrast black/white, lime `--signal`, blue map focus.
 - Desktop is a 400px control rail plus full map; below 960px it becomes map plus bottom sheet.
+- Desktop stop discovery happens on the main map: explicit search button renders dashed
+  pending markers that a click adds to the active place; the modal picker stays for mobile.
 - Place selection uses compact horizontal controls; each active place exposes its stop list.
 - Bus and subway selection uses synchronized multi-marker/list state and an explicit add action.
 - Map zoom stays center-anchored so repeated gestures cannot drift the search area.

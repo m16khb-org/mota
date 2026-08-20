@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
-import { fetchArrivals } from "./api/client";
+import { ApiError, fetchArrivals, fetchNearbyStops } from "./api/client";
 import type { BusStop } from "./domain/bus";
 import type { SubwayStation } from "./domain/subway";
 
@@ -59,6 +59,22 @@ Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
 });
 vi.stubGlobal("ResizeObserver", TestResizeObserver);
 
+let matchMediaMatches = false;
+Object.defineProperty(window, "matchMedia", {
+  configurable: true,
+  writable: true,
+  value: (query: string) => ({
+    matches: matchMediaMatches && query.includes("960"),
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  }),
+});
+
 vi.mock("./components/MapPicker", () => ({
   MapPicker: ({ onSave }: { onSave: (stops: readonly BusStop[]) => void }) => (
     <>
@@ -90,17 +106,35 @@ vi.mock("./components/SubwayPicker", () => ({
 vi.mock("./components/MapCanvas", () => ({
   MapCanvas: ({
     stops,
+    pendingStops = [],
+    onAddPending,
     subwayStations = [],
   }: {
     stops: readonly BusStop[];
+    pendingStops?: readonly BusStop[];
+    onAddPending?: (stop: BusStop) => void;
     subwayStations?: readonly SubwayStation[];
-  }) => (
-    <section
-      aria-label="통근 정류장 지도"
-      data-stop-count={stops.length}
-      data-subway-count={subwayStations.length}
-    />
-  ),
+  }) => {
+    const savedIds = new Set(stops.map((stop) => stop.id));
+    const discoverable = pendingStops.filter((stop) => !savedIds.has(stop.id));
+    return (
+      <section
+        aria-label="통근 정류장 지도"
+        data-stop-count={stops.length}
+        data-pending-count={discoverable.length}
+        data-subway-count={subwayStations.length}
+      >
+        {discoverable.map((stop) => (
+          <button
+            key={stop.id}
+            type="button"
+            aria-label={`마커 ${stop.name} 추가`}
+            onClick={() => onAddPending?.(stop)}
+          />
+        ))}
+      </section>
+    );
+  },
 }));
 
 vi.mock("./api/client", async (importOriginal) => {
@@ -108,12 +142,14 @@ vi.mock("./api/client", async (importOriginal) => {
   return {
     ...original,
     fetchArrivals: vi.fn(),
+    fetchNearbyStops: vi.fn(),
   };
 });
 
 describe("App company commute", () => {
   beforeEach(() => {
     localStorage.clear();
+    matchMediaMatches = false;
     scrollIntoView.mockClear();
     vi.mocked(fetchArrivals).mockResolvedValue({
       arrivals: [
@@ -299,6 +335,85 @@ describe("App company commute", () => {
     );
     expect(screen.getByTestId("save-announcement")).toHaveTextContent(
       "천호 1개 지하철역",
+    );
+  });
+
+  it("keeps mobile stop discovery on the modal picker without stage controls", () => {
+    render(<App />);
+
+    expect(screen.queryByTestId("stage-map-controls")).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /이 위치에서 찾기/ }),
+    ).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "버스 정류장 추가" }));
+    expect(
+      screen.getByRole("button", { name: "테스트 회사 정류장 저장" }),
+    ).toBeVisible();
+  });
+});
+
+describe("App desktop stage stop search", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    scrollIntoView.mockClear();
+    matchMediaMatches = true;
+    vi.mocked(fetchNearbyStops).mockReset();
+    vi.mocked(fetchArrivals).mockResolvedValue({
+      arrivals: [],
+      updatedAt: "2026-08-20T00:00:00.000Z",
+    });
+  });
+
+  afterEach(() => {
+    matchMediaMatches = false;
+  });
+
+  it("adds nearby stops directly from the main map and keeps the rest discoverable", async () => {
+    vi.mocked(fetchNearbyStops).mockResolvedValue([
+      companyStop,
+      secondCompanyStop,
+    ]);
+    render(<App />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /이 위치에서 찾기/ }),
+    );
+
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "주변 정류장 2곳",
+    );
+    const mapRegion = screen.getByRole("region", { name: "통근 정류장 지도" });
+    expect(mapRegion).toHaveAttribute("data-pending-count", "2");
+
+    fireEvent.click(screen.getByRole("button", { name: "마커 천호역 추가" }));
+
+    expect(mapRegion).toHaveAttribute("data-stop-count", "1");
+    expect(mapRegion).toHaveAttribute("data-pending-count", "1");
+    expect(screen.getByTestId("save-announcement")).toHaveTextContent(
+      "천호역 정류장을",
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "마커 천호역현대백화점 추가" }),
+    );
+
+    expect(mapRegion).toHaveAttribute("data-stop-count", "2");
+    expect(mapRegion).toHaveAttribute("data-pending-count", "0");
+  });
+
+  it("explains the Seoul service boundary instead of asking to retry", async () => {
+    vi.mocked(fetchNearbyStops).mockRejectedValue(
+      new ApiError(400, "INVALID_LOCATION"),
+    );
+    render(<App />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /이 위치에서 찾기/ }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "서울 서비스 범위 밖이에요",
     );
   });
 });

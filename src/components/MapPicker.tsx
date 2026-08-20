@@ -1,6 +1,6 @@
 import { Crosshair, LocateFixed, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { fetchNearbyStops } from "../api/client";
+import { fetchNearbyStops, isServiceAreaError } from "../api/client";
 import type { BusStop } from "../domain/bus";
 import { MapCanvas } from "./MapCanvas";
 
@@ -89,8 +89,12 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
       if (nextStops.length === 0) {
         setError("이 주변에서 정류장을 찾지 못했습니다. 지도를 옮기거나 확대해 보세요.");
       }
-    } catch {
-      setError("정류장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    } catch (error) {
+      setError(
+        isServiceAreaError(error)
+          ? "서울 서비스 범위 밖이에요. 지도를 서울 근처로 옮겨 주세요."
+          : "정류장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      );
     } finally {
       setLoading(false);
     }
