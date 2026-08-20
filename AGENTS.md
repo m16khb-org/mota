@@ -83,7 +83,8 @@ mota/
   nearby-subway search: static OSM station data tolerates a longer wait, so the
   server races the four global Overpass mirrors (1.5s stagger, first response
   wins) within a 16s budget and the browser allows 20s.
-- Subway route points come from OpenStreetMap Overpass; they do not expose live arrivals.
+- Subway route points come from OpenStreetMap Overpass; selecting a saved station
+  fetches live Seoul subway arrivals via the arrival proxy upstream.
 - `commute-bus-web:stops:v3` stores explicit start-stop/optional-transfer route options.
 - Route comparison ranks only fresh first-bus boarding waits; it is not a total travel-time estimate.
 - The service worker precaches only the same-origin app shell; `/api/*` and map tiles stay live.

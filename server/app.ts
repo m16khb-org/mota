@@ -6,8 +6,12 @@ import {
   normalizeNearbyStops,
 } from "../src/domain/bus";
 import {
+  type SubwayArrival,
   type SubwayStation,
+  apiStationName,
   normalizeNearbySubwayStations,
+  normalizeSubwayArrivals,
+  subwayArrivalLookupSchema,
   subwaySearchSchema,
 } from "../src/domain/subway";
 
@@ -18,6 +22,9 @@ type UpstreamFetch = (
 
 const NEARBY_STOPS_URL = "https://bus.go.kr/sbus/bus/selectNearStops.do";
 const ARRIVALS_URL = "http://m.bus.go.kr/mBus/bus/getStationByUid.bms";
+const SUBWAY_ARRIVAL_UPSTREAM =
+  process.env.SUBWAY_ARRIVAL_UPSTREAM ??
+  "https://k-skill-proxy.nomadamas.org";
 const OVERPASS_ENDPOINTS = [
   "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
@@ -42,6 +49,7 @@ interface SubwayCacheEntry {
 interface AppDeps {
   readonly now?: () => number;
   readonly sleep?: (ms: number) => Promise<void>;
+  readonly subwayArrivalUpstream?: string;
 }
 
 export function createApp(
@@ -49,6 +57,7 @@ export function createApp(
   deps: AppDeps = {},
 ) {
   const now = deps.now ?? Date.now;
+  const subwayArrivalUpstream = deps.subwayArrivalUpstream ?? SUBWAY_ARRIVAL_UPSTREAM;
   const sleep =
     deps.sleep ??
     ((ms: number) =>
@@ -213,6 +222,50 @@ export function createApp(
         {
           error: "UPSTREAM_UNAVAILABLE",
           message: "지하철역 정보를 불러오지 못했습니다.",
+          detail,
+        },
+        502,
+      );
+    }
+  });
+
+  app.get("/api/subway/arrivals", async (context) => {
+    const query = subwayArrivalLookupSchema.safeParse(context.req.query());
+    if (!query.success) {
+      return context.json(
+        {
+          error: "INVALID_STATION",
+          message: "역 이름을 입력해 주세요.",
+        },
+        400,
+      );
+    }
+
+    const upstreamUrl = new URL("/v1/seoul-subway/arrival", subwayArrivalUpstream);
+    upstreamUrl.search = new URLSearchParams({
+      station: apiStationName(query.data.station),
+    }).toString();
+
+    try {
+      const response = await upstreamFetch(upstreamUrl.toString(), {
+        headers: UPSTREAM_HEADERS,
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Subway arrivals upstream returned ${response.status}`,
+        );
+      }
+
+      const result: { arrivals: SubwayArrival[]; updatedAt: string } =
+        normalizeSubwayArrivals(await response.json());
+      return context.json(result);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "Unknown upstream failure";
+      return context.json(
+        {
+          error: "UPSTREAM_UNAVAILABLE",
+          message: "지하철 도착 정보를 불러오지 못했습니다.",
           detail,
         },
         502,

@@ -3,7 +3,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
-import { ApiError, fetchArrivals, fetchNearbyStops } from "./api/client";
+import { ApiError, fetchArrivals, fetchNearbyStops, fetchSubwayArrivals } from "./api/client";
 import type { BusStop } from "./domain/bus";
 import type { SubwayStation } from "./domain/subway";
 
@@ -143,6 +143,7 @@ vi.mock("./api/client", async (importOriginal) => {
     ...original,
     fetchArrivals: vi.fn(),
     fetchNearbyStops: vi.fn(),
+    fetchSubwayArrivals: vi.fn(),
   };
 });
 
@@ -151,6 +152,23 @@ describe("App company commute", () => {
     localStorage.clear();
     matchMediaMatches = false;
     scrollIntoView.mockClear();
+    vi.mocked(fetchArrivals).mockReset();
+    vi.mocked(fetchSubwayArrivals).mockReset();
+    vi.mocked(fetchSubwayArrivals).mockResolvedValue({
+      arrivals: [
+        {
+          id: "1002-하행-강남방면",
+          line: "2호선",
+          direction: "강남방면",
+          trainStatus: "일반",
+          seconds: 45,
+          message: "전역 출발",
+          location: "을지로",
+          isLastTrain: false,
+        },
+      ],
+      updatedAt: "2026-08-20T03:10:20.000Z",
+    });
     vi.mocked(fetchArrivals).mockResolvedValue({
       arrivals: [
         {
@@ -350,6 +368,28 @@ describe("App company commute", () => {
     expect(
       screen.getByRole("button", { name: "테스트 회사 정류장 저장" }),
     ).toBeVisible();
+  });
+
+  it("shows live subway arrivals when a saved station is selected", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "지하철역 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 지하철역 저장" }));
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+    );
+
+    expect(await screen.findByText("천호 도착 예정")).toBeInTheDocument();
+    expect(fetchSubwayArrivals).toHaveBeenCalledWith("천호");
+    expect(await screen.findByText("2호선")).toBeInTheDocument();
+    expect(screen.getByText("강남방면")).toBeInTheDocument();
+    expect(screen.getByText("곧 도착")).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+    );
+    expect(screen.queryByText("천호 도착 예정")).toBeNull();
   });
 });
 

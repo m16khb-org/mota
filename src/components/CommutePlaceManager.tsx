@@ -23,6 +23,8 @@ interface CommutePlaceManagerProps {
   readonly onRemoveStop: (stopId: BusStop["id"]) => void;
   readonly onRemoveSubway: (stationId: SubwayStation["id"]) => void;
   readonly onSelectStop: (stopId: BusStop["id"]) => void;
+  readonly onSelectSubway: (station: SubwayStation) => void;
+  readonly selectedSubwayStationId: SubwayStation["id"] | null;
   readonly onAddRoute: (
     stopId: BusStop["id"],
     stationId: SubwayStation["id"] | null,
@@ -59,6 +61,8 @@ export function CommutePlaceManager({
   onRemoveStop,
   onRemoveSubway,
   onSelectStop,
+  onSelectSubway,
+  selectedSubwayStationId,
   onAddRoute,
   onRemoveRoute,
   onSelectRoute,
@@ -186,7 +190,9 @@ export function CommutePlaceManager({
 
           <RoutePointList
             place={activePlace}
+            selectedSubwayStationId={selectedSubwayStationId}
             onSelectStop={onSelectStop}
+            onSelectSubway={onSelectSubway}
             onRemoveStop={onRemoveStop}
             onRemoveSubway={onRemoveSubway}
           />

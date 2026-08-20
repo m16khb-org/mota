@@ -261,6 +261,67 @@ describe("bus API adapter", () => {
     );
   });
 
+  it("normalizes realtime subway arrivals for a saved station", async () => {
+    const upstream = vi.fn().mockResolvedValue(
+      Response.json({
+        errorMessage: {
+          status: 200,
+          code: "INFO-000",
+          message: "정상 처리되었습니다.",
+        },
+        realtimeArrivalList: [
+          {
+            subwayId: "1002",
+            updnLine: "하행",
+            trainLineNm: "강남방면",
+            btrainSttus: "일반",
+            barvlDt: "45",
+            arvlMsg2: "전역 출발",
+            arvlMsg3: "을지로",
+            lstcarAt: "0",
+            recptnDt: "2026-08-20 12:10:20",
+          },
+        ],
+      }),
+    );
+    const response = await createApp(upstream, {
+      subwayArrivalUpstream: "https://subway-arrival.test",
+    }).request("/api/subway/arrivals?station=%EC%B2%9C%ED%98%B8");
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      arrivals: [{ line: "2호선", seconds: 45 }],
+      updatedAt: "2026-08-20T03:10:20.000Z",
+    });
+    expect(upstream).toHaveBeenCalledWith(
+      "https://subway-arrival.test/v1/seoul-subway/arrival?station=%EC%B2%9C%ED%98%B8%28%ED%92%8D%EB%82%A9%ED%86%A0%EC%84%B1%29",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
+  it("reports upstream failure for subway arrivals", async () => {
+    const upstream = vi.fn().mockRejectedValue(new Error("proxy down"));
+    const response = await createApp(upstream, {
+      subwayArrivalUpstream: "https://subway-arrival.test",
+    }).request("/api/subway/arrivals?station=%EC%B2%9C%ED%98%B8");
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toMatchObject({
+      error: "UPSTREAM_UNAVAILABLE",
+    });
+  });
+
+  it("rejects subway arrival lookups without a station", async () => {
+    const upstream = vi.fn();
+    const response = await createApp(upstream, {
+      subwayArrivalUpstream: "https://subway-arrival.test",
+    }).request("/api/subway/arrivals?station=%20");
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({ error: "INVALID_STATION" });
+    expect(upstream).not.toHaveBeenCalled();
+  });
+
   it("serves stale cached stations when every mirror fails", async () => {
     let now = 1_000_000;
     const upstream = vi

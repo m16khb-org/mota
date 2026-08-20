@@ -5,7 +5,9 @@ import {
   busStopSchema,
 } from "../domain/bus";
 import {
+  type SubwayArrival,
   type SubwayStation,
+  subwayArrivalSchema,
   subwayStationSchema,
 } from "../domain/subway";
 
@@ -59,6 +61,11 @@ export function isServiceAreaError(error: unknown): boolean {
   return error instanceof ApiError && error.code === "INVALID_LOCATION";
 }
 
+const subwayArrivalsResultSchema = z.object({
+  arrivals: z.array(subwayArrivalSchema),
+  updatedAt: z.string().datetime(),
+});
+
 async function getJson(url: string, timeoutMs = 8_000): Promise<unknown> {
   const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!response.ok) {
@@ -107,4 +114,15 @@ export async function fetchNearbySubwayStations(
   });
   const payload = await getJson(`/api/subway/nearby?${params}`, 20_000);
   return nearbySubwayResultSchema.parse(payload).stations;
+}
+
+export async function fetchSubwayArrivals(
+  station: SubwayStation["name"],
+): Promise<{ readonly arrivals: readonly SubwayArrival[]; readonly updatedAt: string }> {
+  const params = new URLSearchParams({ station });
+  const payload = await getJson(`/api/subway/arrivals?${params}`);
+  return subwayArrivalsResultSchema.parse(payload) as {
+    readonly arrivals: readonly SubwayArrival[];
+    readonly updatedAt: string;
+  };
 }

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   fetchArrivals,
   fetchNearbyStops,
+  fetchSubwayArrivals,
   isServiceAreaError,
 } from "./api/client";
 import { ArrivalList } from "./components/ArrivalList";
@@ -13,9 +14,10 @@ import { MapCanvas } from "./components/MapCanvas";
 import { MapPicker } from "./components/MapPicker";
 import { SubwayPicker } from "./components/SubwayPicker";
 import type { BusArrival, BusStop, CommuteDirection } from "./domain/bus";
-import type { SubwayStation } from "./domain/subway";
+import type { SubwayArrival, SubwayStation } from "./domain/subway";
 import { getActivePlace, getActiveStop, useCommuteStops } from "./hooks/useCommuteStops";
 import { useMediaQuery } from "./hooks/useMediaQuery";
+import { SubwayArrivalList } from "./components/SubwayArrivalList";
 
 interface Point {
   readonly lat: number;
@@ -45,6 +47,19 @@ const EMPTY_ARRIVALS: ArrivalState = {
   updatedAt: null,
 };
 const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
+
+interface SubwayArrivalState {
+  readonly arrivals: readonly SubwayArrival[];
+  readonly loading: boolean;
+  readonly error: string | null;
+  readonly updatedAt: string | null;
+}
+const EMPTY_SUBWAY_ARRIVALS: SubwayArrivalState = {
+  arrivals: [],
+  loading: false,
+  error: null,
+  updatedAt: null,
+};
 
 export function App() {
   const isDesktop = useMediaQuery("(min-width: 960px)");
@@ -78,6 +93,11 @@ export function App() {
   const [locateCenter, setLocateCenter] = useState<Point | null>(null);
   const [nearbyStops, setNearbyStops] = useState<BusStop[]>([]);
   const [stopSearch, setStopSearch] = useState<StageStopSearch>(IDLE_SEARCH);
+  const [selectedStation, setSelectedStation] = useState<SubwayStation | null>(
+    null,
+  );
+  const [subwayArrivalState, setSubwayArrivalState] =
+    useState<SubwayArrivalState>(EMPTY_SUBWAY_ARRIVALS);
   const searchSequence = useRef(0);
 
   const refreshArrivals = useCallback(async () => {
@@ -115,6 +135,8 @@ export function App() {
     setLocateCenter(null);
     setNearbyStops([]);
     setStopSearch(IDLE_SEARCH);
+    setSelectedStation(null);
+    setSubwayArrivalState(EMPTY_SUBWAY_ARRIVALS);
   };
 
   const handleDirectionChange = (next: CommuteDirection) => {
@@ -192,6 +214,40 @@ export function App() {
           isError: true,
         }),
       { enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000 },
+    );
+  };
+
+  const refreshSubwayArrivals = useCallback(async (station: SubwayStation) => {
+    setSubwayArrivalState((current) => ({ ...current, loading: true, error: null }));
+    try {
+      const result = await fetchSubwayArrivals(station.name);
+      setSubwayArrivalState({
+        arrivals: result.arrivals,
+        loading: false,
+        error: null,
+        updatedAt: result.updatedAt,
+      });
+    } catch {
+      setSubwayArrivalState((current) => ({
+        ...current,
+        loading: false,
+        error:
+          "지하철 도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.",
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedStation) {
+      void refreshSubwayArrivals(selectedStation);
+    } else {
+      setSubwayArrivalState(EMPTY_SUBWAY_ARRIVALS);
+    }
+  }, [refreshSubwayArrivals, selectedStation]);
+
+  const handleSelectStation = (station: SubwayStation) => {
+    setSelectedStation((current) =>
+      current?.id === station.id ? null : station,
     );
   };
 
@@ -277,12 +333,18 @@ export function App() {
                 );
               }
             }}
-            onSelectStop={(stopId) =>
-              activePlace && selectStop(direction, activePlace.id, stopId)
-            }
+            onSelectStop={(stopId) => {
+              setSelectedStation(null);
+              activePlace && selectStop(direction, activePlace.id, stopId);
+            }}
+            selectedSubwayStationId={selectedStation?.id ?? null}
+            onSelectSubway={handleSelectStation}
             onRemoveSubway={(stationId) => {
               if (activePlace) {
                 removeSubwayStation(direction, activePlace.id, stationId);
+                if (selectedStation?.id === stationId) {
+                  setSelectedStation(null);
+                }
                 setSaveAnnouncement("지하철역을 경로에서 삭제했습니다.");
               }
             }}
@@ -299,14 +361,26 @@ export function App() {
               selectRouteOption(direction, activePlace.id, optionId)
             }
           />
-          <ArrivalList
-            arrivals={arrivalState.arrivals}
-            loading={arrivalState.loading}
-            error={arrivalState.error}
-            updatedAt={arrivalState.updatedAt}
-            hasStop={Boolean(selectedStop)}
-            onRefresh={() => void refreshArrivals()}
-          />
+          {selectedStation ? (
+            <SubwayArrivalList
+              stationName={selectedStation.name}
+              arrivals={subwayArrivalState.arrivals}
+              loading={subwayArrivalState.loading}
+              error={subwayArrivalState.error}
+              updatedAt={subwayArrivalState.updatedAt}
+              onClose={() => setSelectedStation(null)}
+              onRefresh={() => void refreshSubwayArrivals(selectedStation)}
+            />
+          ) : (
+            <ArrivalList
+              arrivals={arrivalState.arrivals}
+              loading={arrivalState.loading}
+              error={arrivalState.error}
+              updatedAt={arrivalState.updatedAt}
+              hasStop={Boolean(selectedStop)}
+              onRefresh={() => void refreshArrivals()}
+            />
+          )}
         </div>
       </aside>
 

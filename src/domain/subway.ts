@@ -44,6 +44,133 @@ export const subwaySearchSchema = z.object({
   radius: z.coerce.number().int().min(300).max(5_000).default(3_000),
 });
 
+export const subwayArrivalLookupSchema = z.object({
+  station: z.string().trim().min(1).max(20),
+});
+
+/** Seoul's arrival API registers some stations under parenthesized official
+ * names while OpenStreetMap keeps the short form. */
+const API_STATION_ALIASES: Readonly<Record<string, string>> = {
+  천호: "천호(풍납토성)",
+  군자: "군자(능동)",
+  총신대입구: "총신대입구(이수)",
+};
+
+export function apiStationName(station: string): string {
+  return API_STATION_ALIASES[station] ?? station;
+}
+
+export interface SubwayArrival {
+  readonly id: string;
+  readonly line: string;
+  readonly direction: string;
+  readonly trainStatus: string;
+  readonly seconds: number | null;
+  readonly message: string;
+  readonly location: string | null;
+  readonly isLastTrain: boolean;
+}
+
+export const subwayArrivalSchema = z.object({
+  id: z.string().min(1),
+  line: z.string().min(1),
+  direction: z.string().min(1),
+  trainStatus: z.string().min(1),
+  seconds: z.number().nullable(),
+  message: z.string(),
+  location: z.string().nullable(),
+  isLastTrain: z.boolean(),
+});
+
+const SUBWAY_LINE_NAMES: Readonly<Record<string, string>> = {
+  "1001": "1호선",
+  "1002": "2호선",
+  "1003": "3호선",
+  "1004": "4호선",
+  "1005": "5호선",
+  "1006": "6호선",
+  "1007": "7호선",
+  "1008": "8호선",
+  "1009": "9호선",
+  "1063": "경의중앙선",
+  "1065": "공항철도",
+  "1067": "경춘선",
+  "1075": "수인분당선",
+  "1077": "신분당선",
+};
+
+const upstreamSubwayArrivalSchema = z.object({
+  errorMessage: z
+    .object({
+      code: z.string(),
+      message: z.string(),
+    })
+    .nullable()
+    .optional(),
+  realtimeArrivalList: z
+    .array(
+      z.object({
+        subwayId: z.string().min(1),
+        updnLine: z.string().min(1),
+        trainLineNm: z.string().min(1),
+        btrainSttus: z.string().default("일반"),
+        barvlDt: z.string().nullable().optional(),
+        arvlMsg2: z.string().default(""),
+        arvlMsg3: z.string().nullable().optional(),
+        lstcarAt: z.string().nullable().optional(),
+        recptnDt: z.string().min(1),
+      }),
+    )
+    .default([]),
+});
+
+export type UpstreamSubwayArrivalPayload = z.infer<
+  typeof upstreamSubwayArrivalSchema
+>;
+
+function parseSeoulTimestamp(value: string): string {
+  const normalized = value.trim().replace(" ", "T");
+  const instant = new Date(`${normalized}+09:00`);
+  return Number.isNaN(instant.getTime())
+    ? new Date().toISOString()
+    : instant.toISOString();
+}
+
+export function normalizeSubwayArrivals(
+  input: unknown,
+): { arrivals: SubwayArrival[]; updatedAt: string } {
+  const parsed = upstreamSubwayArrivalSchema.parse(input);
+  const arrivals: SubwayArrival[] = parsed.realtimeArrivalList.map(
+    (row) => ({
+      id: `${row.subwayId}-${row.updnLine}-${row.trainLineNm}`,
+      line: SUBWAY_LINE_NAMES[row.subwayId] ?? "기타",
+      direction: row.trainLineNm,
+      trainStatus: row.btrainSttus || "일반",
+      seconds:
+        row.barvlDt !== undefined &&
+        row.barvlDt !== null &&
+        row.barvlDt !== "" &&
+        Number.isFinite(Number(row.barvlDt))
+          ? Number(row.barvlDt)
+          : null,
+      message: row.arvlMsg2,
+      location: row.arvlMsg3?.trim() || null,
+      isLastTrain: row.lstcarAt === "1",
+    }),
+  );
+  arrivals.sort(
+    (left, right) =>
+      (left.seconds ?? Number.POSITIVE_INFINITY) -
+        (right.seconds ?? Number.POSITIVE_INFINITY) ||
+      left.direction.localeCompare(right.direction, "ko"),
+  );
+  const latest = parsed.realtimeArrivalList.reduce(
+    (max, row) => (row.recptnDt > max ? row.recptnDt : max),
+    "",
+  );
+  return { arrivals, updatedAt: parseSeoulTimestamp(latest) };
+}
+
 function distanceMeters(
   center: { readonly lat: number; readonly lng: number },
   point: { readonly lat: number; readonly lng: number },

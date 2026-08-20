@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ApiError, fetchNearbySubwayStations, fetchNearbyStops, isServiceAreaError } from "./client";
+import { ApiError, fetchNearbySubwayStations, fetchNearbyStops, fetchSubwayArrivals, isServiceAreaError } from "./client";
 
 describe("api client error mapping", () => {
   afterEach(() => {
@@ -80,5 +80,40 @@ describe("fetchNearbySubwayStations", () => {
 
     expect(stations).toHaveLength(1);
     expect(timeoutSpy).toHaveBeenCalledWith(20_000);
+  });
+});
+
+describe("fetchSubwayArrivals", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("parses normalized subway arrivals from the server", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        Response.json({
+          arrivals: [
+            {
+              id: "1002-하행-강남방면",
+              line: "2호선",
+              direction: "강남방면",
+              trainStatus: "일반",
+              seconds: 45,
+              message: "전역 출발",
+              location: "을지로",
+              isLastTrain: false,
+            },
+          ],
+          updatedAt: "2026-08-20T03:10:20.000Z",
+        }),
+      ),
+    );
+
+    const result = await fetchSubwayArrivals("천호");
+
+    expect(result.arrivals[0]?.line).toBe("2호선");
+    expect(result.updatedAt).toBe("2026-08-20T03:10:20.000Z");
   });
 });

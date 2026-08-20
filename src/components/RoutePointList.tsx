@@ -5,14 +5,18 @@ import type { CommutePlace } from "../hooks/useCommuteStops";
 
 interface RoutePointListProps {
   readonly place: CommutePlace;
+  readonly selectedSubwayStationId: SubwayStation["id"] | null;
   readonly onSelectStop: (stopId: BusStop["id"]) => void;
+  readonly onSelectSubway: (station: SubwayStation) => void;
   readonly onRemoveStop: (stopId: BusStop["id"]) => void;
   readonly onRemoveSubway: (stationId: SubwayStation["id"]) => void;
 }
 
 export function RoutePointList({
   place,
+  selectedSubwayStationId,
   onSelectStop,
+  onSelectSubway,
   onRemoveStop,
   onRemoveSubway,
 }: RoutePointListProps) {
@@ -59,25 +63,34 @@ export function RoutePointList({
             );
           })}
 
-          {place.subwayStations.map((station) => (
-            <div key={station.id} className="saved-stop-row is-subway">
-              <div className="saved-stop-choice">
-                <TrainFront aria-hidden="true" />
-                <span>
-                  <strong>{station.name}</strong>
-                  <small>지하철 · {station.line}</small>
-                </span>
+          {place.subwayStations.map((station) => {
+            const selected = station.id === selectedSubwayStationId;
+            return (
+              <div key={station.id} className="saved-stop-row is-subway">
+                <button
+                  className={`saved-stop-choice${selected ? " is-active" : ""}`}
+                  type="button"
+                  aria-pressed={selected}
+                  aria-label={`${station.name} 지하철역 ${station.line}`}
+                  onClick={() => onSelectSubway(station)}
+                >
+                  <TrainFront aria-hidden="true" />
+                  <span>
+                    <strong>{station.name}</strong>
+                    <small>지하철 · {station.line}</small>
+                  </span>
+                </button>
+                <button
+                  className="icon-button danger"
+                  type="button"
+                  onClick={() => onRemoveSubway(station.id)}
+                  aria-label={`${station.name} 지하철역 삭제`}
+                >
+                  <Trash2 aria-hidden="true" />
+                </button>
               </div>
-              <button
-                className="icon-button danger"
-                type="button"
-                onClick={() => onRemoveSubway(station.id)}
-                aria-label={`${station.name} 지하철역 삭제`}
-              >
-                <Trash2 aria-hidden="true" />
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <p className="saved-stop-empty">등록한 버스 정류장이나 지하철역이 없습니다.</p>

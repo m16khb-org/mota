@@ -158,7 +158,7 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Short Korean task language: `버스 정류장 추가`, `지하철역 추가`, `이 위치에서 찾기`.
 - Avoid technical API wording in user-facing errors.
 - Use absolute stop identity (`천호역 · 25014`) rather than ambiguous labels.
-- Subway route points use OpenStreetMap Overpass station data and do not imply live arrivals.
+- Subway route points use OpenStreetMap Overpass station data; selecting a saved station shows live Seoul subway arrivals with line badge, direction, and ETA.
 - Timestamps use local Korean time and explain freshness (`20:14 기준`).
 
 ## Responsive and failure states
