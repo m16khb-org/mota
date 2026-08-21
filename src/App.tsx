@@ -98,6 +98,13 @@ export function App() {
     );
   };
 
+  const saveNearbySubwayStation = (station: SubwayStation) => {
+    if (!activePlace) {
+      return;
+    }
+    saveSubwayStations([station]);
+  };
+
   const saveNearbyStop = (stop: BusStop) => {
     if (!activePlace || activePlace.stops.some((saved) => saved.id === stop.id)) {
       return;
@@ -241,7 +248,13 @@ export function App() {
               }
               setPickerMode("bus");
             }}
-            onAddSubway={() => setPickerMode("subway")}
+            onAddSubway={() => {
+              if (isDesktop) {
+                setStageSearchRequest((current) => current + 1);
+                return;
+              }
+              setPickerMode("subway");
+            }}
             onRemoveStop={(stopId) => {
               const stop = activePlace?.stops.find((item) => item.id === stopId);
               if (activePlace) {
@@ -357,6 +370,7 @@ export function App() {
         }
         onSelectSubway={handleSelectStation}
         onSaveStop={saveNearbyStop}
+        onSaveSubwayStation={saveNearbySubwayStation}
       />
 
       {pickerMode === "bus" && activePlace ? (

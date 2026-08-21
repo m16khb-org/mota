@@ -113,7 +113,7 @@ export async function fetchNearbySubwayStations(
     lng: center.lng.toFixed(6),
     radius: String(radius),
   });
-  const payload = await getJson(`/api/subway/nearby?${params}`, 20_000);
+  const payload = await getJson(`/api/subway/nearby?${params}`, 35_000);
   return nearbySubwayResultSchema.parse(payload).stations;
 }
 

@@ -57,7 +57,7 @@ describe("fetchNearbySubwayStations", () => {
     vi.restoreAllMocks();
   });
 
-  it("allows 20s for Overpass-backed searches instead of the default 8s", async () => {
+  it("allows 35s for Overpass-backed searches instead of the default 8s", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       Response.json({
         stations: [
@@ -81,7 +81,7 @@ describe("fetchNearbySubwayStations", () => {
     });
 
     expect(stations).toHaveLength(1);
-    expect(timeoutSpy).toHaveBeenCalledWith(20_000);
+    expect(timeoutSpy).toHaveBeenCalledWith(35_000);
   });
 });
 

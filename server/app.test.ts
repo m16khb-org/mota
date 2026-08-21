@@ -208,7 +208,7 @@ describe("bus API adapter", () => {
     );
     expect(upstream).toHaveBeenNthCalledWith(
       2,
-      "https://overpass.kumi.systems/api/interpreter",
+      "https://overpass-api.de/api/interpreter",
       expect.objectContaining({ method: "POST" }),
     );
   });

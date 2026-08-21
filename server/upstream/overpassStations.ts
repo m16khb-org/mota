@@ -6,12 +6,14 @@ import { UPSTREAM_HEADERS } from "./seoulBus";
 import { UpstreamError } from "./upstreamError";
 
 const OVERPASS_ENDPOINTS = [
+  // Reliability-ranked: mail.ru measures 100% success (9-13s response)
+  // from this deployment's network; the others frequently time out or 502.
   "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+  "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
   "https://overpass.private.coffee/api/interpreter",
-  "https://overpass-api.de/api/interpreter",
 ] as const;
-const SUBWAY_TOTAL_BUDGET_MS = 16_000;
+const SUBWAY_TOTAL_BUDGET_MS = 30_000;
 const SUBWAY_MIRROR_STAGGER_MS = 1_500;
 const SUBWAY_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
 const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;

@@ -23,11 +23,13 @@ interface MapCanvasProps {
   readonly selectedStopIds?: readonly BusStop["id"][];
   readonly pendingStops?: readonly BusStop[];
   readonly subwayStations?: readonly SubwayStation[];
+  readonly pendingSubwayStations?: readonly SubwayStation[];
   readonly selectedSubwayStationIds?: readonly SubwayStation["id"][];
   readonly onCenterChange: (center: Point) => void;
   readonly onSelect: (stop: BusStop) => void;
   readonly onAddPending?: (stop: BusStop) => void;
   readonly onSelectSubway?: (station: SubwayStation) => void;
+  readonly onAddPendingSubway?: (station: SubwayStation) => void;
 }
 
 interface AccessibleMarkerProps {
@@ -204,13 +206,16 @@ export function MapCanvas({
   selectedStopIds = [],
   pendingStops = [],
   subwayStations = [],
+  pendingSubwayStations = [],
   selectedSubwayStationIds = [],
   onCenterChange,
   onSelect,
   onAddPending,
   onSelectSubway,
+  onAddPendingSubway,
 }: MapCanvasProps) {
   const savedStopIds = new Set(stops.map((stop) => stop.id));
+  const savedStationIds = new Set(subwayStations.map((station) => station.id));
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
   return (
     <section className="picker-map-frame" aria-label="서울 버스 정류장 지도">
@@ -272,6 +277,24 @@ export function MapCanvas({
                 <strong>{stop.name}</strong>
                 <br />
                 ARS {stop.arsId} · 눌러서 경로에 추가
+              </Popup>
+            </MapPointMarker>
+          ))}
+        {pendingSubwayStations
+          .filter((station) => !savedStationIds.has(station.id))
+          .map((station) => (
+            <MapPointMarker
+              key={`pending-subway-${station.id}`}
+              label={`${station.name} 지하철역, ${station.line}, 눌러서 추가`}
+              active={false}
+              onSelect={() => onAddPendingSubway?.(station)}
+              center={{ lat: station.lat, lng: station.lng }}
+              visualClassName="map-marker-pending"
+            >
+              <Popup>
+                <strong>{station.name}</strong>
+                <br />
+                {station.line} · 눌러서 경로에 추가
               </Popup>
             </MapPointMarker>
           ))}

@@ -7,7 +7,11 @@ import {
   Search,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchNearbyStops, isServiceAreaError } from "../api/client";
+import {
+  fetchNearbyStops,
+  fetchNearbySubwayStations,
+  isServiceAreaError,
+} from "../api/client";
 import type { BusStop, CommuteDirection } from "../domain/bus";
 import type { SubwayStation } from "../domain/subway";
 import type { CommutePlace } from "../hooks/useCommuteStops";
@@ -47,6 +51,8 @@ interface MapStageProps {
   /** Saves a discovered nearby stop into the active place (App owns the
    * mutation and the save announcement). */
   readonly onSaveStop: (stop: BusStop) => void;
+  /** Saves a discovered nearby subway station into the active place. */
+  readonly onSaveSubwayStation: (station: SubwayStation) => void;
 }
 
 export function MapStage({
@@ -60,10 +66,12 @@ export function MapStage({
   onSelectStop,
   onSelectSubway,
   onSaveStop,
+  onSaveSubwayStation,
 }: MapStageProps) {
   const [stageCenter, setStageCenter] = useState<Point>(center);
   const [locateCenter, setLocateCenter] = useState<Point | null>(null);
   const [nearbyStops, setNearbyStops] = useState<BusStop[]>([]);
+  const [nearbyStations, setNearbyStations] = useState<SubwayStation[]>([]);
   const [stopSearch, setStopSearch] = useState<StageStopSearch>(IDLE_SEARCH);
   const searchSequence = useRef(0);
   const handledSearchRequest = useRef(searchRequest);
@@ -75,35 +83,47 @@ export function MapStage({
     const sequence = searchSequence.current + 1;
     searchSequence.current = sequence;
     setStopSearch({ loading: true, notice: null, isError: false });
-    try {
-      const stops = await fetchNearbyStops(stageCenter);
-      if (searchSequence.current !== sequence) {
-        return;
-      }
-      setNearbyStops(stops);
-      setStopSearch(
-        stops.length > 0
-          ? {
-              loading: false,
-              notice: `주변 정류장 ${stops.length}곳 · 마커를 눌러 추가하세요`,
-              isError: false,
-            }
-          : {
-              loading: false,
-              notice: "이 주변에서 정류장을 찾지 못했습니다. 지도를 옮겨 다시 시도해 주세요.",
-              isError: true,
-            },
-      );
-    } catch (error) {
-      if (searchSequence.current !== sequence) {
-        return;
-      }
+    const [stopsResult, stationsResult] = await Promise.allSettled([
+      fetchNearbyStops(stageCenter),
+      fetchNearbySubwayStations(stageCenter),
+    ]);
+    if (searchSequence.current !== sequence) {
+      return;
+    }
+    const stops = stopsResult.status === "fulfilled" ? stopsResult.value : [];
+    const stations =
+      stationsResult.status === "fulfilled" ? stationsResult.value : [];
+    setNearbyStops(stops);
+    setNearbyStations(stations);
+    const total = stops.length + stations.length;
+    const stopError = stopsResult.status === "rejected";
+    const stationError = stationsResult.status === "rejected";
+    if (total > 0) {
+      const parts: string[] = [];
+      if (stops.length > 0) parts.push(`정류장 ${stops.length}곳`);
+      if (stations.length > 0) parts.push(`지하철역 ${stations.length}곳`);
+      setStopSearch({
+        loading: false,
+        notice: `주변 ${parts.join(" · ")} · 마커를 눌러 추가하세요`,
+        isError: false,
+      });
+    } else if (stopError || stationError) {
+      const error = stopError
+        ? (stopsResult as PromiseRejectedResult).reason
+        : (stationsResult as PromiseRejectedResult).reason;
       setNearbyStops([]);
+      setNearbyStations([]);
       setStopSearch({
         loading: false,
         notice: isServiceAreaError(error)
           ? "서울 서비스 범위 밖이에요. 지도를 서울 근처로 옮겨 주세요."
-          : "정류장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+          : "이 주변에서 정류장·지하철역을 찾지 못했습니다. 잠시 후 다시 시도해 주세요.",
+        isError: true,
+      });
+    } else {
+      setStopSearch({
+        loading: false,
+        notice: "이 주변에서 정류장·지하철역을 찾지 못했습니다. 지도를 옮겨 다시 시도해 주세요.",
         isError: true,
       });
     }
@@ -148,6 +168,7 @@ export function MapStage({
           selectedStop={selectedStop}
           pendingStops={isDesktop ? nearbyStops : []}
           subwayStations={place?.subwayStations ?? []}
+          pendingSubwayStations={isDesktop ? nearbyStations : []}
           selectedSubwayStationIds={
             selectedSubwayStationId === null ? [] : [selectedSubwayStationId]
           }
@@ -155,6 +176,7 @@ export function MapStage({
           onSelect={(stop) => onSelectStop(stop.id)}
           onAddPending={onSaveStop}
           onSelectSubway={onSelectSubway}
+          onAddPendingSubway={onSaveSubwayStation}
         />
       </div>
       {isDesktop ? (
