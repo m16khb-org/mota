@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  CommuteRouteOptionIdSchema,
   commuteFavoriteSchema,
   commuteProcedureSchema,
-  commuteRouteOptionSchema,
   savedCommuteProcedureSchema,
 } from "./commute";
 
@@ -248,46 +246,6 @@ describe("saved minutes", () => {
   });
 });
 
-describe("legacy drafts", () => {
-  const draft = {
-    id: "draft-1",
-    kind: "legacy-draft",
-    stopId: "124000454",
-    stationId: null,
-  };
-
-  it("parses a migrated v3 option as a non-evaluable legacy draft", () => {
-    const result = savedCommuteProcedureSchema.safeParse(draft);
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.kind).toBe("legacy-draft");
-      expect("steps" in result.data).toBe(false);
-    }
-  });
-
-  it("never parses a legacy draft as a ready procedure", () => {
-    expect(commuteProcedureSchema.safeParse(draft).success).toBe(false);
-  });
-
-  it("keeps a station-only draft and rejects a draft without any referenced point", () => {
-    expect(
-      savedCommuteProcedureSchema.safeParse({
-        ...draft,
-        stopId: null,
-        stationId: "osm-node-2095165702",
-      }).success,
-    ).toBe(true);
-    expect(
-      savedCommuteProcedureSchema.safeParse({
-        ...draft,
-        stopId: null,
-        stationId: null,
-      }).success,
-    ).toBe(false);
-  });
-});
-
 describe("favorite services", () => {
   const busFavorite = {
     id: "fav-bus-1",
@@ -419,49 +377,5 @@ describe("computed and live fields", () => {
         nextArrivalSeconds: 240,
       }).success,
     ).toBe(false);
-  });
-});
-
-describe("commute route option (baseline characterization)", () => {
-  it("accepts a two-field route option with a nullable transfer station", () => {
-    const result = commuteRouteOptionSchema.safeParse({
-      id: "opt-1",
-      startStopId: "124000454",
-      transferStationId: null,
-    });
-
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.startStopId).toBe("124000454");
-      expect(result.data.transferStationId).toBeNull();
-    }
-  });
-
-  it("accepts a referenced subway station as the transfer point", () => {
-    const result = commuteRouteOptionSchema.safeParse({
-      id: "opt-2",
-      startStopId: "124000454",
-      transferStationId: "osm-node-2095165702",
-    });
-
-    expect(result.success).toBe(true);
-  });
-
-  it("rejects a blank id and a blank start stop", () => {
-    expect(
-      commuteRouteOptionSchema.safeParse({
-        id: "",
-        startStopId: "124000454",
-        transferStationId: null,
-      }).success,
-    ).toBe(false);
-    expect(
-      commuteRouteOptionSchema.safeParse({
-        id: "opt-3",
-        startStopId: "",
-        transferStationId: null,
-      }).success,
-    ).toBe(false);
-    expect(CommuteRouteOptionIdSchema.safeParse("").success).toBe(false);
   });
 });

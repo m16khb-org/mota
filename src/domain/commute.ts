@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { busStopSchema } from "./bus";
 import { subwayStationSchema } from "./subway";
 
 export const CommuteProcedureIdSchema = z
@@ -91,28 +90,9 @@ export const commuteProcedureSchema = z.strictObject({
   steps: commuteStepsSchema,
 });
 
-/** A migrated v3 route option keeps only its referenced stop/station. It has
- * no steps or durations, so it can never be evaluated as a ready procedure. */
-export const legacyCommuteDraftSchema = z
-  .strictObject({
-    id: CommuteProcedureIdSchema,
-    kind: z.literal("legacy-draft"),
-    stopId: stopIdSchema.nullable(),
-    stationId: subwayStationSchema.shape.id.nullable(),
-  })
-  .superRefine((draft, ctx) => {
-    if (draft.stopId === null && draft.stationId === null) {
-      ctx.addIssue({
-        code: "custom",
-        message: "legacy draft must retain a referenced stop or station",
-      });
-    }
-  });
-
-export const savedCommuteProcedureSchema = z.discriminatedUnion("kind", [
-  commuteProcedureSchema,
-  legacyCommuteDraftSchema,
-]);
+/** A saved procedure is always ready to evaluate. Superseded v3 route
+ * options are discarded on migration rather than kept as drafts. */
+export const savedCommuteProcedureSchema = commuteProcedureSchema;
 
 export const busCommuteFavoriteSchema = z.strictObject({
   id: CommuteFavoriteIdSchema,
@@ -154,10 +134,7 @@ export type CommuteStep = z.infer<typeof commuteStepSchema>;
 export type CommuteProcedure = Readonly<
   z.infer<typeof commuteProcedureSchema>
 >;
-export type LegacyCommuteDraft = Readonly<
-  z.infer<typeof legacyCommuteDraftSchema>
->;
-export type SavedCommuteProcedure = z.infer<typeof savedCommuteProcedureSchema>;
+export type SavedCommuteProcedure = CommuteProcedure;
 export type BusCommuteFavorite = Readonly<
   z.infer<typeof busCommuteFavoriteSchema>
 >;
@@ -165,23 +142,3 @@ export type SubwayCommuteFavorite = Readonly<
   z.infer<typeof subwayCommuteFavoriteSchema>
 >;
 export type CommuteFavorite = z.infer<typeof commuteFavoriteSchema>;
-
-/** Legacy v3 route-option contract, still consumed by v3 storage and UI until
- * the v4 storage migration removes its consumers (plan tasks 3 and 10). */
-export const CommuteRouteOptionIdSchema = z
-  .string()
-  .min(1)
-  .brand<"CommuteRouteOptionId">();
-
-export const commuteRouteOptionSchema = z.object({
-  id: CommuteRouteOptionIdSchema,
-  startStopId: busStopSchema.shape.id,
-  transferStationId: subwayStationSchema.shape.id.nullable(),
-});
-
-export type CommuteRouteOptionId = z.infer<
-  typeof CommuteRouteOptionIdSchema
->;
-export type CommuteRouteOption = Readonly<
-  z.infer<typeof commuteRouteOptionSchema>
->;

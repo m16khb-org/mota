@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { liveArrivalsPort } from "../api/client";
 import {
   refreshLiveQueries,
   type LiveQuery,
@@ -79,7 +80,10 @@ export function useLiveCommuteSnapshots(
     nextGenerationIdRef.current += 1;
     generationRef.current = { id, preAttempt };
 
-    refreshLiveQueries(activeQueries, { previous: preAttempt })
+    refreshLiveQueries(activeQueries, {
+        port: liveArrivalsPort,
+        previous: preAttempt,
+      })
       .then((result) => {
         if (generationRef.current?.id !== id) return;
         generationRef.current = null;

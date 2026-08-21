@@ -2,7 +2,6 @@
 
 import { beforeEach, describe, expect, it } from "vitest";
 import type { BusStop } from "../domain/bus";
-import { commuteProcedureSchema } from "../domain/commute";
 import type { SubwayStation } from "../domain/subway";
 import { loadCommutes, saveCommutes } from "./commuteStopsStorage";
 
@@ -213,11 +212,10 @@ describe("commuteStopsStorage v4", () => {
     expect(companyPlace?.name).toBe("v4 회사");
     expect(companyPlace?.procedures.map((procedure) => procedure.id)).toEqual([
       "proc-ready",
-      "draft-1",
     ]);
   });
 
-  it("migrates each v3 route option into a non-evaluable legacy draft and preserves places, points, and selections", () => {
+  it("discards v3 route options on migration while preserving places, points, and selections", () => {
     localStorage.setItem(V3_KEY, v3Payload);
 
     const loaded = loadCommutes();
@@ -230,28 +228,9 @@ describe("commuteStopsStorage v4", () => {
       subwayStations: [subwayStation],
     });
     expect(loaded.company.activePlaceId).toBe("company-v3");
-    expect(companyPlace?.procedures).toEqual([
-      {
-        id: "opt-a",
-        kind: "legacy-draft",
-        stopId: companyStop.id,
-        stationId: null,
-      },
-      {
-        id: "opt-b",
-        kind: "legacy-draft",
-        stopId: secondCompanyStop.id,
-        stationId: subwayStation.id,
-      },
-    ]);
-    expect(companyPlace?.activeProcedureId).toBe("opt-b");
+    expect(companyPlace?.procedures).toEqual([]);
+    expect(companyPlace?.activeProcedureId).toBeNull();
     expect(companyPlace?.favorites).toEqual([]);
-
-    for (const procedure of companyPlace?.procedures ?? []) {
-      expect(procedure.kind).toBe("legacy-draft");
-      expect("steps" in procedure).toBe(false);
-      expect(commuteProcedureSchema.safeParse(procedure).success).toBe(false);
-    }
   });
 
   it("round trips ready procedures and favorites through v4 without touching v3", () => {
@@ -281,6 +260,9 @@ describe("commuteStopsStorage v4", () => {
     expect(place?.activeProcedureId).toBe("proc-ready");
     expect(loaded).toEqual(reloaded);
     expect(localStorage.getItem(V3_KEY)).toBe(v3Payload);
+    const saved = localStorage.getItem(V4_KEY) ?? "";
+    expect(saved).not.toContain("legacy-draft");
+    expect(saved).not.toContain("routeOptions");
   });
 
   it("falls back to v3 when the v4 payload is corrupt or schema-invalid", () => {
@@ -308,11 +290,7 @@ describe("commuteStopsStorage v4", () => {
     localStorage.setItem(V4_KEY, JSON.stringify(invalid));
     const loaded = loadCommutes();
     expect(loaded.company.places[0]?.name).toBe("v3 회사");
-    expect(
-      loaded.company.places[0]?.procedures.every(
-        (procedure) => procedure.kind === "legacy-draft",
-      ),
-    ).toBe(true);
+    expect(loaded.company.places[0]?.procedures).toEqual([]);
   });
 
   it("preserves the old v1/v2/v3 keys byte-for-byte after migrating to v4", () => {
@@ -383,14 +361,13 @@ describe("commuteStopsStorage v4", () => {
     const place = loaded.company.places[0];
 
     expect(place?.procedures.map((procedure) => procedure.id)).toEqual([
-      "draft-1",
       "proc-ready",
     ]);
     expect(place?.favorites.map((favorite) => favorite.id)).toEqual([
       "fav-bus-1",
       "fav-subway-1",
     ]);
-    expect(place?.activeProcedureId).toBe("draft-1");
+    expect(place?.activeProcedureId).toBe("proc-ready");
   });
 
   it("loads and saves through an injected storage implementation without window.localStorage", () => {

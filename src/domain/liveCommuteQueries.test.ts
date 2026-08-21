@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi, type Mock } from "vitest";
+import { liveArrivalsPort } from "../api/client";
 import {
   commuteFavoriteSchema,
   commuteProcedureSchema,
-  savedCommuteProcedureSchema,
   type CommuteFavorite,
   type SavedCommuteProcedure,
 } from "./commute";
@@ -208,33 +208,10 @@ describe("deriveLiveQueries", () => {
     expect(new Set(keys).size).toBe(2);
   });
 
-  it("derives no request from inactive or legacy-draft procedure data", () => {
+  it("derives no request when no procedure is active", () => {
     expect(
       deriveLiveQueries({ activeProcedure: null, visibleFavorites: [] }),
     ).toEqual([]);
-
-    const legacyDraft = savedCommuteProcedureSchema.parse({
-      id: "draft-1",
-      kind: "legacy-draft",
-      stopId: busStopId,
-      stationId: null,
-    });
-    expect(
-      deriveLiveQueries({ activeProcedure: legacyDraft, visibleFavorites: [] }),
-    ).toEqual([]);
-    expect(
-      deriveLiveQueries({
-        activeProcedure: legacyDraft,
-        visibleFavorites: [busFavorite("fav-bus-1", busStopId)],
-      }),
-    ).toEqual([
-      {
-        kind: "bus",
-        key: `bus:${arsId}`,
-        args: { arsId },
-        stopIds: [busStopId],
-      },
-    ]);
   });
 });
 
@@ -254,7 +231,7 @@ describe("refreshLiveQueries", () => {
         : Response.json(subwayArrivalsPayload),
     );
 
-    const snapshots = await refreshLiveQueries(queries, { now });
+    const snapshots = await refreshLiveQueries(queries, { port: liveArrivalsPort, now });
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(callCount(fetchMock, "/api/arrivals/")).toBe(1);
@@ -295,7 +272,7 @@ describe("refreshLiveQueries", () => {
         : Response.json({ error: "UPSTREAM_UNAVAILABLE" }, { status: 502 }),
     );
 
-    const snapshots = await refreshLiveQueries(queries, { now });
+    const snapshots = await refreshLiveQueries(queries, { port: liveArrivalsPort, now });
 
     const bus = snapshots.get(`bus:${arsId}`);
     if (!bus) throw new Error("expected a bus snapshot");
@@ -333,6 +310,7 @@ describe("refreshLiveQueries", () => {
     );
 
     const snapshots = await refreshLiveQueries([subwayQuery], {
+      port: liveArrivalsPort,
       previous: new Map([[subwayQuery.key, retained]]),
       now,
     });

@@ -10,6 +10,7 @@ import {
   subwayArrivalSchema,
   subwayStationSchema,
 } from "../domain/subway";
+import type { LiveArrivalsPort } from "../domain/liveCommuteQueries";
 
 const nearbyResultSchema = z.object({
   stops: z.array(busStopSchema),
@@ -126,3 +127,20 @@ export async function fetchSubwayArrivals(
     readonly updatedAt: string;
   };
 }
+
+/** Domain port implementation: maps one live query onto the browser API
+ * transport. Injected into `refreshLiveQueries` by the refresh controller. */
+export const liveArrivalsPort: LiveArrivalsPort = async (query) => {
+  if (query.kind === "bus") {
+    const result = await fetchArrivals(query.args.arsId);
+    return {
+      updatedAt: Date.parse(result.updatedAt),
+      arrivals: result.arrivals,
+    };
+  }
+  const result = await fetchSubwayArrivals(query.args.station);
+  return {
+    updatedAt: Date.parse(result.updatedAt),
+    arrivals: result.arrivals,
+  };
+};

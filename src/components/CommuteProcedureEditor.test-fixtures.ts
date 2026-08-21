@@ -80,8 +80,6 @@ export function createPlace(input: {
     stops: input.stops,
     subwayStations: input.subwayStations,
     selectedStopId: input.stops[0]?.id ?? null,
-    routeOptions: [],
-    activeRouteOptionId: null,
     procedures: [],
     favorites: input.favorites,
     activeProcedureId: null,

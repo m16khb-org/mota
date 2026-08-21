@@ -1,9 +1,7 @@
 import type { CommuteFavorite, CommuteStep, SavedCommuteProcedure } from "../domain/commute";
 
 export const STEP_KINDS = ["walk", "bus", "subway"] as const;
-export type EditorStepKind = (typeof STEP_KINDS)[number];
-
-type WalkEditorStep = {
+export type EditorStepKind = (typeof STEP_KINDS)[number];type WalkEditorStep = {
   readonly id: string;
   readonly kind: "walk";
   readonly minutes: string;
@@ -86,21 +84,7 @@ function editorStepFromReady(step: CommuteStep, favorites: readonly CommuteFavor
 
 export function createEditorState(procedure: SavedCommuteProcedure | null, favorites: readonly CommuteFavorite[], scope: string): EditorState {
   if (procedure === null) return { scope, name: "", steps: [] };
-  switch (procedure.kind) {
-    case "ready":
-      return { scope, name: procedure.name, steps: procedure.steps.map((step) => editorStepFromReady(step, favorites)) };
-    case "legacy-draft":
-      return {
-        scope,
-        name: "",
-        steps: [
-          ...(procedure.stopId === null ? [] : [{ id: "legacy-bus", kind: "bus" as const, favoriteId: "", pointId: procedure.stopId, rideMinutes: "", fallbackWaitMinutes: "" }]),
-          ...(procedure.stationId === null ? [] : [{ id: "legacy-subway", kind: "subway" as const, favoriteId: "", pointId: procedure.stationId, rideMinutes: "", fallbackWaitMinutes: "" }]),
-        ],
-      };
-    default:
-      return assertNever(procedure);
-  }
+  return { scope, name: procedure.name, steps: procedure.steps.map((step) => editorStepFromReady(step, favorites)) };
 }
 
 export function createEditorStep(kind: EditorStepKind, id: string): EditorStep {
@@ -200,17 +184,5 @@ export function availableFavorites(step: EditorStep, favorites: readonly Commute
       });
     default:
       return assertNever(step);
-  }
-}
-
-export function procedureStatus(procedure: SavedCommuteProcedure | null): string | null {
-  if (procedure === null) return null;
-  switch (procedure.kind) {
-    case "ready":
-      return null;
-    case "legacy-draft":
-      return "설정 필요";
-    default:
-      return assertNever(procedure);
   }
 }

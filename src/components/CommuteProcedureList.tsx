@@ -16,32 +16,13 @@ interface CommuteProcedureListProps {
 
 const KIND_LABEL = { walk: "도보", bus: "버스", subway: "지하철" } as const;
 
-function assertNever(value: never): never {
-  throw new TypeError(`Unexpected procedure: ${JSON.stringify(value)}`);
-}
-
 function rowLabel(procedure: SavedCommuteProcedure): string {
-  switch (procedure.kind) {
-    case "ready":
-      return procedure.name;
-    case "legacy-draft":
-      return "이전 버전 루트";
-    default:
-      return assertNever(procedure);
-  }
+  return procedure.name;
 }
 
-function rowSummary(procedure: SavedCommuteProcedure): string | null {
-  switch (procedure.kind) {
-    case "ready": {
-      const kinds = procedure.steps.map((step) => KIND_LABEL[step.kind]);
-      return `${procedure.steps.length}단계 · ${kinds.join(" → ")}`;
-    }
-    case "legacy-draft":
-      return null;
-    default:
-      return assertNever(procedure);
-  }
+function rowSummary(procedure: SavedCommuteProcedure): string {
+  const kinds = procedure.steps.map((step) => KIND_LABEL[step.kind]);
+  return `${procedure.steps.length}단계 · ${kinds.join(" → ")}`;
 }
 
 export function CommuteProcedureList({
@@ -86,13 +67,7 @@ export function CommuteProcedureList({
                   onClick={() => onSelect(procedure.id)}
                 >
                   <strong>{label}</strong>
-                  {summary ? (
-                    <span>{summary}</span>
-                  ) : (
-                    <span className="procedure-draft-badge" role="status">
-                      설정 필요
-                    </span>
-                  )}
+                  <span>{summary}</span>
                 </button>
                 <div className="procedure-row-controls">
                   <button

@@ -7,7 +7,7 @@ import type { SubwayStation } from "../domain/subway";
 import type {
   CommuteFavoriteInput,
   CommuteProcedureInput,
-} from "./commuteStopsSelectors";
+} from "./commuteIdentity";
 import { useCommuteStops } from "./useCommuteStops";
 
 const companyStop: BusStop = {
@@ -107,12 +107,8 @@ describe("useCommuteStops", () => {
     const { result } = renderHook(() => useCommuteStops());
     const migratedPlace = result.current.commutes.company.places[0];
 
-    expect(migratedPlace).toMatchObject({
-      name: "회사 1",
-      stops: [companyStop],
-      selectedStopId: companyStop.id,
-    });
-    expect(result.current.commutes.company.activePlaceId).toBe(migratedPlace?.id);
+    expect(migratedPlace?.procedures).toEqual([]);
+    expect(migratedPlace?.activeProcedureId).toBeNull();
 
     await waitFor(() => {
       const stored = localStorage.getItem("commute-bus-web:stops:v4");
@@ -123,7 +119,7 @@ describe("useCommuteStops", () => {
     });
   });
 
-  it("migrates v2 stops into explicit bus-only route options", async () => {
+  it("migrates v2 places and stops without fabricating procedures", async () => {
     localStorage.setItem(
       "commute-bus-web:stops:v2",
       JSON.stringify({
@@ -144,33 +140,18 @@ describe("useCommuteStops", () => {
     );
 
     const { result } = renderHook(() => useCommuteStops());
-    const migratedPlace = result.current.commutes.company.places[0] as unknown as {
-      routeOptions: Array<{
-        id: string;
-        startStopId: BusStop["id"];
-        transferStationId: SubwayStation["id"] | null;
-      }>;
-      activeRouteOptionId: string | null;
-    };
+    const migratedPlace = result.current.commutes.company.places[0];
 
-    expect(migratedPlace.routeOptions).toEqual([
-      {
-        id: `migrated-${companyStop.id}`,
-        startStopId: companyStop.id,
-        transferStationId: null,
-      },
-      {
-        id: `migrated-${secondCompanyStop.id}`,
-        startStopId: secondCompanyStop.id,
-        transferStationId: null,
-      },
-    ]);
-    expect(migratedPlace.activeRouteOptionId).toBe(
-      `migrated-${secondCompanyStop.id}`,
-    );
+    expect(migratedPlace?.stops).toEqual([companyStop, secondCompanyStop]);
+    expect(migratedPlace?.subwayStations).toEqual([subwayStation]);
+    expect(migratedPlace?.selectedStopId).toBe(secondCompanyStop.id);
+    expect(migratedPlace?.procedures).toEqual([]);
+    expect(migratedPlace?.activeProcedureId).toBeNull();
 
     await waitFor(() => {
-      expect(localStorage.getItem("commute-bus-web:stops:v4")).not.toBeNull();
+      const stored = localStorage.getItem("commute-bus-web:stops:v4");
+      expect(stored).not.toBeNull();
+      expect(stored).not.toContain("routeOptions");
     });
   });
 
@@ -209,11 +190,9 @@ describe("useCommuteStops", () => {
         stops: [companyStop, secondCompanyStop],
         subwayStations: [subwayStation],
       });
-      // Current normalization forces selectedStopId onto the active option's
-      // start stop, so the stored companyStop selection becomes opt-b's stop.
-      expect(companyPlace?.selectedStopId).toBe(secondCompanyStop.id);
-      expect(companyPlace?.routeOptions).toEqual(v3CompanyPlace.routeOptions);
-      expect(companyPlace?.activeRouteOptionId).toBe("opt-b");
+      expect(companyPlace?.selectedStopId).toBe(companyStop.id);
+      expect(companyPlace?.procedures).toEqual([]);
+      expect(companyPlace?.activeProcedureId).toBeNull();
       expect(result.current.commutes.company.activePlaceId).toBe("company-v3");
       expect(result.current.commutes.home.places[0]).toMatchObject({
         id: "home-v3",
@@ -254,44 +233,7 @@ describe("useCommuteStops", () => {
       expect(
         companyPlace?.stops.some((stop) => stop.id === companyStop.id),
       ).toBe(false);
-      // Current v2 migration synthesizes one bus-only option per stop.
-      expect(companyPlace?.routeOptions).toEqual([
-        {
-          id: `migrated-${homeStop.id}`,
-          startStopId: homeStop.id,
-          transferStationId: null,
-        },
-      ]);
-    });
-
-    it("cleans migrated route options when their referenced points are deleted", async () => {
-      localStorage.setItem("commute-bus-web:stops:v3", v3Payload);
-      const { result } = renderHook(() => useCommuteStops());
-
-      act(() => {
-        result.current.removeSubwayStation(
-          "company",
-          "company-v3",
-          subwayStation.id,
-        );
-      });
-      let place = result.current.commutes.company.places[0];
-      // opt-b referenced the deleted station; the bus-only opt-a survives.
-      expect(place?.routeOptions.map((option) => option.id)).toEqual(["opt-a"]);
-      expect(place?.activeRouteOptionId).toBe("opt-a");
-
-      act(() => {
-        result.current.removeStop("company", "company-v3", companyStop.id);
-      });
-      place = result.current.commutes.company.places[0];
-      expect(place?.routeOptions).toEqual([]);
-
-      await waitFor(() => {
-        const stored = JSON.parse(
-          localStorage.getItem("commute-bus-web:stops:v4") ?? "{}",
-        );
-        expect(stored.company.places[0].routeOptions).toHaveLength(0);
-      });
+      expect(companyPlace?.procedures).toEqual([]);
     });
   });
 
@@ -359,31 +301,19 @@ describe("useCommuteStops", () => {
       return { result, placeId };
     }
 
-    it("writes v4 with migrated drafts while leaving the stored v3 payload untouched", async () => {
+    it("writes v4 without drafts while leaving the stored v3 payload untouched", async () => {
       localStorage.setItem("commute-bus-web:stops:v3", v3Payload);
 
       const { result } = renderHook(() => useCommuteStops());
-      expect(result.current.commutes.company.places[0]?.procedures).toEqual([
-        {
-          id: "opt-a",
-          kind: "legacy-draft",
-          stopId: companyStop.id,
-          stationId: null,
-        },
-        {
-          id: "opt-b",
-          kind: "legacy-draft",
-          stopId: secondCompanyStop.id,
-          stationId: subwayStation.id,
-        },
-      ]);
+      expect(result.current.commutes.company.places[0]?.procedures).toEqual([]);
 
       await waitFor(() => {
         const stored = localStorage.getItem("commute-bus-web:stops:v4");
         expect(stored).not.toBeNull();
         const parsed = JSON.parse(stored ?? "{}");
-        expect(parsed.company.places[0].procedures).toHaveLength(2);
-        expect(parsed.company.places[0].activeProcedureId).toBe("opt-b");
+        expect(parsed.company.places[0].procedures).toHaveLength(0);
+        expect(parsed.company.places[0].activeProcedureId).toBeNull();
+        expect(stored).not.toContain("routeOptions");
       });
       expect(localStorage.getItem("commute-bus-web:stops:v3")).toBe(v3Payload);
     });
@@ -578,7 +508,7 @@ describe("useCommuteStops", () => {
       ).toEqual(["subway"]);
     });
 
-    it("cleans referencing procedures, drafts, and favorites when points are deleted", () => {
+    it("cleans referencing procedures and favorites when points are deleted", () => {
       localStorage.setItem("commute-bus-web:stops:v3", v3Payload);
       const { result } = renderHook(() => useCommuteStops());
       const placeId = result.current.commutes.company.places[0]?.id as string;
@@ -593,8 +523,6 @@ describe("useCommuteStops", () => {
       });
       const before = result.current.commutes.company.places[0];
       expect(before?.procedures.map((procedure) => procedure.kind)).toEqual([
-        "legacy-draft",
-        "legacy-draft",
         "ready",
       ]);
       expect(before?.favorites).toHaveLength(2);
@@ -604,13 +532,11 @@ describe("useCommuteStops", () => {
       });
       const afterStopRemoval =
         result.current.commutes.company.places[0];
-      expect(
-        afterStopRemoval?.procedures.map((procedure) => procedure.id),
-      ).toEqual(["opt-b"]);
+      expect(afterStopRemoval?.procedures).toEqual([]);
       expect(
         afterStopRemoval?.favorites.map((favorite) => favorite.kind),
       ).toEqual(["subway"]);
-      expect(afterStopRemoval?.activeProcedureId).toBe("opt-b");
+      expect(afterStopRemoval?.activeProcedureId).toBeNull();
       expect(
         afterStopRemoval?.stops.map((stop) => stop.id),
       ).toEqual([secondCompanyStop.id]);
@@ -624,18 +550,9 @@ describe("useCommuteStops", () => {
       });
       const afterStationRemoval =
         result.current.commutes.company.places[0];
-      // opt-b keeps its surviving stop reference; the station-only references
-      // (route option transfer, subway favorite) are gone.
-      expect(afterStationRemoval?.procedures).toEqual([
-        {
-          id: "opt-b",
-          kind: "legacy-draft",
-          stopId: secondCompanyStop.id,
-          stationId: null,
-        },
-      ]);
+      expect(afterStationRemoval?.procedures).toEqual([]);
       expect(afterStationRemoval?.favorites).toEqual([]);
-      expect(afterStationRemoval?.activeProcedureId).toBe("opt-b");
+      expect(afterStationRemoval?.activeProcedureId).toBeNull();
     });
   });
 

@@ -1,87 +1,22 @@
-import type { z } from "zod";
-import type { BusStop, CommuteDirection } from "../domain/bus";
-import {
-  CommuteFavoriteIdSchema,
-  CommuteProcedureIdSchema,
-  type CommuteFavorite,
-  type CommuteFavoriteId,
-  type CommuteProcedure,
-  type CommuteProcedureId,
-  type SavedCommuteProcedure,
+import type { CommuteDirection } from "../domain/bus";
+import type {
+  CommuteFavorite,
+  CommuteFavoriteId,
+  CommuteProcedure,
+  CommuteProcedureId,
+  SavedCommuteProcedure,
 } from "../domain/commute";
-import type { commuteFavoriteSchema, commuteProcedureSchema } from "../domain/commute";
-import type { SubwayStation } from "../domain/subway";
+import { favoriteIdentityKey } from "./commuteIdentity";
 import type {
   CommutePlace,
   CommuteStops,
-  DirectionCollection,
 } from "./commuteStopsStorage";
 
-/** Unbranded input shapes accepted by the hook mutations; the Zod schemas in
- * `src/domain/commute.ts` stay the single validation boundary. */
-type DistributiveOmit<T, K extends keyof never> = T extends unknown
-  ? Omit<T, K>
-  : never;
-
-export type CommuteProcedureInput = DistributiveOmit<
-  z.input<typeof commuteProcedureSchema>,
-  "id" | "kind"
->;
-export type CommuteFavoriteInput = DistributiveOmit<
-  z.input<typeof commuteFavoriteSchema>,
-  "id"
->;
-
-function createRandomIdPart(): string {
-  const random = new Uint32Array(2);
-  globalThis.crypto.getRandomValues(random);
-  const [first = 0, second = 0] = random;
-  return `${first.toString(36)}${second.toString(36)}`;
-}
-
-export function createPlaceId(direction: CommuteDirection): string {
-  return `${direction}-${createRandomIdPart()}`;
-}
-
-export function createProcedureId(): CommuteProcedureId {
-  return CommuteProcedureIdSchema.parse(`proc-${createRandomIdPart()}`);
-}
-
-export function createFavoriteId(): CommuteFavoriteId {
-  return CommuteFavoriteIdSchema.parse(`fav-${createRandomIdPart()}`);
-}
-
-export function getActivePlace(
-  collection: DirectionCollection,
-): CommutePlace | null {
-  return (
-    collection.places.find((place) => place.id === collection.activePlaceId) ??
-    null
-  );
-}
-
-export function getActiveStop(place: CommutePlace | null): BusStop | null {
-  return (
-    place?.stops.find((stop) => stop.id === place.selectedStopId) ?? null
-  );
-}
-
-export function getActiveProcedure(
-  place: CommutePlace | null,
-): SavedCommuteProcedure | null {
-  return (
-    place?.procedures.find(
-      (procedure) => procedure.id === place.activeProcedureId,
-    ) ?? null
-  );
-}
-
-/** Exact favorite identity: display labels never participate. */
-export function favoriteIdentityKey(favorite: CommuteFavorite): string {
-  return favorite.kind === "bus"
-    ? `bus:${favorite.stopId}:${favorite.routeId}:${favorite.direction}`
-    : `subway:${favorite.stationId}:${favorite.subwayId}:${favorite.updnLine}`;
-}
+/** Aggregate state transitions. Every mutation of the saved commute
+ * collection goes through here so the invariants — procedures must reference
+ * saved points, ready procedures never survive dangling references, favorites
+ * dedupe by exact identity — hold for every caller. Functions are pure:
+ * they return a new aggregate and never read the clock, storage, or network. */
 
 function mapPlace(
   commutes: CommuteStops,
@@ -157,9 +92,7 @@ export function addProcedureToCommutes(
     }
     const contentKey = procedureContentKey(procedure);
     const existing = place.procedures.find(
-      (candidate) =>
-        candidate.kind === "ready" &&
-        procedureContentKey(candidate) === contentKey,
+      (candidate) => procedureContentKey(candidate) === contentKey,
     );
     if (existing) {
       return { ...place, activeProcedureId: existing.id };
@@ -343,148 +276,6 @@ export function updateFavoriteInCommutes(
           ? { ...favorite, id: favoriteId }
           : candidate,
       ),
-    };
-  });
-}
-
-function removeStopReferences(
-  procedures: readonly SavedCommuteProcedure[],
-  stopId: BusStop["id"],
-): SavedCommuteProcedure[] {
-  const next: SavedCommuteProcedure[] = [];
-  for (const procedure of procedures) {
-    if (procedure.kind === "legacy-draft") {
-      if (procedure.stopId !== stopId) {
-        next.push(procedure);
-        continue;
-      }
-      if (procedure.stationId === null) {
-        // No surviving referenced point: the draft cannot be kept.
-        continue;
-      }
-      next.push({ ...procedure, stopId: null });
-      continue;
-    }
-    const referencesStop = procedure.steps.some(
-      (step) => step.kind === "bus" && step.stopId === stopId,
-    );
-    // A ready procedure never survives a dangling stop reference, and it is
-    // never silently demoted to a draft.
-    if (!referencesStop) {
-      next.push(procedure);
-    }
-  }
-  return next;
-}
-
-function removeStationReferences(
-  procedures: readonly SavedCommuteProcedure[],
-  stationId: SubwayStation["id"],
-): SavedCommuteProcedure[] {
-  const next: SavedCommuteProcedure[] = [];
-  for (const procedure of procedures) {
-    if (procedure.kind === "legacy-draft") {
-      if (procedure.stationId !== stationId) {
-        next.push(procedure);
-        continue;
-      }
-      if (procedure.stopId === null) {
-        continue;
-      }
-      next.push({ ...procedure, stationId: null });
-      continue;
-    }
-    const referencesStation = procedure.steps.some(
-      (step) => step.kind === "subway" && step.stationId === stationId,
-    );
-    if (!referencesStation) {
-      next.push(procedure);
-    }
-  }
-  return next;
-}
-
-export function removeStopFromCommutes(
-  commutes: CommuteStops,
-  direction: CommuteDirection,
-  placeId: string,
-  stopId: BusStop["id"],
-): CommuteStops {
-  return mapPlace(commutes, direction, placeId, (place) => {
-    const stops = place.stops.filter((stop) => stop.id !== stopId);
-    if (stops.length === place.stops.length) {
-      return place;
-    }
-    const routeOptions = place.routeOptions.filter(
-      (option) => option.startStopId !== stopId,
-    );
-    const activeRouteOptionId = routeOptions.some(
-      (option) => option.id === place.activeRouteOptionId,
-    )
-      ? place.activeRouteOptionId
-      : (routeOptions[0]?.id ?? null);
-    const activeRoute = routeOptions.find(
-      (option) => option.id === activeRouteOptionId,
-    );
-    const favorites = place.favorites.filter(
-      (favorite) => !(favorite.kind === "bus" && favorite.stopId === stopId),
-    );
-    const procedures = removeStopReferences(place.procedures, stopId);
-    return {
-      ...place,
-      stops,
-      routeOptions,
-      activeRouteOptionId,
-      selectedStopId:
-        activeRoute?.startStopId ??
-        (place.selectedStopId === stopId
-          ? (stops[0]?.id ?? null)
-          : place.selectedStopId),
-      favorites,
-      procedures,
-      activeProcedureId: nextActiveProcedureId(place, procedures),
-    };
-  });
-}
-
-export function removeSubwayStationFromCommutes(
-  commutes: CommuteStops,
-  direction: CommuteDirection,
-  placeId: string,
-  stationId: SubwayStation["id"],
-): CommuteStops {
-  return mapPlace(commutes, direction, placeId, (place) => {
-    const subwayStations = place.subwayStations.filter(
-      (station) => station.id !== stationId,
-    );
-    if (subwayStations.length === place.subwayStations.length) {
-      return place;
-    }
-    const routeOptions = place.routeOptions.filter(
-      (option) => option.transferStationId !== stationId,
-    );
-    const activeRouteOptionId = routeOptions.some(
-      (option) => option.id === place.activeRouteOptionId,
-    )
-      ? place.activeRouteOptionId
-      : (routeOptions[0]?.id ?? null);
-    const activeRoute = routeOptions.find(
-      (option) => option.id === activeRouteOptionId,
-    );
-    const favorites = place.favorites.filter(
-      (favorite) =>
-        !(favorite.kind === "subway" && favorite.stationId === stationId),
-    );
-    const procedures = removeStationReferences(place.procedures, stationId);
-    return {
-      ...place,
-      subwayStations,
-      routeOptions,
-      activeRouteOptionId,
-      selectedStopId: activeRoute?.startStopId ?? place.selectedStopId,
-      favorites,
-      procedures,
-      activeProcedureId: nextActiveProcedureId(place, procedures),
     };
   });
 }

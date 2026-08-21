@@ -1,4 +1,3 @@
-import { fetchArrivals, fetchSubwayArrivals } from "../api/client";
 import type { ArsId, BusArrival, StopId } from "./bus";
 import type {
   CommuteFavorite,
@@ -50,11 +49,21 @@ export interface LiveSnapshot<T = LiveArrivals> {
 export type LiveBasis = "live" | "stale" | "unavailable";
 
 export interface LiveQueryInput {
-  /** Only the active ready procedure contributes; `null` (inactive) and
-   * legacy drafts derive no request. */
+  /** Only the active ready procedure contributes; `null` (inactive)
+   * derives no request. */
   readonly activeProcedure: SavedCommuteProcedure | null;
   readonly visibleFavorites: readonly CommuteFavorite[];
 }
+
+/** Driven port: fetches one query endpoint's arrivals. The domain names the
+ * abstraction; the concrete transport lives in `src/api/client.ts` and is
+ * injected by the refresh controller / tests. */
+export type LiveArrivalsPort = (
+  query: LiveQuery,
+) => Promise<{
+  readonly updatedAt: number;
+  readonly arrivals: readonly LiveArrivals[];
+}>;
 
 export function deriveLiveQueries(input: LiveQueryInput): readonly LiveQuery[] {
   const queries: LiveQuery[] = [];
@@ -133,25 +142,19 @@ export function snapshotBasis(
   return "live";
 }
 
-async function fetchLiveQuery(query: LiveQuery): Promise<{
+async function fetchLiveQuery(
+  port: LiveArrivalsPort,
+  query: LiveQuery,
+): Promise<{
   readonly updatedAt: number;
   readonly arrivals: readonly LiveArrivals[];
 }> {
-  if (query.kind === "bus") {
-    const result = await fetchArrivals(query.args.arsId);
-    return {
-      updatedAt: Date.parse(result.updatedAt),
-      arrivals: result.arrivals,
-    };
-  }
-  const result = await fetchSubwayArrivals(query.args.station);
-  return {
-    updatedAt: Date.parse(result.updatedAt),
-    arrivals: result.arrivals,
-  };
+  return port(query);
 }
 
 export interface RefreshLiveQueriesOptions {
+  /** Transport port; implemented by `liveArrivalsPort` in `src/api/client.ts`. */
+  readonly port: LiveArrivalsPort;
   /** Snapshots from the previous cycle; a failing endpoint keeps its retained
    * last success instead of erasing it. */
   readonly previous?: ReadonlyMap<string, LiveSnapshot>;
@@ -164,7 +167,7 @@ export interface RefreshLiveQueriesOptions {
  * owns marking snapshots pending and dropping obsolete keys. */
 export async function refreshLiveQueries(
   queries: readonly LiveQuery[],
-  options: RefreshLiveQueriesOptions = {},
+  options: RefreshLiveQueriesOptions,
 ): Promise<ReadonlyMap<string, LiveSnapshot>> {
   const previous = options.previous ?? new Map<string, LiveSnapshot>();
   const now = options.now ?? Date.now();
@@ -172,7 +175,7 @@ export async function refreshLiveQueries(
   const snapshots = await Promise.all(
     queries.map(async (query): Promise<LiveSnapshot> => {
       try {
-        const result = await fetchLiveQuery(query);
+        const result = await fetchLiveQuery(options.port, query);
         return {
           query,
           latestAttemptAt: now,

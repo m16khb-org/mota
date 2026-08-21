@@ -6,17 +6,13 @@ import {
 } from "../domain/bus";
 import {
   CommuteProcedureIdSchema,
-  CommuteRouteOptionIdSchema,
   commuteFavoriteSchema,
-  commuteRouteOptionSchema,
-  savedCommuteProcedureSchema,
+  commuteProcedureSchema,
   type CommuteFavorite,
-  type CommuteRouteOption,
-  type LegacyCommuteDraft,
-  type SavedCommuteProcedure,
+  type CommuteProcedure,
 } from "../domain/commute";
 import { subwayStationSchema } from "../domain/subway";
-import { favoriteIdentityKey } from "./commuteStopsSelectors";
+import { favoriteIdentityKey } from "./commuteIdentity";
 
 const STORAGE_KEY = "commute-bus-web:stops:v4";
 const V3_STORAGE_KEY = "commute-bus-web:stops:v3";
@@ -26,6 +22,35 @@ const V1_STORAGE_KEY = "commute-bus-web:stops:v1";
 /** Storage seam for tests and one-shot drivers; the app uses window.localStorage. */
 export type CommuteStorage = Pick<Storage, "getItem" | "setItem">;
 
+/** Read-only shape superseded v4 payloads may still contain: a draft left by
+ * the retired v3-route-option migration. It parses so history stays loadable,
+ * then normalizeCollection drops it — it is never written back. */
+const legacyDraftReadSchema = z.strictObject({
+  id: CommuteProcedureIdSchema,
+  kind: z.literal("legacy-draft"),
+  stopId: busStopSchema.shape.id.nullable(),
+  stationId: subwayStationSchema.shape.id.nullable(),
+});
+
+const persistedProcedureSchema = z.discriminatedUnion("kind", [
+  commuteProcedureSchema,
+  legacyDraftReadSchema,
+]);
+
+const commutePlaceSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().trim().min(1),
+  stops: z.array(busStopSchema),
+  subwayStations: z.array(subwayStationSchema).default([]),
+  selectedStopId: busStopSchema.shape.id.nullable(),
+  procedures: z.array(commuteProcedureSchema),
+  favorites: z.array(commuteFavoriteSchema),
+  activeProcedureId: CommuteProcedureIdSchema.nullable(),
+});
+
+/** v2/v3 read shape. v3's routeOptions and both versions' extra keys are
+ * stripped by Zod on parse; migration discards them instead of keeping
+ * drafts. */
 const previousCommutePlaceSchema = z.object({
   id: z.string().min(1),
   name: z.string().trim().min(1),
@@ -34,39 +59,30 @@ const previousCommutePlaceSchema = z.object({
   selectedStopId: busStopSchema.shape.id.nullable(),
 });
 
-/** v3 added explicit bus-only/transfer route options; still stored inside v4
- * places until the route-option UI is retired (plan task 10). */
-const v3CommutePlaceSchema = previousCommutePlaceSchema.extend({
-  routeOptions: z.array(commuteRouteOptionSchema),
-  activeRouteOptionId: CommuteRouteOptionIdSchema.nullable(),
-});
-
-/** v4 adds ordered commute procedures (ready or migrated legacy drafts) and
- * exact-service favorites; only v4 is ever written. */
-const commutePlaceSchema = v3CommutePlaceSchema.extend({
-  procedures: z.array(savedCommuteProcedureSchema),
-  favorites: z.array(commuteFavoriteSchema),
-  activeProcedureId: CommuteProcedureIdSchema.nullable(),
-});
-
 const directionCollectionSchema = z.object({
   places: z.array(commutePlaceSchema),
   activePlaceId: z.string().min(1).nullable(),
 });
 
-const v3DirectionCollectionSchema = z.object({
-  places: z.array(v3CommutePlaceSchema),
+/** Read shape for already-persisted v4 payloads (may still contain drafts). */
+const persistedPlaceSchema = commutePlaceSchema.extend({
+  procedures: z.array(persistedProcedureSchema),
+});
+
+const persistedCollectionSchema = z.object({
+  places: z.array(persistedPlaceSchema),
   activePlaceId: z.string().min(1).nullable(),
 });
 
 const commuteStopsSchema = z.object({
-  company: directionCollectionSchema,
-  home: directionCollectionSchema,
+  company: persistedCollectionSchema,
+  home: persistedCollectionSchema,
 });
 
-const v3CommuteStopsSchema = z.object({
-  company: v3DirectionCollectionSchema,
-  home: v3DirectionCollectionSchema,
+/** Clean in-memory shape: procedures are always ready. */
+const commuteStopsShapeSchema = z.object({
+  company: directionCollectionSchema,
+  home: directionCollectionSchema,
 });
 
 const previousDirectionCollectionSchema = z.object({
@@ -88,51 +104,26 @@ export type CommutePlace = Readonly<z.infer<typeof commutePlaceSchema>>;
 export type DirectionCollection = Readonly<
   z.infer<typeof directionCollectionSchema>
 >;
-export type CommuteStops = Readonly<z.infer<typeof commuteStopsSchema>>;
-
-type V3DirectionCollection = z.infer<typeof v3DirectionCollectionSchema>;
+export type CommuteStops = Readonly<z.infer<typeof commuteStopsShapeSchema>>;
 
 const PLACE_COPY = {
   company: "회사",
   home: "집",
 } as const;
 
-function createMigratedRouteOption(stop: BusStop): CommuteRouteOption {
-  return commuteRouteOptionSchema.parse({
-    id: `migrated-${stop.id}`,
-    startStopId: stop.id,
-    transferStationId: null,
-  });
-}
-
-/** A v3 route option becomes a non-evaluable setup draft that keeps only the
- * stop/station it referenced; no service, direction, or duration is invented. */
-function routeOptionToLegacyDraft(option: CommuteRouteOption): LegacyCommuteDraft {
-  return {
-    id: CommuteProcedureIdSchema.parse(option.id),
-    kind: "legacy-draft",
-    stopId: option.startStopId,
-    stationId: option.transferStationId,
-  };
-}
-
 function createDefaultPlace(
   direction: CommuteDirection,
   stop: BusStop | null = null,
 ): CommutePlace {
-  const routeOptions = stop ? [createMigratedRouteOption(stop)] : [];
-  const procedures = routeOptions.map(routeOptionToLegacyDraft);
   return {
     id: `${direction}-1`,
     name: `${PLACE_COPY[direction]} 1`,
     stops: stop ? [stop] : [],
     subwayStations: [],
     selectedStopId: stop?.id ?? null,
-    routeOptions,
-    activeRouteOptionId: routeOptions[0]?.id ?? null,
-    procedures,
+    procedures: [],
     favorites: [],
-    activeProcedureId: procedures[0]?.id ?? null,
+    activeProcedureId: null,
   };
 }
 
@@ -150,47 +141,31 @@ function createInitialCommutes(
   };
 }
 
+/** Ready procedures must reference saved points, ids stay unique. Superseded
+ * legacy drafts read from old payloads are dropped here. */
 function normalizeProcedures(
-  procedures: readonly SavedCommuteProcedure[],
+  procedures: readonly z.infer<typeof persistedProcedureSchema>[],
   stopIds: ReadonlySet<string>,
   stationIds: ReadonlySet<string>,
-): SavedCommuteProcedure[] {
+): CommuteProcedure[] {
   const seenIds = new Set<string>();
-  const normalized: SavedCommuteProcedure[] = [];
+  const normalized: CommuteProcedure[] = [];
   for (const procedure of procedures) {
-    if (seenIds.has(procedure.id)) {
+    if (procedure.kind !== "ready") {
       continue;
     }
-    let candidate = procedure;
-    if (procedure.kind === "ready") {
-      const referencesSavedPoints = procedure.steps.every((step) =>
-        step.kind === "walk"
-          ? true
-          : step.kind === "bus"
-            ? stopIds.has(step.stopId)
-            : stationIds.has(step.stationId),
-      );
-      if (!referencesSavedPoints) {
-        continue;
-      }
-    } else {
-      const stopId =
-        procedure.stopId !== null && stopIds.has(procedure.stopId)
-          ? procedure.stopId
-          : null;
-      const stationId =
-        procedure.stationId !== null && stationIds.has(procedure.stationId)
-          ? procedure.stationId
-          : null;
-      if (stopId === null && stationId === null) {
-        continue;
-      }
-      if (stopId !== procedure.stopId || stationId !== procedure.stationId) {
-        candidate = { ...procedure, stopId, stationId };
-      }
+    const referencesSavedPoints = procedure.steps.every((step) =>
+      step.kind === "walk"
+        ? true
+        : step.kind === "bus"
+          ? stopIds.has(step.stopId)
+          : stationIds.has(step.stationId),
+    );
+    if (!referencesSavedPoints || seenIds.has(procedure.id)) {
+      continue;
     }
-    seenIds.add(candidate.id);
-    normalized.push(candidate);
+    seenIds.add(procedure.id);
+    normalized.push(procedure);
   }
   return normalized;
 }
@@ -226,44 +201,17 @@ function normalizeFavorites(
 }
 
 function normalizeCollection(
-  collection: z.infer<typeof directionCollectionSchema>,
+  collection: z.infer<typeof persistedCollectionSchema>,
 ): DirectionCollection {
   const places = collection.places.map((place) => {
     const stopIds = new Set(place.stops.map((stop) => stop.id));
     const stationIds = new Set(
       place.subwayStations.map((station) => station.id),
     );
-    const optionIds = new Set<string>();
-    const pairs = new Set<string>();
-    const routeOptions = place.routeOptions.filter((option) => {
-      const pair = `${option.startStopId}:${option.transferStationId ?? ""}`;
-      const valid =
-        stopIds.has(option.startStopId) &&
-        (option.transferStationId === null ||
-          stationIds.has(option.transferStationId)) &&
-        !optionIds.has(option.id) &&
-        !pairs.has(pair);
-      if (valid) {
-        optionIds.add(option.id);
-        pairs.add(pair);
-      }
-      return valid;
-    });
     const selectedStopId =
       place.selectedStopId !== null && stopIds.has(place.selectedStopId)
         ? place.selectedStopId
         : (place.stops[0]?.id ?? null);
-    const activeRouteOptionId = optionIds.has(
-      place.activeRouteOptionId ?? "",
-    )
-      ? place.activeRouteOptionId
-      : (routeOptions.find((option) => option.startStopId === selectedStopId)
-          ?.id ??
-        routeOptions[0]?.id ??
-        null);
-    const activeRoute = routeOptions.find(
-      (option) => option.id === activeRouteOptionId,
-    );
     const procedures = normalizeProcedures(
       place.procedures,
       stopIds,
@@ -277,9 +225,7 @@ function normalizeCollection(
       : (procedures[0]?.id ?? null);
     return {
       ...place,
-      routeOptions,
-      activeRouteOptionId,
-      selectedStopId: activeRoute?.startStopId ?? selectedStopId,
+      selectedStopId,
       procedures,
       favorites,
       activeProcedureId,
@@ -296,95 +242,19 @@ function normalizeCollection(
   };
 }
 
-function normalizeV3Collection(
-  collection: z.infer<typeof v3DirectionCollectionSchema>,
-): V3DirectionCollection {
-  const places = collection.places.map((place) => {
-    const stopIds = new Set(place.stops.map((stop) => stop.id));
-    const stationIds = new Set(
-      place.subwayStations.map((station) => station.id),
-    );
-    const optionIds = new Set<string>();
-    const pairs = new Set<string>();
-    const routeOptions = place.routeOptions.filter((option) => {
-      const pair = `${option.startStopId}:${option.transferStationId ?? ""}`;
-      const valid =
-        stopIds.has(option.startStopId) &&
-        (option.transferStationId === null ||
-          stationIds.has(option.transferStationId)) &&
-        !optionIds.has(option.id) &&
-        !pairs.has(pair);
-      if (valid) {
-        optionIds.add(option.id);
-        pairs.add(pair);
-      }
-      return valid;
-    });
-    const selectedStopId =
-      place.selectedStopId !== null && stopIds.has(place.selectedStopId)
-        ? place.selectedStopId
-        : (place.stops[0]?.id ?? null);
-    const activeRouteOptionId = optionIds.has(place.activeRouteOptionId ?? "")
-      ? place.activeRouteOptionId
-      : (routeOptions.find((option) => option.startStopId === selectedStopId)
-          ?.id ??
-        routeOptions[0]?.id ??
-        null);
-    const activeRoute = routeOptions.find(
-      (option) => option.id === activeRouteOptionId,
-    );
-    return {
-      ...place,
-      routeOptions,
-      activeRouteOptionId,
-      selectedStopId: activeRoute?.startStopId ?? selectedStopId,
-    };
-  });
-  const activePlaceExists = places.some(
-    (place) => place.id === collection.activePlaceId,
-  );
-  return {
-    places,
-    activePlaceId: activePlaceExists
-      ? collection.activePlaceId
-      : (places[0]?.id ?? null),
-  };
-}
-
-/** v3 -> v4: each route option becomes a legacy draft and selections carry over. */
-function migrateV3Collection(collection: V3DirectionCollection): DirectionCollection {
+/** v2/v3 -> v4: places, stops, stations, and selections carry over;
+ * superseded route options are discarded, not converted to drafts. */
+function migratePreviousCollection(
+  collection: z.infer<typeof previousDirectionCollectionSchema>,
+): DirectionCollection {
   return normalizeCollection({
     activePlaceId: collection.activePlaceId,
     places: collection.places.map((place) => ({
       ...place,
-      procedures: place.routeOptions.map(routeOptionToLegacyDraft),
+      procedures: [],
       favorites: [],
-      activeProcedureId:
-        place.activeRouteOptionId === null
-          ? null
-          : CommuteProcedureIdSchema.parse(place.activeRouteOptionId),
+      activeProcedureId: null,
     })),
-  });
-}
-
-function migratePreviousCollection(
-  collection: z.infer<typeof previousDirectionCollectionSchema>,
-): V3DirectionCollection {
-  return normalizeV3Collection({
-    activePlaceId: collection.activePlaceId,
-    places: collection.places.map((place) => {
-      const routeOptions = place.stops.map(createMigratedRouteOption);
-      return {
-        ...place,
-        routeOptions,
-        activeRouteOptionId:
-          routeOptions.find(
-            (option) => option.startStopId === place.selectedStopId,
-          )?.id ??
-          routeOptions[0]?.id ??
-          null,
-      };
-    }),
   });
 }
 
@@ -410,27 +280,14 @@ function parseV4Commutes(stored: string): CommuteStops | null {
   };
 }
 
-function parseV3Commutes(stored: string): CommuteStops | null {
-  const parsed = v3CommuteStopsSchema.safeParse(parseJson(stored));
-  if (!parsed.success) {
-    return null;
-  }
-  return {
-    company: migrateV3Collection(normalizeV3Collection(parsed.data.company)),
-    home: migrateV3Collection(normalizeV3Collection(parsed.data.home)),
-  };
-}
-
-function parseV2Commutes(stored: string): CommuteStops | null {
+function parsePreviousCommutes(stored: string): CommuteStops | null {
   const parsed = previousCommuteStopsSchema.safeParse(parseJson(stored));
   if (!parsed.success) {
     return null;
   }
   return {
-    company: migrateV3Collection(
-      migratePreviousCollection(parsed.data.company),
-    ),
-    home: migrateV3Collection(migratePreviousCollection(parsed.data.home)),
+    company: migratePreviousCollection(parsed.data.company),
+    home: migratePreviousCollection(parsed.data.home),
   };
 }
 
@@ -450,19 +307,13 @@ export function loadCommutes(storage?: CommuteStorage): CommuteStops {
     }
   }
 
-  const v3Stored = store.getItem(V3_STORAGE_KEY);
-  if (v3Stored) {
-    const parsed = parseV3Commutes(v3Stored);
-    if (parsed) {
-      return parsed;
-    }
-  }
-
-  const v2Stored = store.getItem(V2_STORAGE_KEY);
-  if (v2Stored) {
-    const parsed = parseV2Commutes(v2Stored);
-    if (parsed) {
-      return parsed;
+  for (const key of [V3_STORAGE_KEY, V2_STORAGE_KEY]) {
+    const previous = store.getItem(key);
+    if (previous) {
+      const parsed = parsePreviousCommutes(previous);
+      if (parsed) {
+        return parsed;
+      }
     }
   }
 

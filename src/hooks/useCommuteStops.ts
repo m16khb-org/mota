@@ -7,14 +7,18 @@ import {
   type CommutePlace,
   type CommuteStops,
 } from "./commuteStopsStorage";
-import { createPlaceId, removeStopFromCommutes, removeSubwayStationFromCommutes } from "./commuteStopsSelectors";
+import { createPlaceId } from "./commuteIdentity";
+import {
+  removeStopFromCommutes,
+  removeSubwayStationFromCommutes,
+} from "./commutePointCleanup";
 import { useCommuteProcedures } from "./useCommuteProcedures";
 
 export {
   getActivePlace,
   getActiveProcedure,
   getActiveStop,
-} from "./commuteStopsSelectors";
+} from "./commuteProjections";
 export type {
   CommutePlace,
   DirectionCollection,
@@ -40,8 +44,6 @@ export function useCommuteStops() {
         stops: [],
         subwayStations: [],
         selectedStopId: null,
-        routeOptions: [],
-        activeRouteOptionId: null,
         procedures: [],
         favorites: [],
         activeProcedureId: null,
@@ -168,14 +170,7 @@ export function useCommuteStops() {
             ) {
               return place;
             }
-            const route = place.routeOptions.find(
-              (option) => option.startStopId === stopId,
-            );
-            return {
-              ...place,
-              selectedStopId: stopId,
-              activeRouteOptionId: route?.id ?? place.activeRouteOptionId,
-            };
+            return { ...place, selectedStopId: stopId };
           }),
         },
       }));

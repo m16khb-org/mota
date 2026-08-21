@@ -9,8 +9,6 @@ import {
 import type { CommuteStops } from "./commuteStopsStorage";
 import {
   addProcedureToCommutes,
-  createFavoriteId,
-  createProcedureId,
   editProcedureInCommutes,
   pinFavoriteInCommutes,
   removeProcedureFromCommutes,
@@ -18,14 +16,18 @@ import {
   selectProcedureInCommutes,
   unpinFavoriteFromCommutes,
   updateFavoriteInCommutes,
+} from "./commuteTransitions";
+import {
+  createFavoriteId,
+  createProcedureId,
   type CommuteFavoriteInput,
   type CommuteProcedureInput,
-} from "./commuteStopsSelectors";
+} from "./commuteIdentity";
 
 export type {
   CommuteFavoriteInput,
   CommuteProcedureInput,
-} from "./commuteStopsSelectors";
+} from "./commuteIdentity";
 
 /** Procedure and favorite mutations for the active place. Zod schemas in
  * `src/domain/commute.ts` stay the single validation boundary. */

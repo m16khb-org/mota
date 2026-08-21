@@ -9,7 +9,6 @@ import {
   createEditorState,
   createEditorStep,
   editorReducer,
-  procedureStatus,
 } from "./commuteProcedureEditorState";
 import { issueFor, validateEditor } from "./commuteProcedureEditorValidation";
 
@@ -39,7 +38,6 @@ export function CommuteProcedureEditor({ direction, onCancel, onSave, place, pro
   const [storedState, dispatch] = useReducer(editorReducer, initialState);
   const state = storedState.scope === scope ? storedState : initialState;
   const validation = useMemo(() => validateEditor(state, favorites), [favorites, state]);
-  const status = procedureStatus(procedure);
   const nameError = issueFor(validation.issues, "name");
   const stepsError = issueFor(validation.issues, "steps");
 
@@ -62,7 +60,6 @@ export function CommuteProcedureEditor({ direction, onCancel, onSave, place, pro
           <span className="eyebrow">순서대로 저장</span>
           <h3 id={headingId}>통근 절차</h3>
         </div>
-        {status ? <span className="procedure-status" role="status">{status}</span> : null}
       </div>
 
       <form onSubmit={save}>

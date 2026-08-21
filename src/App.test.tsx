@@ -165,11 +165,31 @@ vi.mock("./components/MapCanvas", () => ({
 
 vi.mock("./api/client", async (importOriginal) => {
   const original = await importOriginal<typeof import("./api/client")>();
+  const fetchArrivals = vi.fn<typeof original.fetchArrivals>();
+  const fetchNearbyStops = vi.fn<typeof original.fetchNearbyStops>();
+  const fetchSubwayArrivals = vi.fn<typeof original.fetchSubwayArrivals>();
+  // Bind the domain port onto the mocked transports so call-count
+  // assertions and the refresh path observe the same fns.
+  const liveArrivalsPort: typeof original.liveArrivalsPort = async (query) => {
+    if (query.kind === "bus") {
+      const result = await fetchArrivals(query.args.arsId);
+      return {
+        updatedAt: Date.parse(result.updatedAt),
+        arrivals: result.arrivals,
+      };
+    }
+    const result = await fetchSubwayArrivals(query.args.station);
+    return {
+      updatedAt: Date.parse(result.updatedAt),
+      arrivals: result.arrivals,
+    };
+  };
   return {
     ...original,
-    fetchArrivals: vi.fn(),
-    fetchNearbyStops: vi.fn(),
-    fetchSubwayArrivals: vi.fn(),
+    fetchArrivals,
+    fetchNearbyStops,
+    fetchSubwayArrivals,
+    liveArrivalsPort,
   };
 });
 
@@ -903,7 +923,7 @@ describe("App daily commute flow", () => {
     expect(screen.getByText(/까지 출발/)).toBeInTheDocument();
   });
 
-  it("keeps a migrated legacy draft non-evaluable until the user completes it", async () => {
+  it("drops superseded v3 route options on migration instead of keeping drafts", async () => {
     localStorage.setItem(
       "commute-bus-web:stops:v3",
       JSON.stringify({
@@ -945,47 +965,16 @@ describe("App daily commute flow", () => {
     );
     render(<App />);
     await act(async () => {});
-
-    expect(screen.getByText("이전 버전 루트")).toBeInTheDocument();
-    expect(screen.getByText("설정 필요")).toBeInTheDocument();
-    expect(screen.queryByText(/까지 출발/)).not.toBeInTheDocument();
-
-    await pinBothFavorites();
-    fireEvent.click(
-      screen.getByRole("button", { name: "이전 버전 루트 절차 편집" }),
-    );
-    await act(async () => {});
-
-    expect(
-      screen.getByRole("button", { name: "절차 저장" }),
-    ).toBeDisabled();
-
-    fireEvent.change(screen.getByLabelText("절차 이름"), {
-      target: { value: "마이그레이션 루틴" },
-    });
-    await selectFavoriteOption("1번째 버스 서비스", `강동05 · ${BUS_DIRECTION}`);
-    fireEvent.change(screen.getByLabelText("1번째 버스 탑승 시간 (분)"), {
-      target: { value: "15" },
-    });
-    fireEvent.change(screen.getByLabelText("1번째 버스 대기 대안 시간 (분)"), {
-      target: { value: "10" },
-    });
-    await selectFavoriteOption("2번째 지하철 서비스", "2호선 · 강남방면");
-    fireEvent.change(screen.getByLabelText("2번째 지하철 탑승 시간 (분)"), {
-      target: { value: "20" },
-    });
-    fireEvent.change(screen.getByLabelText("2번째 지하철 대기 대안 시간 (분)"), {
-      target: { value: "5" },
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: "절차 저장" }));
-    await act(async () => {});
-
-    expect(
-      screen.getByRole("heading", { name: "마이그레이션 루틴" }),
-    ).toBeInTheDocument();
+    expect(screen.queryByText("이전 버전 루트")).not.toBeInTheDocument();
     expect(screen.queryByText("설정 필요")).not.toBeInTheDocument();
-    expect(screen.getByText(/까지 출발/)).toBeInTheDocument();
+    expect(
+      screen.getByText("저장한 통근 절차가 없습니다."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/까지 출발/)).not.toBeInTheDocument();
+    const stored = localStorage.getItem("commute-bus-web:stops:v4");
+    expect(stored).not.toBeNull();
+    expect(stored).not.toContain("legacy-draft");
+    expect(stored).not.toContain("routeOptions");
   });
 
   it("does not mutate saved procedures when the editor is cancelled", async () => {
