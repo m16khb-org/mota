@@ -179,6 +179,37 @@ describe("CommuteEta", () => {
     expect(screen.getByText(/2호선 강남방면/)).toBeVisible();
   });
 
+  it("renders named (non-numeric) bus routes without the 번 suffix", () => {
+    const namedRouteProcedure = commuteProcedureSchema.parse({
+      id: "named-route-commute",
+      kind: "ready",
+      name: "광주 노선",
+      steps: [
+        { id: "walk-out", kind: "walk", minutes: 5 },
+        busCommuteStepSchema.parse({
+          ...busStep,
+          id: "bus-named",
+          routeName: "1113-1광주",
+        }),
+      ],
+    });
+    const namedEstimate = estimateCommuteProcedure({
+      procedure: namedRouteProcedure,
+      now,
+    });
+    render(
+      <CommuteEta
+        procedure={namedRouteProcedure}
+        result={namedEstimate}
+        refreshing={false}
+        onEditProcedure={vi.fn()}
+        onRefresh={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/1113-1광주 버스/)).toBeVisible();
+    expect(screen.queryByText(/1113-1광주번/)).not.toBeInTheDocument();
+  });
+
   it("moves the destination time when a live boarding result changes", () => {
     const { rerender } = renderEta({ result: estimate() });
     expectHeaderTime("도착 예정", "10:44 도착");

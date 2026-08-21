@@ -36,5 +36,10 @@ export async function fetchSubwayArrivals(
       `Subway arrivals upstream returned ${response.status}`,
     );
   }
-  return normalizeSubwayArrivals(await response.json());
+  const normalized = normalizeSubwayArrivals(await response.json());
+  // `updatedAt` must be the adapter receipt time (like the bus route), not
+  // the upstream `recptnDt` data time: the 90-second freshness rule and the
+  // countdown `elapsed` both key on it, and upstream data timestamps can lag
+  // receipt by minutes, marking fresh data stale and dropping imminent trains.
+  return { arrivals: normalized.arrivals, updatedAt: new Date().toISOString() };
 }

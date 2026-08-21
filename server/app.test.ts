@@ -338,11 +338,15 @@ describe("bus API adapter", () => {
       subwayArrivalUpstream: "https://subway-arrival.test",
     }).request("/api/subway/arrivals?station=%EC%B2%9C%ED%98%B8");
 
+    const body = (await response.json()) as { updatedAt: string; arrivals: unknown[] };
     expect(response.status).toBe(200);
-    expect(await response.json()).toMatchObject({
+    expect(body).toMatchObject({
       arrivals: [{ line: "2호선", seconds: 45 }],
-      updatedAt: "2026-08-20T03:10:20.000Z",
     });
+    // updatedAt is the adapter receipt time (not upstream recptnDt), so the
+    // 90-second freshness rule judges when we received the data.
+    expect(Date.parse(body.updatedAt)).toBeGreaterThan(Date.now() - 10_000);
+    expect(Date.parse(body.updatedAt)).toBeLessThan(Date.now() + 10_000);
     expect(upstream).toHaveBeenCalledWith(
       "https://subway-arrival.test/v1/seoul-subway/arrival?station=%EC%B2%9C%ED%98%B8%28%ED%92%8D%EB%82%A9%ED%86%A0%EC%84%B1%29",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),

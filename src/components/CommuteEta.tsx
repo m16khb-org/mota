@@ -42,7 +42,9 @@ function stepLabel(step: CommuteStep): string {
     case "walk":
       return `${step.minutes}분 걷기`;
     case "bus":
-      return `${step.routeName}번 버스`;
+      return /^\d+$/.test(step.routeName)
+        ? `${step.routeName}번 버스`
+        : `${step.routeName} 버스`;
     case "subway":
       return `${step.lineName} ${step.trainLineNm}`;
     default:
@@ -67,7 +69,8 @@ function summary(result: CommuteEstimate, refreshing: boolean): string {
   if (result.blockedAtStepId !== null) {
     return "일부 경로의 시간을 확인하지 못했습니다.";
   }
-  if (result.steps.some((step) => step.basis === "unavailable")) {
+  const hasLiveStep = result.steps.some((step) => step.basis === "live");
+  if (!hasLiveStep) {
     return "저장한 이동 시간과 대기 시간으로 계산했습니다.";
   }
   return "저장한 이동 시간과 최신 대기 정보를 반영했습니다.";

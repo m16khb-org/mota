@@ -117,7 +117,7 @@ function matchingDepartures(
       return assertNever(favorite);
   }
   const elapsed = Math.max(0, Math.floor((now - source.lastSuccess.updatedAt) / 1_000));
-  return departures.filter((departure) => departure.seconds > elapsed).sort(
+  return departures.filter((departure) => departure.seconds >= elapsed).sort(
     (left, right) => left.seconds - right.seconds || left.message.localeCompare(right.message, "ko"),
   ).slice(0, 2);
 }
@@ -211,7 +211,7 @@ function FavoriteDepartureCard({
             </li>
           ))}
         </ol>
-      ) : <p className="favorite-no-departure">도착 정보 없음 · 출발 안내 없음</p>}
+      ) : <p className="favorite-no-departure">이 방면 도착 예정 없음</p>}
       {editing ? (
         <form className="favorite-access-form" onSubmit={saveAccess}>
           <label>
