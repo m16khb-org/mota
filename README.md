@@ -1,13 +1,14 @@
+# 모타
+
 <p align="center">
   <img src="docs/icon.png" width="120" alt="모타 프로젝트 아이콘" />
 </p>
 
-# 모타
+지도 기반 서울 출퇴근 버스 대기 웹앱입니다. React 19와 Bun/Hono로 만들었습니다.
 
-Hermes의 `/bus_company`, `/bus_home` 기능을 지도 기반 웹앱으로 분리한 프로젝트입니다.
-
-서울대중교통의 좌표 기반 근접 정류소 응답과 서울 BIS 실시간 도착정보를 서버에서
-정규화해 제공합니다. 브라우저에는 집→회사, 회사→집 정류장 선택만 저장합니다.
+Hermes의 `/bus_company`, `/bus_home` 기능을 분리한 프로젝트입니다. 서울대중교통의
+좌표 기반 근접 정류소 응답과 서울 BIS 실시간 도착정보를 서버에서 정규화해 제공하며,
+브라우저에는 집→회사, 회사→집 정류장 선택만 저장합니다.
 
 ## 실행
 
@@ -30,6 +31,17 @@ pnpm check
 pnpm test
 pnpm build
 ```
+
+## 배포
+
+```bash
+docker compose up -d --build
+docker compose logs -f web
+```
+
+프로덕션 컨테이너는 빌드된 `dist/`를 정적 서빙하며 기본 `HOST=0.0.0.0`,
+`PORT=3000`으로 바인딩됩니다. 서울 교통 업스트림으로의 아웃바운드 접근이
+필요합니다.
 
 ## 데이터 출처
 
