@@ -101,6 +101,103 @@ describe("MapCanvas", () => {
   });
 });
 
+describe("MapCanvas popup Escape focus restore", () => {
+  afterEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  function setupOpenPopup() {
+    render(
+      <MapCanvas
+        center={{ lat: 37.5366, lng: 127.1253 }}
+        stops={[]}
+        selectedStop={null}
+        onCenterChange={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+    const frame = document.querySelector(".picker-map-frame");
+    expect(frame).not.toBeNull();
+    // Simulate Leaflet's popup DOM inside the frame.
+    const popupPane = document.createElement("div");
+    const popup = document.createElement("div");
+    popup.className = "leaflet-popup";
+    const closeButton = document.createElement("a");
+    closeButton.className = "leaflet-popup-close-button";
+    popup.appendChild(closeButton);
+    popupPane.appendChild(popup);
+    frame?.appendChild(popupPane);
+    // Simulate a focusable owner marker element.
+    const marker = document.createElement("div");
+    marker.tabIndex = 0;
+    frame?.appendChild(marker);
+    return { frame, popup, closeButton, marker };
+  }
+
+  it("restores focus to the owner marker when Escape fires with focus inside the popup", () => {
+    const { frame, popup, marker } = setupOpenPopup();
+    // Announce the popup source via the bubbling CustomEvent from CenterObserver.
+    frame?.dispatchEvent(
+      new CustomEvent("popupopen", {
+        bubbles: true,
+        detail: { popup: { _source: { getElement: () => marker } } },
+      }),
+    );
+    const focusTarget = document.createElement("button");
+    popup.appendChild(focusTarget);
+    focusTarget.focus();
+
+    const clickSpy = vi.fn();
+    const closeAnchor = frame?.querySelector(
+      ".leaflet-popup-close-button",
+    ) as HTMLAnchorElement;
+    closeAnchor.addEventListener("click", clickSpy);
+
+    frame?.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
+
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    // rAF is async; wait a microtask for the refocus.
+    return new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        expect(document.activeElement).toBe(marker);
+        resolve();
+      });
+    });
+  });
+
+  it("does not move focus when Escape fires with focus outside the popup", () => {
+    const { frame, marker } = setupOpenPopup();
+    frame?.dispatchEvent(
+      new CustomEvent("popupopen", {
+        bubbles: true,
+        detail: { popup: { _source: { getElement: () => marker } } },
+      }),
+    );
+    // Focus the marker (outside the popup), not popup content.
+    marker.focus();
+
+    const clickSpy = vi.fn();
+    const closeAnchor = frame?.querySelector(
+      ".leaflet-popup-close-button",
+    ) as HTMLAnchorElement;
+    closeAnchor.addEventListener("click", clickSpy);
+
+    frame?.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
+
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    return new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        expect(document.activeElement).toBe(marker);
+        resolve();
+      });
+    });
+  });
+});
+
 describe("MapCanvas motion and hit targets", () => {
   afterEach(() => {
     reducedMotion = false;

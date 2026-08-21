@@ -193,6 +193,21 @@ function CenterObserver({
       const nextCenter = event.target.getCenter();
       onCenterChange({ lat: nextCenter.lat, lng: nextCenter.lng });
     },
+    popupopen(event) {
+      // Re-dispatch as a bubbling CustomEvent so the frame-level Escape
+      // handler can resolve the popup's owner marker (_source).
+      map.getContainer().dispatchEvent(
+        new CustomEvent("popupopen", {
+          bubbles: true,
+          detail: { popup: event.popup },
+        }),
+      );
+    },
+    popupclose() {
+      map.getContainer().dispatchEvent(
+        new CustomEvent("popupclose", { bubbles: true }),
+      );
+    },
   });
 
   // Machine-consumed runtime truth: the REAL Leaflet instance options, so QA
@@ -242,40 +257,62 @@ export function MapCanvas({
   // Container-level Escape: closes whichever popup is open, regardless of
   // which marker owns it or whether focus sits on the marker, inside the
   // popup, or elsewhere on the map. Attached to the frame element so it
-  // cannot race Leaflet's lazy popup materialization.
+  // cannot race Leaflet's lazy popup materialization. The popupopen event
+  // captures the popup instance (with its `_source` marker link) so Escape
+  // can restore focus to the owner marker — but only when focus was inside
+  // the popup, so other contexts keep their natural focus behavior.
   const frameRef = useRef<HTMLElement | null>(null);
+  const activePopupSourceRef = useRef<{
+    getElement?: () => HTMLElement | null;
+  } | null>(null);
+
   useEffect(() => {
     const frame = frameRef.current;
     if (!frame) {
       return;
     }
+    // Leaflet fires popupopen on the map instance; the DOM container
+    // re-dispatches it as a bubbling DOM event we can capture here.
+    const handlePopupOpen = (event: Event) => {
+      const detail = (event as CustomEvent<{ popup?: { _source?: unknown } }>)
+        .detail;
+      const source = detail?.popup?._source as
+        | { getElement?: () => HTMLElement | null }
+        | undefined;
+      activePopupSourceRef.current = source ?? null;
+    };
+    const handlePopupClose = () => {
+      activePopupSourceRef.current = null;
+    };
+    frame.addEventListener("popupopen", handlePopupOpen);
+    frame.addEventListener("popupclose", handlePopupClose);
+
     const handleFrameKeydown = (event: Event) => {
       if ((event as KeyboardEvent).key !== "Escape") {
         return;
       }
-      const popup = frame.querySelector(".leaflet-popup");
-      if (!popup) {
+      const popupEl = frame.querySelector(".leaflet-popup");
+      if (!popupEl) {
         return;
       }
-      // Leaflet's popup object keeps `_source` pointing at the owner
-      // marker. Resolve it before closing, then restore focus to the
-      // marker's hit-target element so keyboard users keep their place.
-      const popupObject = (
-        popup as HTMLElement & {
-          __leafletInstance?: { _source?: { getElement?: () => HTMLElement | null } };
-        }
-      ).__leafletInstance;
-      const markerElement = popupObject?._source?.getElement?.() ?? null;
-      const closeButton = popup.querySelector<HTMLAnchorElement>(
+      // Refocus only when focus is currently inside the popup content —
+      // marker-focus and container-focus Escape keep their natural target.
+      const active = document.activeElement;
+      const focusWasInPopup = popupEl.contains(active);
+      const ownerMarkerElement =
+        activePopupSourceRef.current?.getElement?.() ?? null;
+      const closeButton = popupEl.querySelector<HTMLAnchorElement>(
         ".leaflet-popup-close-button",
       );
       closeButton?.click();
-      if (markerElement) {
-        requestAnimationFrame(() => markerElement.focus());
+      if (focusWasInPopup && ownerMarkerElement) {
+        requestAnimationFrame(() => ownerMarkerElement.focus());
       }
     };
     frame.addEventListener("keydown", handleFrameKeydown);
     return () => {
+      frame.removeEventListener("popupopen", handlePopupOpen);
+      frame.removeEventListener("popupclose", handlePopupClose);
       frame.removeEventListener("keydown", handleFrameKeydown);
     };
   }, []);
