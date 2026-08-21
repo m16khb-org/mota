@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-08-17T15:12:50Z
-**Commit:** cb2dfa4
+**Generated:** 2026-08-21T19:00:00Z
+**Commit:** aec1657
 **Branch:** main
 
 ## OVERVIEW
@@ -16,15 +16,25 @@ manifest and service worker make the production build installable with an offlin
 ```text
 mota/
 ├── server/                 # Bun/Hono API adapter and production static server
+│   ├── app.ts              # Hono routes: parse → upstream adapter → error mapping
+│   ├── upstream/           # Driven adapters: Seoul BIS, Overpass mirror race, subway proxy
+│   ├── index.ts            # Production bind + static serving of dist/
+│   └── config.ts           # Host/port configuration
 ├── public/                 # PWA manifest, install icon, registration, offline worker
 ├── src/
-│   ├── api/                # Browser API response validation
+│   ├── api/                # Browser transport boundary; owns the injected LiveArrivalsPort
 │   ├── components/         # UI, Leaflet map, picker, arrival presentation
-│   ├── domain/             # Shared browser/server schemas and normalization
-│   ├── hooks/              # Versioned multi-place localStorage persistence
-│   ├── App.tsx             # Browser orchestration root
+│   ├── domain/             # Shared browser/server kernel: Zod schemas, estimators, query derivation
+│   ├── hooks/              # Application layer: use-case orchestration, persistence, transitions
+│   │   ├── commuteIdentity.ts       # Id + identity-key factories
+│   │   ├── commuteProjections.ts    # Read queries over the aggregate
+│   │   ├── commuteTransitions.ts    # Aggregate state transitions and invariants
+│   │   ├── commutePointCleanup.ts   # Stop/station deletion cascades
+│   │   └── commuteStopsStorage.ts   # Versioned localStorage repository (v1→v4)
+│   ├── App.tsx             # Composition root: wires ports into hooks
 │   ├── main.tsx            # React/Vite entry point
 │   └── styles.css          # Global design system and responsive layout
+├── ARCHITECTURE.md         # DDD/hexagonal/clean/OOP/SOLID contract for code structure
 ├── DESIGN.md               # Product, visual, interaction, and accessibility contracts
 └── package.json            # pnpm scripts; Bun runtime
 ```
@@ -35,58 +45,67 @@ mota/
 |------|----------|-------|
 | Change bus stop/arrival contracts | `src/domain/bus.ts` | Shared by browser and server |
 | Change subway station contracts | `src/domain/subway.ts` | OSM station normalization |
-| Change upstream request handling | `server/app.ts` | Hono routes, route timeouts (8s; subway mirrors race with 1.5s stagger in a 16s budget), 400/502 mapping |
+| Change upstream adapters (BIS/Overpass/proxy) | `server/upstream/` | Driven adapters: fetch + normalize; routes stay thin |
+| Change HTTP routes/error shapes | `server/app.ts` | Parse → adapter → 400/502 mapping only |
 | Change production bind/static serving | `server/index.ts`, `server/config.ts` | Serves prebuilt `dist/` |
-| Change browser API calls | `src/api/client.ts` | Re-validates server JSON with Zod |
-| Change app state/refresh flow | `src/App.tsx` | Direction, active place/stop, arrivals |
-| Change saved places/stops | `src/hooks/useCommuteStops.ts`, `src/hooks/commuteStopsStorage.ts` | v2 storage; migrates v1 |
+| Change browser API calls | `src/api/client.ts` | Re-validates server JSON with Zod; owns `liveArrivalsPort` |
+| Change live query derivation/freshness | `src/domain/liveCommuteQueries.ts` | Port type + pure derive/snapshot logic; no client import |
+| Change app state/refresh flow | `src/App.tsx`, `src/hooks/useLiveCommuteSnapshots.ts` | Composition root wires the port into the controller |
+| Change saved places/stops | `src/hooks/useCommuteStops.ts`, `commuteTransitions.ts`, `commutePointCleanup.ts`, `commuteStopsStorage.ts` | v4 storage; transitions own aggregate invariants; cleanup owns deletion cascades |
+| Change procedure/favorite identity rules | `src/hooks/commuteIdentity.ts` | Id factories + exact identity keys |
+| Change read queries over the aggregate | `src/hooks/commuteProjections.ts` | Active place/stop/projection lookups |
 | Change place/route controls | `src/components/CommutePlaceManager.tsx`, `src/components/RoutePointList.tsx` | Bus and subway points |
-| Change map behavior/accessibility | `src/components/MapCanvas.tsx` | Used by main view and picker |
-| Change bus marker picker | `src/components/MapPicker.tsx` | Explicit multi-select search |
-| Change subway marker picker | `src/components/SubwayPicker.tsx` | Overpass multi-select search |
-| Change explicit route options | `src/domain/commute.ts`, `src/hooks/useCommuteRouteOptions.ts` | v3 stop/station references |
-| Change route wait ranking | `src/domain/routeComparison.ts`, `src/components/RouteComparison.tsx` | Live boarding wait only |
-| Change install/offline behavior | `public/manifest.webmanifest`, `public/register-sw.js`, `public/sw.js` | Browser-native address-bar install, shell-only cache |
-| Change global appearance | `DESIGN.md`, then `src/styles.css` | CSS is global, not component-scoped |
-| Change tests | Colocated `*.test.ts(x)` | jsdom declared per React test file |
+| Change the ETA estimator | `src/domain/commuteEstimate.ts` | Pure; injected `now`; live-only leave guidance |
+| Change architecture/layering rules | `ARCHITECTURE.md` | Read before moving modules across layers |
 
 ## CODE MAP
 
-| Symbol | Type | Location | Refs | Role |
-|--------|------|----------|-----:|------|
-| `BusStop` | interface | `src/domain/bus.ts` | 38 | Shared stop identity and coordinates |
-| `App` | function | `src/App.tsx` | 9 | Frontend composition and arrival lifecycle |
-| `createApp` | function | `server/app.ts` | 7 | API router and upstream adapter |
-| `fetchArrivals` | function | `src/api/client.ts` | 7 | Browser arrival transport boundary |
-| `CommutePlaceManager` | function | `src/components/CommutePlaceManager.tsx` | 3 | Named places and multi-stop controls |
-| `MapPicker` | function | `src/components/MapPicker.tsx` | 7 | Bus marker multi-selection and modal focus |
-| `SubwayPicker` | function | `src/components/SubwayPicker.tsx` | 3 | Nearby subway multi-select |
-| `MapCanvas` | function | `src/components/MapCanvas.tsx` | 5 | Leaflet rendering and marker keyboard adapter |
-| `normalizeNearbyStops` | function | `src/domain/bus.ts` | 5 | Official stop payload normalization |
-| `normalizeArrivals` | function | `src/domain/bus.ts` | 5 | BIS payload normalization and ETA sorting |
-| `useCommuteStops` | hook | `src/hooks/useCommuteStops.ts` | 5 | Multi-place state mutations and persistence |
-| `fetchNearbyStops` | function | `src/api/client.ts` | 3 | Explicit map-center stop lookup |
+| Symbol | Type | Location | Role |
+|--------|------|----------|------|
+| `BusStop` | interface | `src/domain/bus.ts` | Shared stop identity and coordinates |
+| `estimateCommuteProcedure` | function | `src/domain/commuteEstimate.ts` | Pure ETA/leave-by estimator |
+| `deriveLiveQueries` | function | `src/domain/liveCommuteQueries.ts` | Deduped active-query derivation |
+| `LiveArrivalsPort` | type | `src/domain/liveCommuteQueries.ts` | Domain-named transport port |
+| `liveArrivalsPort` | object | `src/api/client.ts` | Concrete port implementation (injected) |
+| `App` | function | `src/App.tsx` | Composition root wiring ports into hooks |
+| `createApp` | function | `server/app.ts` | Thin Hono routing; upstream injected |
+| `fetchArrivals` | function | `src/api/client.ts` | Browser arrival transport boundary |
+| `commuteTransitions` | module | `src/hooks/commuteTransitions.ts` | Aggregate state transitions and invariants |
+| `commuteProjections` | module | `src/hooks/commuteProjections.ts` | Read queries over the aggregate |
+| `commuteIdentity` | module | `src/hooks/commuteIdentity.ts` | Id factories + exact identity keys |
+| `useLiveCommuteSnapshots` | hook | `src/hooks/useLiveCommuteSnapshots.ts` | Foreground-only refresh controller |
+| `useCommuteStops` | hook | `src/hooks/useCommuteStops.ts` | Aggregate state, persistence, place mutations |
+| `MapCanvas` | function | `src/components/MapCanvas.tsx` | Leaflet rendering and marker keyboard adapter |
 
 ## CONVENTIONS
 
 - One strict `tsconfig.json` covers browser, server, tests, and tool configs.
-- Browser and server share `src/domain/bus.ts`; `src/` is not frontend-only.
-- Parse untrusted values with Zod at every boundary: upstream, route input, browser JSON,
-  and localStorage.
-- Persist named place collections under `commute-bus-web:stops:v2`; preserve v1 migration.
-- Preserve branded `StopId`, `ArsId`, and `RouteId`; ARS IDs are five-digit strings.
+- `ARCHITECTURE.md` is the binding layering contract: domain inward-only,
+  adapters implement domain-named ports, composition roots inject them.
+- `src/domain/**` imports only Zod and sibling domain modules — never React,
+  `src/api`, `src/hooks`, `src/components`, or `server/**`.
+- Browser and server share `src/domain/`; `src/` is not frontend-only.
+- Parse untrusted values with Zod at every boundary: upstream, route input,
+  browser JSON, and localStorage.
+- Persist under `commute-bus-web:stops:v4`; the storage module owns v1→v4
+  migration and is the only module touching that key family.
+- Preserve branded `StopId`, `ArsId`, `RouteId`, `CommuteProcedureId`; ARS IDs
+  are five-digit strings; persisted identity is never coerced.
+- Model domain variation with discriminated unions + exhaustive `switch`;
+  no abstract base classes, inheritance hierarchies, or `instanceof` chains
+  in `src/domain`. Classes are for framework boundaries and error taxonomy.
+- Aggregate invariants live in `commuteTransitions.ts` as pure functions;
+  hooks validate with Zod then delegate to a transition.
 - Relative imports only; no path aliases, barrels, or separate package boundaries.
-- Tests live beside implementations. Server tests call Hono in memory with injected upstream
-  fetch; React tests opt into jsdom with a file directive.
+- Tests live beside implementations. Server tests call Hono in memory with an
+  injected upstream fetch; React tests opt into jsdom with a file directive.
 - Async UI tests await rendered state (`findBy*`/`waitFor`); no sleeps or live transit calls.
-- Both browser and server network paths use `AbortSignal.timeout(8_000)`, except
-  nearby-subway search: static OSM station data tolerates a longer wait, so the
-  server races the four global Overpass mirrors (1.5s stagger, first response
-  wins) within a 16s budget and the browser allows 20s.
-- Subway route points come from OpenStreetMap Overpass; selecting a saved station
-  fetches live Seoul subway arrivals via the arrival proxy upstream.
-- `commute-bus-web:stops:v3` stores explicit start-stop/optional-transfer route options.
-- Route comparison ranks only fresh first-bus boarding waits; it is not a total travel-time estimate.
+- Both browser and server network paths use `AbortSignal.timeout(8_000)`,
+  except nearby-subway search: the server races the four Overpass mirrors
+  (1.5s stagger, 16s budget, 24h cache, 60s mirror cooldown) in
+  `server/upstream/overpassStations.ts` and the browser allows 20s.
+- A latest successful snapshot is live for at most 90 seconds; leave guidance
+  requires a live first transit leg; persistence never stores snapshots/ETAs.
 - The service worker precaches only the same-origin app shell; `/api/*` and map tiles stay live.
 - Leave `beforeinstallprompt` to the browser; installation is exposed only through
   the address bar or browser menu, never an in-app install button.
@@ -96,6 +115,14 @@ mota/
 
 ## ANTI-PATTERNS (THIS PROJECT)
 
+- Do not import outward from `src/domain` (React, api, hooks, components, server);
+  define a port type in domain and implement it in an adapter instead.
+- Do not parse upstream payloads or add fetch/IO inside Hono routes; routes stay
+  thin and delegate to `server/upstream/*` adapters.
+- Do not add abstract base classes, inheritance hierarchies, `instanceof` chains,
+  or constructor-enforced invariants to `src/domain`; use discriminated unions,
+  exhaustive switches, and pure transition functions.
+- Do not bypass `commuteTransitions.ts` when mutating the aggregate from a hook.
 - Do not fetch nearby stops continuously while the map moves; search only from
   `이 위치에서 찾기`.
 - Do not fetch subway stations continuously or imply that route points include live arrivals.
@@ -106,7 +133,8 @@ mota/
 - Do not let color carry state alone or remove keyboard/list alternatives for map actions.
 - Do not announce every map movement to assistive technology.
 - Do not cache `/api/*` responses or imply that offline mode includes current transit data.
-- Do not label boarding-wait rank as the fastest commute or infer walking/transfer duration.
+- Do not label the ETA as a fully live journey; it is live boarding waits plus
+  saved travel estimates, and leave guidance needs a live first leg.
 - Do not add gradients, glass effects, nested cards, excessive rounding, decorative illustration,
   or large empty hero space.
 
