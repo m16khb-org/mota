@@ -85,8 +85,22 @@ function AccessibleMarker({
       marker.openPopup();
     };
     element.addEventListener("keydown", handleKeydown);
+
+    // Escape inside the popup content (focus moved past the marker) must
+    // also close: Leaflet's document-level handler is inert here, so the
+    // popup's own DOM listens for it.
+    const popupElement = marker.getPopup()?.getElement();
+    const handlePopupKeydown = (event: Event) => {
+      if ((event as KeyboardEvent).key === "Escape") {
+        marker.closePopup();
+        (marker.getElement() as HTMLElement | null)?.focus();
+      }
+    };
+    popupElement?.addEventListener("keydown", handlePopupKeydown);
+
     return () => {
       element.removeEventListener("keydown", handleKeydown);
+      popupElement?.removeEventListener("keydown", handlePopupKeydown);
     };
   }, [marker, label, active]);
 
