@@ -915,6 +915,7 @@ select:focus-visible {
   margin: 28px 0 8px;
   color: var(--signal);
   font-weight: 700;
+  line-height: 1.5;
 }
 
 .stage-copy h2 {
@@ -1519,6 +1520,7 @@ select:focus-visible {
   margin: 12px 0 16px;
   color: var(--muted);
   font-size: 0.75rem;
+  line-height: 1.5;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1733,7 +1735,7 @@ select:focus-visible {
   font-weight: 760;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
-  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .favorite-secondary-eta {
@@ -1741,7 +1743,7 @@ select:focus-visible {
   color: var(--muted);
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
-  word-break: keep-all;
+  white-space: nowrap;
 }
 
 .favorite-guidance {
