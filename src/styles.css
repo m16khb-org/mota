@@ -2082,3 +2082,11 @@ select:focus-visible {
     justify-content: end;
   }
 }
+
+/* Leaflet popup close button: match the app's focus-visible ring pattern
+ * (3px route-blue outline) instead of the stock gray-only shift. */
+.leaflet-popup-close-button:focus-visible {
+  outline: 3px solid var(--route-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}

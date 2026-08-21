@@ -85,22 +85,8 @@ function AccessibleMarker({
       marker.openPopup();
     };
     element.addEventListener("keydown", handleKeydown);
-
-    // Escape inside the popup content (focus moved past the marker) must
-    // also close: Leaflet's document-level handler is inert here, so the
-    // popup's own DOM listens for it.
-    const popupElement = marker.getPopup()?.getElement();
-    const handlePopupKeydown = (event: Event) => {
-      if ((event as KeyboardEvent).key === "Escape") {
-        marker.closePopup();
-        (marker.getElement() as HTMLElement | null)?.focus();
-      }
-    };
-    popupElement?.addEventListener("keydown", handlePopupKeydown);
-
     return () => {
       element.removeEventListener("keydown", handleKeydown);
-      popupElement?.removeEventListener("keydown", handlePopupKeydown);
     };
   }, [marker, label, active]);
 
@@ -252,8 +238,44 @@ export function MapCanvas({
   const savedStopIds = new Set(stops.map((stop) => stop.id));
   const savedStationIds = new Set(subwayStations.map((station) => station.id));
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
+  // Container-level Escape: closes whichever popup is open, regardless of
+  // which marker owns it or whether focus sits on the marker, inside the
+  // popup, or elsewhere on the map. Attached to the frame element so it
+  // cannot race Leaflet's lazy popup materialization.
+  const frameRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) {
+      return;
+    }
+    const handleFrameKeydown = (event: Event) => {
+      if ((event as KeyboardEvent).key !== "Escape") {
+        return;
+      }
+      const popup = frame.querySelector(".leaflet-popup");
+      if (!popup) {
+        return;
+      }
+      // Find the marker that owns this popup and close+refocus it.
+      const closeButton = popup.querySelector<HTMLAnchorElement>(
+        ".leaflet-popup-close-button",
+      );
+      closeButton?.click();
+    };
+    frame.addEventListener("keydown", handleFrameKeydown);
+    return () => {
+      frame.removeEventListener("keydown", handleFrameKeydown);
+    };
+  }, []);
   return (
-    <section className="picker-map-frame" aria-label="서울 버스 정류장 지도">
+    <section
+      className="picker-map-frame"
+      aria-label="서울 버스 정류장 지도"
+      ref={frameRef}
+      onKeyDown={undefined}
+      tabIndex={-1}
+    >
       <MapContainer
         center={center}
         zoom={15}
