@@ -25,4 +25,7 @@ export default {
   hostname: resolveHostname(Bun.env.HOST),
   port,
   fetch: app.fetch,
+  /** Bun's default is 10s; the Overpass mirror race can take up to 30s,
+   * so connections must survive the full upstream budget. */
+  idleTimeout: 60,
 };
