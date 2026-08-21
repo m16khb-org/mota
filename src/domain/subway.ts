@@ -105,6 +105,42 @@ const SUBWAY_LINE_NAMES: Readonly<Record<string, string>> = {
   "1077": "신분당선",
 };
 
+/** OSM `ref` codes (numeric) and `line` tags ("수도권 전철") need
+ * translation to Korean line names for display. */
+const OSM_LINE_NAMES: Readonly<Record<string, string>> = {
+  "1": "1호선",
+  "2": "2호선",
+  "3": "3호선",
+  "4": "4호선",
+  "5": "5호선",
+  "6": "6호선",
+  "7": "7호선",
+  "8": "8호선",
+  "9": "9호선",
+  경의중앙: "경의중앙선",
+  경춘: "경춘선",
+  수인분당: "수인분당선",
+  신분당: "신분당선",
+  공항철도: "공항철도",
+  서해: "서해선",
+  김포: "김포골드라인",
+  우이신설: "우이신설경전철",
+  에버라인: "에버라인",
+};
+
+function osmLineName(tags: Readonly<Record<string, string>>): string {
+  const raw = tags.ref ?? tags.line ?? "";
+  const ref = raw.split(";")[0]?.trim() ?? "";
+  if (OSM_LINE_NAMES[ref]) {
+    return OSM_LINE_NAMES[ref];
+  }
+  if (tags.line && tags.line !== "수도권 전철") {
+    const first = tags.line.split(";")[0]?.trim();
+    if (first) return first;
+  }
+  return "지하철";
+}
+
 const upstreamSubwayArrivalSchema = z.object({
   errorMessage: z
     .object({
@@ -213,11 +249,7 @@ export function normalizeNearbySubwayStations(
     const station: SubwayStation = {
       id: SubwayStationIdSchema.parse(`osm-${element.type}-${element.id}`),
       name,
-      line:
-        element.tags.ref ??
-        element.tags.line ??
-        element.tags.network ??
-        "지하철",
+      line: osmLineName(element.tags),
       lat,
       lng,
       distanceMeters: Math.round(distanceMeters(center, { lat, lng })),

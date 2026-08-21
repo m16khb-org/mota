@@ -1140,6 +1140,12 @@ select:focus-visible {
   fill: var(--surface);
 }
 
+.map-marker-pending-subway {
+  stroke: var(--subway);
+  stroke-dasharray: 5 3;
+  fill: var(--surface);
+}
+
 .map-marker-bus.is-active,
 .map-marker-subway.is-active {
   stroke: var(--ink);

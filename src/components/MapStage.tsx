@@ -226,9 +226,9 @@ export function MapStage({
         </span>
         <p>{direction === "company" ? "집에서 회사까지" : "회사에서 집까지"}</p>
         <h2>
-          {"정확한 정류장, "}
+          {"정확한 정류장과 "}
           <br />
-          놓치지 않는 버스.
+          놓치지 않는 버스
         </h2>
         <button
           className="stage-action"

@@ -197,7 +197,12 @@ export function CommutePlaceManager({
             <button
               className="icon-button danger"
               type="button"
-              onClick={() => onRemovePlace(activePlace.id)}
+              onClick={() => {
+                const message = `${activePlace.name}과 저장된 정류장·지하철역·절차·즐겨찾기를 모두 삭제할까요? 되돌릴 수 없습니다.`;
+                if (window.confirm(message)) {
+                  onRemovePlace(activePlace.id);
+                }
+              }}
               aria-label={`${activePlace.name} 삭제`}
             >
               <Trash2 aria-hidden="true" />

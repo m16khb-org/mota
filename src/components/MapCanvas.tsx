@@ -289,7 +289,7 @@ export function MapCanvas({
               active={false}
               onSelect={() => onAddPendingSubway?.(station)}
               center={{ lat: station.lat, lng: station.lng }}
-              visualClassName="map-marker-pending"
+              visualClassName="map-marker-pending-subway"
             >
               <Popup>
                 <strong>{station.name}</strong>

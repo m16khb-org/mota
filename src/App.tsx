@@ -105,7 +105,16 @@ export function App() {
     saveSubwayStations([station]);
   };
 
-  const saveNearbyStop = (stop: BusStop) => {
+  /** Korean particle: 을/를 based on the final jamo of the preceding noun. */
+function koreanObjectParticle(name: string): string {
+  const last = name.charCodeAt(name.length - 1);
+  if (last >= 0xac00 && last <= 0xd7a3) {
+    return (last - 0xac00) % 28 === 0 ? "를" : "을";
+  }
+  return "을";
+}
+
+const saveNearbyStop = (stop: BusStop) => {
     if (!activePlace || activePlace.stops.some((saved) => saved.id === stop.id)) {
       return;
     }
@@ -235,7 +244,7 @@ export function App() {
             }}
             onRemovePlace={(placeId) => {
               removePlace(direction, placeId);
-              setSaveAnnouncement(`${activePlace?.name ?? "선택한 장소"}를 삭제했습니다.`);
+              setSaveAnnouncement(`${activePlace?.name ?? "선택한 장소"}${koreanObjectParticle(activePlace?.name ?? "장소")} 삭제했습니다.`);
             }}
             onSelectPlace={(placeId) => {
               selectPlace(direction, placeId);
