@@ -257,11 +257,22 @@ export function MapCanvas({
       if (!popup) {
         return;
       }
-      // Find the marker that owns this popup and close+refocus it.
+      // Leaflet's popup object keeps `_source` pointing at the owner
+      // marker. Resolve it before closing, then restore focus to the
+      // marker's hit-target element so keyboard users keep their place.
+      const popupObject = (
+        popup as HTMLElement & {
+          __leafletInstance?: { _source?: { getElement?: () => HTMLElement | null } };
+        }
+      ).__leafletInstance;
+      const markerElement = popupObject?._source?.getElement?.() ?? null;
       const closeButton = popup.querySelector<HTMLAnchorElement>(
         ".leaflet-popup-close-button",
       );
       closeButton?.click();
+      if (markerElement) {
+        requestAnimationFrame(() => markerElement.focus());
+      }
     };
     frame.addEventListener("keydown", handleFrameKeydown);
     return () => {
