@@ -6,15 +6,18 @@ import { UPSTREAM_HEADERS } from "./seoulBus";
 import { UpstreamError } from "./upstreamError";
 
 const OVERPASS_ENDPOINTS = [
-  // Reliability-ranked: mail.ru measures 100% success (9-13s response)
-  // from this deployment's network; the others frequently time out or 502.
+  // Reliability-ranked from this deployment's network (2026-08-21):
+  // mail.ru measures 100% eventual success at 9-14s (occasionally exceeding
+  // a 15s per-request timeout); the other three public mirrors consistently
+  // fail from this network (connect errors or 502 with empty bodies).
   "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
   "https://overpass.private.coffee/api/interpreter",
 ] as const;
-const SUBWAY_TOTAL_BUDGET_MS = 30_000;
+const SUBWAY_TOTAL_BUDGET_MS = 45_000;
 const SUBWAY_MIRROR_STAGGER_MS = 1_500;
+const SUBWAY_PER_REQUEST_TIMEOUT_MS = 25_000;
 const SUBWAY_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
 const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;
 
@@ -64,7 +67,7 @@ export function createOverpassStations(
       }
 
       const overpassQuery = [
-        "[out:json][timeout:12];",
+        "[out:json][timeout:20];",
         `nwr["railway"="station"]["station"="subway"](around:${radius},${lat},${lng});`,
         "out center tags;",
       ].join("");
@@ -98,10 +101,16 @@ export function createOverpassStations(
             `Subway mirror budget exhausted before ${endpoint}`,
           );
         }
+        // Per-request timeout so one slow mirror cannot consume the entire
+        // budget: the remaining mirrors still get their chance to answer.
+        const requestTimeout = Math.min(
+          remainingBudget,
+          SUBWAY_PER_REQUEST_TIMEOUT_MS,
+        );
         const controller = new AbortController();
         const abortTimer = setTimeout(
           () => controller.abort(),
-          remainingBudget,
+          requestTimeout,
         );
         running.add(controller);
         try {
