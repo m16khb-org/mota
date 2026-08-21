@@ -121,7 +121,7 @@ describe("bus API adapter", () => {
         {
           id: "osm-node-5801572034",
           name: "천호",
-          line: "지하철",
+          line: "8호선",
           lat: 37.5385225,
           lng: 127.1234021,
         },

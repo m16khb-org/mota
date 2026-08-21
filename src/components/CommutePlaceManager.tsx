@@ -2,6 +2,7 @@ import { Plus, Route, Trash2 } from "lucide-react";
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
 import type { CommuteProcedureId } from "../domain/commute";
+import { koreanWithParticle } from "../domain/koreanParticles";
 import type { SubwayStation } from "../domain/subway";
 import type {
   CommutePlace,
@@ -198,7 +199,7 @@ export function CommutePlaceManager({
               className="icon-button danger"
               type="button"
               onClick={() => {
-                const message = `${activePlace.name}과 저장된 정류장·지하철역·절차·즐겨찾기를 모두 삭제할까요? 되돌릴 수 없습니다.`;
+                const message = `${activePlace.name}${koreanWithParticle(activePlace.name)} 저장된 정류장·지하철역·절차·즐겨찾기를 모두 삭제할까요? 되돌릴 수 없습니다.`;
                 if (window.confirm(message)) {
                   onRemovePlace(activePlace.id);
                 }

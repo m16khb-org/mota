@@ -416,7 +416,7 @@ describe("App company commute", () => {
     fireEvent.click(screen.getByRole("button", { name: "테스트 지하철역 저장" }));
 
     fireEvent.click(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     );
 
     expect(await screen.findByText("천호 도착 예정")).toBeInTheDocument();
@@ -426,7 +426,7 @@ describe("App company commute", () => {
     expect(screen.getByText("곧 도착")).toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     );
     expect(screen.queryByText("천호 도착 예정")).toBeNull();
   });
@@ -701,7 +701,7 @@ async function pinBothFavorites(): Promise<void> {
   );
   await act(async () => {});
   fireEvent.click(
-    screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+    screen.getByRole("button", { name: "천호 지하철역 8호선" }),
   );
   await act(async () => {});
   const subwayPinButtons = screen.getAllByRole("button", {
@@ -713,7 +713,7 @@ async function pinBothFavorites(): Promise<void> {
   fireEvent.click(subwayPinButtons[0]);
   await act(async () => {});
   fireEvent.click(
-    screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+    screen.getByRole("button", { name: "천호 지하철역 8호선" }),
   );
   await act(async () => {});
 }
@@ -1065,7 +1065,7 @@ describe("App repair epoch 1: map/detail integration", () => {
       screen.getByRole("button", { name: "천호 지하철역 마커" }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     ).toHaveAttribute("aria-pressed", "true");
 
     fireEvent.click(screen.getByRole("button", { name: "천호 지하철역 마커" }));
@@ -1096,7 +1096,7 @@ describe("App repair epoch 1: map/detail integration", () => {
     ).toHaveAttribute("aria-pressed", "true");
 
     fireEvent.click(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     );
     await act(async () => {});
     expect(
@@ -1136,7 +1136,7 @@ describe("App repair epoch 1: map/detail integration", () => {
     await act(async () => {});
 
     fireEvent.click(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     );
     await act(async () => {});
 
@@ -1168,7 +1168,7 @@ describe("App repair epoch 1: map/detail integration", () => {
       ),
     ).toHaveLength(1);
     fireEvent.click(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     );
     await act(async () => {});
     expect(
@@ -1275,12 +1275,12 @@ describe("App selected subway rail row", () => {
     await act(async () => {});
 
     fireEvent.click(
-      screen.getByRole("button", { name: "천호 지하철역 수도권 전철" }),
+      screen.getByRole("button", { name: "천호 지하철역 8호선" }),
     );
     await act(async () => {});
 
     const railButton = screen.getByRole("button", {
-      name: "천호 지하철역 수도권 전철",
+      name: "천호 지하철역 8호선",
     });
     const row = railButton.closest(".saved-stop-row");
     expect(row).not.toBeNull();

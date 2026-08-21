@@ -1,6 +1,6 @@
 import { MapPinned, TrainFront, Trash2 } from "lucide-react";
 import type { BusStop } from "../domain/bus";
-import type { SubwayStation } from "../domain/subway";
+import { stationDisplayLine, type SubwayStation } from "../domain/subway";
 import type { CommutePlace } from "../hooks/useCommuteStops";
 
 interface RoutePointListProps {
@@ -74,13 +74,13 @@ export function RoutePointList({
                   className={`saved-stop-choice${selected ? " is-active" : ""}`}
                   type="button"
                   aria-pressed={selected}
-                  aria-label={`${station.name} 지하철역 ${station.line}`}
+                  aria-label={`${station.name} 지하철역 ${stationDisplayLine(station)}`}
                   onClick={() => onSelectSubway(station)}
                 >
                   <TrainFront aria-hidden="true" />
                   <span>
                     <strong>{station.name}</strong>
-                    <small>지하철 · {station.line}</small>
+                    <small>지하철 · {stationDisplayLine(station)}</small>
                   </span>
                 </button>
                 <button

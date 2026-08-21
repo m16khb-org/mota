@@ -9,7 +9,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";import {
   type CircleMarkerProps,
 } from "react-leaflet";
 import type { BusStop } from "../domain/bus";
-import type { SubwayStation } from "../domain/subway";
+import { stationDisplayLine, type SubwayStation } from "../domain/subway";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
 interface Point {
@@ -285,7 +285,7 @@ export function MapCanvas({
           .map((station) => (
             <MapPointMarker
               key={`pending-subway-${station.id}`}
-              label={`${station.name} 지하철역, ${station.line}, 눌러서 추가`}
+              label={`${station.name} 지하철역, ${stationDisplayLine(station)}, 눌러서 추가`}
               active={false}
               onSelect={() => onAddPendingSubway?.(station)}
               center={{ lat: station.lat, lng: station.lng }}
@@ -294,7 +294,7 @@ export function MapCanvas({
               <Popup>
                 <strong>{station.name}</strong>
                 <br />
-                {station.line} · 눌러서 경로에 추가
+                {stationDisplayLine(station)} · 눌러서 경로에 추가
               </Popup>
             </MapPointMarker>
           ))}
@@ -303,7 +303,7 @@ export function MapCanvas({
           return (
             <MapPointMarker
               key={`subway-${station.id}`}
-              label={`${station.name} 지하철역, ${station.line}, 중심에서 ${Math.round(
+              label={`${station.name} 지하철역, ${stationDisplayLine(station)}, 중심에서 ${Math.round(
                 station.distanceMeters,
               )}미터`}
               active={active}
@@ -316,7 +316,7 @@ export function MapCanvas({
               <Popup>
                 <strong>{station.name}</strong>
                 <br />
-                {station.line}
+                {stationDisplayLine(station)}
               </Popup>
             </MapPointMarker>
           );

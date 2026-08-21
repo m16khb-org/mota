@@ -17,6 +17,10 @@ import type {
   CommuteProcedureId,
 } from "./domain/commute";
 import type { SubwayStation } from "./domain/subway";
+import {
+  koreanDirectionParticle,
+  koreanObjectParticle,
+} from "./domain/koreanParticles";
 import type {
   CommuteFavoriteInput,
   CommuteProcedureInput,
@@ -105,15 +109,7 @@ export function App() {
     saveSubwayStations([station]);
   };
 
-  /** Korean particle: 을/를 based on the final jamo of the preceding noun. */
-function koreanObjectParticle(name: string): string {
-  const last = name.charCodeAt(name.length - 1);
-  if (last >= 0xac00 && last <= 0xd7a3) {
-    return (last - 0xac00) % 28 === 0 ? "를" : "을";
-  }
-  return "을";
-}
-
+  
 const saveNearbyStop = (stop: BusStop) => {
     if (!activePlace || activePlace.stops.some((saved) => saved.id === stop.id)) {
       return;
@@ -240,7 +236,7 @@ const saveNearbyStop = (stop: BusStop) => {
             }}
             onRenamePlace={(placeId, name) => {
               renamePlace(direction, placeId, name);
-              setSaveAnnouncement(`${name}으로 장소 이름을 변경했습니다.`);
+              setSaveAnnouncement(`${name}${koreanDirectionParticle(name)} 장소 이름을 변경했습니다.`);
             }}
             onRemovePlace={(placeId) => {
               removePlace(direction, placeId);
