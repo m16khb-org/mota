@@ -17,7 +17,8 @@ const OVERPASS_ENDPOINTS = [
 ] as const;
 const SUBWAY_TOTAL_BUDGET_MS = 45_000;
 const SUBWAY_MIRROR_STAGGER_MS = 1_500;
-const SUBWAY_PER_REQUEST_TIMEOUT_MS = 25_000;
+const SUBWAY_PER_REQUEST_TIMEOUT_MS = 20_000;
+const SUBWAY_RETRY_DELAY_MS = 2_000;
 const SUBWAY_CACHE_TTL_MS = 24 * 60 * 60 * 1_000;
 const SUBWAY_MIRROR_COOLDOWN_MS = 60 * 1_000;
 
@@ -55,8 +56,24 @@ export function createOverpassStations(
 
   return {
     /** Fresh stations, a cached copy, or a stale-cache fallback. Throws
-     * `UpstreamError` only when nothing is available. */
+     * `UpstreamError` only when nothing is available. The reliable mirror
+     * (mail.ru) occasionally exceeds 20s on a single attempt, so the race
+     * is retried once after a short delay when the network allows. */
     async fetchNearbyStations(
+      location: { readonly lat: number; readonly lng: number; readonly radius: number },
+    ): Promise<SubwayStation[]> {
+      try {
+        return await this.raceMirrors(location);
+      } catch (error) {
+        if (now() + SUBWAY_RETRY_DELAY_MS + SUBWAY_PER_REQUEST_TIMEOUT_MS > now() + SUBWAY_TOTAL_BUDGET_MS) {
+          throw error;
+        }
+        await sleep(SUBWAY_RETRY_DELAY_MS);
+        return await this.raceMirrors(location);
+      }
+    },
+
+    async raceMirrors(
       location: { readonly lat: number; readonly lng: number; readonly radius: number },
     ): Promise<SubwayStation[]> {
       const { lat, lng, radius } = location;
