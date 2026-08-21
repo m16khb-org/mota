@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/icon.png" width="120" alt="모타 프로젝트 아이콘" />
+</p>
+
 # 모타
 
 Hermes의 `/bus_company`, `/bus_home` 기능을 지도 기반 웹앱으로 분리한 프로젝트입니다.
