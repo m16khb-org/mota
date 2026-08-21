@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
+import type { SubwayStation } from "../domain/subway";
 import {
   loadCommutes,
   saveCommutes,
   type CommutePlace,
   type CommuteStops,
 } from "./commuteStopsStorage";
-import { createPlaceId } from "./commuteStopsSelectors";
-import { useCommuteRouteOptions } from "./useCommuteRouteOptions";
+import { createPlaceId, removeStopFromCommutes, removeSubwayStationFromCommutes } from "./commuteStopsSelectors";
+import { useCommuteProcedures } from "./useCommuteProcedures";
 
 export {
   getActivePlace,
-  getActiveRouteOption,
+  getActiveProcedure,
   getActiveStop,
 } from "./commuteStopsSelectors";
 export type {
@@ -21,7 +22,7 @@ export type {
 
 export function useCommuteStops() {
   const [commutes, setCommutes] = useState<CommuteStops>(loadCommutes);
-  const routeMutations = useCommuteRouteOptions(setCommutes);
+  const mutations = useCommuteProcedures(setCommutes);
 
   useEffect(() => {
     saveCommutes(commutes);
@@ -41,6 +42,9 @@ export function useCommuteStops() {
         selectedStopId: null,
         routeOptions: [],
         activeRouteOptionId: null,
+        procedures: [],
+        favorites: [],
+        activeProcedureId: null,
       };
       setCommutes((current) => ({
         ...current,
@@ -140,40 +144,9 @@ export function useCommuteStops() {
       placeId: string,
       stopId: BusStop["id"],
     ) => {
-      setCommutes((current) => ({
-        ...current,
-        [direction]: {
-          ...current[direction],
-          places: current[direction].places.map((place) => {
-            if (place.id !== placeId) {
-              return place;
-            }
-            const stops = place.stops.filter((stop) => stop.id !== stopId);
-            const routeOptions = place.routeOptions.filter(
-              (option) => option.startStopId !== stopId,
-            );
-            const activeRouteOptionId = routeOptions.some(
-              (option) => option.id === place.activeRouteOptionId,
-            )
-              ? place.activeRouteOptionId
-              : (routeOptions[0]?.id ?? null);
-            const activeRoute = routeOptions.find(
-              (option) => option.id === activeRouteOptionId,
-            );
-            return {
-              ...place,
-              stops,
-              routeOptions,
-              activeRouteOptionId,
-              selectedStopId:
-                activeRoute?.startStopId ??
-                (place.selectedStopId === stopId
-                  ? (stops[0]?.id ?? null)
-                  : place.selectedStopId),
-            };
-          }),
-        },
-      }));
+      setCommutes((current) =>
+        removeStopFromCommutes(current, direction, placeId, stopId),
+      );
     },
     [],
   );
@@ -210,6 +183,52 @@ export function useCommuteStops() {
     [],
   );
 
+  const addSubwayStations = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      stations: readonly SubwayStation[],
+    ) => {
+      setCommutes((current) => ({
+        ...current,
+        [direction]: {
+          activePlaceId: placeId,
+          places: current[direction].places.map((place) => {
+            if (place.id !== placeId) {
+              return place;
+            }
+            const merged = new Map(
+              place.subwayStations.map((station) => [station.id, station]),
+            );
+            for (const station of stations) {
+              merged.set(station.id, station);
+            }
+            return { ...place, subwayStations: [...merged.values()] };
+          }),
+        },
+      }));
+    },
+    [],
+  );
+
+  const removeSubwayStation = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      stationId: SubwayStation["id"],
+    ) => {
+      setCommutes((current) =>
+        removeSubwayStationFromCommutes(
+          current,
+          direction,
+          placeId,
+          stationId,
+        ),
+      );
+    },
+    [],
+  );
+
   return {
     commutes,
     addPlace,
@@ -219,6 +238,8 @@ export function useCommuteStops() {
     addStop,
     removeStop,
     selectStop,
-    ...routeMutations,
+    addSubwayStations,
+    removeSubwayStation,
+    ...mutations,
   } as const;
 }

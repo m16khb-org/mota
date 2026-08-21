@@ -3,15 +3,16 @@
 ## Product brief
 
 `모타`(mota — "뭐 타?")는 출근 직전 또는 퇴근 직전, 사용자가 지도에서 정확한 서울 버스 정류장과
-지하철역을 경로로 고르고 가장 먼저 오는 버스를 확인하는 웹앱이다. 여러 회사와 집을
-이름으로 구분하고 각 장소에 여러 경로 지점을 저장하며, `회사로`(집 → 회사)와
+지하철역을 경로로 고르고 도착 목록에서 본 정확한 노선·방향을 즐겨찾기로 저장한 뒤,
+도보·버스·지하철 순서의 통근 절차를 직접 만들어 출발 안내와 도착 예정 시간을 확인하는 웹앱이다.
+여러 회사와 집을 이름으로 구분하고 각 장소에 여러 경로 지점을 저장하며, `회사로`(집 → 회사)와
 `집으로`(회사 → 집)을 화면의 두 방향으로 보존한다.
 
 ### Primary persona
 
 - 서울에서 버스로 출퇴근하며 정류장 이름이 비슷해 반대편 정류장을 자주 혼동하는 사람
 - 이동 중 한 손과 짧은 주의 시간으로 사용한다.
-- 가장 중요한 질문은 “어느 정류장에서 어떤 버스가 몇 분 뒤 오는가?”이다.
+- 가장 중요한 질문은 “지금 저장한 절차대로 언제 나가야 하고 몇 시에 도착하는가?”이다.
 
 ### Success criteria
 
@@ -20,7 +21,8 @@
 3. 지도 마커를 여러 개 선택해 한 번에 경로에 추가한다.
 4. 재방문 사용자는 장소와 버스 정류장을 한 번의 탭으로 전환하고 도착정보를 새로고침한다.
 5. 정류장명, ARS 번호, 역명, 지도 위치를 함께 보여 잘못된 지점 선택을 줄인다.
-6. 사용자는 브라우저의 설치 표면에서 앱을 설치하고 오프라인에서도 저장한 화면을 다시 연다.
+6. 사용자는 저장한 절차와 즐겨찾기의 출발 안내·도착 예정을 한 화면에서 읽는다.
+7. 사용자는 브라우저의 설치 표면에서 앱을 설치하고 오프라인에서도 저장한 화면을 다시 연다.
 
 ## Visual direction
 
@@ -38,13 +40,38 @@
 | `--paper` | `#f7f7f3` | App background |
 | `--surface` | `#ffffff` | Panels and cards |
 | `--line` | `#d9d9d2` | Borders and separators |
+| `--line-strong` | `#a8a8a0` | Emphasized dashed outlines for empty-state blocks |
 | `--muted` | `#62625d` | Secondary text |
 | `--signal` | `#c7f000` | Active commute direction, selected stop |
+| `--signal-soft` | `#f4fbd6` | Selected picker/result row surface (pale signal tint) |
 | `--signal-ink` | `#182000` | Text on signal |
 | `--route-blue` | `#155eef` | Route identity and map focus |
+| `--subway` | `#7c3aed` | Subway identity: station rows and map markers |
 | `--danger` | `#c81e1e` | Errors only |
+| `--danger-ink` | `#721c1c` | Error text on the danger surface |
+| `--danger-surface` | `#fff2f0` | Tinted error block background |
+| `--danger-strong` | `#d92d20` | Strong error border on dark map trays |
+| `--danger-soft-ink` | `#ffd5d0` | Error text on dark map trays |
+| `--on-ink` | `#ffffff` | Text and rings sitting on `--ink` surfaces |
+| `--ink-overlay-panel` | `rgb(11 11 11 / 92%)` | Dark map-tray card (stage copy) |
+| `--ink-overlay-note` | `rgb(11 11 11 / 88%)` | Dark map-tray note (search status) |
+| `--ink-overlay-quiet` | `rgb(11 11 11 / 82%)` | Dark map-tray caption (data note) |
+| `--scrim` | `rgb(11 11 11 / 48%)` | Picker overlay backdrop |
+| `--stage-line` | `#515447` | Border on dark map trays (status pill) |
+| `--stage-line-quiet` | `#45483c` | Quieter border on dark map trays (data note) |
+| `--stage-muted` | `#aeb1a7` | Secondary text on dark map trays |
+| `--map-base` | `#e6e9e1` | Map stage and picker map background behind tiles |
+| `--skeleton-base` | `#eeeeea` | Loading skeleton resting surface |
+| `--skeleton-raised` | `#deded8` | Loading skeleton pulse target |
 
 Color never carries state alone. Active tabs use color, weight, and shape; errors include icon and text.
+
+Platform literals outside CSS: `index.html` `<meta name="theme-color">` and the manifest's
+`theme_color`/`background_color` must be literal hex (the browser/OS consumes them before CSS
+loads); they mirror `--ink` and `--paper` and change only with those tokens. The same applies to
+`public/pwa-icon.svg`: SVG `fill`/`rect` attributes are consumed by the manifest icon pipeline
+with no cascade, so its `#0b0b0b` (`--ink`) background/bus cutouts and `#c7f000` (`--signal`) bus
+body are intentional token mirrors, changed only alongside those tokens.
 
 ### Type
 
@@ -64,22 +91,35 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 
 - Radius: 0 for app shell, 8px controls, 12px cards, 18px mobile sheet.
 - Border: 1px solid `--line`.
-- Shadow: only floating map controls and mobile sheet; `0 8px 30px rgb(0 0 0 / 12%)`.
+- Elevation tokens (shadow recipes): `--shadow-control` `0 4px 16px rgb(0 0 0 / 12%)`
+  (floating map controls), `--shadow-card` `0 8px 30px rgb(0 0 0 / 18%)` (stage card),
+  `--shadow-pin` `0 6px 20px rgb(0 0 0 / 25%)` (center pin), `--shadow-overlay`
+  `0 18px 80px rgb(0 0 0 / 30%)` (picker shell), `--shadow-sheet`
+  `0 -8px 30px rgb(0 0 0 / 12%)` (mobile sheet). Shadows appear only on floating
+  map controls and the mobile sheet.
 - No nested cards. Sections are separated by borders and spacing.
+- Map markers: the visible circles (`18–22px`) are non-interactive and styled by
+  token classes (`.map-marker-bus`/`-subway`/`-pending`, `.is-active` → `--signal`
+  fill + `--ink` stroke); interaction lives on the separate invisible 44px hit
+  circle.
 
 ## Layout
 
 ### Desktop (`>= 960px`)
 
-- Full-height shell.
-- 400px control rail on the left; map fills the remaining viewport.
+- Full-height bounded shell (`100dvh`, `overflow: hidden`): the document never scrolls.
+- 400px control rail on the left; map fills the remaining viewport in one bounded row.
+- The rail's scroll pane (`.rail-scroll`) is the ONLY vertical scroll owner; rail scrolling
+  never moves the map, and the map stays fully painted while rail content scrolls.
 - Brand/direction controls stay at top; place, stop, and arrival controls scroll together.
 - Map picker results appear as an anchored tray over the lower map edge.
 
 ### Mobile (`< 960px`)
 
-- Map occupies the upper 42dvh.
-- Content becomes a bottom sheet with an 18px top radius.
+- Bounded `100dvh` column shell: the document never scrolls.
+- Map occupies the upper 42dvh and stays fully painted; it is the interactive marker surface
+  (the display headline is desktop-only so it never covers markers).
+- The sheet below scrolls internally (`overscroll-behavior: contain`) with an 18px top radius.
 - Direction switch and refresh stay visible near the sheet top.
 - Stop picker list expands within the sheet; controls remain at least 44px high.
 
@@ -99,7 +139,8 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Every bus row renders the stop name and five-digit ARS ID; subway rows render station and line.
 - Active place and stop use `aria-pressed`, a border, and a 3px signal strip.
 - Removing an active place or stop selects the first remaining sibling; an empty collection stays valid.
-- Newly active place chips scroll into view instead of disappearing beyond the horizontal rail.
+- Revealing the active place chip scrolls only the horizontal chip rail (its own overflow container);
+  it never scrolls the document or the vertical rail, so mobile loads stay anchored at the map.
 
 ### Map picker
 
@@ -110,6 +151,10 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Wheel, touch, and double-click zoom stay anchored to the map center.
 - Saving is explicit and adds selected points to the active place without duplicating them.
 - Closing does not overwrite or remove previously saved stops.
+- On the main stage, subway station markers share the rail selection state: click or keyboard
+  activation opens the same station detail as the rail row, and the marker mirrors `aria-pressed`.
+- Marker colors come from the token set (`--route-blue`, `--subway`, `--signal`, `--surface`),
+  never one-off hex values.
 
 ### Arrival row
 
@@ -119,12 +164,29 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 - Rows sort by numeric first ETA. Non-running routes move below active routes.
 - Refresh has loading, success timestamp, empty, and error states.
 
-### Route comparison
+### Selected procedure ETA (통근 절차)
 
-- 저장한 출발 정류장과 선택적 환승역을 목적지 장소에 연결해 명시적인 루트로 저장한다.
-- 비교 카드는 `정류장 → 환승역 → 목적지` 순서와 ARS 기반 실시간 버스 대기를 보여준다.
-- `버스 대기 1순위`는 현재 첫 버스 도착 대기만 비교하며 전체 통근시간으로 표현하지 않는다.
-- 로딩·실패·도착정보 없음 상태는 순위에서 제외하고 나머지 루트 비교는 유지한다.
+- 각 장소는 순서 있는 통근 절차를 여러 개 저장하고 하나를 선택 상태로 유지한다.
+- 절차는 `도보 → 버스 → 지하철` 등 사용자가 직접 배치하며, 버스·지하철 단계는 도착 목록에서
+  저장한 정확한 즐겨찾기 서비스만 선택할 수 있다.
+- 대시보드는 선택한 절차의 출발 안내(라이브 첫 탑승 대기 기준)와 도착 예정 시간, 단계별
+  `실시간|예상|오래됨|정보 없음` 근거를 보여준다.
+- 결과는 “실시간 탑승 대기 + 저장한 이동·대기 시간 추정”이며 전체 구간이 실시간이라고
+  주장하지 않는다. 미래 환승 예측이 없으면 그 단계만 저장한 대안 대기 시간으로 `예상` 표기한다.
+- 각 절차 단계는 24px(컴팩트 컨테이너 20px) 인라인 거터를 유지해 필드가 레일 가장자리에
+  붙지 않고 한글 입력과 포커스 링이 잘리지 않는다.
+- 이전 버전 루트는 `설정 필요` 초안으로 남고 즐겨찾기 선택 전에는 계산에 들어가지 않는다.
+- 막힌 단계가 있으면 계산된 앞 구간을 유지하고 경로 수정·재확인 동작을 제공한다.
+
+### Favorite departures (즐겨찾기 출발)
+
+- 버스·지하철 도착 행에서 저장하면 정확한 노선·방향(또는 호선·상하행)만 카드로 보여준다.
+- 카드는 다음 두 도착과 기준 시각, 접근 시간 기반 `N분 후 출발/지금 출발` 안내를 제공한다.
+- 출발 안내는 최근 성공 스냅샷이 90초 이내이고 최근 시도가 실패하지 않았을 때만 나온다.
+- 갱신 실패·오래된 정보는 해당 카드에만 표시하고 다른 카드와 저장 데이터를 유지한다.
+- 같은 화면의 활성 절차와 즐겨찾기는 하나의 갱신 주기(표시 중 30초, 숨김 중지)를 공유한다.
+- 선택한 정류장·역이 이미 이 갱신 집합에 있으면 상세 패널은 같은 스냅샷을 재사용하고
+  겹치는 요청을 추가하지 않는다. 집합에 없는 지점은 핀 저장 전 전체 상세를 직접 불러온다.
 
 ### Install and offline surface
 

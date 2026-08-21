@@ -1,65 +1,33 @@
-import { CircleDot, Crosshair, Info, LocateFixed, Navigation, Search } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  fetchArrivals,
-  fetchNearbyStops,
-  fetchSubwayArrivals,
-  isServiceAreaError,
-} from "./api/client";
+import { useState } from "react";
 import { ArrivalList } from "./components/ArrivalList";
 import { BrandHeader } from "./components/BrandHeader";
+import { CommuteEta } from "./components/CommuteEta";
 import { CommutePlaceManager } from "./components/CommutePlaceManager";
+import { CommuteProcedureEditor } from "./components/CommuteProcedureEditor";
 import { CommuteSwitch } from "./components/CommuteSwitch";
-import { MapCanvas } from "./components/MapCanvas";
+import { FavoriteDepartures } from "./components/FavoriteDepartures";
 import { MapPicker } from "./components/MapPicker";
-import { SubwayPicker } from "./components/SubwayPicker";
-import type { BusArrival, BusStop, CommuteDirection } from "./domain/bus";
-import type { SubwayArrival, SubwayStation } from "./domain/subway";
-import { getActivePlace, getActiveStop, useCommuteStops } from "./hooks/useCommuteStops";
-import { useMediaQuery } from "./hooks/useMediaQuery";
+import { MapStage } from "./components/MapStage";
 import { SubwayArrivalList } from "./components/SubwayArrivalList";
+import { SubwayPicker } from "./components/SubwayPicker";
+import type { BusStop, CommuteDirection } from "./domain/bus";
+import type {
+  CommuteFavorite,
+  CommuteFavoriteId,
+  CommuteProcedureId,
+} from "./domain/commute";
+import type { SubwayStation } from "./domain/subway";
+import type {
+  CommuteFavoriteInput,
+  CommuteProcedureInput,
+} from "./hooks/useCommuteProcedures";
+import { useCommuteDailyLive } from "./hooks/useCommuteDailyLive";
+import { useArrivalDetail } from "./hooks/useArrivalDetail";
+import { getActivePlace, getActiveProcedure, getActiveStop, useCommuteStops } from "./hooks/useCommuteStops";
+import { useMediaQuery } from "./hooks/useMediaQuery";
 
-interface Point {
-  readonly lat: number;
-  readonly lng: number;
-}
-interface StageStopSearch {
-  readonly loading: boolean;
-  readonly notice: string | null;
-  readonly isError: boolean;
-}
-const IDLE_SEARCH: StageStopSearch = {
-  loading: false,
-  notice: null,
-  isError: false,
-};
-
-interface ArrivalState {
-  readonly arrivals: readonly BusArrival[];
-  readonly loading: boolean;
-  readonly error: string | null;
-  readonly updatedAt: string | null;
-}
-const EMPTY_ARRIVALS: ArrivalState = {
-  arrivals: [],
-  loading: false,
-  error: null,
-  updatedAt: null,
-};
 const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
-
-interface SubwayArrivalState {
-  readonly arrivals: readonly SubwayArrival[];
-  readonly loading: boolean;
-  readonly error: string | null;
-  readonly updatedAt: string | null;
-}
-const EMPTY_SUBWAY_ARRIVALS: SubwayArrivalState = {
-  arrivals: [],
-  loading: false,
-  error: null,
-  updatedAt: null,
-};
+const NO_FAVORITES: readonly CommuteFavorite[] = [];
 
 export function App() {
   const isDesktop = useMediaQuery("(min-width: 960px)");
@@ -75,179 +43,68 @@ export function App() {
     selectStop,
     addSubwayStations,
     removeSubwayStation,
-    addRouteOption,
-    removeRouteOption,
-    selectRouteOption,
+    addProcedure,
+    editProcedure,
+    removeProcedure,
+    reorderProcedure,
+    selectProcedure,
+    pinFavorite,
+    unpinFavorite,
+    updateFavorite,
   } = useCommuteStops();
   const [pickerMode, setPickerMode] = useState<"bus" | "subway" | null>(null);
-  const [arrivalState, setArrivalState] = useState<ArrivalState>(EMPTY_ARRIVALS);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
-  const collection = commutes[direction];
-  const activePlace = getActivePlace(collection);
-  const selectedStop = getActiveStop(activePlace);
-  const mapAnchor = selectedStop ?? activePlace?.subwayStations[0] ?? null;
-  const mapCenter = mapAnchor
-    ? { lat: mapAnchor.lat, lng: mapAnchor.lng }
-    : DEFAULT_MAP_CENTER;
-  const [stageCenter, setStageCenter] = useState<Point>(mapCenter);
-  const [locateCenter, setLocateCenter] = useState<Point | null>(null);
-  const [nearbyStops, setNearbyStops] = useState<BusStop[]>([]);
-  const [stopSearch, setStopSearch] = useState<StageStopSearch>(IDLE_SEARCH);
   const [selectedStation, setSelectedStation] = useState<SubwayStation | null>(
     null,
   );
-  const [subwayArrivalState, setSubwayArrivalState] =
-    useState<SubwayArrivalState>(EMPTY_SUBWAY_ARRIVALS);
-  const searchSequence = useRef(0);
+  const [editorTarget, setEditorTarget] = useState<
+    "new" | CommuteProcedureId | null
+  >(null);
+  const [stageSearchRequest, setStageSearchRequest] = useState(0);
 
-  const refreshArrivals = useCallback(async () => {
-    if (!selectedStop) {
-      return;
-    }
+  const collection = commutes[direction];
+  const activePlace = getActivePlace(collection);
+  const selectedStop = getActiveStop(activePlace);
+  const mapAnchor =
+    selectedStop ?? activePlace?.subwayStations[0] ?? null;
+  const mapCenter = mapAnchor
+    ? { lat: mapAnchor.lat, lng: mapAnchor.lng }
+    : DEFAULT_MAP_CENTER;
+  const activeProcedure = getActiveProcedure(activePlace);
+  const favorites = activePlace?.favorites ?? NO_FAVORITES;
+  const readyProcedure =
+    activeProcedure?.kind === "ready" ? activeProcedure : null;
 
-    setArrivalState((current) => ({ ...current, loading: true, error: null }));
-    try {
-      const result = await fetchArrivals(selectedStop.arsId);
-      setArrivalState({
-        arrivals: result.arrivals,
-        loading: false,
-        error: null,
-        updatedAt: result.updatedAt,
-      });
-    } catch {
-      setArrivalState((current) => ({
-        ...current,
-        loading: false,
-        error: "도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.",
-      }));
-    }
-  }, [selectedStop]);
-
-  useEffect(() => {
-    if (selectedStop) {
-      void refreshArrivals();
-    } else {
-      setArrivalState(EMPTY_ARRIVALS);
-    }
-  }, [refreshArrivals, selectedStop]);
-
-  const resetStageSearch = () => {
-    setLocateCenter(null);
-    setNearbyStops([]);
-    setStopSearch(IDLE_SEARCH);
-    setSelectedStation(null);
-    setSubwayArrivalState(EMPTY_SUBWAY_ARRIVALS);
-  };
+  const live = useCommuteDailyLive(activeProcedure, favorites);
+  const { busDetail, subwayDetail, refreshBusDetail, refreshSubwayDetail } =
+    useArrivalDetail({
+      selectedStop,
+      selectedStation,
+      live: {
+        queries: live.queries,
+        snapshots: live.snapshots,
+        refresh: live.refresh,
+      },
+    });
 
   const handleDirectionChange = (next: CommuteDirection) => {
     setDirection(next);
-    resetStageSearch();
+    setSelectedStation(null);
   };
 
-  const searchStageStops = async () => {
-    if (!activePlace) {
-      return;
-    }
-    const sequence = searchSequence.current + 1;
-    searchSequence.current = sequence;
-    setStopSearch({ loading: true, notice: null, isError: false });
-    try {
-      const stops = await fetchNearbyStops(stageCenter);
-      if (searchSequence.current !== sequence) {
-        return;
-      }
-      setNearbyStops(stops);
-      setStopSearch(
-        stops.length > 0
-          ? {
-              loading: false,
-              notice: `주변 정류장 ${stops.length}곳 · 마커를 눌러 추가하세요`,
-              isError: false,
-            }
-          : {
-              loading: false,
-              notice: "이 주변에서 정류장을 찾지 못했습니다. 지도를 옮겨 다시 시도해 주세요.",
-              isError: true,
-            },
-      );
-    } catch (error) {
-      if (searchSequence.current !== sequence) {
-        return;
-      }
-      setNearbyStops([]);
-      setStopSearch({
-        loading: false,
-        notice: isServiceAreaError(error)
-          ? "서울 서비스 범위 밖이에요. 지도를 서울 근처로 옮겨 주세요."
-          : "정류장을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
-        isError: true,
-      });
-    }
+  const handleSelectStation = (station: SubwayStation) => {
+    setSelectedStation((current) =>
+      current?.id === station.id ? null : station,
+    );
   };
 
-  const addNearbyStop = (stop: BusStop) => {
+  const saveNearbyStop = (stop: BusStop) => {
     if (!activePlace || activePlace.stops.some((saved) => saved.id === stop.id)) {
       return;
     }
     addStop(direction, activePlace.id, stop);
     setSaveAnnouncement(
       `${stop.name} 정류장을 ${activePlace.name}에 저장했습니다.`,
-    );
-  };
-
-  const locateUser = () => {
-    if (!navigator.geolocation) {
-      setStopSearch({
-        loading: false,
-        notice: "이 브라우저에서는 현재 위치를 사용할 수 없습니다.",
-        isError: true,
-      });
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) =>
-        setLocateCenter({ lat: coords.latitude, lng: coords.longitude }),
-      () =>
-        setStopSearch({
-          loading: false,
-          notice: "현재 위치를 확인하지 못했습니다. 지도를 직접 옮겨 주세요.",
-          isError: true,
-        }),
-      { enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000 },
-    );
-  };
-
-  const refreshSubwayArrivals = useCallback(async (station: SubwayStation) => {
-    setSubwayArrivalState((current) => ({ ...current, loading: true, error: null }));
-    try {
-      const result = await fetchSubwayArrivals(station.name);
-      setSubwayArrivalState({
-        arrivals: result.arrivals,
-        loading: false,
-        error: null,
-        updatedAt: result.updatedAt,
-      });
-    } catch {
-      setSubwayArrivalState((current) => ({
-        ...current,
-        loading: false,
-        error:
-          "지하철 도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.",
-      }));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectedStation) {
-      void refreshSubwayArrivals(selectedStation);
-    } else {
-      setSubwayArrivalState(EMPTY_SUBWAY_ARRIVALS);
-    }
-  }, [refreshSubwayArrivals, selectedStation]);
-
-  const handleSelectStation = (station: SubwayStation) => {
-    setSelectedStation((current) =>
-      current?.id === station.id ? null : station,
     );
   };
 
@@ -279,6 +136,53 @@ export function App() {
     setPickerMode(null);
   };
 
+  const editingProcedure =
+    editorTarget === null || editorTarget === "new"
+      ? null
+      : (activePlace?.procedures.find(
+          (procedure) => procedure.id === editorTarget,
+        ) ?? null);
+
+  const saveProcedure = (procedure: CommuteProcedureInput) => {
+    if (!activePlace) {
+      return;
+    }
+    if (editorTarget === "new") {
+      addProcedure(direction, activePlace.id, procedure);
+    } else if (editorTarget !== null) {
+      editProcedure(direction, activePlace.id, editorTarget, procedure);
+    }
+    setEditorTarget(null);
+    setSaveAnnouncement(`${procedure.name} 절차를 저장했습니다.`);
+  };
+
+  const editActiveProcedure = () => {
+    if (readyProcedure !== null) {
+      setEditorTarget(readyProcedure.id);
+    }
+  };
+
+  const handlePinFavorite = (favorite: CommuteFavoriteInput) => {
+    if (activePlace) {
+      pinFavorite(direction, activePlace.id, favorite);
+    }
+  };
+
+  const handleUnpinFavorite = (favoriteId: CommuteFavoriteId) => {
+    if (activePlace) {
+      unpinFavorite(direction, activePlace.id, favoriteId);
+    }
+  };
+
+  const handleUpdateFavorite = (
+    favoriteId: CommuteFavoriteId,
+    favorite: CommuteFavoriteInput,
+  ) => {
+    if (activePlace) {
+      updateFavorite(direction, activePlace.id, favoriteId, favorite);
+    }
+  };
+
   return (
     <main className="app-shell">
       <p
@@ -299,6 +203,16 @@ export function App() {
           role="tabpanel"
           aria-labelledby={`commute-tab-${direction}`}
         >
+          {readyProcedure && live.estimate !== null ? (
+            <CommuteEta
+              procedure={readyProcedure}
+              result={live.estimate}
+              refreshing={live.refreshing}
+              onEditProcedure={editActiveProcedure}
+              onRefresh={live.refresh}
+            />
+          ) : null}
+
           <CommutePlaceManager
             key={`${direction}-${activePlace?.id ?? "empty"}`}
             direction={direction}
@@ -318,11 +232,15 @@ export function App() {
             }}
             onSelectPlace={(placeId) => {
               selectPlace(direction, placeId);
-              resetStageSearch();
+              setSelectedStation(null);
             }}
-            onAddStop={() =>
-              isDesktop ? void searchStageStops() : setPickerMode("bus")
-            }
+            onAddStop={() => {
+              if (isDesktop) {
+                setStageSearchRequest((current) => current + 1);
+                return;
+              }
+              setPickerMode("bus");
+            }}
             onAddSubway={() => setPickerMode("subway")}
             onRemoveStop={(stopId) => {
               const stop = activePlace?.stops.find((item) => item.id === stopId);
@@ -348,129 +266,98 @@ export function App() {
                 setSaveAnnouncement("지하철역을 경로에서 삭제했습니다.");
               }
             }}
-            onAddRoute={(stopId, stationId) =>
+            onAddProcedure={() => setEditorTarget("new")}
+            onEditProcedure={(procedureId) => setEditorTarget(procedureId)}
+            onSelectProcedure={(procedureId) =>
               activePlace &&
-              addRouteOption(direction, activePlace.id, stopId, stationId)
+              selectProcedure(direction, activePlace.id, procedureId)
             }
-            onRemoveRoute={(optionId) =>
+            onRemoveProcedure={(procedureId) => {
+              if (activePlace) {
+                removeProcedure(direction, activePlace.id, procedureId);
+                setSaveAnnouncement("통근 절차를 삭제했습니다.");
+              }
+            }}
+            onReorderProcedure={(procedureId, toIndex) =>
               activePlace &&
-              removeRouteOption(direction, activePlace.id, optionId)
-            }
-            onSelectRoute={(optionId) =>
-              activePlace &&
-              selectRouteOption(direction, activePlace.id, optionId)
+              reorderProcedure(direction, activePlace.id, procedureId, toIndex)
             }
           />
+
+          {editorTarget !== null && activePlace ? (
+            <CommuteProcedureEditor
+              direction={direction}
+              place={activePlace}
+              procedure={editingProcedure}
+              onSave={saveProcedure}
+              onCancel={() => setEditorTarget(null)}
+            />
+          ) : null}
+
+          <FavoriteDepartures
+            favorites={favorites}
+            snapshots={live.snapshots}
+            now={live.now}
+            onRefresh={live.refresh}
+            onUpdateFavorite={handleUpdateFavorite}
+            onUnpinFavorite={handleUnpinFavorite}
+          />
+
           {selectedStation ? (
             <SubwayArrivalList
               stationName={selectedStation.name}
-              arrivals={subwayArrivalState.arrivals}
-              loading={subwayArrivalState.loading}
-              error={subwayArrivalState.error}
-              updatedAt={subwayArrivalState.updatedAt}
+              arrivals={subwayDetail.arrivals}
+              loading={subwayDetail.loading}
+              error={subwayDetail.error}
+              updatedAt={subwayDetail.updatedAt}
               onClose={() => setSelectedStation(null)}
-              onRefresh={() => void refreshSubwayArrivals(selectedStation)}
+              onRefresh={refreshSubwayDetail}
+              favoriteControls={{
+                station: selectedStation,
+                apiStationName: selectedStation.name,
+                favorites,
+                onPinFavorite: handlePinFavorite,
+                onUnpinFavorite: handleUnpinFavorite,
+              }}
             />
           ) : (
             <ArrivalList
-              arrivals={arrivalState.arrivals}
-              loading={arrivalState.loading}
-              error={arrivalState.error}
-              updatedAt={arrivalState.updatedAt}
+              arrivals={busDetail.arrivals}
+              loading={busDetail.loading}
+              error={busDetail.error}
+              updatedAt={busDetail.updatedAt}
               hasStop={Boolean(selectedStop)}
-              onRefresh={() => void refreshArrivals()}
+              onRefresh={refreshBusDetail}
+              {...(selectedStop
+                ? {
+                    favoriteControls: {
+                      stop: selectedStop,
+                      favorites,
+                      onPinFavorite: handlePinFavorite,
+                      onUnpinFavorite: handleUnpinFavorite,
+                    },
+                  }
+                : {})}
             />
           )}
         </div>
       </aside>
 
-      <section className="map-stage" aria-label="선택한 통근 정류장 안내">
-        <div className="stage-live-map">
-          <MapCanvas
-            center={locateCenter ?? mapCenter}
-            stops={activePlace?.stops ?? []}
-            selectedStop={selectedStop}
-            pendingStops={isDesktop ? nearbyStops : []}
-            subwayStations={activePlace?.subwayStations ?? []}
-            onCenterChange={setStageCenter}
-            onSelect={(stop) =>
-              activePlace && selectStop(direction, activePlace.id, stop.id)
-            }
-            onAddPending={addNearbyStop}
-            onSelectSubway={(station) =>
-              setSaveAnnouncement(`${station.name} 지하철역 경로 지점입니다.`)
-            }
-          />
-        </div>
-        {isDesktop ? (
-          <div className="stage-map-controls" data-testid="stage-map-controls">
-            <div className="map-center-pin" aria-hidden="true">
-              <Crosshair />
-            </div>
-            <div className="stage-search-tray">
-              <div className="stage-search-actions">
-                <button
-                  className="locate-button"
-                  type="button"
-                  onClick={locateUser}
-                  disabled={!activePlace}
-                >
-                  <LocateFixed aria-hidden="true" />
-                  현위치
-                </button>
-                <button
-                  className="primary-button compact"
-                  type="button"
-                  onClick={() => void searchStageStops()}
-                  disabled={stopSearch.loading || !activePlace}
-                >
-                  <Search aria-hidden="true" />
-                  {stopSearch.loading ? "찾는 중…" : "이 위치에서 찾기"}
-                </button>
-              </div>
-              {stopSearch.notice ? (
-                <p
-                  className={
-                    stopSearch.isError
-                      ? "stage-search-note is-error"
-                      : "stage-search-note"
-                  }
-                  role={stopSearch.isError ? "alert" : "status"}
-                >
-                  {stopSearch.notice}
-                </p>
-              ) : null}
-            </div>
-          </div>
-        ) : null}
-        <div className="stage-copy">
-          <span className="status-pill">
-            <CircleDot aria-hidden="true" /> 서울 실시간 BIS
-          </span>
-          <p>{direction === "company" ? "집에서 회사까지" : "회사에서 집까지"}</p>
-          <h2>
-            {"정확한 정류장, "}
-            <br />
-            놓치지 않는 버스.
-          </h2>
-          <button
-            className="stage-action"
-            type="button"
-            disabled={!activePlace}
-            onClick={() => void searchStageStops()}
-          >
-            <Navigation aria-hidden="true" />
-            주변 정류장 찾기
-          </button>
-        </div>
-        <div className="data-note">
-          <Info aria-hidden="true" />
-          <p>
-            정류장 ARS 번호와 좌표를 함께 확인하세요.{" "}
-            <span>반대편 정류장은 별개의 번호입니다.</span>
-          </p>
-        </div>
-      </section>
+      <MapStage
+        key={`stage-${direction}-${activePlace?.id ?? "empty"}`}
+        direction={direction}
+        place={activePlace}
+        selectedStop={selectedStop}
+        selectedSubwayStationId={selectedStation?.id ?? null}
+        center={mapCenter}
+        searchRequest={stageSearchRequest}
+        isDesktop={isDesktop}
+        onSelectStop={(stopId) =>
+          activePlace && selectStop(direction, activePlace.id, stopId)
+        }
+        onSelectSubway={handleSelectStation}
+        onSaveStop={saveNearbyStop}
+      />
 
       {pickerMode === "bus" && activePlace ? (
         <MapPicker

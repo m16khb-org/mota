@@ -88,3 +88,90 @@ describe("normalizeSubwayArrivals", () => {
     expect(result.arrivals).toEqual([]);
   });
 });
+
+describe("display identity baseline", () => {
+  it("keeps observable line and direction labels stable through normalization", () => {
+    const { arrivals } = normalizeSubwayArrivals(payload);
+    const [first] = arrivals;
+
+    expect(first?.line).toBe("2호선");
+    expect(first?.direction).toBe("강남방면");
+    expect(first?.id).toBe("1002-하행-강남방면");
+  });
+});
+
+describe("stable subway service and direction identity", () => {
+  it("propagates subwayId, updnLine, and trainLineNm from the upstream row", () => {
+    const { arrivals } = normalizeSubwayArrivals(payload);
+    const [first] = arrivals;
+
+    expect(first?.subwayId).toBe("1002");
+    expect(first?.updnLine).toBe("하행");
+    expect(first?.trainLineNm).toBe("강남방면");
+  });
+
+  it("keeps identical display labels with different stable keys distinct", () => {
+    const { arrivals } = normalizeSubwayArrivals({
+      errorMessage: { code: "INFO-000", message: "정상 처리되었습니다." },
+      realtimeArrivalList: [
+        {
+          subwayId: "1099",
+          updnLine: "외선",
+          trainLineNm: "성수방면",
+          barvlDt: "60",
+          recptnDt: "2026-08-20 12:10:20",
+        },
+        {
+          subwayId: "1098",
+          updnLine: "내선",
+          trainLineNm: "성수방면",
+          barvlDt: "90",
+          recptnDt: "2026-08-20 12:10:21",
+        },
+      ],
+    });
+
+    expect(arrivals).toHaveLength(2);
+    expect(arrivals.map((arrival) => arrival.line)).toEqual(["기타", "기타"]);
+    expect(arrivals.map((arrival) => arrival.direction)).toEqual([
+      "성수방면",
+      "성수방면",
+    ]);
+    expect(
+      arrivals.map((arrival) => `${arrival.subwayId}|${arrival.updnLine}`),
+    ).toEqual(["1099|외선", "1098|내선"]);
+    expect(new Set(arrivals.map((arrival) => arrival.id)).size).toBe(2);
+  });
+
+  it("rejects upstream rows that lack the stable subwayId key", () => {
+    expect(() =>
+      normalizeSubwayArrivals({
+        errorMessage: { code: "INFO-000", message: "정상 처리되었습니다." },
+        realtimeArrivalList: [
+          {
+            updnLine: "하행",
+            trainLineNm: "강남방면",
+            barvlDt: "45",
+            recptnDt: "2026-08-20 12:10:20",
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects upstream rows that lack the stable updnLine key", () => {
+    expect(() =>
+      normalizeSubwayArrivals({
+        errorMessage: { code: "INFO-000", message: "정상 처리되었습니다." },
+        realtimeArrivalList: [
+          {
+            subwayId: "1002",
+            trainLineNm: "강남방면",
+            barvlDt: "45",
+            recptnDt: "2026-08-20 12:10:20",
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+});

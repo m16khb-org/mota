@@ -66,7 +66,10 @@ export function RoutePointList({
           {place.subwayStations.map((station) => {
             const selected = station.id === selectedSubwayStationId;
             return (
-              <div key={station.id} className="saved-stop-row is-subway">
+              <div
+                key={station.id}
+                className={`saved-stop-row is-subway${selected ? " is-active" : ""}`}
+              >
                 <button
                   className={`saved-stop-choice${selected ? " is-active" : ""}`}
                   type="button"

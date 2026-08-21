@@ -1,18 +1,16 @@
-import type {
-  CircleMarker as LeafletCircleMarker,
-  LeafletEvent,
-} from "leaflet";
-import { useEffect } from "react";
-import {
+import type { CircleMarker as LeafletCircleMarker } from "leaflet";
+import { useEffect, useRef, useState, type ReactNode } from "react";import {
   CircleMarker,
   MapContainer,
   Popup,
   TileLayer,
   useMap,
   useMapEvents,
+  type CircleMarkerProps,
 } from "react-leaflet";
 import type { BusStop } from "../domain/bus";
 import type { SubwayStation } from "../domain/subway";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 interface Point {
   readonly lat: number;
@@ -32,27 +30,131 @@ interface MapCanvasProps {
   readonly onSelectSubway?: (station: SubwayStation) => void;
 }
 
-function makeMarkerAccessible(label: string, onSelect: () => void) {
-  return (event: LeafletEvent) => {
-    const marker = event.target as LeafletCircleMarker;
+interface AccessibleMarkerProps {
+  readonly label: string;
+  readonly active: boolean;
+  readonly onSelect: () => void;
+  readonly children?: ReactNode;
+  readonly markerProps: CircleMarkerProps;
+}
+
+/** CircleMarker whose element stays an accessible button with a CURRENT
+ * `aria-pressed`: the `add` event fires once, so selection changes are
+ * re-synced through an effect instead of a stale closure. */
+function AccessibleMarker({
+  label,
+  active,
+  onSelect,
+  children,
+  markerProps,
+}: AccessibleMarkerProps) {
+  const [marker, setMarker] = useState<LeafletCircleMarker | null>(null);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
+
+  useEffect(() => {
+    if (marker === null) {
+      return;
+    }
     const element = marker.getElement();
     if (!element) {
       return;
     }
-
     element.setAttribute("role", "button");
     element.setAttribute("tabindex", "0");
     element.setAttribute("aria-label", label);
-    element.addEventListener("keydown", (event) => {
+    element.setAttribute("aria-pressed", String(active));
+    element.classList.add("map-marker-hit-target");
+    const handleKeydown = (event: Event) => {
       const keyboardEvent = event as KeyboardEvent;
       if (keyboardEvent.key !== "Enter" && keyboardEvent.key !== " ") {
         return;
       }
       keyboardEvent.preventDefault();
-      onSelect();
+      onSelectRef.current();
       marker.openPopup();
-    });
-  };
+    };
+    element.addEventListener("keydown", handleKeydown);
+    return () => {
+      element.removeEventListener("keydown", handleKeydown);
+    };
+  }, [marker, label, active]);
+
+  return (
+    <CircleMarker ref={setMarker} {...markerProps}>
+      {children}
+    </CircleMarker>
+  );
+}
+
+/** One map point: a visible circle (18-22px) plus a dedicated invisible
+ * 44px interactive circle that carries click, keyboard, and aria state. The
+ * SVG path's geometry is Leaflet's hit area, so the hit circle is real
+ * geometry, not a CSS box. Leaflet applies `pathOptions.className` only at
+ * creation (setStyle never re-applies it), so the visible circle's
+ * `is-active` class is toggled on its element through an effect. */
+function MapPointMarker({
+  label,
+  active,
+  onSelect,
+  children,
+  center,
+  visualClassName,
+}: {
+  readonly label: string;
+  readonly active: boolean;
+  readonly onSelect: () => void;
+  readonly children?: ReactNode;
+  readonly center: Point;
+  readonly visualClassName: string;
+}) {
+  const [visualMarker, setVisualMarker] = useState<LeafletCircleMarker | null>(
+    null,
+  );
+  const [baseClass, suffix] = visualClassName.split(" ");
+
+  useEffect(() => {
+    if (visualMarker === null) {
+      return;
+    }
+    const element = visualMarker.getElement();
+    if (!element || baseClass === undefined) {
+      return;
+    }
+    element.classList.add(baseClass);
+    element.classList.toggle("is-active", suffix === "is-active");
+  }, [visualMarker, baseClass, suffix]);
+
+  return (
+    <>
+      <CircleMarker
+        ref={setVisualMarker}
+        center={center}
+        radius={9}
+        interactive={false}
+        pathOptions={{ fillOpacity: 1, weight: 3 }}
+      >
+        {children}
+      </CircleMarker>
+      <AccessibleMarker
+        label={label}
+        active={active}
+        onSelect={onSelect}
+        markerProps={{
+          center,
+          radius: 22,
+          pathOptions: {
+            className: "map-marker-hit",
+            stroke: false,
+            fill: true,
+            fillColor: "transparent",
+            fillOpacity: 0,
+          },
+          eventHandlers: { click: onSelect },
+        }}
+      />
+    </>
+  );
 }
 
 function CenterObserver({
@@ -69,6 +171,17 @@ function CenterObserver({
       onCenterChange({ lat: nextCenter.lat, lng: nextCenter.lng });
     },
   });
+
+  // Machine-consumed runtime truth: the REAL Leaflet instance options, so QA
+  // can prove animation settings without relying on CSS.
+  useEffect(() => {
+    const container = map.getContainer();
+    container.dataset.leafletZoomAnimation = String(map.options.zoomAnimation);
+    container.dataset.leafletFadeAnimation = String(map.options.fadeAnimation);
+    container.dataset.leafletMarkerZoomAnimation = String(
+      map.options.markerZoomAnimation,
+    );
+  }, [map]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: primitive deps keep pan position stable across re-renders
   useEffect(() => {
@@ -98,6 +211,7 @@ export function MapCanvas({
   onSelectSubway,
 }: MapCanvasProps) {
   const savedStopIds = new Set(stops.map((stop) => stop.id));
+  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
   return (
     <section className="picker-map-frame" aria-label="서울 버스 정류장 지도">
       <MapContainer
@@ -108,6 +222,9 @@ export function MapCanvas({
         scrollWheelZoom="center"
         touchZoom="center"
         doubleClickZoom="center"
+        zoomAnimation={!reducedMotion}
+        fadeAnimation={!reducedMotion}
+        markerZoomAnimation={!reducedMotion}
         className="picker-map"
       >
         <TileLayer
@@ -120,92 +237,65 @@ export function MapCanvas({
           const active =
             selectedStop?.id === stop.id || selectedStopIds.includes(stop.id);
           return (
-            <CircleMarker
+            <MapPointMarker
               key={stop.id}
+              label={`${stop.name} 정류장, ARS ${stop.arsId}, 중심에서 ${Math.round(
+                stop.distanceMeters,
+              )}미터`}
+              active={active}
+              onSelect={() => onSelect(stop)}
               center={{ lat: stop.lat, lng: stop.lng }}
-              radius={active ? 11 : 9}
-              pathOptions={{
-                color: active ? "#0b0b0b" : "#155eef",
-                fillColor: active ? "#c7f000" : "#ffffff",
-                fillOpacity: 1,
-                weight: active ? 4 : 3,
-              }}
-              eventHandlers={{
-                add: makeMarkerAccessible(
-                  `${stop.name} 정류장, ARS ${stop.arsId}, 중심에서 ${Math.round(
-                    stop.distanceMeters,
-                  )}미터`,
-                  () => onSelect(stop),
-                ),
-                click: () => onSelect(stop),
-              }}
+              visualClassName={
+                active ? "map-marker-bus is-active" : "map-marker-bus"
+              }
             >
               <Popup>
                 <strong>{stop.name}</strong>
                 <br />
                 ARS {stop.arsId}
               </Popup>
-            </CircleMarker>
+            </MapPointMarker>
           );
         })}
         {pendingStops
           .filter((stop) => !savedStopIds.has(stop.id))
           .map((stop) => (
-            <CircleMarker
+            <MapPointMarker
               key={`pending-${stop.id}`}
+              label={`${stop.name} 정류장, ARS ${stop.arsId}, 눌러서 추가`}
+              active={false}
+              onSelect={() => onAddPending?.(stop)}
               center={{ lat: stop.lat, lng: stop.lng }}
-              radius={9}
-              pathOptions={{
-                color: "#155eef",
-                fillColor: "#ffffff",
-                fillOpacity: 1,
-                weight: 3,
-                dashArray: "4 4",
-              }}
-              eventHandlers={{
-                add: makeMarkerAccessible(
-                  `${stop.name} 정류장, ARS ${stop.arsId}, 눌러서 추가`,
-                  () => onAddPending?.(stop),
-                ),
-                click: () => onAddPending?.(stop),
-              }}
+              visualClassName="map-marker-pending"
             >
               <Popup>
                 <strong>{stop.name}</strong>
                 <br />
                 ARS {stop.arsId} · 눌러서 경로에 추가
               </Popup>
-            </CircleMarker>
+            </MapPointMarker>
           ))}
         {subwayStations.map((station) => {
           const active = selectedSubwayStationIds.includes(station.id);
           return (
-            <CircleMarker
+            <MapPointMarker
               key={`subway-${station.id}`}
+              label={`${station.name} 지하철역, ${station.line}, 중심에서 ${Math.round(
+                station.distanceMeters,
+              )}미터`}
+              active={active}
+              onSelect={() => onSelectSubway?.(station)}
               center={{ lat: station.lat, lng: station.lng }}
-              radius={active ? 11 : 9}
-              pathOptions={{
-                color: active ? "#0b0b0b" : "#7c3aed",
-                fillColor: active ? "#c7f000" : "#ffffff",
-                fillOpacity: 1,
-                weight: active ? 4 : 3,
-              }}
-              eventHandlers={{
-                add: makeMarkerAccessible(
-                  `${station.name} 지하철역, ${station.line}, 중심에서 ${Math.round(
-                    station.distanceMeters,
-                  )}미터`,
-                  () => onSelectSubway?.(station),
-                ),
-                click: () => onSelectSubway?.(station),
-              }}
+              visualClassName={
+                active ? "map-marker-subway is-active" : "map-marker-subway"
+              }
             >
               <Popup>
                 <strong>{station.name}</strong>
                 <br />
                 {station.line}
               </Popup>
-            </CircleMarker>
+            </MapPointMarker>
           );
         })}
       </MapContainer>

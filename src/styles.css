@@ -1,8 +1,8 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css");
 
 :root {
-  color: #0b0b0b;
-  background: #f7f7f3;
+  color: var(--ink);
+  background: var(--paper);
   font-family: "Pretendard Variable", Pretendard, Inter, system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -10,11 +10,34 @@
   --paper: #f7f7f3;
   --surface: #ffffff;
   --line: #d9d9d2;
+  --line-strong: #a8a8a0;
   --muted: #62625d;
   --signal: #c7f000;
+  --signal-soft: #f4fbd6;
   --signal-ink: #182000;
   --route-blue: #155eef;
+  --subway: #7c3aed;
   --danger: #c81e1e;
+  --danger-ink: #721c1c;
+  --danger-surface: #fff2f0;
+  --map-base: #e6e9e1;
+  --skeleton-base: #eeeeea;
+  --skeleton-raised: #deded8;
+  --on-ink: #ffffff;
+  --danger-strong: #d92d20;
+  --danger-soft-ink: #ffd5d0;
+  --ink-overlay-panel: rgb(11 11 11 / 92%);
+  --ink-overlay-note: rgb(11 11 11 / 88%);
+  --ink-overlay-quiet: rgb(11 11 11 / 82%);
+  --scrim: rgb(11 11 11 / 48%);
+  --stage-line: #515447;
+  --stage-line-quiet: #45483c;
+  --stage-muted: #aeb1a7;
+  --shadow-control: 0 4px 16px rgb(0 0 0 / 12%);
+  --shadow-card: 0 8px 30px rgb(0 0 0 / 18%);
+  --shadow-pin: 0 6px 20px rgb(0 0 0 / 25%);
+  --shadow-overlay: 0 18px 80px rgb(0 0 0 / 30%);
+  --shadow-sheet: 0 -8px 30px rgb(0 0 0 / 12%);
 }
 
 * {
@@ -62,9 +85,11 @@ button:disabled {
 }
 
 .app-shell {
-  min-height: 100dvh;
+  height: 100dvh;
+  min-height: 0;
   display: grid;
   grid-template-columns: 400px minmax(0, 1fr);
+  grid-template-rows: 100%;
   overflow: hidden;
 }
 
@@ -72,8 +97,10 @@ button:disabled {
   position: relative;
   z-index: 2;
   display: flex;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
   flex-direction: column;
+  overflow: hidden;
   border-right: 1px solid var(--ink);
   background: var(--surface);
 }
@@ -158,6 +185,7 @@ button:disabled {
   min-height: 0;
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .commute-places,
@@ -238,15 +266,6 @@ select:focus-visible {
   box-shadow: inset 0 0 0 2px var(--route-blue);
 }
 
-.route-option-form select {
-  font-size: 1rem;
-  font-family: inherit;
-}
-
-.route-option-form select:focus-visible {
-  border-color: var(--route-blue);
-}
-
 .secondary-button {
   display: inline-flex;
   min-height: 44px;
@@ -305,7 +324,7 @@ select:focus-visible {
   background: var(--paper);
 }
 
-.route-option-main:hover {
+.procedure-row-main:hover {
   background: var(--paper);
 }
 
@@ -354,7 +373,7 @@ select:focus-visible {
   gap: 10px;
   margin-top: 16px;
   padding: 16px;
-  border: 1px dashed #a8a8a0;
+  border: 1px dashed var(--line-strong);
   color: var(--muted);
   background: var(--paper);
 }
@@ -394,7 +413,7 @@ select:focus-visible {
   border: 1px solid var(--ink);
   border-left: 0;
   border-radius: 0 8px 8px 0;
-  color: #fff;
+  color: var(--on-ink);
   background: var(--ink);
   font-weight: 700;
   cursor: pointer;
@@ -448,7 +467,12 @@ select:focus-visible {
 }
 
 .saved-stop-row.is-subway {
-  box-shadow: inset 3px 0 0 #7c3aed;
+  box-shadow: inset 3px 0 0 var(--subway);
+}
+
+.saved-stop-row.is-subway.is-active {
+  border-color: var(--ink);
+  box-shadow: inset 3px 0 0 var(--signal), inset 0 -3px 0 var(--subway);
 }
 
 .saved-stop-choice {
@@ -466,7 +490,7 @@ select:focus-visible {
 }
 
 .saved-stop-row.is-subway .saved-stop-choice {
-  cursor: default;
+  cursor: pointer;
 }
 
 .saved-stop-choice svg {
@@ -513,172 +537,112 @@ select:focus-visible {
   width: 100%;
 }
 
-.route-options {
+.procedure-list {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--line);
 }
 
-.route-options-heading {
+.procedure-list-heading {
   align-items: end;
 }
 
-.route-options-heading h3 {
+.procedure-list-heading h3 {
   margin: 2px 0 0;
   font-size: 1.05rem;
 }
 
-.route-options-actions {
+.procedure-list-actions {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.route-options-actions > span {
+.procedure-list-actions > span {
   color: var(--muted);
   font-size: 0.75rem;
 }
 
-.route-options-actions .icon-button {
-  width: 44px;
-  height: 44px;
-}
-
-.route-option-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.route-option-form label,
-.route-destination {
-  display: grid;
-  gap: 6px;
-}
-
-.route-option-form label > span,
-.route-destination > span {
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 760;
-}
-
-.route-option-form select,
-.route-destination {
-  min-width: 0;
-  min-height: 44px;
-  padding: 0 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: 7px;
-  color: var(--ink);
-  background: var(--surface);
-}
-
-.route-destination {
-  align-content: center;
-}
-
-.route-option-form > button {
-  align-self: end;
-}
-
-.route-option-empty {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 12px;
-  color: var(--muted);
-}
-
-.route-option-empty svg {
-  width: 18px;
-  height: 18px;
-}
-
-.route-option-empty p {
-  margin: 0;
-  font-size: 0.82rem;
-}
-
-.route-option-list {
+.procedure-rows {
   display: grid;
   gap: 8px;
   margin-top: 14px;
 }
 
-.route-option {
+.procedure-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 44px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
   overflow: hidden;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
 }
 
-.route-option.is-active {
+.procedure-row.is-active {
   border-color: var(--ink);
   box-shadow: inset 3px 0 0 var(--signal);
 }
 
-.route-option-main {
+.procedure-row-main {
   display: grid;
   min-width: 0;
-  gap: 8px;
-  padding: 12px 14px;
+  align-content: center;
+  gap: 4px;
+  padding: 10px 14px;
   border: 0;
   text-align: left;
   background: transparent;
+  cursor: pointer;
 }
 
-.route-path,
-.route-wait {
+.procedure-row-main strong {
+  font-size: 0.9375rem;
+}
+
+.procedure-row-main > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.procedure-draft-badge {
+  justify-self: start;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 8px;
+  color: var(--ink);
+  font-size: 0.7rem;
+}
+
+.procedure-row-controls {
   display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 7px;
 }
 
-.route-path {
-  flex-wrap: wrap;
-  font-size: 0.82rem;
-}
-
-.route-path > span {
-  color: var(--muted);
-}
-
-.route-wait b {
-  padding: 3px 6px;
-  border: 1px solid var(--ink);
-  color: var(--signal-ink);
-  background: var(--signal);
-  font-size: 0.68rem;
-}
-
-.route-wait strong {
-  margin-left: auto;
-  font-size: 1.15rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.route-wait span,
-.route-wait small {
-  color: var(--muted);
-  font-size: 0.72rem;
-}
-
-.route-wait .is-error {
-  color: var(--danger);
-  font-weight: 760;
-}
-
-.route-option > .icon-button {
+.procedure-row-controls .icon-button {
   width: 44px;
   height: 100%;
   border: 0;
   border-left: 1px solid var(--line);
   border-radius: 0;
+}
+
+.procedure-list-empty {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+}
+
+.procedure-list-empty svg {
+  flex: none;
+}
+
+.procedure-list-empty p {
+  margin: 0;
+  font-size: 0.875rem;
 }
 
 .primary-button {
@@ -690,7 +654,7 @@ select:focus-visible {
   padding: 0 18px;
   border: 1px solid var(--ink);
   border-radius: 8px;
-  color: #fff;
+  color: var(--on-ink);
   background: var(--ink);
   font-weight: 720;
   cursor: pointer;
@@ -738,13 +702,13 @@ select:focus-visible {
   height: 96px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #eeeeea;
+  background: var(--skeleton-base);
   animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
 }
 
 @keyframes skeleton-pulse {
   to {
-    background: #deded8;
+    background: var(--skeleton-raised);
   }
 }
 
@@ -834,8 +798,8 @@ select:focus-visible {
   margin: 0 0 14px;
   padding: 12px 14px;
   border-left: 3px solid var(--danger);
-  color: #721c1c;
-  background: #fff2f0;
+  color: var(--danger-ink);
+  background: var(--danger-surface);
   font-size: 0.82rem;
   line-height: 1.45;
 }
@@ -859,7 +823,7 @@ select:focus-visible {
 }
 
 .arrival-error button:hover {
-  background: #fff2f0;
+  background: var(--danger-surface);
 }
 
 .arrival-row.is-inactive {
@@ -898,7 +862,7 @@ select:focus-visible {
   align-self: start;
   height: 100dvh;
   overflow: hidden;
-  background: #e6e9e1;
+  background: var(--map-base);
 }
 
 .stage-live-map {
@@ -920,9 +884,9 @@ select:focus-visible {
   padding: 22px;
   border: 1px solid var(--ink);
   border-radius: 12px;
-  color: #fff;
-  background: rgb(11 11 11 / 92%);
-  box-shadow: 0 8px 30px rgb(0 0 0 / 18%);
+  color: var(--on-ink);
+  background: var(--ink-overlay-panel);
+  box-shadow: var(--shadow-card);
   pointer-events: none;
 }
 
@@ -931,7 +895,7 @@ select:focus-visible {
   align-items: center;
   gap: 7px;
   padding: 8px 11px;
-  border: 1px solid #515447;
+  border: 1px solid var(--stage-line);
   border-radius: 999px;
   color: var(--signal);
   font-size: 0.75rem;
@@ -987,9 +951,9 @@ select:focus-visible {
   max-width: 330px;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #45483c;
+  border: 1px solid var(--stage-line-quiet);
   border-radius: 8px;
-  background: rgb(11 11 11 / 82%);
+  background: var(--ink-overlay-quiet);
 }
 
 .data-note svg {
@@ -1000,7 +964,7 @@ select:focus-visible {
 
 .data-note p {
   margin: 0;
-  color: #fff;
+  color: var(--on-ink);
   font-size: 0.78rem;
   line-height: 1.45;
 }
@@ -1008,7 +972,7 @@ select:focus-visible {
 .data-note span {
   display: block;
   margin-top: 3px;
-  color: #aeb1a7;
+  color: var(--stage-muted);
 }
 
 .stage-map-controls {
@@ -1040,16 +1004,16 @@ select:focus-visible {
   padding: 10px 14px;
   border: 1px solid var(--ink);
   border-radius: 8px;
-  background: rgb(11 11 11 / 88%);
-  color: #fff;
+  background: var(--ink-overlay-note);
+  color: var(--on-ink);
   font-size: 0.82rem;
   font-weight: 650;
   line-height: 1.4;
 }
 
 .stage-search-note.is-error {
-  border-color: #d92d20;
-  color: #ffd5d0;
+  border-color: var(--danger-strong);
+  color: var(--danger-soft-ink);
 }
 
 .picker-overlay {
@@ -1062,7 +1026,7 @@ select:focus-visible {
   justify-items: end;
   padding: 24px 24px 0 424px;
   overflow: hidden;
-  background: rgb(11 11 11 / 48%);
+  background: var(--scrim);
 }
 
 .picker-shell {
@@ -1074,7 +1038,7 @@ select:focus-visible {
   border: 1px solid var(--ink);
   border-radius: 14px 14px 0 0;
   background: var(--surface);
-  box-shadow: 0 18px 80px rgb(0 0 0 / 30%);
+  box-shadow: var(--shadow-overlay);
 }
 
 .sheet-handle {
@@ -1117,14 +1081,14 @@ select:focus-visible {
 }
 
 .picker-map {
-  background: #e6e9e1;
+  background: var(--map-base);
 }
 
 .leaflet-bar,
 .leaflet-touch .leaflet-bar {
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  box-shadow: var(--shadow-control);
   overflow: hidden;
 }
 
@@ -1154,9 +1118,40 @@ select:focus-visible {
   line-height: 44px;
 }
 
+/* Visible map circles are non-interactive (interaction lives on the separate
+ * 44px hit circle), so Leaflet never adds .leaflet-interactive to them —
+ * style the marker classNames directly. */
+.map-marker-bus {
+  stroke: var(--route-blue);
+  fill: var(--surface);
+}
+
+.map-marker-subway {
+  stroke: var(--subway);
+  fill: var(--surface);
+}
+
+.map-marker-pending {
+  stroke: var(--route-blue);
+  fill: var(--surface);
+}
+
+.map-marker-bus.is-active,
+.map-marker-subway.is-active {
+  stroke: var(--ink);
+  fill: var(--signal);
+}
+
 .leaflet-interactive:focus-visible {
   outline: 3px solid var(--route-blue);
   outline-offset: 3px;
+}
+
+/* Map hit targets: each point renders an invisible 44px interactive circle
+ * (radius 22 geometry) behind the visible 18-22px circle; focus shows a ring
+ * on the full 44px target. */
+.map-marker-hit {
+  cursor: pointer;
 }
 
 .leaflet-container .leaflet-control-attribution a {
@@ -1175,11 +1170,11 @@ select:focus-visible {
   width: 42px;
   height: 42px;
   place-items: center;
-  border: 3px solid #fff;
+  border: 3px solid var(--on-ink);
   border-radius: 50%;
   color: var(--signal);
   background: var(--ink);
-  box-shadow: 0 6px 20px rgb(0 0 0 / 25%);
+  box-shadow: var(--shadow-pin);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -1201,9 +1196,9 @@ select:focus-visible {
   padding: 0 13px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   font-weight: 700;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  box-shadow: var(--shadow-control);
   cursor: pointer;
 }
 
@@ -1271,7 +1266,7 @@ select:focus-visible {
   border: 1px solid var(--line);
   border-radius: 8px;
   text-align: left;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   transition: border-color 180ms ease, background-color 180ms ease;
 }
@@ -1282,7 +1277,7 @@ select:focus-visible {
 }
 
 .stop-result.is-active {
-  background: #f4fbd6;
+  background: var(--signal-soft);
   box-shadow: inset 4px 0 var(--signal);
 }
 
@@ -1328,35 +1323,27 @@ select:focus-visible {
 
 @media (max-width: 959px) {
   .app-shell {
-    display: block;
-    min-height: 100dvh;
-    overflow: visible;
+    display: flex;
+    height: 100dvh;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
     background: var(--paper);
   }
 
   .map-stage {
-    position: fixed;
+    position: relative;
     z-index: 0;
-    inset: 0 0 auto;
-    height: auto;
-    min-height: 42dvh;
+    order: -1;
+    flex: 0 0 42dvh;
+    width: 100%;
+    height: 42dvh;
+    min-height: 0;
   }
 
-  .stage-copy {
-    top: 18px;
-    left: 18px;
-    width: calc(100% - 36px);
-    padding: 16px;
-  }
-
-  .stage-copy > p {
-    margin-top: 18px;
-  }
-
-  .stage-copy h2 {
-    font-size: clamp(2rem, 9vw, 3.4rem);
-  }
-
+  /* The mobile map is the interactive marker surface; the display headline
+   * covered it. Task copy lives in the sheet below. */
+  .stage-copy,
   .stage-action,
   .data-note {
     display: none;
@@ -1364,11 +1351,13 @@ select:focus-visible {
 
   .control-rail {
     z-index: 2;
-    min-height: 58dvh;
-    margin-top: 42dvh;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: 0;
+    overflow: hidden;
     border-right: 0;
     border-radius: 18px 18px 0 0;
-    box-shadow: 0 -8px 30px rgb(0 0 0 / 12%);
+    box-shadow: var(--shadow-sheet);
   }
 
   .brand-header {
@@ -1392,7 +1381,7 @@ select:focus-visible {
     padding: 20px;
   }
 
-  .picker-overlay {
+.picker-overlay {
     align-items: end;
     padding: 0;
   }
@@ -1413,8 +1402,29 @@ select:focus-visible {
 }
 
 @media (max-width: 480px) {
-  .route-option-form {
+  .route-add-actions {
     grid-template-columns: 1fr;
+  }
+
+  .procedure-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .procedure-row-controls {
+    border-top: 1px solid var(--line);
+  }
+
+  /* The stacked control row is auto-height, so the inherited 100% height
+   * collapses to the 20px icon. Pin the 44px interactive target. */
+  .procedure-row-controls .icon-button {
+    min-height: 44px;
+    border-left: 0;
+  }
+
+  .procedure-row-main strong,
+  .procedure-row-main > span,
+  .procedure-row-controls .icon-button {
+    word-break: keep-all;
   }
 
   .picker-footer {
@@ -1446,11 +1456,618 @@ select:focus-visible {
   .primary-button,
   .secondary-button,
   .place-selector button,
+  .arrival-favorite-toggle,
   .stop-result {
     transition-duration: 1ms;
   }
 
   .arrival-skeleton span {
     animation: none;
+  }
+}
+
+/* Commute ETA */
+.commute-eta {
+  container-type: inline-size;
+  padding: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.commute-eta-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.commute-eta-heading h2 {
+  margin: 4px 0 0;
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+}
+
+.commute-eta-times {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 8px 16px;
+}
+
+.commute-eta-times > div {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+}
+
+.commute-eta-times span,
+.commute-eta-step-copy > span,
+.commute-eta-blocked > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.commute-eta-times strong {
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.commute-eta-summary {
+  margin: 12px 0 16px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.commute-eta-timeline {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commute-eta-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px 12px;
+  padding: 0 0 12px 16px;
+  border-bottom: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+}
+
+.commute-eta-step-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.commute-eta-step-copy strong {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.commute-eta-basis {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.commute-eta-basis.is-live {
+  border-color: var(--ink);
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+
+.commute-eta-basis.is-stale,
+.commute-eta-basis.is-unavailable {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.commute-eta-blocked {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--danger);
+  background: var(--paper);
+}
+
+.commute-eta-blocked p {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.commute-eta-blocked > span {
+  display: block;
+  margin-top: 4px;
+  word-break: keep-all;
+}
+
+.commute-eta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+@container (max-width: 22rem) {
+  .commute-eta-heading,
+  .commute-eta-times {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .commute-eta-times > div {
+    text-align: left;
+  }
+
+  .commute-eta-basis {
+    align-self: start;
+  }
+}
+
+/* Favorite departures */
+.favorite-departures {
+  padding: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.favorite-departure-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.favorite-departure {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.favorite-departure.is-stale {
+  border-left-color: var(--muted);
+}
+
+.favorite-departure.has-failure {
+  border-left-color: var(--danger);
+}
+
+.favorite-departure-heading,
+.favorite-departure-times li,
+.favorite-departure-actions,
+.favorite-access-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favorite-departure-heading {
+  align-items: start;
+  justify-content: space-between;
+}
+
+.favorite-departure-heading > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.favorite-departure-heading strong,
+.favorite-no-departure {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+/* Narrow cards wrap BETWEEN the route name and the direction unit; the
+ * separator is bound to the direction by a no-break space in the markup. */
+.favorite-direction {
+  word-break: keep-all;
+}
+
+.favorite-departure-heading > div > span,
+.favorite-status,
+.favorite-departure-actions > span,
+.favorite-no-departure {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.favorite-status {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.favorite-status svg {
+  width: 16px;
+  height: 16px;
+}
+
+.favorite-status.has-failure {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.favorite-departure-times {
+  display: grid;
+  gap: 4px;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.favorite-departure-times li {
+  justify-content: space-between;
+  min-width: 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.favorite-departure-times li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.favorite-primary-eta {
+  min-width: 0;
+  font-size: 1.8rem;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+.favorite-secondary-eta {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  word-break: keep-all;
+}
+
+.favorite-guidance {
+  flex: 0 0 auto;
+  color: var(--signal-ink);
+  background: var(--signal);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.favorite-no-departure {
+  margin: 16px 0;
+}
+
+.favorite-departure-actions {
+  flex-wrap: wrap;
+  justify-content: end;
+}
+
+.favorite-departure-actions > span {
+  margin-right: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.favorite-departure-actions .secondary-button {
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+.favorite-access-form {
+  justify-content: end;
+}
+
+.favorite-access-form input {
+  width: 72px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.arrival-row-actions {
+  display: flex;
+  grid-row: 3;
+  grid-column: 1;
+  margin-top: 4px;
+}
+
+.arrival-favorite-toggle {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+
+.arrival-favorite-toggle:hover {
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+.arrival-favorite-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrival-favorite-toggle {
+    transition-duration: 1ms;
+  }
+}
+
+.arrival-row.is-subway .subway-line-badge {
+  width: fit-content;
+}
+
+/* Task 7 - ordered commute procedure editor */
+.procedure-editor {
+  container-type: inline-size;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.procedure-editor-heading h3 {
+  margin: 4px 0 0;
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+}
+
+.procedure-status {
+  padding: 4px 8px;
+  border: 1px solid var(--ink);
+  color: var(--signal-ink);
+  background: var(--signal);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.procedure-name-field,
+.procedure-field {
+  display: grid;
+  gap: 8px;
+}
+
+.procedure-name-field {
+  margin-top: 16px;
+}
+
+.procedure-name-field > span,
+.procedure-field > span:first-child {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 760;
+}
+
+.procedure-name-field input,
+.procedure-field input,
+.procedure-field select {
+  width: 100%;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+}
+
+.procedure-name-field input:focus-visible,
+.procedure-field input:focus-visible,
+.procedure-field select:focus-visible {
+  outline: 3px solid var(--route-blue);
+  outline-offset: 2px;
+  border-color: var(--route-blue);
+  box-shadow: none;
+}
+
+.procedure-step-list {
+  display: grid;
+  gap: 0;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.procedure-step {
+  display: grid;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Compact sheet layout (<960px): the editor spans the full panel width, so
+ * the gutter follows the viewport layout breakpoint. */
+@media (max-width: 959px) {
+  .procedure-step {
+    padding: 16px 20px;
+  }
+}
+
+.procedure-step-heading,
+.procedure-step-controls,
+.procedure-minute-input,
+.procedure-favorite-empty,
+.procedure-editor-actions {
+  display: flex;
+  align-items: center;
+}
+
+.procedure-step-heading {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.procedure-step-heading h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.procedure-step-heading h3 span {
+  color: var(--route-blue);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.procedure-step-controls {
+  gap: 4px;
+}
+
+.procedure-step-controls .icon-button {
+  width: 44px;
+  height: 44px;
+}
+
+.procedure-transit-fields,
+.procedure-transit-minutes {
+  display: grid;
+  gap: 12px;
+}
+
+.procedure-transit-minutes {
+  grid-template-columns: 1fr;
+}
+
+.procedure-point,
+.procedure-empty,
+.procedure-save-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.procedure-save-status,
+.procedure-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  word-break: keep-all;
+}
+
+.procedure-save-status svg,
+.procedure-field-error svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.procedure-point {
+  padding-left: 12px;
+  border-left: 3px solid var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+
+.procedure-minute-input {
+  gap: 8px;
+}
+
+.procedure-minute-input input {
+  font-variant-numeric: tabular-nums;
+}
+
+.procedure-minute-input > span {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.procedure-field-error {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.procedure-favorite-empty {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  border-left: 3px solid var(--signal);
+  color: var(--muted);
+  background: var(--paper);
+  font-size: 0.75rem;
+}
+
+.procedure-favorite-empty strong {
+  color: var(--ink);
+}
+
+.procedure-favorite-empty a {
+  color: var(--route-blue);
+  font-weight: 700;
+}
+
+.procedure-add-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(8rem, 100%), 1fr));
+  gap: 8px;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.procedure-add-actions .secondary-button {
+  width: 100%;
+  padding: 0 12px;
+}
+
+.procedure-editor-actions {
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.procedure-editor-actions .primary-button {
+  margin-right: auto;
+}
+
+@container (max-width: 21rem) {
+  .procedure-step-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .procedure-step-controls {
+    justify-content: end;
   }
 }

@@ -1,14 +1,14 @@
 import { Plus, Route, Trash2 } from "lucide-react";
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
-import type { CommuteRouteOptionId } from "../domain/commute";
+import type { CommuteProcedureId } from "../domain/commute";
 import type { SubwayStation } from "../domain/subway";
 import type {
   CommutePlace,
   DirectionCollection,
 } from "../hooks/useCommuteStops";
+import { CommuteProcedureList } from "./CommuteProcedureList";
 import { RoutePointList } from "./RoutePointList";
-import { RouteComparison } from "./RouteComparison";
 
 interface CommutePlaceManagerProps {
   readonly direction: CommuteDirection;
@@ -25,12 +25,14 @@ interface CommutePlaceManagerProps {
   readonly onSelectStop: (stopId: BusStop["id"]) => void;
   readonly onSelectSubway: (station: SubwayStation) => void;
   readonly selectedSubwayStationId: SubwayStation["id"] | null;
-  readonly onAddRoute: (
-    stopId: BusStop["id"],
-    stationId: SubwayStation["id"] | null,
+  readonly onAddProcedure: () => void;
+  readonly onEditProcedure: (procedureId: CommuteProcedureId) => void;
+  readonly onSelectProcedure: (procedureId: CommuteProcedureId) => void;
+  readonly onRemoveProcedure: (procedureId: CommuteProcedureId) => void;
+  readonly onReorderProcedure: (
+    procedureId: CommuteProcedureId,
+    toIndex: number,
   ) => void;
-  readonly onRemoveRoute: (optionId: CommuteRouteOptionId) => void;
-  readonly onSelectRoute: (optionId: CommuteRouteOptionId) => void;
 }
 
 const COPY = {
@@ -63,9 +65,11 @@ export function CommutePlaceManager({
   onSelectStop,
   onSelectSubway,
   selectedSubwayStationId,
-  onAddRoute,
-  onRemoveRoute,
-  onSelectRoute,
+  onAddProcedure,
+  onEditProcedure,
+  onSelectProcedure,
+  onRemoveProcedure,
+  onReorderProcedure,
 }: CommutePlaceManagerProps) {
   const copy = COPY[direction];
   const activePlaceId = activePlace?.id ?? null;
@@ -78,11 +82,23 @@ export function CommutePlaceManager({
     if (!activePlaceId) {
       return;
     }
-    const revealActivePlace = () =>
-      activePlaceButtonRef.current?.scrollIntoView({
-        block: "nearest",
-        inline: "nearest",
+    // Horizontal place-chip rail scrolling only: the chip strip owns its own
+    // overflow, so revealing the active chip never scrolls the document or
+    // the vertical rail panel.
+    const revealActivePlace = () => {
+      const rail = placeSelectorRef.current;
+      const chip = activePlaceButtonRef.current;
+      if (!rail || !chip) {
+        return;
+      }
+      const railLeft = chip.offsetLeft - rail.offsetLeft;
+      const target =
+        railLeft - (rail.clientWidth - chip.clientWidth) / 2;
+      rail.scrollTo({
+        left: Math.max(0, target),
+        behavior: "instant",
       });
+    };
     revealActivePlace();
     window.addEventListener("resize", revealActivePlace);
     if (!placeSelectorRef.current || typeof ResizeObserver === "undefined") {
@@ -151,11 +167,11 @@ export function CommutePlaceManager({
               className={place.id === activePlace?.id ? "is-active" : ""}
               type="button"
               aria-pressed={place.id === activePlace?.id}
-              aria-label={`${place.name}, 루트 ${place.routeOptions.length}개`}
+              aria-label={`${place.name}, 절차 ${place.procedures.length}개`}
               onClick={() => onSelectPlace(place.id)}
             >
               <strong>{place.name}</strong>
-              <span>루트 {place.routeOptions.length}개</span>
+              <span>절차 {place.procedures.length}개</span>
             </button>
           ))}
         </fieldset>
@@ -216,11 +232,13 @@ export function CommutePlaceManager({
             </button>
           </div>
 
-          <RouteComparison
+          <CommuteProcedureList
             place={activePlace}
-            onAdd={onAddRoute}
-            onRemove={onRemoveRoute}
-            onSelect={onSelectRoute}
+            onAdd={onAddProcedure}
+            onEdit={onEditProcedure}
+            onSelect={onSelectProcedure}
+            onRemove={onRemoveProcedure}
+            onReorder={onReorderProcedure}
           />
         </div>
       ) : null}

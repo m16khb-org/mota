@@ -62,8 +62,11 @@ export function apiStationName(station: string): string {
 
 export interface SubwayArrival {
   readonly id: string;
+  readonly subwayId: string;
+  readonly updnLine: string;
   readonly line: string;
   readonly direction: string;
+  readonly trainLineNm: string;
   readonly trainStatus: string;
   readonly seconds: number | null;
   readonly message: string;
@@ -73,8 +76,11 @@ export interface SubwayArrival {
 
 export const subwayArrivalSchema = z.object({
   id: z.string().min(1),
+  subwayId: z.string().min(1),
+  updnLine: z.string().min(1),
   line: z.string().min(1),
   direction: z.string().min(1),
+  trainLineNm: z.string().min(1),
   trainStatus: z.string().min(1),
   seconds: z.number().nullable(),
   message: z.string(),
@@ -143,8 +149,11 @@ export function normalizeSubwayArrivals(
   const arrivals: SubwayArrival[] = parsed.realtimeArrivalList.map(
     (row) => ({
       id: `${row.subwayId}-${row.updnLine}-${row.trainLineNm}`,
+      subwayId: row.subwayId,
+      updnLine: row.updnLine,
       line: SUBWAY_LINE_NAMES[row.subwayId] ?? "기타",
       direction: row.trainLineNm,
+      trainLineNm: row.trainLineNm,
       trainStatus: row.btrainSttus || "일반",
       seconds:
         row.barvlDt !== undefined &&

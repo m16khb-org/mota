@@ -1,5 +1,20 @@
-import { RefreshCw, TrainFront } from "lucide-react";
-import type { SubwayArrival } from "../domain/subway";
+import { BookmarkMinus, BookmarkPlus, RefreshCw, TrainFront } from "lucide-react";
+import type {
+  CommuteFavorite,
+  SubwayCommuteFavorite,
+} from "../domain/commute";
+import type { SubwayArrival, SubwayStation } from "../domain/subway";
+import type { CommuteFavoriteInput } from "../hooks/useCommuteProcedures";
+
+const DEFAULT_ACCESS_MINUTES = 5;
+
+interface SubwayFavoriteControls {
+  readonly station: SubwayStation;
+  readonly apiStationName: string;
+  readonly favorites: readonly CommuteFavorite[];
+  readonly onPinFavorite: (favorite: CommuteFavoriteInput) => void;
+  readonly onUnpinFavorite: (favoriteId: SubwayCommuteFavorite["id"]) => void;
+}
 
 interface SubwayArrivalListProps {
   readonly stationName: string;
@@ -9,6 +24,31 @@ interface SubwayArrivalListProps {
   readonly updatedAt: string | null;
   readonly onClose: () => void;
   readonly onRefresh: () => void;
+  /** Bound Task 3 mutations for the active direction and place. */
+  readonly favoriteControls?: SubwayFavoriteControls;
+}
+
+function pinnedSubwayFavorite(
+  arrival: SubwayArrival,
+  controls: SubwayFavoriteControls,
+): SubwayCommuteFavorite | null {
+  for (const favorite of controls.favorites) {
+    switch (favorite.kind) {
+      case "bus":
+        break;
+      case "subway":
+        if (
+          favorite.stationId === controls.station.id &&
+          favorite.apiStationName === controls.apiStationName &&
+          favorite.subwayId === arrival.subwayId &&
+          favorite.updnLine === arrival.updnLine
+        ) {
+          return favorite;
+        }
+        break;
+    }
+  }
+  return null;
 }
 
 function formatEta(seconds: number | null): string {
@@ -38,6 +78,7 @@ export function SubwayArrivalList({
   updatedAt,
   onClose,
   onRefresh,
+  favoriteControls,
 }: SubwayArrivalListProps) {
   return (
     <section className="arrivals" aria-labelledby="subway-arrival-title">
@@ -97,30 +138,70 @@ export function SubwayArrivalList({
       ) : null}
 
       <div className="arrival-list">
-        {arrivals.map((arrival) => (
-          <article
-            className={`arrival-row is-subway${
-              arrival.seconds === null ? " is-inactive" : ""
-            }`}
-            key={`${arrival.id}-${arrival.direction}-${arrival.message}`}
-          >
-            <div className="route-identity">
+        {arrivals.map((arrival) => {
+          const pinned =
+            favoriteControls === undefined
+              ? null
+              : pinnedSubwayFavorite(arrival, favoriteControls);
+          return (
+            <article
+              className={`arrival-row is-subway${
+                arrival.seconds === null ? " is-inactive" : ""
+              }`}
+              key={`${arrival.id}-${arrival.direction}-${arrival.message}`}
+            >
+              <div className="route-identity">
               <span className="subway-line-badge">{arrival.line}</span>
               <span className="subway-direction">{arrival.direction}</span>
-            </div>
-            <div className="arrival-meta">
-              <span>{arrival.trainStatus}</span>
-              {arrival.isLastTrain ? <span>막차</span> : null}
-            </div>
-            <div className="eta-block">
-              <strong>{formatEta(arrival.seconds)}</strong>
-              <span>{arrival.message}</span>
-              {arrival.location ? (
-                <small>{arrival.location} 부근</small>
+              </div>
+              <div className="arrival-meta">
+                <span>{arrival.trainStatus}</span>
+                {arrival.isLastTrain ? <span>막차</span> : null}
+              </div>
+              <div className="eta-block">
+                <strong>{formatEta(arrival.seconds)}</strong>
+                <span>{arrival.message}</span>
+                {arrival.location ? (
+                  <small>{arrival.location} 부근</small>
+                ) : null}
+              </div>
+              {favoriteControls ? (
+                <div className="arrival-row-actions">
+                  <button
+                    className="arrival-favorite-toggle"
+                    type="button"
+                    onClick={() => {
+                      if (pinned) {
+                        favoriteControls.onUnpinFavorite(pinned.id);
+                        return;
+                      }
+                      favoriteControls.onPinFavorite({
+                        kind: "subway",
+                        stationId: favoriteControls.station.id,
+                        apiStationName: favoriteControls.apiStationName,
+                        subwayId: arrival.subwayId,
+                        updnLine: arrival.updnLine,
+                        lineName: arrival.line,
+                        trainLineNm: arrival.trainLineNm,
+                        accessMinutes: DEFAULT_ACCESS_MINUTES,
+                      });
+                    }}
+                    aria-label={`${arrival.line} · ${arrival.trainLineNm} 즐겨찾기 ${
+                      pinned ? "해제" : "추가"
+                    }`}
+                  >
+                    {pinned ? (
+                      <BookmarkMinus aria-hidden="true" />
+                    ) : (
+                      <BookmarkPlus aria-hidden="true" />
+                    )}
+                    {pinned ? "해제" : "저장"}
+                  </button>
+                </div>
               ) : null}
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );
