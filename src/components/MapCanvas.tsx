@@ -38,6 +38,7 @@ interface AccessibleMarkerProps {
   readonly onSelect: () => void;
   readonly children?: ReactNode;
   readonly markerProps: CircleMarkerProps;
+  readonly onMarkerReady?: (marker: LeafletCircleMarker | null) => void;
 }
 
 /** CircleMarker whose element stays an accessible button with a CURRENT
@@ -49,6 +50,7 @@ function AccessibleMarker({
   onSelect,
   children,
   markerProps,
+  onMarkerReady,
 }: AccessibleMarkerProps) {
   const [marker, setMarker] = useState<LeafletCircleMarker | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -69,10 +71,16 @@ function AccessibleMarker({
     element.classList.add("map-marker-hit-target");
     const handleKeydown = (event: Event) => {
       const keyboardEvent = event as KeyboardEvent;
+      if (keyboardEvent.key === "Escape") {
+        marker.closePopup();
+        return;
+      }
       if (keyboardEvent.key !== "Enter" && keyboardEvent.key !== " ") {
         return;
       }
       keyboardEvent.preventDefault();
+      // Enter must replace any open popup, matching the click behavior.
+      marker.closePopup();
       onSelectRef.current();
       marker.openPopup();
     };
@@ -83,7 +91,13 @@ function AccessibleMarker({
   }, [marker, label, active]);
 
   return (
-    <CircleMarker ref={setMarker} {...markerProps}>
+    <CircleMarker
+      ref={(m: LeafletCircleMarker | null) => {
+        setMarker(m);
+        onMarkerReady?.(m);
+      }}
+      {...markerProps}
+    >
       {children}
     </CircleMarker>
   );
@@ -113,6 +127,7 @@ function MapPointMarker({
   const [visualMarker, setVisualMarker] = useState<LeafletCircleMarker | null>(
     null,
   );
+  const hitMarkerRef = useRef<LeafletCircleMarker | null>(null);
   const [baseClass, suffix] = visualClassName.split(" ");
 
   useEffect(() => {
@@ -150,8 +165,14 @@ function MapPointMarker({
             fillColor: "transparent",
             fillOpacity: 0,
           },
-          eventHandlers: { click: onSelect },
+          eventHandlers: {
+            click: onSelect,
+            mouseover: () => {
+              hitMarkerRef.current?.openPopup();
+            },
+          },
         }}
+        onMarkerReady={(m) => { hitMarkerRef.current = m; }}
       >
         {children}
       </AccessibleMarker>
