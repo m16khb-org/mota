@@ -135,9 +135,7 @@ function MapPointMarker({
         radius={9}
         interactive={false}
         pathOptions={{ fillOpacity: 1, weight: 3 }}
-      >
-        {children}
-      </CircleMarker>
+      />
       <AccessibleMarker
         label={label}
         active={active}
@@ -154,7 +152,9 @@ function MapPointMarker({
           },
           eventHandlers: { click: onSelect },
         }}
-      />
+      >
+        {children}
+      </AccessibleMarker>
     </>
   );
 }
