@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <title>모타 앱 아이콘</title>
-  <rect width="1024" height="1024" fill="#0b0b0b" />
-  <g fill="#c7f000">
-    <rect x="240" y="220" width="544" height="552" rx="72" />
-    <rect x="300" y="284" width="424" height="232" rx="24" fill="#0b0b0b" />
-    <rect x="300" y="556" width="424" height="32" rx="16" fill="#0b0b0b" />
-    <circle cx="344" cy="668" r="44" fill="#0b0b0b" />
-    <circle cx="680" cy="668" r="44" fill="#0b0b0b" />
-    <rect x="320" y="748" width="104" height="80" rx="28" />
-    <rect x="600" y="748" width="104" height="80" rx="28" />
-  </g>
+  <rect width="1024" height="1024" fill="#ffffff" />
+  <text
+    x="512"
+    y="610"
+    font-family="Times New Roman, Times, Liberation Serif, Nimbus Roman, serif"
+    font-size="330"
+    font-weight="bold"
+    fill="#000000"
+    text-anchor="middle"
+  >mota</text>
 </svg>
