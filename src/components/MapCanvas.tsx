@@ -191,6 +191,8 @@ function CenterObserver({
   useMapEvents({
     moveend(event) {
       const nextCenter = event.target.getCenter();
+      // Machine-consumed runtime truth for drag/bounds QA.
+      map.getContainer().dataset.mapCenter = `${nextCenter.lat.toFixed(5)},${nextCenter.lng.toFixed(5)}`;
       onCenterChange({ lat: nextCenter.lat, lng: nextCenter.lng });
     },
     popupopen(event) {
@@ -258,6 +260,17 @@ function ContainerSizeObserver() {
 
   return null;
 }
+
+/** Seoul service area (matches the API validation window, slightly padded
+ * so edge stops pan naturally). Drags clamp here — the map can never fly
+ * off into the world. */
+const SEOUL_BOUNDS: [[number, number], [number, number]] = [
+  [37.2, 126.6],
+  [37.95, 127.45],
+];
+/** Caps drag momentum so a fast flick glides briefly instead of flying
+ * across the city. Leaflet default is 15 px/ms. */
+const INERTIA_MAX_SPEED = 2.0;
 
 export function MapCanvas({
   center,
@@ -353,6 +366,10 @@ export function MapCanvas({
         zoom={15}
         minZoom={11}
         maxZoom={19}
+        maxBounds={SEOUL_BOUNDS}
+        maxBoundsViscosity={1.0}
+        inertia={!reducedMotion}
+        inertiaMaxSpeed={INERTIA_MAX_SPEED}
         scrollWheelZoom="center"
         touchZoom="center"
         doubleClickZoom="center"

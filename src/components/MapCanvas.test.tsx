@@ -7,6 +7,10 @@ import { MapCanvas } from "./MapCanvas";
 
 interface MapContainerProps {
   readonly children: ReactNode;
+  readonly maxBounds?: unknown;
+  readonly maxBoundsViscosity?: number;
+  readonly inertia?: boolean;
+  readonly inertiaMaxSpeed?: number;
   readonly scrollWheelZoom?: boolean | "center";
   readonly touchZoom?: boolean | "center";
   readonly doubleClickZoom?: boolean | "center";
@@ -41,6 +45,10 @@ vi.mock("react-leaflet", () => ({
     zoomAnimation,
     fadeAnimation,
     markerZoomAnimation,
+    maxBounds,
+    maxBoundsViscosity,
+    inertia,
+    inertiaMaxSpeed,
   }: MapContainerProps) => (
     <div
       data-testid="leaflet-map"
@@ -51,6 +59,10 @@ vi.mock("react-leaflet", () => ({
       data-zoom-animation={String(zoomAnimation)}
       data-fade-animation={String(fadeAnimation)}
       data-marker-zoom-animation={String(markerZoomAnimation)}
+      data-max-bounds={maxBounds ? JSON.stringify(maxBounds) : "undefined"}
+      data-max-bounds-viscosity={String(maxBoundsViscosity)}
+      data-inertia={String(inertia)}
+      data-inertia-max-speed={String(inertiaMaxSpeed)}
     >
       {children}
     </div>
@@ -319,5 +331,30 @@ describe("MapCanvas container resize", () => {
     expect(mockMap.invalidateSize).toHaveBeenCalledWith({ animate: false });
 
     vi.unstubAllGlobals();
+  });
+});
+
+describe("MapCanvas drag containment", () => {
+  it("clamps the view to the Seoul service area and caps drag inertia", () => {
+    render(
+      <MapCanvas
+        center={{ lat: 37.5366, lng: 127.1253 }}
+        stops={[]}
+        selectedStop={null}
+        onCenterChange={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+    const map = screen.getByTestId("leaflet-map");
+    expect(map).toHaveAttribute(
+      "data-max-bounds",
+      JSON.stringify([
+        [37.2, 126.6],
+        [37.95, 127.45],
+      ]),
+    );
+    expect(map).toHaveAttribute("data-max-bounds-viscosity", "1");
+    expect(map).toHaveAttribute("data-inertia", "true");
+    expect(map).toHaveAttribute("data-inertia-max-speed", "2");
   });
 });
