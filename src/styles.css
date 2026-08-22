@@ -152,6 +152,23 @@ button:disabled {
   letter-spacing: 0;
 }
 
+.google-login {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 720;
+  text-decoration: none;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.google-login:hover {
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+
 .commute-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2195,4 +2212,38 @@ select:focus-visible {
   outline: 3px solid var(--route-blue);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Top-level crash recovery surface (AppErrorBoundary). */
+.app-error {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-height: 100dvh;
+  padding: 24px;
+  background: var(--paper);
+}
+
+.app-error h1 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.app-error p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.app-error-detail {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--danger-ink);
+  background: var(--danger-surface);
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-all;
 }

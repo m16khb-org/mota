@@ -29,7 +29,12 @@ export type AutoCommuteEtaProps = {
 };
 
 function formatTime(timestamp: number): string {
-  return timeFormatter.format(new Date(timestamp));
+  const date = new Date(timestamp);
+  // Total function: an invalid timestamp must degrade to a label, never
+  // throw out of render (Intl RangeError would unmount the app).
+  return Number.isFinite(timestamp) && !Number.isNaN(date.getTime())
+    ? timeFormatter.format(date)
+    : "시간 미확인";
 }
 
 function waitLabel(seconds: number): string {

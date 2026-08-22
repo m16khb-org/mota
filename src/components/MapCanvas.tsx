@@ -308,6 +308,29 @@ export function MapCanvas({
     if (!frame) {
       return;
     }
+    // Map gestures must never navigate away: the OSM attribution link sits
+    // inside the draggable surface, and a finger grazing it during a drag
+    // follows the link — the whole-app "white screen" failure mode. Kill
+    // the default navigation; the attribution is also visible in the app
+    // shell and the picker footers.
+    const blockAttributionNavigation = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest(".leaflet-control-attribution a")) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    frame.addEventListener("click", blockAttributionNavigation, true);
+    return () => {
+      frame.removeEventListener("click", blockAttributionNavigation, true);
+    };
+  }, []);
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) {
+      return;
+    }
     // Leaflet fires popupopen on the map instance; the DOM container
     // re-dispatches it as a bubbling DOM event we can capture here.
     const handlePopupOpen = (event: Event) => {
