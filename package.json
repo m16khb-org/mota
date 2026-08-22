@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "hono": "^4.9.2",
+    "jose": "^6.1.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.539.0",
     "react": "^19.1.1",

@@ -8,6 +8,7 @@ import { fetchArrivals, fetchNearbyStops } from "./upstream/seoulBus";
 import { createRouteStations } from "./upstream/routeStations";
 import { createOverpassStations } from "./upstream/overpassStations";
 import { fetchSubwayArrivals } from "./upstream/subwayArrivals";
+import { verifyGatewaySession } from "./auth/gateway";
 import { errorDetail } from "./upstream/upstreamError";
 
 type UpstreamFetch = (
@@ -40,6 +41,13 @@ export function createApp(
   app.get("/api/health", (context) =>
     context.json({ status: "ok", service: "mota" }),
   );
+
+  app.get("/api/auth/session", async (context) => {
+    const user = await verifyGatewaySession(context.req.header("cookie"));
+    return user
+      ? context.json({ authenticated: true, user })
+      : context.json({ authenticated: false });
+  });
 
   app.get("/api/stops/nearby", async (context) => {
     const query = nearbySearchSchema.safeParse(context.req.query());

@@ -1,4 +1,5 @@
 import { BusFront } from "lucide-react";
+import { GoogleLogin } from "./GoogleLogin";
 
 export function BrandHeader() {
   return (
@@ -10,6 +11,7 @@ export function BrandHeader() {
         <span>서울 출퇴근</span>
         <h1>모타</h1>
       </div>
+      <GoogleLogin />
     </header>
   );
 }
