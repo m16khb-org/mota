@@ -117,9 +117,13 @@ major panels use 24px. Avoid large empty hero space because this is a task surfa
 ### Mobile (`< 960px`)
 
 - Bounded `100dvh` column shell: the document never scrolls.
-- Map occupies the upper 42dvh and stays fully painted; it is the interactive marker surface
-  (the display headline is desktop-only so it never covers markers).
-- The sheet below scrolls internally (`overscroll-behavior: contain`) with an 18px top radius.
+- The sheet below is the primary surface. The map defaults to the upper 30dvh and stays
+  fully painted; it is the interactive marker surface (the display headline is desktop-only
+  so it never covers markers).
+- The map exposes a `지도 펼치기` toggle (44px, bottom-center) that expands it to 55dvh and
+  back (`지도 접기`); the height snaps without layout animation, and the map repaints on
+  container resize (Leaflet `invalidateSize`), never leaving gray edges.
+- The sheet scrolls internally (`overscroll-behavior: contain`) with an 18px top radius.
 - Direction switch and refresh stay visible near the sheet top.
 - Stop picker list expands within the sheet; controls remain at least 44px high.
 

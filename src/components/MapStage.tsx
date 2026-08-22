@@ -1,4 +1,6 @@
 import {
+  ChevronDown,
+  ChevronUp,
   CircleDot,
   Crosshair,
   Info,
@@ -74,6 +76,9 @@ export function MapStage({
   const [nearbyStops, setNearbyStops] = useState<BusStop[]>([]);
   const [nearbyStations, setNearbyStations] = useState<SubwayStation[]>([]);
   const [stopSearch, setStopSearch] = useState<StageStopSearch>(IDLE_SEARCH);
+  /** Mobile map expansion: the sheet is the primary mobile surface, so the
+   * map defaults to a short strip and expands on demand. Desktop ignores it. */
+  const [mapExpanded, setMapExpanded] = useState(false);
   const searchSequence = useRef(0);
   const handledSearchRequest = useRef(searchRequest);
 
@@ -156,7 +161,10 @@ export function MapStage({
   }, [searchRequest, searchStageStops]);
 
   return (
-    <section className="map-stage" aria-label="선택한 통근 정류장 안내">
+    <section
+      className={mapExpanded ? "map-stage is-expanded" : "map-stage"}
+      aria-label="선택한 통근 정류장 안내"
+    >
       <div className="stage-live-map">
         <MapCanvas
           center={locateCenter ?? center}
@@ -175,6 +183,21 @@ export function MapStage({
           onAddPendingSubway={onSaveSubwayStation}
         />
       </div>
+      {!isDesktop ? (
+        <button
+          type="button"
+          className="stage-expand-button"
+          aria-expanded={mapExpanded}
+          onClick={() => setMapExpanded((current) => !current)}
+        >
+          {mapExpanded ? (
+            <ChevronDown aria-hidden="true" />
+          ) : (
+            <ChevronUp aria-hidden="true" />
+          )}
+          {mapExpanded ? "지도 접기" : "지도 펼치기"}
+        </button>
+      ) : null}
       {isDesktop ? (
         <div className="stage-map-controls" data-testid="stage-map-controls">
           <div className="map-center-pin" aria-hidden="true">

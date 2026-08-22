@@ -235,6 +235,30 @@ function CenterObserver({
   return null;
 }
 
+/** Keeps Leaflet's internal size in sync with element-level container
+ * resizes (height class toggles, sheet layout changes, dvh shifts). Leaflet
+ * only tracks window resizes by default, so a stage height change would
+ * leave stale map bounds and gray edges until the next window event. */
+function ContainerSizeObserver() {
+  const map = useMap();
+
+  useEffect(() => {
+    // Test DOMs may not implement ResizeObserver; the map then keeps
+    // Leaflet's default window-resize tracking.
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const container = map.getContainer();
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize({ animate: false });
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [map]);
+
+  return null;
+}
+
 export function MapCanvas({
   center,
   stops,
@@ -343,6 +367,7 @@ export function MapCanvas({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <CenterObserver center={center} onCenterChange={onCenterChange} />
+        <ContainerSizeObserver />
         {stops.map((stop) => {
           const active =
             selectedStop?.id === stop.id || selectedStopIds.includes(stop.id);

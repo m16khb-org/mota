@@ -18,6 +18,19 @@ interface MapContainerProps {
 
 let reducedMotion = false;
 
+const mockMap = {
+  getCenter: () => ({ lat: 37.5366, lng: 127.1253 }),
+  getZoom: () => 15,
+  setView: vi.fn(),
+  getContainer: () => document.createElement("div"),
+  invalidateSize: vi.fn(),
+  options: {
+    zoomAnimation: true,
+    fadeAnimation: true,
+    markerZoomAnimation: true,
+  },
+};
+
 vi.mock("react-leaflet", () => ({
   MapContainer: ({
     children,
@@ -47,17 +60,7 @@ vi.mock("react-leaflet", () => ({
   ),
   CircleMarker: ({ children }: { readonly children: ReactNode }) => children,
   Popup: ({ children }: { readonly children: ReactNode }) => children,
-  useMap: () => ({
-    getCenter: () => ({ lat: 37.5366, lng: 127.1253 }),
-    getZoom: () => 15,
-    setView: vi.fn(),
-    getContainer: () => document.createElement("div"),
-    options: {
-      zoomAnimation: true,
-      fadeAnimation: true,
-      markerZoomAnimation: true,
-    },
-  }),
+  useMap: () => mockMap,
   useMapEvents: vi.fn(),
 }));
 
@@ -279,5 +282,42 @@ describe("MapCanvas visible marker styling contract", () => {
     ).toBe(true);
     // Focus stays on the interactive hit circle only.
     expect(css).toMatch(/^\.leaflet-interactive:focus-visible \{/m);
+  });
+});
+
+describe("MapCanvas container resize", () => {
+  it("repaints the Leaflet map when its container resizes", () => {
+    const resizeCallbacks: ResizeObserverCallback[] = [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          resizeCallbacks.push(callback);
+        }
+        observe = vi.fn();
+        unobserve = vi.fn();
+        disconnect = vi.fn();
+      },
+    );
+
+    render(
+      <MapCanvas
+        center={{ lat: 37.5366, lng: 127.1253 }}
+        stops={[]}
+        selectedStop={null}
+        onCenterChange={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(resizeCallbacks).toHaveLength(1);
+    const notifyResize = resizeCallbacks[0];
+    if (notifyResize === undefined) {
+      throw new Error("ResizeObserver was not registered");
+    }
+    notifyResize([], {} as ResizeObserver);
+    expect(mockMap.invalidateSize).toHaveBeenCalledWith({ animate: false });
+
+    vi.unstubAllGlobals();
   });
 });
