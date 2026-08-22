@@ -1,13 +1,16 @@
 import {
   normalizeArrivals,
   normalizeNearbyStops,
+  normalizeRouteStations,
   type BusArrival,
+  type BusRouteStation,
   type BusStop,
 } from "../../src/domain/bus";
 import { UpstreamError } from "./upstreamError";
 
 const NEARBY_STOPS_URL = "https://bus.go.kr/sbus/bus/selectNearStops.do";
 const ARRIVALS_URL = "http://m.bus.go.kr/mBus/bus/getStationByUid.bms";
+const ROUTE_STATIONS_URL = "http://m.bus.go.kr/mBus/bus/getStaionByRoute.bms";
 
 export const UPSTREAM_HEADERS = {
   Accept: "application/json",
@@ -64,4 +67,24 @@ export async function fetchArrivals(
     );
   }
   return normalizeArrivals(await response.json());
+}
+
+/** Ordered stop list of one bus route (the route's own path). */
+export async function fetchRouteStations(
+  upstreamFetch: UpstreamFetch,
+  busRouteId: string,
+): Promise<BusRouteStation[]> {
+  const upstreamUrl = new URL(ROUTE_STATIONS_URL);
+  upstreamUrl.search = new URLSearchParams({ busRouteId }).toString();
+  const response = await upstreamFetch(upstreamUrl.toString(), {
+    headers: UPSTREAM_HEADERS,
+    signal: AbortSignal.timeout(8_000),
+  });
+  if (!response.ok) {
+    throw new UpstreamError(
+      "Route stations upstream failed",
+      `Route stations upstream returned ${response.status}`,
+    );
+  }
+  return normalizeRouteStations(await response.json());
 }

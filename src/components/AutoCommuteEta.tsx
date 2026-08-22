@@ -127,9 +127,11 @@ export function AutoCommuteEta({
       <p className="commute-eta-summary" aria-live="polite">
         {refreshing
           ? "정보 갱신 중 · 이전 결과를 표시합니다."
-          : hasLive
-            ? "거리와 실시간 도착정보로 자동 계산했습니다."
-            : "거리 기준 예상 시간입니다. 실시간 정보는 갱신 후 표시됩니다."}
+          : plan.legs.some((leg) => leg.verified)
+            ? "노선 경유지를 실제 지나는 버스로 확인하고 실제 경로 거리로 계산했습니다."
+            : hasLive
+              ? "거리와 실시간 도착정보로 자동 계산했습니다."
+              : "거리 기준 예상 시간입니다. 실시간 정보는 갱신 후 표시됩니다."}
       </p>
 
       <ol className="commute-eta-timeline">
@@ -148,14 +150,23 @@ export function AutoCommuteEta({
               <strong>
                 {index + 1}. {leg.routeLabel ?? (leg.kind === "bus" ? "버스" : "지하철")}{" "}
                 {leg.rideMinutes > 0 ? `· ${leg.rideMinutes}분` : ""}
+                {leg.verified && leg.alightName ? ` · ${leg.alightName} 하차` : ""}
+                {leg.verified && leg.tailWalkMinutes > 0
+                  ? ` · 도보 ${leg.tailWalkMinutes}분`
+                  : ""}
               </strong>
               <span>
                 {leg.fromName} → {leg.toName} · {waitLabel(leg.waitSeconds)} ·{" "}
                 {formatTime(leg.departureAt)} 출발 · {formatTime(leg.endAt)} 도착
               </span>
             </div>
-            <span className={`commute-eta-basis is-${leg.basis}`}>
-              {BASIS_LABELS[leg.basis]}
+            <span className="commute-eta-basis-group">
+              <span className={`commute-eta-basis is-${leg.basis}`}>
+                {BASIS_LABELS[leg.basis]}
+              </span>
+              {leg.verified ? (
+                <span className="commute-eta-verified">노선 확인</span>
+              ) : null}
             </span>
           </li>
         ))}

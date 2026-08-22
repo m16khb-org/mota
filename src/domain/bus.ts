@@ -40,6 +40,18 @@ export interface BusArrival {
   readonly second: ArrivalEstimate | null;
 }
 
+/** One ordered stop on a bus route (BIS 노선 경유 정류장). */
+export interface BusRouteStation {
+  readonly seq: number;
+  readonly stopId: StopId;
+  readonly arsId: ArsId;
+  readonly name: string;
+  readonly lat: number;
+  readonly lng: number;
+  /** Terminus this ordering is bound for (same on every row). */
+  readonly direction: string;
+}
+
 export const busStopSchema = z.object({
   id: StopIdSchema,
   arsId: ArsIdSchema,
@@ -48,6 +60,56 @@ export const busStopSchema = z.object({
   lng: z.number().finite(),
   distanceMeters: z.number().nonnegative(),
 });
+
+export const busRouteStationSchema = z.object({
+  seq: z.number().int().positive(),
+  stopId: StopIdSchema,
+  arsId: ArsIdSchema,
+  name: z.string().min(1),
+  lat: z.number().finite(),
+  lng: z.number().finite(),
+  direction: z.string().min(1),
+});
+
+const rawRouteStationSchema = z.object({
+  seq: z.coerce.number(),
+  station: StopIdSchema,
+  /** Blank on 미정차 (non-stopping) rows; filtered out below. */
+  arsId: z.string().default(""),
+  stationNm: z.string().min(1),
+  gpsX: z.coerce.number().finite(),
+  gpsY: z.coerce.number().finite(),
+  direction: z.string().default("").catch(""),
+});
+
+const routeStationsResponseSchema = z.object({
+  resultList: z.union([
+    z.array(rawRouteStationSchema),
+    z.null(),
+  ]),
+});
+
+/** Upstream route-station payloads: one ordered list per routeId. A null
+ * list means the route id is unknown upstream — normalized to []. Rows
+ * without a five-digit ARS ( freeway 미정차 points) cannot serve as
+ * boarding or alighting stops and are dropped. */
+export function normalizeRouteStations(input: unknown): BusRouteStation[] {
+  const parsed = routeStationsResponseSchema.parse(input);
+  const rows = parsed.resultList ?? [];
+  return rows
+    .filter((row) => /^\d{5}$/.test(row.arsId))
+    .map((row) => ({
+      seq: row.seq,
+      stopId: row.station,
+      arsId: ArsIdSchema.parse(row.arsId),
+      name: row.stationNm,
+      lng: row.gpsX,
+      lat: row.gpsY,
+      direction: row.direction,
+    }))
+    .filter((row) => row.direction !== "")
+    .sort((left, right) => left.seq - right.seq);
+}
 
 const nearbyStopSchema = z.object({
   strid: StopIdSchema,

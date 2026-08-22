@@ -5,6 +5,7 @@ import {
   subwaySearchSchema,
 } from "../src/domain/subway";
 import { fetchArrivals, fetchNearbyStops } from "./upstream/seoulBus";
+import { createRouteStations } from "./upstream/routeStations";
 import { createOverpassStations } from "./upstream/overpassStations";
 import { fetchSubwayArrivals } from "./upstream/subwayArrivals";
 import { errorDetail } from "./upstream/upstreamError";
@@ -30,6 +31,9 @@ export function createApp(
   const overpass = createOverpassStations(upstreamFetch, {
     now: deps.now,
     sleep: deps.sleep,
+  });
+  const routeStations = createRouteStations(upstreamFetch, {
+    now: deps.now,
   });
   const app = new Hono();
 
@@ -115,6 +119,33 @@ export function createApp(
         {
           error: "UPSTREAM_UNAVAILABLE",
           message: "지하철 도착 정보를 불러오지 못했습니다.",
+          detail: errorDetail(error),
+        },
+        502,
+      );
+    }
+  });
+
+  app.get("/api/routes/:routeId/stations", async (context) => {
+    const routeId = context.req.param("routeId");
+    if (!/^\d+$/.test(routeId)) {
+      return context.json(
+        {
+          error: "INVALID_ROUTE_ID",
+          message: "노선 ID는 숫자여야 합니다.",
+        },
+        400,
+      );
+    }
+
+    try {
+      const stations = await routeStations.fetch(routeId);
+      return context.json({ stations });
+    } catch (error) {
+      return context.json(
+        {
+          error: "UPSTREAM_UNAVAILABLE",
+          message: "노선 정보를 불러오지 못했습니다.",
           detail: errorDetail(error),
         },
         502,

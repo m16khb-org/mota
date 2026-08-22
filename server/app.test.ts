@@ -467,3 +467,103 @@ describe("bus API adapter", () => {
     });
   });
 });
+
+describe("route stations API", () => {
+  const routePayload = {
+    error: { errorMessage: "성공", errorCode: "0000" },
+    resultList: [
+      {
+        stationNo: "11111",
+        arsId: "11111",
+        trnstnid: "121000901",
+        stationNm: "강변",
+        busRouteId: "100100574",
+        posY: "439736.5",
+        station: "121000902",
+        posX: "167858.9",
+        direction: "종점행",
+        gpsX: "127.1",
+        gpsY: "37.54",
+        seq: "1",
+      },
+      {
+        stationNo: "22222",
+        arsId: "22222",
+        trnstnid: "121000903",
+        stationNm: "천호",
+        busRouteId: "100100574",
+        posY: "440002.7",
+        station: "121000904",
+        posX: "168321.3",
+        direction: "종점행",
+        gpsX: "127.1001",
+        gpsY: "37.53",
+        seq: "2",
+      },
+    ],
+  };
+
+  it("returns the ordered route stop list", async () => {
+    const upstream = vi.fn().mockResolvedValue(Response.json(routePayload));
+    const response = await createApp(upstream).request(
+      "/api/routes/100100574/stations",
+    );
+    expect(response.status).toBe(200);
+    const payload = (await response.json()) as {
+      stations: { seq: number; name: string; arsId: string }[];
+    };
+    expect(payload.stations.map((s) => s.name)).toEqual(["강변", "천호"]);
+    expect(payload.stations[0]).toMatchObject({
+      arsId: "11111",
+      lat: 37.54,
+      lng: 127.1,
+      direction: "종점행",
+    });
+    expect(upstream).toHaveBeenCalledTimes(1);
+  });
+
+  it("serves the second request from the day-long cache without upstream", async () => {
+    const upstream = vi.fn().mockResolvedValue(Response.json(routePayload));
+    const app = createApp(upstream);
+    await app.request("/api/routes/100100574/stations");
+    const second = await app.request("/api/routes/100100574/stations");
+    expect(second.status).toBe(200);
+    expect(upstream).toHaveBeenCalledTimes(1);
+  });
+
+  it("normalizes an unknown route to an empty list", async () => {
+    const upstream = vi.fn().mockResolvedValue(
+      Response.json({
+        error: { errorMessage: "성공", errorCode: "0000" },
+        resultList: null,
+      }),
+    );
+    const response = await createApp(upstream).request(
+      "/api/routes/999999999/stations",
+    );
+    expect(response.status).toBe(200);
+    const payload = (await response.json()) as { stations: unknown[] };
+    expect(payload.stations).toEqual([]);
+  });
+
+  it("rejects a non-numeric route id", async () => {
+    const upstream = vi.fn();
+    const response = await createApp(upstream).request(
+      "/api/routes/abc/stations",
+    );
+    expect(response.status).toBe(400);
+    expect(upstream).not.toHaveBeenCalled();
+  });
+
+  it("maps upstream failures onto 502", async () => {
+    const upstream = vi.fn().mockResolvedValue(
+      new Response("upstream down", { status: 503 }),
+    );
+    const response = await createApp(upstream).request(
+      "/api/routes/100100574/stations",
+    );
+    expect(response.status).toBe(502);
+    const payload = (await response.json()) as { error: string };
+    expect(payload.error).toBe("UPSTREAM_UNAVAILABLE");
+  });
+});

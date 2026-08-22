@@ -1,4 +1,9 @@
-import type { ArsId, BusArrival } from "./bus";
+import type { ArsId, BusArrival, BusRouteStation, RouteId } from "./bus";
+import {
+  terminusMatches,
+  verifyRouteLeg,
+  type RouteLegVerification,
+} from "./routeVerification";
 import type { AutoCommuteProcedure, CommuteProcedureId } from "./commute";
 import type {
   BusArrivalsSource,
@@ -50,6 +55,14 @@ export interface AutoPlanLeg {
   readonly startAt: number;
   readonly departureAt: number;
   readonly endAt: number;
+  /** The chosen bus was verified against the route's own stop list: it
+   * really stops near the next waypoint, and rideMinutes is the true path
+   * length over that list. */
+  readonly verified: boolean;
+  /** Verified legs only: the actual alighting stop name. */
+  readonly alightName: string | null;
+  /** Verified legs only: alighting stop → waypoint walk, whole minutes. */
+  readonly tailWalkMinutes: number;
 }
 
 export interface AutoCommutePlan {
@@ -77,12 +90,19 @@ export interface AutoCommuteEstimateInput {
   readonly now: number;
   readonly busArrivals?: readonly BusArrivalsSource[];
   readonly subwayArrivals?: readonly SubwayArrivalsSource[];
+  /** Route stop lists by routeId (fetched by the hook layer through the
+   * route-stations port). Present entries enable waypoint verification and
+   * path-accurate ride times; missing entries fall back to geometry. */
+  readonly routeStations?: ReadonlyMap<string, readonly BusRouteStation[]>;
 }
 
 interface BusCandidate {
   readonly departureAt: number;
   readonly label: string;
   readonly towardsTarget: boolean;
+  /** Waypoint verification succeeded AND the live direction matches the
+   * required terminus — the route provably serves this leg the right way. */
+  readonly verified: RouteLegVerification | null;
 }
 
 function sourceBasis(
@@ -119,21 +139,29 @@ function serviceGoesTowards(label: string, targetName: string): boolean {
   return labelCore.includes(targetCore) || targetCore.includes(labelCore);
 }
 
-function busCandidates(
+/** A live bus departure observed at the boarding stop, with the identity
+ * needed for route verification. */
+interface BusServiceCandidate {
+  readonly routeId: RouteId;
+  readonly routeName: string;
+  readonly direction: string;
+  readonly departureAt: number;
+}
+
+function busServiceCandidates(
   arrivals: readonly BusArrival[],
   successAt: number,
-  targetName: string,
-): BusCandidate[] {
-  const candidates: BusCandidate[] = [];
+): BusServiceCandidate[] {
+  const candidates: BusServiceCandidate[] = [];
   for (const arrival of arrivals) {
     if (arrival.first.seconds === null) {
       continue;
     }
-    const label = `${arrival.routeName} 버스 · ${arrival.direction}`;
     candidates.push({
+      routeId: arrival.routeId,
+      routeName: arrival.routeName,
+      direction: arrival.direction,
       departureAt: successAt + arrival.first.seconds * 1000,
-      label,
-      towardsTarget: serviceGoesTowards(arrival.direction, targetName),
     });
   }
   return candidates;
@@ -157,18 +185,20 @@ function subwayCandidates(
         `${arrival.trainLineNm} ${arrival.direction}`,
         targetName,
       ),
+      verified: null,
     });
   }
   return candidates;
 }
 
-/** Routes actually heading to the next point win; among equals the earliest
- * catchable departure, then the label, decides — independent of response
- * order. */
+/** Verified correct-way routes win; among equals the earliest catchable
+ * departure, then the label, decides — independent of response order. */
 function chooseBusCandidate(
   candidates: readonly BusCandidate[],
   readiness: number,
 ): BusCandidate | null {
+  const rank = (candidate: BusCandidate): number =>
+    candidate.verified !== null ? 2 : candidate.towardsTarget ? 1 : 0;
   let chosen: BusCandidate | null = null;
   for (const candidate of candidates) {
     if (candidate.departureAt < readiness) {
@@ -176,8 +206,8 @@ function chooseBusCandidate(
     }
     const better =
       chosen === null ||
-      (candidate.towardsTarget && !chosen.towardsTarget) ||
-      (candidate.towardsTarget === chosen.towardsTarget &&
+      rank(candidate) > rank(chosen) ||
+      (rank(candidate) === rank(chosen) &&
         (candidate.departureAt < chosen.departureAt ||
           (candidate.departureAt === chosen.departureAt &&
             candidate.label < chosen.label)));
@@ -218,10 +248,6 @@ export function deriveAutoCommutePlan(
       continue;
     }
     const kind: "bus" | "subway" = from.kind === "stop" ? "bus" : "subway";
-    const rideMinutes =
-      (kind === "bus"
-        ? suggestBusRideMinutes(from, to)
-        : suggestSubwayRideMinutes(from, to)) ?? 0;
 
     const source =
       kind === "bus"
@@ -235,11 +261,23 @@ export function deriveAutoCommutePlan(
         ? BUS_FALLBACK_WAIT_MINUTES
         : SUBWAY_FALLBACK_WAIT_MINUTES;
 
+    // Waypoint verification (bus legs) happens inside the live-candidate
+    // selection below: the route's own stop list proves the bus stops near
+    // `to`, yields the true path ride time, the actual alighting stop, and
+    // the required terminus for a correct-way bus.
+
+    let rideMinutes =
+      (kind === "bus"
+        ? suggestBusRideMinutes(from, to)
+        : suggestSubwayRideMinutes(from, to)) ?? 0;
+
     let routeLabel: string | null = null;
     let waitSeconds = fallbackWaitMinutes * 60;
     let waitBasis: AutoLegBasis =
       basis === "unavailable" ? "unavailable" : basis;
     let departureAt = cursor + waitSeconds * 1000;
+    let alightName: string | null = null;
+    let tailWalkMinutes = 0;
 
     if (
       basis === "live" &&
@@ -247,20 +285,63 @@ export function deriveAutoCommutePlan(
       source.arrivals !== null &&
       source.successAt !== null
     ) {
-      const candidates =
-        kind === "bus"
-          ? busCandidates(source.arrivals as readonly BusArrival[], source.successAt, to.name)
-          : subwayCandidates(
-              source.arrivals as readonly SubwayArrival[],
-              source.successAt,
-              to.name,
-            );
-      const chosen = chooseBusCandidate(candidates, cursor);
-      if (chosen !== null) {
-        routeLabel = chosen.label;
-        waitSeconds = Math.round((chosen.departureAt - cursor) / 1000);
-        waitBasis = "live";
-        departureAt = chosen.departureAt;
+      if (kind === "bus" && from.arsId !== undefined) {
+        const services = busServiceCandidates(
+          source.arrivals as readonly BusArrival[],
+          source.successAt,
+        );
+        const routeLists = input.routeStations;
+        const candidates: BusCandidate[] = services.map((service) => {
+          const leg =
+            routeLists === undefined
+              ? null
+              : (() => {
+                  const stations = routeLists.get(service.routeId);
+                  if (stations === undefined) {
+                    return null;
+                  }
+                  const checked = verifyRouteLeg({
+                    stations,
+                    fromArsId: from.arsId ?? ("" as ArsId),
+                    to,
+                  });
+                  return checked !== null &&
+                    terminusMatches(service.direction, checked.boundTermini)
+                    ? checked
+                    : null;
+                })();
+          return {
+            departureAt: service.departureAt,
+            label: `${service.routeName} 버스 · ${service.direction}`,
+            towardsTarget: serviceGoesTowards(service.direction, to.name),
+            verified: leg,
+          };
+        });
+        const chosen = chooseBusCandidate(candidates, cursor);
+        if (chosen !== null) {
+          routeLabel = chosen.label;
+          waitSeconds = Math.round((chosen.departureAt - cursor) / 1000);
+          waitBasis = "live";
+          departureAt = chosen.departureAt;
+          if (chosen.verified !== null) {
+            rideMinutes = chosen.verified.pathMinutes;
+            alightName = chosen.verified.alightName;
+            tailWalkMinutes = chosen.verified.tailWalkMinutes;
+          }
+        }
+      } else {
+        const candidates: BusCandidate[] = subwayCandidates(
+          source.arrivals as readonly SubwayArrival[],
+          source.successAt,
+          to.name,
+        ).map((candidate) => ({ ...candidate, verified: null }));
+        const chosen = chooseBusCandidate(candidates, cursor);
+        if (chosen !== null) {
+          routeLabel = chosen.label;
+          waitSeconds = Math.round((chosen.departureAt - cursor) / 1000);
+          waitBasis = "live";
+          departureAt = chosen.departureAt;
+        }
       }
     }
 
@@ -270,7 +351,8 @@ export function deriveAutoCommutePlan(
       waitBasis = basis === "stale" ? "stale" : "estimated";
     }
 
-    const endAt = departureAt + rideMinutes * MINUTE_MS;
+    const endAt =
+      departureAt + (rideMinutes + tailWalkMinutes) * MINUTE_MS;
     legs.push({
       id: `${procedure.id}:leg:${index}`,
       kind,
@@ -283,6 +365,9 @@ export function deriveAutoCommutePlan(
       startAt: cursor,
       departureAt,
       endAt,
+      verified: alightName !== null,
+      alightName,
+      tailWalkMinutes,
     });
 
     if (index === 0 && routeLabel !== null && waitBasis === "live") {

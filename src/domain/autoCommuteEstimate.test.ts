@@ -201,3 +201,66 @@ describe("deriveAutoCommutePlan", () => {
     expect(plan?.legs[0]?.routeLabel).toBeNull();
   });
 });
+
+describe("deriveAutoCommutePlan waypoint verification", () => {
+  const verifiedRoute = [
+    { seq: 1, stopId: "a1" as never, arsId: "11111" as never, name: "강변", lat: 37.54, lng: 127.1, direction: "종점행" },
+    { seq: 2, stopId: "a2" as never, arsId: "25015" as never, name: "집앞 정류장", lat: 37.52, lng: 127.1, direction: "종점행" },
+    { seq: 3, stopId: "a3" as never, arsId: "33333" as never, name: "천호", lat: 37.51, lng: 127.1005, direction: "종점행" },
+  ];
+
+  it("prefers the route verified against its stop list and uses the path ride time", () => {
+    const successAt = now - 10_000;
+    const plan = deriveAutoCommutePlan({
+      procedure,
+      points: [stopA, stationB],
+      origin,
+      now,
+      routeStations: new Map([["341", verifiedRoute]]),
+      busArrivals: [
+        {
+          stopId: "stop-a" as never,
+          arrivals: [
+            // Earlier departure but bound the wrong way for the verified list.
+            makeBusArrival("341", "성수동", 120),
+            // Verified route: 341 bound 종점행 stops near 천호.
+            makeBusArrival("341", "종점행", 400),
+            // Name-matching unverified alternative, even earlier.
+            makeBusArrival("63", "천호역", 100),
+          ],
+          successAt,
+          latestAttemptFailed: false,
+        },
+      ],
+    });
+    const leg = plan?.legs[0];
+    expect(leg?.verified).toBe(true);
+    expect(leg?.routeLabel).toContain("종점행");
+    expect(leg?.alightName).toBe("천호");
+    // Path 집앞→천호 ≈ 1113 m -> ceil(1113/300) = 4 min (not the
+    // circuity heuristic's 7).
+    expect(leg?.rideMinutes).toBe(4);
+  });
+
+  it("keeps the geometry fallback when the route list is absent", () => {
+    const successAt = now - 10_000;
+    const plan = deriveAutoCommutePlan({
+      procedure,
+      points: [stopA, stationB],
+      origin,
+      now,
+      busArrivals: [
+        {
+          stopId: "stop-a" as never,
+          arrivals: [makeBusArrival("341", "천호역", 200)],
+          successAt,
+          latestAttemptFailed: false,
+        },
+      ],
+    });
+    const leg = plan?.legs[0];
+    expect(leg?.verified).toBe(false);
+    expect(leg?.alightName).toBeNull();
+    expect(leg?.rideMinutes).toBeGreaterThan(0);
+  });
+});

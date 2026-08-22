@@ -18,6 +18,7 @@ import {
 import { deriveLiveQueries, type BusLiveQuery, type LiveQuery, type LiveSnapshot, type SubwayLiveQuery } from "../domain/liveCommuteQueries";
 import type { SubwayArrival, SubwayStation } from "../domain/subway";
 import { useLiveCommuteSnapshots } from "./useLiveCommuteSnapshots";
+import { useRouteStations } from "./useRouteStations";
 
 export function isBusArrivalRow(
   arrival: BusArrival | SubwayArrival,
@@ -136,6 +137,9 @@ export function useCommuteDailyLive(
   );
   const { snapshots, refresh } = useLiveCommuteSnapshots(queries);
   const sources = useMemo(() => estimateSources(snapshots), [snapshots]);
+  // Route stop lists for waypoint verification; fetched lazily from live
+  // snapshots and session-cached (empty on failure -> geometry fallback).
+  const routeStations = useRouteStations(autoInput?.points ?? [], snapshots);
   const { estimate, now, autoPlan } = useMemo(() => {
     const current = Date.now();
     return {
@@ -155,11 +159,12 @@ export function useCommuteDailyLive(
               points: autoInput.points,
               origin: autoInput.origin,
               now: current,
+              routeStations,
               ...sources,
             })
           : null,
     };
-  }, [activeProcedure, autoInput, sources]);
+  }, [activeProcedure, autoInput, sources, routeStations]);
   const refreshing = useMemo(
     () =>
       [...snapshots.values()].some(

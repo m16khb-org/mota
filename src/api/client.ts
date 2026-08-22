@@ -1,7 +1,9 @@
 import { z } from "zod";
 import {
   type BusArrival,
+  type BusRouteStation,
   type BusStop,
+  busRouteStationSchema,
   busStopSchema,
 } from "../domain/bus";
 import {
@@ -45,6 +47,10 @@ const arrivalsResultSchema = z.object({
     }),
   ),
   updatedAt: z.string().datetime(),
+});
+
+const routeStationsResultSchema = z.object({
+  stations: z.array(busRouteStationSchema),
 });
 
 export class ApiError extends Error {
@@ -126,6 +132,13 @@ export async function fetchSubwayArrivals(
     readonly arrivals: readonly SubwayArrival[];
     readonly updatedAt: string;
   };
+}
+
+export async function fetchRouteStations(
+  routeId: string,
+): Promise<readonly BusRouteStation[]> {
+  const payload = await getJson(`/api/routes/${routeId}/stations`);
+  return routeStationsResultSchema.parse(payload).stations;
 }
 
 /** Domain port implementation: maps one live query onto the browser API
