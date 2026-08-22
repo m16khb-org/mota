@@ -154,4 +154,73 @@ describe("MapPicker", () => {
 
     expect(onClose).toHaveBeenCalledOnce();
   });
+
+  it("locates with a fresh accurate fix and moves the map center", async () => {
+    const options = stubGeolocation((success) =>
+      success(positionOf(37.54, 127.13, 30)),
+    );
+    render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "현위치" }));
+
+    await waitFor(() =>
+      expect(screen.getByText("37.54000, 127.13000")).toBeInTheDocument(),
+    );
+    // A cached fix can be where the user WAS, not where they are.
+    expect(options.at(-1)?.maximumAge).toBe(0);
+  });
+
+  it("rejects a low-accuracy fix instead of moving to a wrong location", async () => {
+    stubGeolocation((success) => success(positionOf(37.6, 127.2, 900)));
+    render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "현위치" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "오차 범위가 약 900m",
+    );
+    expect(screen.getByText("37.53660, 127.12530")).toBeInTheDocument();
+  });
 });
+
+function positionOf(
+  lat: number,
+  lng: number,
+  accuracy: number,
+): GeolocationPosition {
+  return {
+    coords: {
+      latitude: lat,
+      longitude: lng,
+      accuracy,
+      altitude: null,
+      altitudeAccuracy: null,
+      heading: null,
+      speed: null,
+      toJSON: () => ({}),
+    },
+    timestamp: 0,
+    toJSON: () => ({}),
+  };
+}
+
+function stubGeolocation(
+  respond: (success: (position: GeolocationPosition) => void) => void,
+): PositionOptions[] {
+  const calls: PositionOptions[] = [];
+  Object.defineProperty(window.navigator, "geolocation", {
+    configurable: true,
+    value: {
+      getCurrentPosition: (
+        success: (position: GeolocationPosition) => void,
+        _error: () => void,
+        options?: PositionOptions,
+      ) => {
+        const resolved: PositionOptions = options ?? {};
+        calls.push(resolved);
+        respond(success);
+      },
+    },
+  });
+  return calls;
+}

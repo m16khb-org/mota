@@ -2,6 +2,7 @@ import { Crosshair, LocateFixed, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchNearbyStops, isServiceAreaError } from "../api/client";
 import type { BusStop } from "../domain/bus";
+import { locateFailureNotice, requestCurrentPosition } from "./locate";
 import { MapCanvas } from "./MapCanvas";
 
 const DEFAULT_CENTER = { lat: 37.5366, lng: 127.1253 };
@@ -101,17 +102,17 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
   };
 
   const useCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setError("이 브라우저에서는 현재 위치를 사용할 수 없습니다.");
-      return;
-    }
-
     setError(null);
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => setCenter({ lat: coords.latitude, lng: coords.longitude }),
-      () => setError("현재 위치를 확인하지 못했습니다. 지도를 직접 옮겨 주세요."),
-      { enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000 },
-    );
+    void requestCurrentPosition().then((result) => {
+      if (result.kind === "located") {
+        setCenter({ lat: result.lat, lng: result.lng });
+        return;
+      }
+      const notice = locateFailureNotice(result);
+      if (notice !== null) {
+        setError(notice);
+      }
+    });
   };
 
   return (

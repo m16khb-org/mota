@@ -15,6 +15,7 @@ import {
 import type { BusStop, CommuteDirection } from "../domain/bus";
 import type { SubwayStation } from "../domain/subway";
 import type { CommutePlace } from "../hooks/useCommuteStops";
+import { locateFailureNotice, requestCurrentPosition } from "./locate";
 import { MapCanvas } from "./MapCanvas";
 
 interface Point {
@@ -130,25 +131,16 @@ export function MapStage({
   }, [place, stageCenter]);
 
   const locateUser = () => {
-    if (!navigator.geolocation) {
-      setStopSearch({
-        loading: false,
-        notice: "이 브라우저에서는 현재 위치를 사용할 수 없습니다.",
-        isError: true,
-      });
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) =>
-        setLocateCenter({ lat: coords.latitude, lng: coords.longitude }),
-      () =>
-        setStopSearch({
-          loading: false,
-          notice: "현재 위치를 확인하지 못했습니다. 지도를 직접 옮겨 주세요.",
-          isError: true,
-        }),
-      { enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000 },
-    );
+    void requestCurrentPosition().then((result) => {
+      if (result.kind === "located") {
+        setLocateCenter({ lat: result.lat, lng: result.lng });
+        return;
+      }
+      const notice = locateFailureNotice(result);
+      if (notice !== null) {
+        setStopSearch({ loading: false, notice, isError: true });
+      }
+    });
   };
 
   useEffect(() => {

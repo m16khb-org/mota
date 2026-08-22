@@ -2,6 +2,7 @@ import { Crosshair, LocateFixed, Search, TrainFront, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchNearbySubwayStations, isServiceAreaError } from "../api/client";
 import type { SubwayStation } from "../domain/subway";
+import { locateFailureNotice, requestCurrentPosition } from "./locate";
 import { MapCanvas } from "./MapCanvas";
 
 interface Point {
@@ -105,20 +106,17 @@ export function SubwayPicker({
   };
 
   const useCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setError("이 브라우저에서는 현재 위치를 사용할 수 없습니다.");
-      return;
-    }
     setError(null);
-    navigator.geolocation.getCurrentPosition(
-      (position) =>
-        setCenter({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        }),
-      () => setError("현재 위치를 확인하지 못했습니다."),
-      { enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000 },
-    );
+    void requestCurrentPosition().then((result) => {
+      if (result.kind === "located") {
+        setCenter({ lat: result.lat, lng: result.lng });
+        return;
+      }
+      const notice = locateFailureNotice(result);
+      if (notice !== null) {
+        setError(notice);
+      }
+    });
   };
 
   return (
