@@ -12,6 +12,12 @@
 /** Fixes above this radius are flagged as coarse in the notice. */
 const COARSE_LOCATE_ACCURACY_METERS = 200;
 
+/** Fixes at or above this radius are almost certainly IP-based fallback
+ * (no GPS/Wi-Fi source reached the browser): the center is the ISP's
+ * registered area, not the user. No app-side retry can improve this — the
+ * notice must point at device settings. */
+const IP_FALLBACK_ACCURACY_METERS = 3_000;
+
 const LOCATE_TIMEOUT_MS = 8_000;
 
 export type LocateResult =
@@ -64,11 +70,13 @@ export function locateCoarseNotice(result: LocateResult): string | null {
     return null;
   }
   const meters = result.accuracy;
-  const described = Number.isFinite(meters)
-    ? Number(meters) >= 1000
+  if (!Number.isFinite(meters) || meters >= IP_FALLBACK_ACCURACY_METERS) {
+    return "기기가 대략적인 위치(IP 기반)만 알려주고 있어요. 기기 설정에서 위치 서비스를 켜고 브라우저에 정확한 위치 권한을 허용한 뒤 다시 시도해 주세요.";
+  }
+  const described =
+    meters >= 1000
       ? `약 ${Math.round(meters / 1000)}km`
-      : `약 ${Math.round(meters)}m`
-    : "매우 넓게";
+      : `약 ${Math.round(meters)}m`;
   return `위치 오차가 ${described} 있어요. 내 위치가 아니라면 지도를 직접 옮겨 주세요.`;
 }
 

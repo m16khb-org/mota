@@ -170,19 +170,33 @@ describe("MapPicker", () => {
     expect(options.at(-1)?.maximumAge).toBe(0);
   });
 
-  it("pans on a coarse fix but warns about the wide radius", async () => {
+  it("pans on an IP-fallback fix and points at device settings", async () => {
     stubGeolocation((success) => success(positionOf(37.6, 127.2, 50_000)));
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
     fireEvent.click(screen.getByRole("button", { name: "현위치" }));
 
-    // The fix is accepted: the map center moves to the reported position.
+    // The fix is still accepted: the map center moves to the reported position.
     await waitFor(() =>
       expect(screen.getByText("37.60000, 127.20000")).toBeInTheDocument(),
     );
-    // ...and the wide radius is disclosed instead of silently trusted.
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "오차가 약 50km",
+      "대략적인 위치(IP 기반)",
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("위치 서비스를 켜고");
+  });
+
+  it("pans on a mid-range fix and warns with the soft radius copy", async () => {
+    stubGeolocation((success) => success(positionOf(37.55, 127.14, 900)));
+    render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "현위치" }));
+
+    await waitFor(() =>
+      expect(screen.getByText("37.55000, 127.14000")).toBeInTheDocument(),
+    );
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "오차가 약 900m",
     );
   });
 });
