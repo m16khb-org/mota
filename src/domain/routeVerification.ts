@@ -12,8 +12,10 @@ import { haversineMeters, suggestWalkMinutes } from "./commuteTravelTime";
 /** Waypoint match radius: the route must stop within this distance of the
  * next itinerary point to count as passing it. */
 export const WAYPOINT_MATCH_METERS = 400;
-/** Seoul bus commercial speed incl. stops ≈ 18 km/h. */
-const PATH_METERS_PER_MINUTE = 300;
+/** Default commercial speed when the upstream reports no segment speed. */
+const DEFAULT_KMH = 18;
+const MIN_KMH = 8;
+const MAX_KMH = 60;
 
 export interface RouteLegVerification {
   /** Stop on the route nearest the waypoint (the alighting stop). */
@@ -64,15 +66,17 @@ export function terminusMatches(
   });
 }
 
-/** Sums consecutive stop-to-stop distances over the route's own ordering —
- * the ride length a passenger actually experiences. */
-function pathMetersBetween(
+/** Sums real travel time over the route's own segments between the two
+ * indices (either direction): each segment uses its upstream road distance
+ * (haversine fallback) and live section speed (clamped; default 18 km/h). */
+function pathMinutesBetween(
   stations: readonly BusRouteStation[],
   fromIndex: number,
   toIndex: number,
-): number {
+): { minutes: number; meters: number } {
   const [start, end] =
     fromIndex <= toIndex ? [fromIndex, toIndex] : [toIndex, fromIndex];
+  let minutes = 0;
   let meters = 0;
   for (let index = start; index < end; index += 1) {
     const a = stations[index];
@@ -80,9 +84,15 @@ function pathMetersBetween(
     if (a === undefined || b === undefined) {
       continue;
     }
-    meters += haversineMeters(a, b);
+    const segmentMeters = a.sectionMeters ?? haversineMeters(a, b);
+    meters += segmentMeters;
+    const kmh =
+      a.sectSpdKmh === null
+        ? DEFAULT_KMH
+        : Math.min(Math.max(a.sectSpdKmh, MIN_KMH), MAX_KMH);
+    minutes += segmentMeters / ((kmh * 1000) / 60);
   }
-  return meters;
+  return { minutes: Math.max(1, Math.ceil(minutes)), meters };
 }
 
 export function verifyRouteLeg(
@@ -137,8 +147,8 @@ export function verifyRouteLeg(
     return null;
   }
 
-  const pathMeters = pathMetersBetween(stations, boardIndex, alightIndex);
-  const pathMinutes = Math.max(1, Math.ceil(pathMeters / PATH_METERS_PER_MINUTE));
+  const path = pathMinutesBetween(stations, boardIndex, alightIndex);
+  const pathMinutes = path.minutes;
   const tailWalkMinutes = suggestWalkMinutes(alight, to) ?? 0;
   const listTerminus = stations[0]?.direction ?? "";
   const firstStationName = stations[0]?.name ?? "";
@@ -146,7 +156,7 @@ export function verifyRouteLeg(
   return {
     alightName: alight.name,
     tailWalkMinutes,
-    pathMeters: Math.round(pathMeters),
+    pathMeters: Math.round(path.meters),
     pathMinutes,
     // Forward travel follows this list's ordering. Round-trip lists can be
     // bound for the stated direction terminus OR the final stop (the depot

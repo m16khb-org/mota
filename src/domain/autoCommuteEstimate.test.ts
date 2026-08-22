@@ -204,9 +204,9 @@ describe("deriveAutoCommutePlan", () => {
 
 describe("deriveAutoCommutePlan waypoint verification", () => {
   const verifiedRoute = [
-    { seq: 1, stopId: "a1" as never, arsId: "11111" as never, name: "강변", lat: 37.54, lng: 127.1, direction: "종점행" },
-    { seq: 2, stopId: "a2" as never, arsId: "25015" as never, name: "집앞 정류장", lat: 37.52, lng: 127.1, direction: "종점행" },
-    { seq: 3, stopId: "a3" as never, arsId: "33333" as never, name: "천호", lat: 37.51, lng: 127.1005, direction: "종점행" },
+    { seq: 1, stopId: "a1" as never, arsId: "11111" as never, name: "강변", lat: 37.54, lng: 127.1, direction: "종점행", sectSpdKmh: null, sectionMeters: null },
+    { seq: 2, stopId: "a2" as never, arsId: "25015" as never, name: "집앞 정류장", lat: 37.52, lng: 127.1, direction: "종점행", sectSpdKmh: null, sectionMeters: null },
+    { seq: 3, stopId: "a3" as never, arsId: "33333" as never, name: "천호", lat: 37.51, lng: 127.1005, direction: "종점행", sectSpdKmh: null, sectionMeters: null },
   ];
 
   it("prefers the route verified against its stop list and uses the path ride time", () => {

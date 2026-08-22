@@ -17,6 +17,8 @@ function station(
     lat,
     lng: 127.1,
     direction: "종점행",
+    sectSpdKmh: null,
+    sectionMeters: null,
   };
 }
 
@@ -146,5 +148,40 @@ describe("normalizeRouteStations real-world rows", () => {
     });
     expect(stations).toHaveLength(1);
     expect(stations[0]?.name).toBe("강변");
+  });
+});
+
+describe("verifyRouteLeg per-segment speeds", () => {
+  it("uses real road distances and live section speeds over haversine defaults", () => {
+    const withSegments = southbound.map((stop, index) => ({
+      ...stop,
+      // 천호(2) → 강동구청(3): 500 m of road at 12 km/h = 2.5 min.
+      // 천호 index 1 is board, 강동구청 index 2 is alight.
+      sectionMeters: index === 1 ? 500 : null,
+      sectSpdKmh: index === 1 ? 12 : null,
+    }));
+    const verification = verifyRouteLeg({
+      stations: withSegments,
+      fromArsId: "22222" as ArsId,
+      to: { lat: 37.52, lng: 127.1 },
+    });
+    expect(verification).not.toBeNull();
+    expect(verification?.pathMeters).toBe(500);
+    expect(verification?.pathMinutes).toBe(3); // 500m @12km/h = 2.5 → ceil 3
+  });
+
+  it("clamps absurd live speeds into a sane window", () => {
+    const withSegments = southbound.map((stop, index) => ({
+      ...stop,
+      sectionMeters: index === 1 ? 3000 : null,
+      sectSpdKmh: index === 1 ? 500 : null, // bad sensor reading
+    }));
+    const verification = verifyRouteLeg({
+      stations: withSegments,
+      fromArsId: "22222" as ArsId,
+      to: { lat: 37.52, lng: 127.1 },
+    });
+    // 3000 m clamped to 60 km/h = 3 min (not 0).
+    expect(verification?.pathMinutes).toBe(3);
   });
 });

@@ -50,6 +50,12 @@ export interface BusRouteStation {
   readonly lng: number;
   /** Terminus this ordering is bound for (same on every row). */
   readonly direction: string;
+  /** Current traffic speed of the segment to the NEXT stop (km/h); null
+   * when the upstream reports 0/unknown. */
+  readonly sectSpdKmh: number | null;
+  /** Road distance of the segment to the NEXT stop (meters); null when
+   * the upstream omits it. */
+  readonly sectionMeters: number | null;
 }
 
 export const busStopSchema = z.object({
@@ -69,6 +75,8 @@ export const busRouteStationSchema = z.object({
   lat: z.number().finite(),
   lng: z.number().finite(),
   direction: z.string().min(1),
+  sectSpdKmh: z.number().finite().nullable(),
+  sectionMeters: z.number().finite().nullable(),
 });
 
 const rawRouteStationSchema = z.object({
@@ -80,6 +88,9 @@ const rawRouteStationSchema = z.object({
   gpsX: z.coerce.number().finite(),
   gpsY: z.coerce.number().finite(),
   direction: z.string().default("").catch(""),
+  /** Segment to the next stop; 0 means unknown. */
+  sectSpd: z.coerce.number().min(0).catch(0),
+  fullSectDist: z.coerce.number().min(0).catch(0),
 });
 
 const routeStationsResponseSchema = z.object({
@@ -106,6 +117,8 @@ export function normalizeRouteStations(input: unknown): BusRouteStation[] {
       lng: row.gpsX,
       lat: row.gpsY,
       direction: row.direction,
+      sectSpdKmh: row.sectSpd > 0 ? row.sectSpd : null,
+      sectionMeters: row.fullSectDist > 0 ? row.fullSectDist : null,
     }))
     .filter((row) => row.direction !== "")
     .sort((left, right) => left.seq - right.seq);

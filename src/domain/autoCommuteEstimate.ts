@@ -4,6 +4,7 @@ import {
   verifyRouteLeg,
   type RouteLegVerification,
 } from "./routeVerification";
+import { verifySubwayLeg } from "./subwayLine";
 import type { AutoCommuteProcedure, CommuteProcedureId } from "./commute";
 import type {
   BusArrivalsSource,
@@ -334,13 +335,45 @@ export function deriveAutoCommutePlan(
           source.arrivals as readonly SubwayArrival[],
           source.successAt,
           to.name,
-        ).map((candidate) => ({ ...candidate, verified: null }));
+        ).map((candidate) => {
+          // Subway verification from the live direction label: the train
+          // provably passes the waypoint when its terminus or via name
+          // matches the waypoint. Verified trains outrank name-only matches.
+          const verified =
+            from.kind === "station" && to.kind === "station"
+              ? verifySubwayLeg({
+                  boardName: from.name,
+                  board: from,
+                  alightName: to.name,
+                  alight: to,
+                  directionLabel: candidate.label,
+                })
+              : null;
+          return {
+            ...candidate,
+            verified:
+              verified === null
+                ? null
+                : {
+                    alightName: verified.alightName,
+                    tailWalkMinutes: 0,
+                    pathMeters: verified.pathMeters,
+                    pathMinutes: verified.pathMinutes,
+                    boundTermini: [],
+                  },
+          };
+        });
         const chosen = chooseBusCandidate(candidates, cursor);
         if (chosen !== null) {
           routeLabel = chosen.label;
           waitSeconds = Math.round((chosen.departureAt - cursor) / 1000);
           waitBasis = "live";
           departureAt = chosen.departureAt;
+          if (chosen.verified !== null) {
+            rideMinutes = chosen.verified.pathMinutes;
+            alightName = chosen.verified.alightName;
+            tailWalkMinutes = chosen.verified.tailWalkMinutes;
+          }
         }
       }
     }
