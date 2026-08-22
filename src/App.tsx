@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { ArrivalList } from "./components/ArrivalList";
+import { AutoCommuteEta } from "./components/AutoCommuteEta";
+import { AutoProcedureEditor } from "./components/AutoProcedureEditor";
 import { BrandHeader } from "./components/BrandHeader";
 import { CommuteEta } from "./components/CommuteEta";
 import { CommutePlaceManager } from "./components/CommutePlaceManager";
 import { CommuteProcedureEditor } from "./components/CommuteProcedureEditor";
+import { requestCurrentPosition } from "./components/locate";
 import { CommuteSwitch } from "./components/CommuteSwitch";
 import { FavoriteDepartures } from "./components/FavoriteDepartures";
 import { MapPicker } from "./components/MapPicker";
@@ -27,7 +30,7 @@ import type {
 } from "./hooks/useCommuteProcedures";
 import { useCommuteDailyLive } from "./hooks/useCommuteDailyLive";
 import { useArrivalDetail } from "./hooks/useArrivalDetail";
-import { getActivePlace, getActiveProcedure, getActiveStop, useCommuteStops } from "./hooks/useCommuteStops";
+import { getActivePlace, getActiveProcedure, getActiveStop, resolveAutoProcedurePoints, useCommuteStops } from "./hooks/useCommuteStops";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 
 const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
@@ -42,6 +45,7 @@ export function App() {
     renamePlace,
     removePlace,
     selectPlace,
+    setPlaceLocation,
     addStop,
     removeStop,
     selectStop,
@@ -75,11 +79,18 @@ export function App() {
     ? { lat: mapAnchor.lat, lng: mapAnchor.lng }
     : DEFAULT_MAP_CENTER;
   const activeProcedure = getActiveProcedure(activePlace);
+  const autoInput =
+    activePlace !== null && activeProcedure?.kind === "auto"
+      ? {
+          points: resolveAutoProcedurePoints(activePlace, activeProcedure),
+          origin: activePlace.location,
+        }
+      : null;
   const favorites = activePlace?.favorites ?? NO_FAVORITES;
   const readyProcedure =
     activeProcedure?.kind === "ready" ? activeProcedure : null;
 
-  const live = useCommuteDailyLive(activeProcedure, favorites);
+  const live = useCommuteDailyLive(activeProcedure, favorites, autoInput);
   const { busDetail, subwayDetail, refreshBusDetail, refreshSubwayDetail } =
     useArrivalDetail({
       selectedStop,
@@ -215,13 +226,34 @@ const saveNearbyStop = (stop: BusStop) => {
           role="tabpanel"
           aria-labelledby={`commute-tab-${direction}`}
         >
-          {readyProcedure && live.estimate !== null ? (
+          {activeProcedure?.kind === "ready" && live.estimate !== null ? (
             <CommuteEta
-              procedure={readyProcedure}
+              procedure={activeProcedure}
               result={live.estimate}
               refreshing={live.refreshing}
               onEditProcedure={editActiveProcedure}
               onRefresh={live.refresh}
+            />
+          ) : null}
+          {activeProcedure?.kind === "auto" ? (
+            <AutoCommuteEta
+              procedure={activeProcedure}
+              plan={live.autoPlan}
+              refreshing={live.refreshing}
+              onEditProcedure={editActiveProcedure}
+              onRefresh={live.refresh}
+              onSetOrigin={() => {
+                if (activePlace) {
+                  void requestCurrentPosition().then((result) => {
+                    if (result.kind === "located") {
+                      setPlaceLocation(direction, activePlace.id, {
+                        lat: result.lat,
+                        lng: result.lng,
+                      });
+                    }
+                  });
+                }
+              }}
             />
           ) : null}
 
@@ -245,6 +277,9 @@ const saveNearbyStop = (stop: BusStop) => {
             onSelectPlace={(placeId) => {
               selectPlace(direction, placeId);
               setSelectedStation(null);
+            }}
+            onSetPlaceLocation={(placeId, location) => {
+              setPlaceLocation(direction, placeId, location);
             }}
             onAddStop={() => {
               if (isDesktop) {
@@ -303,13 +338,24 @@ const saveNearbyStop = (stop: BusStop) => {
           />
 
           {editorTarget !== null && activePlace ? (
-            <CommuteProcedureEditor
-              direction={direction}
-              place={activePlace}
-              procedure={editingProcedure}
-              onSave={saveProcedure}
-              onCancel={() => setEditorTarget(null)}
-            />
+            editingProcedure?.kind === "ready" ? (
+              <CommuteProcedureEditor
+                direction={direction}
+                place={activePlace}
+                procedure={editingProcedure}
+                onSave={saveProcedure}
+                onCancel={() => setEditorTarget(null)}
+              />
+            ) : (
+              <AutoProcedureEditor
+                place={activePlace}
+                procedure={
+                  editingProcedure?.kind === "auto" ? editingProcedure : null
+                }
+                onSave={saveProcedure}
+                onCancel={() => setEditorTarget(null)}
+              />
+            )
           ) : null}
 
           <FavoriteDepartures

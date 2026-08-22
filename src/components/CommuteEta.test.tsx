@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { normalizeArrivals } from "../domain/bus";
 import {
   busCommuteStepSchema,
-  commuteProcedureSchema,
+  readyCommuteProcedureSchema,
   subwayCommuteStepSchema,
 } from "../domain/commute";
 import { type CommuteEstimate, estimateCommuteProcedure } from "../domain/commuteEstimate";
@@ -39,7 +39,7 @@ const subwayStep = subwayCommuteStepSchema.parse({
   fallbackWaitMinutes: 6,
 });
 
-const procedure = commuteProcedureSchema.parse({
+const procedure = readyCommuteProcedureSchema.parse({
   id: "morning-commute",
   kind: "ready",
   name: "아침 출근",
@@ -180,7 +180,7 @@ describe("CommuteEta", () => {
   });
 
   it("renders named (non-numeric) bus routes without the 번 suffix", () => {
-    const namedRouteProcedure = commuteProcedureSchema.parse({
+    const namedRouteProcedure = readyCommuteProcedureSchema.parse({
       id: "named-route-commute",
       kind: "ready",
       name: "광주 노선",

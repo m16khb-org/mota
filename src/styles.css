@@ -1882,6 +1882,41 @@ select:focus-visible {
   width: fit-content;
 }
 
+/* Origin (출발지) row: the auto itinerary's walk leg source. */
+.place-origin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px dashed var(--line-strong);
+  background: var(--paper);
+}
+
+.place-origin-status {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.inline-link-button {
+  min-height: 44px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--route-blue);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.procedure-auto-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 /* Task 7 - ordered commute procedure editor */
 .procedure-editor {
   container-type: inline-size;

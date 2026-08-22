@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi, type Mock } from "vitest";
 import { liveArrivalsPort } from "../api/client";
 import {
   commuteFavoriteSchema,
-  commuteProcedureSchema,
+  readyCommuteProcedureSchema,
   type CommuteFavorite,
   type SavedCommuteProcedure,
 } from "./commute";
@@ -22,7 +22,7 @@ const procedureStationId = "osm-node-2095165702";
 const favoriteStationAId = "osm-node-4491234";
 const favoriteStationBId = "osm-node-4495678";
 
-const activeProcedure: SavedCommuteProcedure = commuteProcedureSchema.parse({
+const activeProcedure: SavedCommuteProcedure = readyCommuteProcedureSchema.parse({
   id: "proc-1",
   kind: "ready",
   name: "아침 출근",

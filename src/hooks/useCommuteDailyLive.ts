@@ -5,6 +5,11 @@ import type {
   SavedCommuteProcedure,
 } from "../domain/commute";
 import {
+  deriveAutoCommutePlan,
+  type AutoCommutePlan,
+  type ResolvedAutoPoint,
+} from "../domain/autoCommuteEstimate";
+import {
   estimateCommuteProcedure,
   type BusArrivalsSource,
   type CommuteEstimate,
@@ -69,6 +74,7 @@ export interface UseCommuteDailyLiveResult {
   readonly queries: readonly LiveQuery[];
   readonly snapshots: ReadonlyMap<string, LiveSnapshot>;
   readonly estimate: CommuteEstimate | null;
+  readonly autoPlan: AutoCommutePlan | null;
   readonly refreshing: boolean;
   readonly refresh: () => void;
   readonly now: number;
@@ -108,12 +114,21 @@ export function subwayDetailQuery(
   return query ?? null;
 }
 
+/** Runtime inputs for an active `kind: "auto"` procedure: the caller
+ * resolves the persisted point identities against the active place. */
+export interface AutoEstimateInput {
+  readonly points: readonly ResolvedAutoPoint[];
+  readonly origin: { readonly lat: number; readonly lng: number } | null;
+}
+
 /** Single daily-flow wiring: derive the active live query set from the active
  * procedure plus visible favorites, run the one foreground refresh
- * controller, and feed its snapshots to the pure estimator. */
+ * controller, and feed its snapshots to the pure estimators (ready →
+ * estimateCommuteProcedure; auto → deriveAutoCommutePlan). */
 export function useCommuteDailyLive(
   activeProcedure: SavedCommuteProcedure | null,
   favorites: readonly CommuteFavorite[],
+  autoInput: AutoEstimateInput | null = null,
 ): UseCommuteDailyLiveResult {
   const queries = useMemo(
     () => deriveLiveQueries({ activeProcedure, visibleFavorites: favorites }),
@@ -121,7 +136,7 @@ export function useCommuteDailyLive(
   );
   const { snapshots, refresh } = useLiveCommuteSnapshots(queries);
   const sources = useMemo(() => estimateSources(snapshots), [snapshots]);
-  const { estimate, now } = useMemo(() => {
+  const { estimate, now, autoPlan } = useMemo(() => {
     const current = Date.now();
     return {
       now: current,
@@ -133,8 +148,18 @@ export function useCommuteDailyLive(
               ...sources,
             })
           : null,
+      autoPlan:
+        activeProcedure?.kind === "auto" && autoInput !== null
+          ? deriveAutoCommutePlan({
+              procedure: activeProcedure,
+              points: autoInput.points,
+              origin: autoInput.origin,
+              now: current,
+              ...sources,
+            })
+          : null,
     };
-  }, [activeProcedure, sources]);
+  }, [activeProcedure, autoInput, sources]);
   const refreshing = useMemo(
     () =>
       [...snapshots.values()].some(
@@ -146,6 +171,7 @@ export function useCommuteDailyLive(
     queries,
     snapshots,
     estimate,
+    autoPlan,
     refreshing,
     refresh,
     now,

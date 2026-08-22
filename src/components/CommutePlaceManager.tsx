@@ -1,4 +1,4 @@
-import { Plus, Route, Trash2 } from "lucide-react";
+import { LocateFixed, Plus, Route, Trash2 } from "lucide-react";
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import type { BusStop, CommuteDirection } from "../domain/bus";
 import type { CommuteProcedureId } from "../domain/commute";
@@ -8,6 +8,7 @@ import type {
   CommutePlace,
   DirectionCollection,
 } from "../hooks/useCommuteStops";
+import { locateFailureNotice, requestCurrentPosition } from "./locate";
 import { CommuteProcedureList } from "./CommuteProcedureList";
 import { RoutePointList } from "./RoutePointList";
 
@@ -19,6 +20,10 @@ interface CommutePlaceManagerProps {
   readonly onRenamePlace: (placeId: string, name: string) => void;
   readonly onRemovePlace: (placeId: string) => void;
   readonly onSelectPlace: (placeId: string) => void;
+  readonly onSetPlaceLocation: (
+    placeId: string,
+    location: { readonly lat: number; readonly lng: number } | null,
+  ) => void;
   readonly onAddStop: () => void;
   readonly onAddSubway: () => void;
   readonly onRemoveStop: (stopId: BusStop["id"]) => void;
@@ -59,6 +64,7 @@ export function CommutePlaceManager({
   onRenamePlace,
   onRemovePlace,
   onSelectPlace,
+  onSetPlaceLocation,
   onAddStop,
   onAddSubway,
   onRemoveStop,
@@ -78,6 +84,22 @@ export function CommutePlaceManager({
   const activePlaceButtonRef = useRef<HTMLButtonElement>(null);
   const [newPlaceName, setNewPlaceName] = useState("");
   const [draftName, setDraftName] = useState(activePlace?.name ?? "");
+  const [originNotice, setOriginNotice] = useState<string | null>(null);
+
+  const setOriginToCurrentLocation = (placeId: string) => {
+    setOriginNotice("현재 위치를 확인하는 중…");
+    void requestCurrentPosition().then((result) => {
+      if (result.kind === "located") {
+        onSetPlaceLocation(placeId, { lat: result.lat, lng: result.lng });
+        setOriginNotice("출발지를 현재 위치로 저장했습니다.");
+        return;
+      }
+      const notice = locateFailureNotice(result);
+      setOriginNotice(
+        notice ?? "현재 위치를 가져올 수 없습니다. 브라우저 위치 권한을 확인하세요.",
+      );
+    });
+  };
 
   useEffect(() => {
     if (!activePlaceId) {
@@ -209,6 +231,28 @@ export function CommutePlaceManager({
               <Trash2 aria-hidden="true" />
             </button>
           </div>
+
+          <div className="place-origin-row">
+            <span className="place-origin-status">
+              {activePlace.location
+                ? "출발지 설정됨 · 첫 도보 시간 자동 계산"
+                : "출발지 미설정 · 첫 도보 시간 없이 계산"}
+            </span>
+            <button
+              className="secondary-button"
+              disabled={originNotice === "현재 위치를 확인하는 중…"}
+              onClick={() => setOriginToCurrentLocation(activePlace.id)}
+              type="button"
+            >
+              <LocateFixed aria-hidden="true" />
+              {activePlace.location ? "출발지 다시 설정" : "현위치로 출발지 설정"}
+            </button>
+          </div>
+          {originNotice ? (
+            <p className="procedure-save-status" role="status">
+              {originNotice}
+            </p>
+          ) : null}
 
           <RoutePointList
             place={activePlace}

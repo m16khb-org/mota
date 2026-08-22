@@ -238,7 +238,7 @@ describe("useCommuteStops", () => {
   });
 
   describe("v4 procedures and favorites", () => {
-    const fiveSteps: CommuteProcedureInput["steps"] = [
+    const fiveSteps: Extract<CommuteProcedureInput, { kind: "ready" }>["steps"] = [
       { id: "s1", kind: "walk", minutes: 4 },
       {
         id: "s2",
@@ -324,6 +324,7 @@ describe("useCommuteStops", () => {
       act(() => {
         result.current.addProcedure("company", placeId, {
           name: "아침 출근",
+          kind: "ready",
           steps: fiveSteps,
         });
       });
@@ -337,6 +338,7 @@ describe("useCommuteStops", () => {
       act(() => {
         result.current.addProcedure("company", placeId, {
           name: "아침 출근",
+          kind: "ready",
           steps: fiveSteps,
         });
       });
@@ -347,6 +349,7 @@ describe("useCommuteStops", () => {
       act(() => {
         result.current.addProcedure("company", placeId, {
           name: "퇴근 길",
+          kind: "ready",
           steps: [{ id: "w1", kind: "walk", minutes: 12 }],
         });
       });
@@ -394,7 +397,7 @@ describe("useCommuteStops", () => {
           "company",
           placeId,
           procedures[0]?.id as never,
-          { name: "아침 출근 바뀜", steps: fiveSteps },
+          { name: "아침 출근 바뀜", kind: "ready", steps: fiveSteps },
         );
       });
       const edited =
@@ -444,6 +447,7 @@ describe("useCommuteStops", () => {
         act(() => {
           result.current.addProcedure("company", placeId, {
             name: "잘못된 절차",
+            kind: "ready",
             steps: [
               { id: "s1", kind: "walk", minutes: 0 },
               { ...busStep, id: "s1" },
@@ -455,6 +459,7 @@ describe("useCommuteStops", () => {
         act(() => {
           result.current.editProcedure("company", placeId, "missing" as never, {
             name: "존재하지 않음",
+            kind: "ready",
             steps: fiveSteps,
           });
         }),
@@ -516,6 +521,7 @@ describe("useCommuteStops", () => {
       act(() => {
         result.current.addProcedure("company", placeId, {
           name: "아침 출근",
+          kind: "ready",
           steps: fiveSteps,
         });
         result.current.pinFavorite("company", placeId, busFavoriteInput);

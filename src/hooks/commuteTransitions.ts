@@ -56,17 +56,31 @@ function procedureReferencesSavedPoints(
 ): boolean {
   const stopIds = new Set(place.stops.map((stop) => stop.id));
   const stationIds = new Set(place.subwayStations.map((station) => station.id));
-  return procedure.steps.every((step) =>
-    step.kind === "walk"
-      ? true
-      : step.kind === "bus"
-        ? stopIds.has(step.stopId)
-        : stationIds.has(step.stationId),
-  );
+  switch (procedure.kind) {
+    case "ready":
+      return procedure.steps.every((step) =>
+        step.kind === "walk"
+          ? true
+          : step.kind === "bus"
+            ? stopIds.has(step.stopId)
+            : stationIds.has(step.stationId),
+      );
+    case "auto":
+      return procedure.points.every((point) =>
+        point.type === "stop"
+          ? stopIds.has(point.stopId)
+          : stationIds.has(point.stationId),
+      );
+  }
 }
 
 function procedureContentKey(procedure: CommuteProcedure): string {
-  return JSON.stringify({ name: procedure.name, steps: procedure.steps });
+  switch (procedure.kind) {
+    case "ready":
+      return JSON.stringify({ kind: "ready", name: procedure.name, steps: procedure.steps });
+    case "auto":
+      return JSON.stringify({ kind: "auto", name: procedure.name, points: procedure.points });
+  }
 }
 
 function nextActiveProcedureId(
@@ -199,6 +213,18 @@ export function selectProcedureInCommutes(
     activeProcedureId: procedureId,
   }));
   return activatePlace(updated, direction, placeId);
+}
+
+export function setPlaceLocationInCommutes(
+  commutes: CommuteStops,
+  direction: CommuteDirection,
+  placeId: string,
+  location: { readonly lat: number; readonly lng: number } | null,
+): CommuteStops {
+  return mapPlace(commutes, direction, placeId, (place) => ({
+    ...place,
+    location,
+  }));
 }
 
 export function pinFavoriteInCommutes(

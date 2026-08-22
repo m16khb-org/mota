@@ -83,6 +83,7 @@ export function createPlace(input: {
     procedures: [],
     favorites: input.favorites,
     activeProcedureId: null,
+    location: null,
   };
 }
 

@@ -718,43 +718,20 @@ async function pinBothFavorites(): Promise<void> {
   await act(async () => {});
 }
 
-async function selectFavoriteOption(
-  selectLabel: string,
-  optionName: string,
-): Promise<void> {
-  const option = screen.getByRole("option", { name: optionName });
-  fireEvent.change(screen.getByLabelText(selectLabel), {
-    target: { value: (option as HTMLOptionElement).value },
-  });
-  await act(async () => {});
-}
-
 async function authorProcedureThroughEditor(): Promise<void> {
   fireEvent.click(screen.getByRole("button", { name: "절차 추가" }));
   await act(async () => {});
 
-  fireEvent.click(screen.getByRole("button", { name: "도보 추가" }));
-  fireEvent.change(screen.getByLabelText("1번째 도보 시간 (분)"), {
-    target: { value: "3" },
-  });
-
-  fireEvent.click(screen.getByRole("button", { name: "버스 추가" }));
-  await selectFavoriteOption("2번째 버스 서비스", `강동05 · ${BUS_DIRECTION}`);
-  fireEvent.change(screen.getByLabelText("2번째 버스 탑승 시간 (분)"), {
-    target: { value: "15" },
-  });
-  fireEvent.change(screen.getByLabelText("2번째 버스 대기 대안 시간 (분)"), {
-    target: { value: "10" },
-  });
-
-  fireEvent.click(screen.getByRole("button", { name: "지하철 추가" }));
-  await selectFavoriteOption("3번째 지하철 서비스", "2호선 · 강남방면");
-  fireEvent.change(screen.getByLabelText("3번째 지하철 탑승 시간 (분)"), {
-    target: { value: "20" },
-  });
-  fireEvent.change(screen.getByLabelText("3번째 지하철 대기 대안 시간 (분)"), {
-    target: { value: "5" },
-  });
+  // Zero-choice authoring: tap the saved points in order, name, save. No
+  // service pickers, no minute inputs — everything else is derived.
+  fireEvent.click(
+    screen.getByRole("button", { name: "천호역 · ARS 25014 경유지 추가" }),
+  );
+  await act(async () => {});
+  fireEvent.click(
+    screen.getByRole("button", { name: "천호 · 수도권 전철 경유지 추가" }),
+  );
+  await act(async () => {});
 
   fireEvent.change(screen.getByLabelText("절차 이름"), {
     target: { value: "출근 루틴" },
@@ -816,18 +793,18 @@ describe("App daily commute flow", () => {
     await authorProcedureThroughEditor();
 
     expect(screen.getByRole("heading", { name: "출근 루틴" })).toBeInTheDocument();
-    expect(screen.getByText("11:01까지 출발")).toBeInTheDocument();
-    expect(screen.getByText("11:49 도착")).toBeInTheDocument();
-    expect(screen.getAllByText("실시간").length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText(/3분 걷기/)).toBeInTheDocument();
+    // The auto plan renders a derived bus leg with a live-observed route and
+    // an arrival time; no origin is set yet, so leave guidance is withheld.
+    expect(screen.getAllByText(/\d{2}:\d{2} 도착/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/1\. .*버스/)).toBeInTheDocument();
+    expect(screen.getByText(/출발 위치가 없어/)).toBeInTheDocument();
 
     firstVisit.unmount();
     render(<App />);
     await act(async () => {});
 
     expect(screen.getByRole("heading", { name: "출근 루틴" })).toBeInTheDocument();
-    expect(screen.getByText("11:01까지 출발")).toBeInTheDocument();
-    expect(screen.getByText("11:49 도착")).toBeInTheDocument();
+    expect(screen.getAllByText(/\d{2}:\d{2} 도착/).length).toBeGreaterThan(0);
     expect(favoriteIdentity("강동05 · 강동공영차고지")).toBeInTheDocument();
   });
 
@@ -997,12 +974,16 @@ describe("App daily commute flow", () => {
     expect(screen.getByText("11:01까지 출발")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "절차 추가" }));
-    fireEvent.click(screen.getByRole("button", { name: "도보 추가" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "천호역 · ARS 25014 경유지 추가" }),
+    );
     fireEvent.click(screen.getByRole("button", { name: "편집 취소" }));
     await act(async () => {});
 
     expect(screen.getByText("1개 저장됨")).toBeInTheDocument();
-    expect(screen.queryByLabelText("1번째 도보 시간 (분)")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/탑승 노선·대기·이동 시간은 자동 계산/),
+    ).not.toBeInTheDocument();
   });
 
   it("isolates procedures and favorites per direction and place", async () => {

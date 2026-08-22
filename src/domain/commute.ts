@@ -83,15 +83,43 @@ const commuteStepsSchema = z
     }
   });
 
-export const commuteProcedureSchema = z.strictObject({
+export const readyCommuteProcedureSchema = z.strictObject({
   id: CommuteProcedureIdSchema,
   kind: z.literal("ready"),
   name: z.string().min(1),
   steps: commuteStepsSchema,
 });
 
-/** A saved procedure is always ready to evaluate. Superseded v3 route
- * options are discarded on migration rather than kept as drafts. */
+/** Auto procedures persist only the ordered point identities; services,
+ * waits, and ride times are derived at run time. */
+const autoProcedurePointSchema = z.discriminatedUnion("type", [
+  z.strictObject({
+    type: z.literal("stop"),
+    stopId: stopIdSchema,
+    arsId: arsIdSchema,
+  }),
+  z.strictObject({
+    type: z.literal("station"),
+    stationId: subwayStationSchema.shape.id,
+    apiStationName: z.string().min(1),
+  }),
+]);
+
+export const autoCommuteProcedureSchema = z.strictObject({
+  id: CommuteProcedureIdSchema,
+  kind: z.literal("auto"),
+  name: z.string().min(1),
+  points: z.array(autoProcedurePointSchema).min(1),
+});
+
+export const commuteProcedureSchema = z.discriminatedUnion("kind", [
+  readyCommuteProcedureSchema,
+  autoCommuteProcedureSchema,
+]);
+
+/** A saved procedure is either fully authored (ready) or a pure geographic
+ * itinerary (auto). Superseded v3 route options are discarded on migration
+ * rather than kept as drafts. */
 export const savedCommuteProcedureSchema = commuteProcedureSchema;
 
 export const busCommuteFavoriteSchema = z.strictObject({
@@ -131,10 +159,17 @@ export type SubwayCommuteStep = Readonly<
   z.infer<typeof subwayCommuteStepSchema>
 >;
 export type CommuteStep = z.infer<typeof commuteStepSchema>;
-export type CommuteProcedure = Readonly<
-  z.infer<typeof commuteProcedureSchema>
->;
+export type CommuteProcedure = z.infer<typeof commuteProcedureSchema>;
 export type SavedCommuteProcedure = CommuteProcedure;
+export type ReadyCommuteProcedure = Readonly<
+  z.infer<typeof readyCommuteProcedureSchema>
+>;
+export type AutoCommuteProcedure = Readonly<
+  z.infer<typeof autoCommuteProcedureSchema>
+>;
+export type AutoProcedurePoint = Readonly<
+  z.infer<typeof autoProcedurePointSchema>
+>;
 export type BusCommuteFavorite = Readonly<
   z.infer<typeof busCommuteFavoriteSchema>
 >;

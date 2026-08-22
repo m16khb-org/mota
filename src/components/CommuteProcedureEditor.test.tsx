@@ -5,8 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 import type { CommuteDirection } from "../domain/bus";
 import {
   busCommuteFavoriteSchema,
-  commuteProcedureSchema,
-  type SavedCommuteProcedure,
+  readyCommuteProcedureSchema,
+  type ReadyCommuteProcedure,
 } from "../domain/commute";
 import type { CommutePlace } from "../hooks/useCommuteStops";
 import { CommuteProcedureEditor } from "./CommuteProcedureEditor";
@@ -21,7 +21,7 @@ import {
 function renderEditor(input: {
   readonly direction?: CommuteDirection;
   readonly place?: CommutePlace;
-  readonly procedure?: SavedCommuteProcedure | null;
+  readonly procedure?: ReadyCommuteProcedure | null;
 } = {}) {
   const onSave = vi.fn();
   const onCancel = vi.fn();
@@ -180,7 +180,7 @@ describe("CommuteProcedureEditor", () => {
 
   it("still resets to the stored procedure state when the editor scope changes", () => {
     // Given: an in-progress new draft for the company place.
-    const savedProcedure = commuteProcedureSchema.parse({
+    const savedProcedure = readyCommuteProcedureSchema.parse({
       id: "proc-evening",
       kind: "ready",
       name: "퇴근길",
@@ -215,7 +215,7 @@ describe("CommuteProcedureEditor", () => {
         onCancel={vi.fn()}
         onSave={vi.fn()}
         place={placeWithProcedure}
-        procedure={savedProcedure satisfies SavedCommuteProcedure}
+        procedure={savedProcedure satisfies ReadyCommuteProcedure}
       />,
     );
 

@@ -21,8 +21,14 @@ function rowLabel(procedure: SavedCommuteProcedure): string {
 }
 
 function rowSummary(procedure: SavedCommuteProcedure): string {
-  const kinds = procedure.steps.map((step) => KIND_LABEL[step.kind]);
-  return `${procedure.steps.length}단계 · ${kinds.join(" → ")}`;
+  switch (procedure.kind) {
+    case "ready": {
+      const kinds = procedure.steps.map((step) => KIND_LABEL[step.kind]);
+      return `${procedure.steps.length}단계 · ${kinds.join(" → ")}`;
+    }
+    case "auto":
+      return `${procedure.points.length}개 경유 · 시간 자동 계산`;
+  }
 }
 
 export function CommuteProcedureList({

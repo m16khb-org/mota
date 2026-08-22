@@ -12,12 +12,14 @@ import {
   removeStopFromCommutes,
   removeSubwayStationFromCommutes,
 } from "./commutePointCleanup";
+import { setPlaceLocationInCommutes } from "./commuteTransitions";
 import { useCommuteProcedures } from "./useCommuteProcedures";
 
 export {
   getActivePlace,
   getActiveProcedure,
   getActiveStop,
+  resolveAutoProcedurePoints,
 } from "./commuteProjections";
 export type {
   CommutePlace,
@@ -47,6 +49,7 @@ export function useCommuteStops() {
         procedures: [],
         favorites: [],
         activeProcedureId: null,
+        location: null,
       };
       setCommutes((current) => ({
         ...current,
@@ -224,12 +227,26 @@ export function useCommuteStops() {
     [],
   );
 
+  const setPlaceLocation = useCallback(
+    (
+      direction: CommuteDirection,
+      placeId: string,
+      location: { readonly lat: number; readonly lng: number } | null,
+    ) => {
+      setCommutes((current) =>
+        setPlaceLocationInCommutes(current, direction, placeId, location),
+      );
+    },
+    [],
+  );
+
   return {
     commutes,
     addPlace,
     renamePlace,
     removePlace,
     selectPlace,
+    setPlaceLocation,
     addStop,
     removeStop,
     selectStop,

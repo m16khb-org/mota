@@ -46,6 +46,12 @@ const commutePlaceSchema = z.object({
   procedures: z.array(commuteProcedureSchema),
   favorites: z.array(commuteFavoriteSchema),
   activeProcedureId: CommuteProcedureIdSchema.nullable(),
+  /** Departure origin for auto itineraries (walk leg + leave guidance).
+   * Older v4 payloads lack the key; null means unset. */
+  location: z
+    .object({ lat: z.number(), lng: z.number() })
+    .nullable()
+    .default(null),
 });
 
 /** v2/v3 read shape. v3's routeOptions and both versions' extra keys are
@@ -124,6 +130,7 @@ function createDefaultPlace(
     procedures: [],
     favorites: [],
     activeProcedureId: null,
+    location: null,
   };
 }
 
@@ -141,8 +148,9 @@ function createInitialCommutes(
   };
 }
 
-/** Ready procedures must reference saved points, ids stay unique. Superseded
- * legacy drafts read from old payloads are dropped here. */
+/** Ready procedures must reference saved points; auto procedures must
+ * reference saved points with unique ids. Superseded legacy drafts read
+ * from old payloads are dropped here. */
 function normalizeProcedures(
   procedures: readonly z.infer<typeof persistedProcedureSchema>[],
   stopIds: ReadonlySet<string>,
@@ -151,16 +159,27 @@ function normalizeProcedures(
   const seenIds = new Set<string>();
   const normalized: CommuteProcedure[] = [];
   for (const procedure of procedures) {
-    if (procedure.kind !== "ready") {
-      continue;
+    let referencesSavedPoints: boolean;
+    switch (procedure.kind) {
+      case "legacy-draft":
+        continue;
+      case "auto":
+        referencesSavedPoints = procedure.points.every((point) =>
+          point.type === "stop"
+            ? stopIds.has(point.stopId)
+            : stationIds.has(point.stationId),
+        );
+        break;
+      case "ready":
+        referencesSavedPoints = procedure.steps.every((step) =>
+          step.kind === "walk"
+            ? true
+            : step.kind === "bus"
+              ? stopIds.has(step.stopId)
+              : stationIds.has(step.stationId),
+        );
+        break;
     }
-    const referencesSavedPoints = procedure.steps.every((step) =>
-      step.kind === "walk"
-        ? true
-        : step.kind === "bus"
-          ? stopIds.has(step.stopId)
-          : stationIds.has(step.stationId),
-    );
     if (!referencesSavedPoints || seenIds.has(procedure.id)) {
       continue;
     }
@@ -251,6 +270,7 @@ function migratePreviousCollection(
     activePlaceId: collection.activePlaceId,
     places: collection.places.map((place) => ({
       ...place,
+      location: null,
       procedures: [],
       favorites: [],
       activeProcedureId: null,

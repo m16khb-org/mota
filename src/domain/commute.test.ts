@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   commuteFavoriteSchema,
-  commuteProcedureSchema,
+  readyCommuteProcedureSchema,
   savedCommuteProcedureSchema,
 } from "./commute";
 
@@ -67,7 +67,7 @@ describe("saved commute procedures", () => {
   });
 
   it("keeps display labels stored separately from identity keys", () => {
-    const result = commuteProcedureSchema.parse(completeProcedure);
+    const result = readyCommuteProcedureSchema.parse(completeProcedure);
     const bus = result.steps[1];
     const subway = result.steps[3];
 

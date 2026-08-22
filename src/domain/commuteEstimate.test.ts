@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { BusArrival, RouteId, StopId } from "./bus";
-import { commuteProcedureSchema } from "./commute";
+import { readyCommuteProcedureSchema } from "./commute";
 import type { CommuteProcedureId, CommuteStepId } from "./commute";
 import {
   estimateCommuteProcedure,
@@ -143,7 +143,7 @@ const estimate = (
 
 /** The schema-parsed ready procedure from the Task 1 contract feeds the
  * estimator without any adapter. */
-const parsedCompleteProcedure = commuteProcedureSchema.parse({
+const parsedCompleteProcedure = readyCommuteProcedureSchema.parse({
   id: "proc-morning",
   kind: "ready",
   name: "아침 출근",

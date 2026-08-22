@@ -78,7 +78,7 @@ export function validateEditor(state: EditorState, favorites: readonly CommuteFa
   if (issues.length > 0 || steps.some((step) => step === null)) return { issues, procedure: null };
   const parsed = commuteProcedureSchema.safeParse({ id: "editor-preview", kind: "ready", name, steps });
   if (!parsed.success) return { issues: [{ field: "steps", message: "절차를 다시 확인하세요." }], procedure: null };
-  const { id: _id, kind: _kind, ...procedure } = parsed.data;
+  const { id: _id, ...procedure } = parsed.data;
   return { issues, procedure };
 }
 

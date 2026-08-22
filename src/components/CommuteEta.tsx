@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { CommuteProcedure, CommuteStep } from "../domain/commute";
+import type { ReadyCommuteProcedure } from "../domain/commute";
 import type {
   CommuteEstimate,
   CommuteStepEstimate,
@@ -21,7 +21,7 @@ const BASIS_LABELS = {
 } as const satisfies Record<CommuteStepEstimateBasis, string>;
 
 export type CommuteEtaProps = {
-  readonly procedure: CommuteProcedure;
+  readonly procedure: ReadyCommuteProcedure;
   readonly result: CommuteEstimate;
   /** Adapted from Task 5/6 snapshots; freshness remains owned by the estimator. */
   readonly refreshing: boolean;
@@ -37,7 +37,7 @@ function formatTime(timestamp: number): string {
   return timeFormatter.format(new Date(timestamp));
 }
 
-function stepLabel(step: CommuteStep): string {
+function stepLabel(step: ReadyCommuteProcedure["steps"][number]): string {
   switch (step.kind) {
     case "walk":
       return `${step.minutes}분 걷기`;

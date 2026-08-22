@@ -5,8 +5,9 @@ import type { CommutePlace, CommuteStops } from "./commuteStopsStorage";
 
 /** Point-deletion transitions: removing a saved stop or station cascades
  * through favorites and procedures so no dangling reference survives. A
- * ready procedure never survives a dangling reference, and selection ids
- * fall back deterministically. */
+ * ready procedure never survives a dangling reference; an auto itinerary
+ * drops only the deleted waypoint (the remaining itinerary stays valid
+ * unless it empties). Selection ids fall back deterministically. */
 
 function mapPlace(
   commutes: CommuteStops,
@@ -36,29 +37,58 @@ function nextActiveProcedureId(
     : (procedures[0]?.id ?? null);
 }
 
-function removeStopReferences(
+/** Drops the deleted waypoint from auto itineraries (an emptied itinerary
+ * is removed); ready procedures never survive a dangling reference. */
+function filterStopReferences(
   procedures: readonly SavedCommuteProcedure[],
   stopId: BusStop["id"],
 ): SavedCommuteProcedure[] {
-  // A ready procedure never survives a dangling stop reference.
-  return procedures.filter(
-    (procedure) =>
-      !procedure.steps.some(
-        (step) => step.kind === "bus" && step.stopId === stopId,
-      ),
-  );
+  const kept: SavedCommuteProcedure[] = [];
+  for (const procedure of procedures) {
+    switch (procedure.kind) {
+      case "ready":
+        if (!procedure.steps.some((step) => step.kind === "bus" && step.stopId === stopId)) {
+          kept.push(procedure);
+        }
+        break;
+      case "auto": {
+        const points = procedure.points.filter(
+          (point) => !(point.type === "stop" && point.stopId === stopId),
+        );
+        if (points.length > 0) {
+          kept.push({ ...procedure, points });
+        }
+        break;
+      }
+    }
+  }
+  return kept;
 }
 
-function removeStationReferences(
+function filterStationReferences(
   procedures: readonly SavedCommuteProcedure[],
   stationId: SubwayStation["id"],
 ): SavedCommuteProcedure[] {
-  return procedures.filter(
-    (procedure) =>
-      !procedure.steps.some(
-        (step) => step.kind === "subway" && step.stationId === stationId,
-      ),
-  );
+  const kept: SavedCommuteProcedure[] = [];
+  for (const procedure of procedures) {
+    switch (procedure.kind) {
+      case "ready":
+        if (!procedure.steps.some((step) => step.kind === "subway" && step.stationId === stationId)) {
+          kept.push(procedure);
+        }
+        break;
+      case "auto": {
+        const points = procedure.points.filter(
+          (point) => !(point.type === "station" && point.stationId === stationId),
+        );
+        if (points.length > 0) {
+          kept.push({ ...procedure, points });
+        }
+        break;
+      }
+    }
+  }
+  return kept;
 }
 
 export function removeStopFromCommutes(
@@ -75,7 +105,7 @@ export function removeStopFromCommutes(
     const favorites = place.favorites.filter(
       (favorite) => !(favorite.kind === "bus" && favorite.stopId === stopId),
     );
-    const procedures = removeStopReferences(place.procedures, stopId);
+    const procedures = filterStopReferences(place.procedures, stopId);
     return {
       ...place,
       stops,
@@ -107,7 +137,7 @@ export function removeSubwayStationFromCommutes(
       (favorite) =>
         !(favorite.kind === "subway" && favorite.stationId === stationId),
     );
-    const procedures = removeStationReferences(place.procedures, stationId);
+    const procedures = filterStationReferences(place.procedures, stationId);
     return {
       ...place,
       subwayStations,

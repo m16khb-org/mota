@@ -1,7 +1,7 @@
 import { AlertTriangle, Footprints, Route, TrainFront } from "lucide-react";
 import { type SubmitEvent, useEffect, useId, useMemo, useReducer, useRef } from "react";
 import type { CommuteDirection } from "../domain/bus";
-import type { SavedCommuteProcedure } from "../domain/commute";
+import type { ReadyCommuteProcedure } from "../domain/commute";
 import type { CommutePlace } from "../hooks/useCommuteStops";
 import type { CommuteProcedureInput } from "../hooks/useCommuteProcedures";
 import { CommuteProcedureStep } from "./CommuteProcedureStep";
@@ -19,7 +19,7 @@ export type CommuteProcedureEditorProps = {
   readonly onCancel: () => void;
   readonly onSave: (procedure: CommuteProcedureInput) => void;
   readonly place: CommutePlace;
-  readonly procedure: SavedCommuteProcedure | null;
+  readonly procedure: ReadyCommuteProcedure | null;
 };
 
 const STEP_ACTIONS = [

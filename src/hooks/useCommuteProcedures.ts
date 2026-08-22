@@ -43,7 +43,6 @@ export function useCommuteProcedures(
       const parsed = commuteProcedureSchema.parse({
         ...procedure,
         id: createProcedureId(),
-        kind: "ready",
       });
       setCommutes((current) =>
         addProcedureToCommutes(current, direction, placeId, parsed),
@@ -62,7 +61,6 @@ export function useCommuteProcedures(
       const parsed = commuteProcedureSchema.parse({
         ...procedure,
         id: procedureId,
-        kind: "ready",
       });
       setCommutes((current) =>
         editProcedureInCommutes(current, direction, placeId, procedureId, parsed),

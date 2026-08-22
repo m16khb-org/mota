@@ -386,3 +386,115 @@ describe("commuteStopsStorage v4", () => {
     expect(localStorage.getItem(V3_KEY)).toBeNull();
   });
 });
+
+describe("auto procedures and place location round-trip", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("persists an auto itinerary and the place origin, then reloads them", () => {
+    const commutes = loadCommutes();
+    const place = commutes.company.places[0];
+    if (!place) throw new Error("expected a default company place");
+    const next = {
+      ...commutes,
+      company: {
+        ...commutes.company,
+        places: commutes.company.places.map((candidate) =>
+          candidate.id === place.id
+            ? {
+                ...candidate,
+                stops: [companyStop],
+                subwayStations: [subwayStation],
+                location: { lat: 37.538, lng: 127.126 },
+                procedures: [
+                  {
+                    id: "proc-auto-1" as never,
+                    kind: "auto" as const,
+                    name: "경로만",
+                    points: [
+                      { type: "stop" as const, stopId: companyStop.id, arsId: companyStop.arsId },
+                      { type: "station" as const, stationId: subwayStation.id, apiStationName: "천호" },
+                    ],
+                  },
+                ],
+                activeProcedureId: "proc-auto-1" as never,
+              }
+            : candidate,
+        ),
+      },
+    };
+    saveCommutes(next);
+
+    const reloaded = loadCommutes();
+    const reloadedPlace = reloaded.company.places.find(
+      (candidate) => candidate.id === place.id,
+    );
+    expect(reloadedPlace?.location).toEqual({ lat: 37.538, lng: 127.126 });
+    const procedure = reloadedPlace?.procedures[0];
+    expect(procedure).toMatchObject({ kind: "auto", name: "경로만" });
+    if (procedure?.kind === "auto") {
+      expect(procedure.points).toHaveLength(2);
+      expect(reloadedPlace?.activeProcedureId).toBe(procedure.id);
+    }
+  });
+
+  it("drops an auto procedure whose points reference deleted stops", () => {
+    const commutes = loadCommutes();
+    const place = commutes.company.places[0];
+    if (!place) throw new Error("expected a default company place");
+    const next = {
+      ...commutes,
+      company: {
+        ...commutes.company,
+        places: commutes.company.places.map((candidate) =>
+          candidate.id === place.id
+            ? {
+                ...candidate,
+                procedures: [
+                  {
+                    id: "proc-dangling" as never,
+                    kind: "auto" as const,
+                    name: "없는 경로",
+                    points: [
+                      { type: "stop" as const, stopId: "99999" as never, arsId: "99999" as never },
+                    ],
+                  },
+                ],
+              }
+            : candidate,
+        ),
+      },
+    };
+    saveCommutes(next);
+    const reloaded = loadCommutes();
+    const reloadedPlace = reloaded.company.places.find(
+      (candidate) => candidate.id === place.id,
+    );
+    expect(reloadedPlace?.procedures).toHaveLength(0);
+  });
+
+  it("treats legacy payloads without location as origin-unset", () => {
+    const legacy = JSON.stringify({
+      company: {
+        places: [
+          {
+            id: "company-legacy",
+            name: "레거시",
+            stops: [companyStop],
+            subwayStations: [],
+            selectedStopId: companyStop.id,
+            procedures: [],
+            favorites: [],
+            activeProcedureId: null,
+          },
+        ],
+        activePlaceId: "company-legacy",
+      },
+      home: { places: [], activePlaceId: null },
+    });
+    localStorage.setItem(V4_KEY, legacy);
+    const commutes = loadCommutes();
+    expect(commutes.company.places[0]?.location).toBeNull();
+  });
+});

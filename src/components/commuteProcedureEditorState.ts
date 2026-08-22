@@ -1,4 +1,4 @@
-import type { CommuteFavorite, CommuteStep, SavedCommuteProcedure } from "../domain/commute";
+import type { CommuteFavorite, CommuteStep, ReadyCommuteProcedure } from "../domain/commute";
 
 export const STEP_KINDS = ["walk", "bus", "subway"] as const;
 export type EditorStepKind = (typeof STEP_KINDS)[number];type WalkEditorStep = {
@@ -109,7 +109,7 @@ function editedFieldsFromSteps(steps: readonly EditorStep[]): ReadonlySet<string
   return keys;
 }
 
-export function createEditorState(procedure: SavedCommuteProcedure | null, favorites: readonly CommuteFavorite[], scope: string): EditorState {
+export function createEditorState(procedure: ReadyCommuteProcedure | null, favorites: readonly CommuteFavorite[], scope: string): EditorState {
   if (procedure === null) return { scope, name: "", steps: [], editedFields: new Set() };
   const steps = procedure.steps.map((step) => editorStepFromReady(step, favorites));
   return { scope, name: procedure.name, steps, editedFields: editedFieldsFromSteps(steps) };

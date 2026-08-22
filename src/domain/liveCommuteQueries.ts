@@ -105,14 +105,30 @@ export function deriveLiveQueries(input: LiveQueryInput): readonly LiveQuery[] {
   };
 
   const procedure = input.activeProcedure;
-  if (procedure?.kind === "ready") {
-    for (const step of procedure.steps) {
-      if (step.kind === "bus") {
-        addBusQuery(step.stopId, step.arsId);
-      } else if (step.kind === "subway") {
-        addSubwayQuery(step.stationId, step.apiStationName);
+  switch (procedure?.kind) {
+    case "ready":
+      for (const step of procedure.steps) {
+        if (step.kind === "bus") {
+          addBusQuery(step.stopId, step.arsId);
+        } else if (step.kind === "subway") {
+          addSubwayQuery(step.stationId, step.apiStationName);
+        }
       }
-    }
+      break;
+    case "auto":
+      // Every itinerary point joins the live set: leg 0 powers leave
+      // guidance; later legs upgrade their waits when a catchable live
+      // departure exists after readiness.
+      for (const point of procedure.points) {
+        if (point.type === "stop") {
+          addBusQuery(point.stopId, point.arsId);
+        } else {
+          addSubwayQuery(point.stationId, point.apiStationName);
+        }
+      }
+      break;
+    case undefined:
+      break;
   }
 
   for (const favorite of input.visibleFavorites) {

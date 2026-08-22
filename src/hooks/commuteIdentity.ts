@@ -10,14 +10,15 @@ import {
 import type { commuteFavoriteSchema, commuteProcedureSchema } from "../domain/commute";
 
 /** Unbranded input shapes accepted by the hook mutations; the Zod schemas in
- * `src/domain/commute.ts` stay the single validation boundary. */
+ * `src/domain/commute.ts` stay the single validation boundary. Procedures
+ * carry their `kind` in the input (ready | auto). */
 type DistributiveOmit<T, K extends keyof never> = T extends unknown
   ? Omit<T, K>
   : never;
 
 export type CommuteProcedureInput = DistributiveOmit<
   z.input<typeof commuteProcedureSchema>,
-  "id" | "kind"
+  "id"
 >;
 export type CommuteFavoriteInput = DistributiveOmit<
   z.input<typeof commuteFavoriteSchema>,
