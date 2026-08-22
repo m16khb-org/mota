@@ -15,7 +15,15 @@ type TransitEditorStep = {
   readonly fallbackWaitMinutes: string;
 };
 export type EditorStep = WalkEditorStep | TransitEditorStep;
-export type EditorState = { readonly scope: string; readonly name: string; readonly steps: readonly EditorStep[] };
+export type EditorState = {
+  readonly scope: string;
+  readonly name: string;
+  readonly steps: readonly EditorStep[];
+  /** Minute fields the user authored ("<stepId>:<field>"). Auto-derived
+   * values sync with geometry only until the field becomes user-owned. */
+  readonly editedFields: ReadonlySet<string>;
+};
+export type MinuteField = "minutes" | "rideMinutes" | "fallbackWaitMinutes";
 
 export type EditorAction =
   | { readonly type: "reset"; readonly state: EditorState }
@@ -24,7 +32,8 @@ export type EditorAction =
   | { readonly type: "remove"; readonly id: string }
   | { readonly type: "move"; readonly id: string; readonly offset: -1 | 1 }
   | { readonly type: "favorite"; readonly id: string; readonly favoriteId: string }
-  | { readonly type: "minutes"; readonly id: string; readonly field: "minutes" | "rideMinutes" | "fallbackWaitMinutes"; readonly value: string };
+  | { readonly type: "minutes"; readonly id: string; readonly field: MinuteField; readonly value: string }
+  | { readonly type: "suggest"; readonly id: string; readonly field: MinuteField; readonly value: string };
 
 function assertNever(value: never): never { throw new TypeError(`Unexpected editor value: ${JSON.stringify(value)}`); }
 
@@ -82,9 +91,28 @@ function editorStepFromReady(step: CommuteStep, favorites: readonly CommuteFavor
   }
 }
 
+/** Saved durations are user-authored: they never re-sync to geometry. */
+function editedFieldsFromSteps(steps: readonly EditorStep[]): ReadonlySet<string> {
+  const keys = new Set<string>();
+  for (const step of steps) {
+    switch (step.kind) {
+      case "walk":
+        keys.add(`${step.id}:minutes`);
+        break;
+      case "bus":
+      case "subway":
+        keys.add(`${step.id}:rideMinutes`);
+        keys.add(`${step.id}:fallbackWaitMinutes`);
+        break;
+    }
+  }
+  return keys;
+}
+
 export function createEditorState(procedure: SavedCommuteProcedure | null, favorites: readonly CommuteFavorite[], scope: string): EditorState {
-  if (procedure === null) return { scope, name: "", steps: [] };
-  return { scope, name: procedure.name, steps: procedure.steps.map((step) => editorStepFromReady(step, favorites)) };
+  if (procedure === null) return { scope, name: "", steps: [], editedFields: new Set() };
+  const steps = procedure.steps.map((step) => editorStepFromReady(step, favorites));
+  return { scope, name: procedure.name, steps, editedFields: editedFieldsFromSteps(steps) };
 }
 
 export function createEditorStep(kind: EditorStepKind, id: string): EditorStep {
@@ -96,6 +124,24 @@ export function createEditorStep(kind: EditorStepKind, id: string): EditorStep {
       return { id, kind, favoriteId: "", pointId: null, rideMinutes: "", fallbackWaitMinutes: "" };
     default:
       return assertNever(kind);
+  }
+}
+
+/** Applies a minute value to one step, shared by user edits and geometry
+ * suggestions. */
+function withMinutes(step: EditorStep, field: MinuteField, value: string): EditorStep {
+  switch (step.kind) {
+    case "walk":
+      return field === "minutes" ? { ...step, minutes: value } : step;
+    case "bus":
+    case "subway":
+      return field === "rideMinutes"
+        ? { ...step, rideMinutes: value }
+        : field === "fallbackWaitMinutes"
+          ? { ...step, fallbackWaitMinutes: value }
+          : step;
+    default:
+      return assertNever(step);
   }
 }
 
@@ -138,18 +184,13 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     case "minutes":
       return {
         ...state,
-        steps: state.steps.map((step) => {
-          if (step.id !== action.id) return step;
-          switch (step.kind) {
-            case "walk":
-              return action.field === "minutes" ? { ...step, minutes: action.value } : step;
-            case "bus":
-            case "subway":
-              return action.field === "rideMinutes" ? { ...step, rideMinutes: action.value } : action.field === "fallbackWaitMinutes" ? { ...step, fallbackWaitMinutes: action.value } : step;
-            default:
-              return assertNever(step);
-          }
-        }),
+        steps: state.steps.map((step) => (step.id === action.id ? withMinutes(step, action.field, action.value) : step)),
+        editedFields: new Set([...state.editedFields, `${action.id}:${action.field}`]),
+      };
+    case "suggest":
+      return {
+        ...state,
+        steps: state.steps.map((step) => (step.id === action.id ? withMinutes(step, action.field, action.value) : step)),
       };
     default:
       return assertNever(action);

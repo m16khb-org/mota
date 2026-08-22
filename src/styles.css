@@ -2053,6 +2053,15 @@ select:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+/* Shown while a minute field mirrors the geometry-derived suggestion and
+ * has not been user-edited yet. Matches the 0.75rem metadata token. */
+.procedure-suggest-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .procedure-minute-input > span {
   flex: 0 0 auto;
   color: var(--muted);

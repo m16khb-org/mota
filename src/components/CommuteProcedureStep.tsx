@@ -8,15 +8,21 @@ import {
   type EditorStep,
 } from "./commuteProcedureEditorState";
 import { issueFor, type EditorIssue } from "./commuteProcedureEditorValidation";
+import type { StepSuggestions } from "./commuteProcedureSuggestions";
 
 type CommuteProcedureStepProps = {
   readonly dispatch: Dispatch<EditorAction>;
+  /** Minute fields already user-authored; suggestions must not clobber them. */
+  readonly editedFields: ReadonlySet<string>;
   readonly favorites: readonly CommuteFavorite[];
+  /** Whether the draft contains any transit step; gates the walk-leg hint. */
+  readonly hasTransitStep: boolean;
   readonly index: number;
   readonly place: CommutePlace;
   readonly step: EditorStep;
   readonly issues: readonly EditorIssue[];
   readonly stepCount: number;
+  readonly suggestions: StepSuggestions | null;
 };
 
 const STEP_LABEL = { walk: "도보", bus: "버스", subway: "지하철" } as const;
@@ -34,12 +40,14 @@ function MinutesField({
   error,
   field,
   label,
+  note,
   step,
 }: {
   readonly dispatch: Dispatch<EditorAction>;
   readonly error: string | null;
   readonly field: "minutes" | "rideMinutes" | "fallbackWaitMinutes";
   readonly label: string;
+  readonly note: string | null;
   readonly step: EditorStep;
 }) {
   let value: string;
@@ -55,12 +63,15 @@ function MinutesField({
       value = assertNever(step);
   }
   const errorId = `${step.id}-${field}-error`;
+  const noteId = `${step.id}-${field}-note`;
   return (
     <label className="procedure-field">
       <span>{label}</span>
       <span className="procedure-minute-input">
         <input
-          aria-describedby={error === null ? undefined : errorId}
+          aria-describedby={
+            error === null ? (note === null ? undefined : noteId) : `${errorId} ${note === null ? "" : noteId}`.trim()
+          }
           aria-invalid={error === null ? undefined : true}
           aria-label={label}
           inputMode="numeric"
@@ -72,16 +83,32 @@ function MinutesField({
         />
         <span>분</span>
       </span>
+      {/* The note is excluded from the accessible name (aria-hidden) and
+       * re-exposed as the field's description via aria-describedby. */}
+      {note ? (
+        <span aria-hidden="true" className="procedure-suggest-note" id={noteId}>
+          {note}
+        </span>
+      ) : null}
       <FieldError id={errorId} message={error} />
     </label>
   );
 }
 
-export function CommuteProcedureStep({ dispatch, favorites, index, place, step, issues, stepCount }: CommuteProcedureStepProps) {
+export function CommuteProcedureStep({ dispatch, editedFields, favorites, hasTransitStep, index, place, step, issues, stepCount, suggestions }: CommuteProcedureStepProps) {
   const position = index + 1;
   const label = STEP_LABEL[step.kind];
   const selectableFavorites = availableFavorites(step, favorites);
   const favoriteError = issueFor(issues, `${step.id}:favorite`);
+  // Positive note while the field mirrors a geometry-derived suggestion;
+  // negative note only when derivation was meaningfully attempted (a walk
+  // with transit siblings, or a ride whose favorite is chosen) so early
+  // drafts don't nag with hints.
+  const autoNote = (field: "minutes" | "rideMinutes", value: number | null, eligible: boolean) => {
+    if (editedFields.has(`${step.id}:${field}`)) return null;
+    if (value !== null) return "거리 기준 자동 계산";
+    return eligible ? "자동 계산 불가 · 직접 입력" : null;
+  };
   let point: string | null;
   switch (step.kind) {
     case "walk":
@@ -104,7 +131,7 @@ export function CommuteProcedureStep({ dispatch, favorites, index, place, step, 
   let fields: ReactNode;
   switch (step.kind) {
     case "walk":
-      fields = <MinutesField dispatch={dispatch} error={issueFor(issues, `${step.id}:minutes`)} field="minutes" label={`${position}번째 도보 시간 (분)`} step={step} />;
+      fields = <MinutesField dispatch={dispatch} error={issueFor(issues, `${step.id}:minutes`)} field="minutes" label={`${position}번째 도보 시간 (분)`} note={autoNote("minutes", suggestions?.walkMinutes ?? null, hasTransitStep)} step={step} />;
       break;
     case "bus":
     case "subway":
@@ -136,8 +163,8 @@ export function CommuteProcedureStep({ dispatch, favorites, index, place, step, 
           </label>
           {selectableFavorites.length === 0 ? <p className="procedure-favorite-empty"><strong>즐겨찾기 없음</strong><a href="#arrival-title">도착 예정에서 즐겨찾기 저장</a></p> : null}
           <div className="procedure-transit-minutes">
-            <MinutesField dispatch={dispatch} error={issueFor(issues, `${step.id}:rideMinutes`)} field="rideMinutes" label={`${position}번째 ${label} 탑승 시간 (분)`} step={step} />
-            <MinutesField dispatch={dispatch} error={issueFor(issues, `${step.id}:fallbackWaitMinutes`)} field="fallbackWaitMinutes" label={`${position}번째 ${label} 대기 대안 시간 (분)`} step={step} />
+            <MinutesField dispatch={dispatch} error={issueFor(issues, `${step.id}:rideMinutes`)} field="rideMinutes" label={`${position}번째 ${label} 탑승 시간 (분)`} note={autoNote("rideMinutes", suggestions?.rideMinutes ?? null, step.favoriteId !== "")} step={step} />
+            <MinutesField dispatch={dispatch} error={issueFor(issues, `${step.id}:fallbackWaitMinutes`)} field="fallbackWaitMinutes" label={`${position}번째 ${label} 대기 대안 시간 (분)`} note={null} step={step} />
           </div>
         </div>
       );

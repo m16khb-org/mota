@@ -85,3 +85,70 @@ describe("CommuteProcedureEditor state", () => {
     expect(homeService).toHaveValue("");
   });
 });
+
+describe("CommuteProcedureEditor travel-time suggestions", () => {
+  it("auto-fills walk and ride minutes from point geometry until the user edits them", async () => {
+    // Given: a walk between the saved bus stop and subway station of the
+    // company place (fixtures place them ~197 m apart).
+    render(
+      <CommuteProcedureEditor
+        direction="company"
+        place={companyPlace}
+        procedure={null}
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "버스 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "도보 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "지하철 추가" }));
+    fireEvent.change(screen.getByLabelText("1번째 버스 서비스"), {
+      target: { value: "fav-company-bus" },
+    });
+    fireEvent.change(screen.getByLabelText("3번째 지하철 서비스"), {
+      target: { value: "fav-company-subway" },
+    });
+
+    // Then: the anchored legs fill from geometry (197 m walk → 3 min,
+    // bus ride with detour → 2 min) and are marked as auto-calculated.
+    await waitFor(() => {
+      expect(screen.getByLabelText("2번째 도보 시간 (분)")).toHaveValue(3);
+    });
+    expect(screen.getByLabelText("1번째 버스 탑승 시간 (분)")).toHaveValue(2);
+    expect(screen.getAllByText("거리 기준 자동 계산").length).toBeGreaterThan(0);
+    // The last leg has no forward anchor and stays manual, with a hint.
+    expect(screen.getByLabelText("3번째 지하철 탑승 시간 (분)")).toHaveValue(null);
+    expect(screen.getByText("자동 계산 불가 · 직접 입력")).toBeVisible();
+
+    // When: an adjacent walk is inserted, the stale auto value is cleared.
+    fireEvent.click(screen.getByRole("button", { name: "도보 추가" }));
+    fireEvent.click(screen.getByRole("button", { name: "4번째 도보 위로" }));
+    await waitFor(() => {
+      expect(screen.getByLabelText("2번째 도보 시간 (분)")).toHaveValue(null);
+    });
+    expect(screen.getByLabelText("3번째 도보 시간 (분)")).toHaveValue(null);
+    expect(screen.getAllByText("자동 계산 불가 · 직접 입력").length).toBe(3);
+
+    // When: the user overrides the walk, the value sticks and the note clears.
+    fireEvent.change(screen.getByLabelText("2번째 도보 시간 (분)"), {
+      target: { value: "7" },
+    });
+    await waitFor(() => {
+      expect(screen.getByLabelText("2번째 도보 시간 (분)")).toHaveValue(7);
+    });
+    const walkField = screen
+      .getByLabelText("2번째 도보 시간 (분)")
+      .closest("label");
+    expect(walkField).not.toBeNull();
+    // The walk's auto-note is gone; the untouched bus ride keeps its note.
+    expect(
+      within(walkField ?? document.body).queryByText("거리 기준 자동 계산"),
+    ).not.toBeInTheDocument();
+    expect(
+      within(
+        screen.getByLabelText("1번째 버스 탑승 시간 (분)").closest("label") ??
+          document.body,
+      ).getByText("거리 기준 자동 계산"),
+    ).toBeVisible();
+  });
+});

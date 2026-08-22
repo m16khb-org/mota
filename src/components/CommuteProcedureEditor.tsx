@@ -9,7 +9,9 @@ import {
   createEditorState,
   createEditorStep,
   editorReducer,
+  type MinuteField,
 } from "./commuteProcedureEditorState";
+import { suggestEditorMinutes } from "./commuteProcedureSuggestions";
 import { issueFor, validateEditor } from "./commuteProcedureEditorValidation";
 
 export type CommuteProcedureEditorProps = {
@@ -37,9 +39,36 @@ export function CommuteProcedureEditor({ direction, onCancel, onSave, place, pro
   );
   const [storedState, dispatch] = useReducer(editorReducer, initialState);
   const state = storedState.scope === scope ? storedState : initialState;
+  const suggestions = useMemo(
+    () => suggestEditorMinutes(state.steps, place),
+    [state.steps, place],
+  );
   const validation = useMemo(() => validateEditor(state, favorites), [favorites, state]);
   const nameError = issueFor(validation.issues, "name");
   const stepsError = issueFor(validation.issues, "steps");
+
+  // Geometry-derived defaults: un-owned minute fields always mirror the
+  // calculation — filling when geometry resolves, clearing back to empty
+  // when it stops (reorder made walks adjacent, favorite unchosen). The
+  // first user keystroke marks the field user-owned in editedFields and
+  // the suggestion never touches it again.
+  useEffect(() => {
+    for (const step of state.steps) {
+      const suggestion = suggestions.get(step.id);
+      if (suggestion === undefined) continue;
+      const fill = (field: MinuteField, current: string, value: number | null) => {
+        if (state.editedFields.has(`${step.id}:${field}`)) return;
+        const next = value === null ? "" : String(value);
+        if (current === next) return;
+        dispatch({ type: "suggest", id: step.id, field, value: next });
+      };
+      if (step.kind === "walk") {
+        fill("minutes", step.minutes, suggestion.walkMinutes);
+      } else {
+        fill("rideMinutes", step.rideMinutes, suggestion.rideMinutes);
+      }
+    }
+  }, [state.steps, state.editedFields, suggestions]);
 
   // Favorites can change while the editor is open (pinning from the arrival
   // rows); only a scope change (direction/place/procedure) restarts the draft.
@@ -81,13 +110,16 @@ export function CommuteProcedureEditor({ direction, onCancel, onSave, place, pro
             {state.steps.map((step, index) => (
               <CommuteProcedureStep
                 dispatch={dispatch}
+                editedFields={state.editedFields}
                 favorites={favorites}
+                hasTransitStep={state.steps.some((step) => step.kind !== "walk")}
                 index={index}
                 issues={validation.issues}
                 key={step.id}
                 place={place}
                 step={step}
                 stepCount={state.steps.length}
+                suggestions={suggestions.get(step.id) ?? null}
               />
             ))}
           </ol>
