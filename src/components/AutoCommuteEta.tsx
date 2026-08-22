@@ -36,9 +36,9 @@ function waitLabel(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const rest = seconds % 60;
   if (minutes === 0) {
-    return rest <= 10 ? "곧 도착" : `${rest}초 대기`;
+    return rest <= 10 ? "곧\u00A0도착" : `${rest}초\u00A0대기`;
   }
-  return `${minutes}분 대기`;
+  return `${minutes}분\u00A0대기`;
 }
 
 /** Timeline for a points-only procedure: every duration is derived — walk
@@ -148,16 +148,24 @@ export function AutoCommuteEta({
           <li className="commute-eta-step" key={leg.id}>
             <div className="commute-eta-step-copy">
               <strong>
-                {index + 1}. {leg.routeLabel ?? (leg.kind === "bus" ? "버스" : "지하철")}{" "}
-                {leg.rideMinutes > 0 ? `· ${leg.rideMinutes}분` : ""}
-                {leg.verified && leg.alightName ? ` · ${leg.alightName} 하차` : ""}
-                {leg.verified && leg.tailWalkMinutes > 0
-                  ? ` · 도보 ${leg.tailWalkMinutes}분`
-                  : ""}
+                {index + 1}. {leg.routeLabel ?? (leg.kind === "bus" ? "버스" : "지하철")}
               </strong>
-              <span>
-                {leg.fromName} → {leg.toName} · {waitLabel(leg.waitSeconds)} ·{" "}
-                {formatTime(leg.departureAt)} 출발 · {formatTime(leg.endAt)} 도착
+              <span className="commute-eta-detail">
+                {[
+                  ...(leg.rideMinutes > 0 ? [`${leg.rideMinutes}분 탑승`] : []),
+                  `${leg.fromName} → ${leg.toName}`,
+                  waitLabel(leg.waitSeconds),
+                  `${formatTime(leg.departureAt)}\u00A0출발`,
+                  `${formatTime(leg.endAt)}\u00A0도착`,
+                  ...(leg.verified && leg.alightName
+                    ? [
+                        `${leg.alightName} 하차`,
+                        ...(leg.tailWalkMinutes > 0
+                          ? [`도보\u00A0${leg.tailWalkMinutes}분`]
+                          : []),
+                      ]
+                    : []),
+                ].join("\u00A0· ")}
               </span>
             </div>
             <span className="commute-eta-basis-group">
