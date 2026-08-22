@@ -1,16 +1,16 @@
 /**
  * Shared 현위치 (locate-me) boundary for the map pickers and the stage.
  *
- * The browser geolocation API happily satisfies a request with a cached or
- * network-based (Wi-Fi/cell) fix whose accuracy radius can span hundreds of
- * meters to kilometers — centered on a landmark the user is NOT standing at.
- * Accepting such a fix silently pans the map to a wrong location, so every
- * caller goes through this gate instead of `getCurrentPosition` directly.
+ * The platform's accuracy radius is NOT a reliable rejection signal: a fix
+ * can be centered exactly right while reporting a conservative multi-
+ * kilometer radius (IP-based fallback does this constantly). Rejecting on
+ * radius broke locate entirely for such devices, so coarse fixes are
+ * ACCEPTED and flagged: the map still pans, and the caller shows a soft
+ * notice so the user knows to double-check the area.
  */
 
-/** Fixes worse than this are rejected: the nearby-stop search radius is
- * 800 m, so a center off by more than this misleads stop picking. */
-const MAX_LOCATE_ACCURACY_METERS = 200;
+/** Fixes above this radius are flagged as coarse in the notice. */
+const COARSE_LOCATE_ACCURACY_METERS = 200;
 
 const LOCATE_TIMEOUT_MS = 8_000;
 
@@ -21,10 +21,11 @@ export type LocateResult =
       readonly lng: number;
       /** 95% confidence radius in meters, as reported by the platform. */
       readonly accuracy: number;
+      /** True when the platform itself admits a wide radius. */
+      readonly coarse: boolean;
     }
   | { readonly kind: "unsupported" }
-  | { readonly kind: "unavailable" }
-  | { readonly kind: "inaccurate"; readonly accuracy: number };
+  | { readonly kind: "unavailable" };
 
 export function requestCurrentPosition(): Promise<LocateResult> {
   return new Promise((resolve) => {
@@ -35,11 +36,14 @@ export function requestCurrentPosition(): Promise<LocateResult> {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude, accuracy } = position.coords;
-        if (!Number.isFinite(accuracy) || accuracy > MAX_LOCATE_ACCURACY_METERS) {
-          resolve({ kind: "inaccurate", accuracy: Number.isFinite(accuracy) ? accuracy : Number.POSITIVE_INFINITY });
-          return;
-        }
-        resolve({ kind: "located", lat: latitude, lng: longitude, accuracy });
+        const usable = Number.isFinite(accuracy);
+        resolve({
+          kind: "located",
+          lat: latitude,
+          lng: longitude,
+          accuracy: usable ? accuracy : Number.POSITIVE_INFINITY,
+          coarse: !usable || accuracy > COARSE_LOCATE_ACCURACY_METERS,
+        });
       },
       () => resolve({ kind: "unavailable" }),
       {
@@ -53,8 +57,22 @@ export function requestCurrentPosition(): Promise<LocateResult> {
   });
 }
 
-/** Maps a rejected fix to user-facing Korean copy; callers pair it with
- * their own retry affordance. */
+/** Notice for a fix the platform flagged as wide. The map still moved; this
+ * tells the user the center may be off. Null for precise fixes. */
+export function locateCoarseNotice(result: LocateResult): string | null {
+  if (result.kind !== "located" || !result.coarse) {
+    return null;
+  }
+  const meters = result.accuracy;
+  const described = Number.isFinite(meters)
+    ? Number(meters) >= 1000
+      ? `약 ${Math.round(meters / 1000)}km`
+      : `약 ${Math.round(meters)}m`
+    : "매우 넓게";
+  return `위치 오차가 ${described} 있어요. 내 위치가 아니라면 지도를 직접 옮겨 주세요.`;
+}
+
+/** Notice for a locate that produced no fix at all. */
 export function locateFailureNotice(result: LocateResult): string | null {
   switch (result.kind) {
     case "located":
@@ -63,12 +81,5 @@ export function locateFailureNotice(result: LocateResult): string | null {
       return "이 브라우저에서는 현재 위치를 사용할 수 없습니다.";
     case "unavailable":
       return "현재 위치를 확인하지 못했습니다. 위치 권한을 확인한 뒤 다시 시도해 주세요.";
-    case "inaccurate": {
-      const meters = result.accuracy;
-      const described = Number.isFinite(meters)
-        ? `약 ${Math.round(meters)}m라`
-        : "매우 넓어";
-      return `현재 위치의 오차 범위가 ${described} 정확한 위치를 잡지 못했어요. 창가나 실외에서 다시 시도해 주세요.`;
-    }
   }
 }

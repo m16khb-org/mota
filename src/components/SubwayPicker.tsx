@@ -2,7 +2,7 @@ import { Crosshair, LocateFixed, Search, TrainFront, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchNearbySubwayStations, isServiceAreaError } from "../api/client";
 import type { SubwayStation } from "../domain/subway";
-import { locateFailureNotice, requestCurrentPosition } from "./locate";
+import { locateCoarseNotice, locateFailureNotice, requestCurrentPosition } from "./locate";
 import { MapCanvas } from "./MapCanvas";
 
 interface Point {
@@ -110,6 +110,10 @@ export function SubwayPicker({
     void requestCurrentPosition().then((result) => {
       if (result.kind === "located") {
         setCenter({ lat: result.lat, lng: result.lng });
+        const coarse = locateCoarseNotice(result);
+        if (coarse !== null) {
+          setError(coarse);
+        }
         return;
       }
       const notice = locateFailureNotice(result);

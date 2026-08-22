@@ -15,7 +15,7 @@ import {
 import type { BusStop, CommuteDirection } from "../domain/bus";
 import type { SubwayStation } from "../domain/subway";
 import type { CommutePlace } from "../hooks/useCommuteStops";
-import { locateFailureNotice, requestCurrentPosition } from "./locate";
+import { locateCoarseNotice, locateFailureNotice, requestCurrentPosition } from "./locate";
 import { MapCanvas } from "./MapCanvas";
 
 interface Point {
@@ -134,6 +134,10 @@ export function MapStage({
     void requestCurrentPosition().then((result) => {
       if (result.kind === "located") {
         setLocateCenter({ lat: result.lat, lng: result.lng });
+        const coarse = locateCoarseNotice(result);
+        if (coarse !== null) {
+          setStopSearch({ loading: false, notice: coarse, isError: false });
+        }
         return;
       }
       const notice = locateFailureNotice(result);

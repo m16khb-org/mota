@@ -170,16 +170,20 @@ describe("MapPicker", () => {
     expect(options.at(-1)?.maximumAge).toBe(0);
   });
 
-  it("rejects a low-accuracy fix instead of moving to a wrong location", async () => {
-    stubGeolocation((success) => success(positionOf(37.6, 127.2, 900)));
+  it("pans on a coarse fix but warns about the wide radius", async () => {
+    stubGeolocation((success) => success(positionOf(37.6, 127.2, 50_000)));
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
     fireEvent.click(screen.getByRole("button", { name: "현위치" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "오차 범위가 약 900m",
+    // The fix is accepted: the map center moves to the reported position.
+    await waitFor(() =>
+      expect(screen.getByText("37.60000, 127.20000")).toBeInTheDocument(),
     );
-    expect(screen.getByText("37.53660, 127.12530")).toBeInTheDocument();
+    // ...and the wide radius is disclosed instead of silently trusted.
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "오차가 약 50km",
+    );
   });
 });
 

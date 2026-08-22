@@ -2,7 +2,7 @@ import { Crosshair, LocateFixed, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchNearbyStops, isServiceAreaError } from "../api/client";
 import type { BusStop } from "../domain/bus";
-import { locateFailureNotice, requestCurrentPosition } from "./locate";
+import { locateCoarseNotice, locateFailureNotice, requestCurrentPosition } from "./locate";
 import { MapCanvas } from "./MapCanvas";
 
 const DEFAULT_CENTER = { lat: 37.5366, lng: 127.1253 };
@@ -106,6 +106,10 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
     void requestCurrentPosition().then((result) => {
       if (result.kind === "located") {
         setCenter({ lat: result.lat, lng: result.lng });
+        const coarse = locateCoarseNotice(result);
+        if (coarse !== null) {
+          setError(coarse);
+        }
         return;
       }
       const notice = locateFailureNotice(result);
