@@ -1,4 +1,11 @@
-import { BusFront, Plus, TrainFront, Trash2 } from "lucide-react";
+import {
+  BusFront,
+  CheckCircle2,
+  MapPin,
+  MapPinPlus,
+  TrainFront,
+  Trash2,
+} from "lucide-react";
 import type { KeyboardEvent } from "react";
 import type { BusStop } from "../domain/bus";
 import { stationDisplayLine, type SubwayStation } from "../domain/subway";
@@ -44,9 +51,13 @@ export function TransitPointSelector({
 }: TransitPointSelectorProps) {
   const points = mode === "bus" ? busStops : subwayStations;
   const label = mode === "bus" ? "정류장" : "역";
+  const heading = mode === "bus" ? "버스 정류장" : "지하철역";
 
   return (
-    <section className="point-selector" aria-labelledby="point-selector-title">
+    <section
+      className={`point-selector${points.length > 0 ? " has-points" : ""}`}
+      aria-labelledby="point-selector-title"
+    >
       <div
         className="transit-tabs"
         role="tablist"
@@ -84,19 +95,31 @@ export function TransitPointSelector({
 
       <div className="section-heading point-selector-heading">
         <div>
-          <span className="eyebrow">확인할 위치</span>
-          <h2 id="point-selector-title">{label} 선택</h2>
+          <span className="eyebrow">어디서 탈까요?</span>
+          <h2 id="point-selector-title">{heading}</h2>
         </div>
         <button className="add-point-button" type="button" onClick={onAdd}>
-          <Plus aria-hidden="true" />
+          <MapPinPlus aria-hidden="true" />
           {label} 찾기
         </button>
       </div>
 
       {points.length === 0 ? (
-        <p className="point-empty">
-          저장한 {label}이 없습니다. 지도에서 가까운 {label}을 찾아보세요.
-        </p>
+        <div className="point-empty">
+          <span className="point-empty-icon" aria-hidden="true">
+            {mode === "bus" ? <MapPin /> : <TrainFront />}
+          </span>
+          <span>
+            <strong>
+              {mode === "bus" ? "정류장을 저장해 보세요" : "역을 저장해 보세요"}
+            </strong>
+            <small>
+              {mode === "bus"
+                ? "가장 빠른 버스 3대를 바로 볼 수 있어요."
+                : "방향별 다음 열차 3대를 바로 볼 수 있어요."}
+            </small>
+          </span>
+        </div>
       ) : (
         <div className="point-list">
           {mode === "bus"
@@ -112,7 +135,11 @@ export function TransitPointSelector({
                     >
                       <strong>{stop.name}</strong>
                       <span>ARS {stop.arsId}</span>
-                      {selected ? <small>선택됨</small> : null}
+                      {selected ? (
+                        <small className="point-current">
+                          <CheckCircle2 aria-hidden="true" /> 지금 보는 곳
+                        </small>
+                      ) : null}
                     </button>
                     <button
                       className="point-remove"
@@ -140,7 +167,11 @@ export function TransitPointSelector({
                     >
                       <strong>{station.name}</strong>
                       <span>{stationDisplayLine(station)}</span>
-                      {selected ? <small>선택됨</small> : null}
+                      {selected ? (
+                        <small className="point-current">
+                          <CheckCircle2 aria-hidden="true" /> 지금 보는 곳
+                        </small>
+                      ) : null}
                     </button>
                     <button
                       className="point-remove"

@@ -1,14 +1,14 @@
-import { Navigation } from "lucide-react";
+import { Clock3 } from "lucide-react";
 
 export function BrandHeader() {
   return (
     <header className="brand-header">
       <div className="brand-mark" aria-hidden="true">
-        <Navigation />
+        <Clock3 />
       </div>
       <div className="brand-copy">
         <h1>모타</h1>
-        <span>다음 도착만 빠르게</span>
+        <p>지금, 뭐 타?</p>
       </div>
     </header>
   );

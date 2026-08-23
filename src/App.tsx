@@ -133,12 +133,12 @@ export function App() {
             <section className="arrivals" aria-labelledby="arrival-title">
               <div className="section-heading">
                 <div>
-                  <span className="eyebrow">실시간 도착정보</span>
-                  <h2 id="arrival-title">도착 예정</h2>
+                  <span className="eyebrow">곧 오는 순서</span>
+                  <h2 id="arrival-title">다음 열차</h2>
                 </div>
               </div>
               <p className="arrival-empty">
-                역을 선택하면 방향별 도착 정보가 표시됩니다.
+                역을 고르면 방향별 가까운 열차 3대를 보여드려요.
               </p>
             </section>
           )}

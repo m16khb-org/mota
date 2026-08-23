@@ -66,7 +66,7 @@ describe("ArrivalList", () => {
       />,
     );
 
-    expect(screen.getByText("천호역 도착 예정")).toBeInTheDocument();
+    expect(screen.getByText("천호역 다음 버스")).toBeInTheDocument();
     expect(screen.getByText("341")).toBeInTheDocument();
     expect(screen.getByText("강동공영차고지")).toBeInTheDocument();
     expect(screen.getByText("5분")).toBeInTheDocument();
@@ -87,7 +87,9 @@ describe("ArrivalList", () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "도착정보 새로고침" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "버스 도착정보 새로고침" }),
+    );
 
     expect(onRefresh).toHaveBeenCalledOnce();
   });

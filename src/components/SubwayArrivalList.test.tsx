@@ -97,6 +97,27 @@ describe("SubwayArrivalList", () => {
     expect(screen.queryByText("1분")).not.toBeInTheDocument();
   });
 
+  it("moves between direction tabs with arrow keys", () => {
+    render(
+      <SubwayArrivalList
+        stationName="천호"
+        arrivals={arrivals}
+        loading={false}
+        error={null}
+        updatedAt={null}
+        onRefresh={vi.fn()}
+      />,
+    );
+    const firstTab = screen.getByRole("tab", { name: "2호선 하행" });
+    const secondTab = screen.getByRole("tab", { name: "1호선 상행" });
+
+    firstTab.focus();
+    fireEvent.keyDown(firstTab, { key: "ArrowRight" });
+
+    expect(secondTab).toHaveFocus();
+    expect(secondTab).toHaveAttribute("aria-selected", "true");
+  });
+
   it("renders line, destination, status, and last-train details", () => {
     render(
       <SubwayArrivalList
@@ -109,8 +130,8 @@ describe("SubwayArrivalList", () => {
       />,
     );
 
-    expect(screen.getByText("천호 도착 예정")).toBeInTheDocument();
-    expect(screen.getByText("2호선")).toBeInTheDocument();
+    expect(screen.getByText("천호 다음 열차")).toBeInTheDocument();
+    expect(screen.getAllByText("2호선")).toHaveLength(2);
     expect(screen.getByText("강남방면")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "1호선 상행" }));

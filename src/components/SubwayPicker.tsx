@@ -1,4 +1,11 @@
-import { Crosshair, LocateFixed, Search, TrainFront, X } from "lucide-react";
+import {
+  Check,
+  Crosshair,
+  LocateFixed,
+  Search,
+  TrainFront,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchNearbySubwayStations, isServiceAreaError } from "../api/client";
 import type { SubwayStation } from "../domain/subway";
@@ -135,8 +142,8 @@ export function SubwayPicker({
         <div className="sheet-handle" aria-hidden="true" />
         <header className="picker-header">
           <div>
-            <span className="eyebrow">지하철 경로 지점</span>
-            <h2 id="subway-picker-title">지도에서 지하철역 선택</h2>
+            <span className="eyebrow">지하철역 찾기</span>
+            <h2 id="subway-picker-title">지도에서 탈 역을 골라주세요</h2>
           </div>
           <button
             ref={closeButtonRef}
@@ -171,17 +178,15 @@ export function SubwayPicker({
             onClick={useCurrentLocation}
           >
             <LocateFixed aria-hidden="true" />
-            현위치
+            내 위치
           </button>
         </div>
 
         <section className="picker-results" aria-busy={loading}>
           <div className="picker-actions">
             <div>
-              <strong>지도 중심 기준</strong>
-              <span>
-                {center.lat.toFixed(5)}, {center.lng.toFixed(5)}
-              </span>
+              <strong>이 주변에서 찾기</strong>
+              <span>지도를 움직이면 검색 위치도 바뀌어요.</span>
             </div>
             <button
               className="primary-button compact"
@@ -189,7 +194,7 @@ export function SubwayPicker({
               onClick={searchNearby}
             >
               <Search aria-hidden="true" />
-              {loading ? "찾는 중…" : "이 위치에서 지하철역 찾기"}
+              {loading ? "찾는 중…" : "주변 역 찾기"}
             </button>
           </div>
 
@@ -201,8 +206,8 @@ export function SubwayPicker({
 
           {stations.length > 0 ? (
             <div className="result-summary">
-              <strong>주변 지하철역 {stations.length}곳</strong>
-              <span>지도 마커나 목록을 눌러 여러 역을 선택하세요.</span>
+              <strong>가까운 역 {stations.length}곳</strong>
+              <span>노선과 거리를 함께 확인하세요.</span>
             </div>
           ) : null}
 
@@ -239,7 +244,11 @@ export function SubwayPicker({
         <footer className="picker-footer">
           <div className="picker-selection">
             <span>선택한 지하철역</span>
-            <strong>{selectedStations.length}개</strong>
+            <strong>
+              {selectedStations.length > 0
+                ? `${selectedStations.length}개`
+                : "역을 선택해 주세요"}
+            </strong>
           </div>
           <button
             className="primary-button"
@@ -247,7 +256,8 @@ export function SubwayPicker({
             disabled={selectedStations.length === 0}
             onClick={() => onSave(selectedStations)}
           >
-            선택한 {selectedStations.length}개 저장
+            <Check aria-hidden="true" />
+            {selectedStations.length}개 저장하기
           </button>
         </footer>
       </div>

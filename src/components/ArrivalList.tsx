@@ -49,28 +49,31 @@ export function ArrivalList({
     <section className="arrivals" aria-labelledby="arrival-title">
       <div className="section-heading">
         <div>
-          <span className="eyebrow">실시간 도착정보</span>
+          <span className="eyebrow">곧 오는 순서</span>
           <h2 id="arrival-title">
-            {stopName === null ? "도착 예정" : `${stopName} 도착 예정`}
+            {stopName === null ? "다음 버스" : `${stopName} 다음 버스`}
           </h2>
         </div>
-        <button
-          className="icon-button"
-          type="button"
-          onClick={onRefresh}
-          disabled={!hasStop || loading}
-          aria-label="도착정보 새로고침"
-        >
-          <RefreshCw aria-hidden="true" />
-        </button>
+        {hasStop ? (
+          <button
+            className="refresh-button"
+            type="button"
+            onClick={onRefresh}
+            disabled={loading}
+            aria-label="버스 도착정보 새로고침"
+          >
+            <RefreshCw aria-hidden="true" />
+            <span>새로고침</span>
+          </button>
+        ) : null}
       </div>
 
       <p className="refresh-status" aria-live="polite">
         {loading
-          ? "실시간 정보를 불러오는 중입니다."
+          ? "도착 정보를 새로 받고 있어요."
           : updatedAt
-            ? `${formatUpdatedAt(updatedAt)} 기준`
-            : "정류장을 선택하면 실시간 정보가 표시됩니다."}
+            ? `${formatUpdatedAt(updatedAt)}에 새로 받았어요.`
+            : "정류장을 고르면 가장 빠른 버스 3대를 보여드려요."}
       </p>
 
       {error ? (
@@ -83,7 +86,9 @@ export function ArrivalList({
       ) : null}
 
       {!loading && hasStop && !error && arrivals.length === 0 ? (
-        <p className="arrival-empty">현재 제공되는 도착 정보가 없습니다.</p>
+        <p className="arrival-empty">
+          지금 도착 예정인 버스가 없어요. 잠시 후 다시 확인해 주세요.
+        </p>
       ) : null}
 
       {loading && arrivals.length === 0 ? (
@@ -95,18 +100,26 @@ export function ArrivalList({
       ) : null}
 
       <div className="arrival-list">
-        {arrivals.slice(0, 3).map((arrival) => (
+        {arrivals.slice(0, 3).map((arrival, index) => (
           <article
             className={`arrival-row${
               arrival.first.seconds === null ? " is-inactive" : ""
             }`}
             key={`${arrival.routeId}-${arrival.direction}`}
           >
-            <div className="route-identity">
-              <strong>{arrival.routeName}</strong>
-              <span>
-                {arrival.direction} <ArrowRight aria-hidden="true" />
+            <div className="route-identity-wrap">
+              <span className="arrival-rank" aria-hidden="true">
+                {index + 1}
               </span>
+              <span className="sr-only">
+                {index + 1}번째로 빠른 버스
+              </span>
+              <div className="route-identity">
+                <strong>{arrival.routeName}</strong>
+                <span>
+                  {arrival.direction} <ArrowRight aria-hidden="true" />
+                </span>
+              </div>
             </div>
             <div className="arrival-meta">
               {arrival.lowFloor ? (

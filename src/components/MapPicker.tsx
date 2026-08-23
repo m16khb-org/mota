@@ -1,4 +1,4 @@
-import { Crosshair, LocateFixed, MapPin, Search, X } from "lucide-react";
+import { Check, Crosshair, LocateFixed, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchNearbyStops, isServiceAreaError } from "../api/client";
 import type { BusStop } from "../domain/bus";
@@ -131,8 +131,8 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
         <div className="sheet-handle" aria-hidden="true" />
         <header className="picker-header">
           <div>
-            <span className="eyebrow">정확한 ARS 정류장</span>
-            <h2 id="picker-title">지도에서 정류장 선택</h2>
+            <span className="eyebrow">버스 정류장 찾기</span>
+            <h2 id="picker-title">지도에서 탈 곳을 골라주세요</h2>
           </div>
           <button
             ref={closeButtonRef}
@@ -159,21 +159,19 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
           </div>
           <button className="locate-button" type="button" onClick={useCurrentLocation}>
             <LocateFixed aria-hidden="true" />
-            현위치
+            내 위치
           </button>
         </div>
 
         <section className="picker-results" aria-busy={loading}>
           <div className="picker-actions">
             <div>
-              <strong>지도 중심 기준</strong>
-              <span>
-                {center.lat.toFixed(5)}, {center.lng.toFixed(5)}
-              </span>
+              <strong>이 주변에서 찾기</strong>
+              <span>지도를 움직이면 검색 위치도 바뀌어요.</span>
             </div>
             <button className="primary-button compact" type="button" onClick={searchNearby}>
               <Search aria-hidden="true" />
-              {loading ? "찾는 중…" : "이 위치에서 찾기"}
+              {loading ? "찾는 중…" : "주변 정류장 찾기"}
             </button>
           </div>
 
@@ -189,8 +187,8 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
               data-testid="stop-result-summary"
               data-stop-count={stops.length}
             >
-              <strong>주변 정류장 {stops.length}곳</strong>
-              <span>목록을 스크롤해 지도 핀과 ARS 번호를 비교하세요.</span>
+              <strong>가까운 정류장 {stops.length}곳</strong>
+              <span>이름과 ARS 번호를 함께 확인하세요.</span>
             </div>
           ) : null}
 
@@ -232,7 +230,7 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
                     .slice(0, 2)
                     .map((stop) => stop.name)
                     .join(", ")}`
-                : "아직 없음"}
+                : "정류장을 선택해 주세요"}
             </strong>
           </div>
           <button
@@ -241,7 +239,8 @@ export function MapPicker({ initialStop, onClose, onSave }: MapPickerProps) {
             disabled={selectedStops.length === 0}
             onClick={() => onSave(selectedStops)}
           >
-            선택한 {selectedStops.length}개 저장
+            <Check aria-hidden="true" />
+            {selectedStops.length}개 저장하기
           </button>
         </footer>
       </div>

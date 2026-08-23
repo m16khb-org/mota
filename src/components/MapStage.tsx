@@ -32,6 +32,8 @@ export function MapStage({
 }: MapStageProps) {
   const [mapCenter, setMapCenter] = useState<Point>(center);
   const [mapExpanded, setMapExpanded] = useState(false);
+  const hasSelection =
+    selectedStop !== null || selectedSubwayStation !== null;
 
   useEffect(() => {
     setMapCenter(center);
@@ -39,7 +41,9 @@ export function MapStage({
 
   return (
     <section
-      className={mapExpanded ? "map-stage is-expanded" : "map-stage"}
+      className={`map-stage${mapExpanded ? " is-expanded" : ""}${
+        hasSelection ? " has-selection" : ""
+      }`}
       aria-label="선택한 정류장과 역 지도"
     >
       <div className="stage-live-map">

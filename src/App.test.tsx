@@ -155,7 +155,7 @@ describe("App minimal arrivals flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "정류장 찾기" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 정류장 선택" }));
 
-    expect(await screen.findByText("천호역 도착 예정")).toBeInTheDocument();
+    expect(await screen.findByText("천호역 다음 버스")).toBeInTheDocument();
     expect(screen.getByText("강동05")).toBeInTheDocument();
     expect(screen.getByText("3분")).toBeInTheDocument();
     await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith("25014"));
@@ -172,7 +172,9 @@ describe("App minimal arrivals flow", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("button", { name: "천호역 ARS 25014 선택됨" }),
+      screen.getByRole("button", {
+        name: "천호역 ARS 25014 지금 보는 곳",
+      }),
     ).toHaveAttribute("aria-pressed", "true");
     await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith("25014"));
   });
@@ -184,7 +186,7 @@ describe("App minimal arrivals flow", () => {
     fireEvent.click(screen.getByRole("button", { name: "역 찾기" }));
     fireEvent.click(screen.getByRole("button", { name: "테스트 역 선택" }));
 
-    expect(await screen.findByText("천호 도착 예정")).toBeInTheDocument();
+    expect(await screen.findByText("천호 다음 열차")).toBeInTheDocument();
     expect(
       screen.getByRole("tablist", { name: "지하철 방향 선택" }),
     ).toBeInTheDocument();

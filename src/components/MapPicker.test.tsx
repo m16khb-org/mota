@@ -18,6 +18,11 @@ vi.mock("./MapCanvas", () => ({
     onSelect: (stop: BusStop) => void;
   }) => (
     <>
+      <output
+        data-testid="map-center"
+        data-lat={center.lat}
+        data-lng={center.lng}
+      />
       <button
         type="button"
         onClick={() => onCenterChange({ lat: center.lat + 0.001, lng: center.lng })}
@@ -72,12 +77,12 @@ describe("MapPicker", () => {
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={onSave} />);
 
     fireEvent.click(screen.getByRole("button", { name: "테스트 지도 이동" }));
-    fireEvent.click(screen.getByRole("button", { name: "이 위치에서 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "주변 정류장 찾기" }));
 
     expect(await screen.findByText("천호역")).toBeInTheDocument();
     expect(screen.getByTestId("stop-result-summary")).toHaveAttribute("data-stop-count", "1");
     fireEvent.click(screen.getByRole("button", { name: /천호역.*25014/ }));
-    fireEvent.click(screen.getByRole("button", { name: "선택한 1개 저장" }));
+    fireEvent.click(screen.getByRole("button", { name: "1개 저장하기" }));
 
     expect(onSave).toHaveBeenCalledWith([nearbyStop]);
     await waitFor(() =>
@@ -92,12 +97,14 @@ describe("MapPicker", () => {
     vi.mocked(fetch).mockResolvedValueOnce(new Response(null, { status: 503 }));
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "이 위치에서 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "주변 정류장 찾기" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "정류장을 불러오지 못했습니다",
     );
-    expect(screen.getByRole("button", { name: "이 위치에서 찾기" })).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "주변 정류장 찾기" }),
+    ).toBeEnabled();
   });
 
   it("explains when the search center is outside the Seoul service area", async () => {
@@ -109,7 +116,7 @@ describe("MapPicker", () => {
     );
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "이 위치에서 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "주변 정류장 찾기" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "서울 서비스 범위 밖이에요",
@@ -126,7 +133,7 @@ describe("MapPicker", () => {
     const onSave = vi.fn();
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={onSave} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "이 위치에서 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "주변 정류장 찾기" }));
     fireEvent.click(
       await screen.findByRole("button", { name: "지도 마커 천호역" }),
     );
@@ -140,7 +147,7 @@ describe("MapPicker", () => {
     expect(
       screen.getByRole("button", { name: /천호역현대백화점 정류장 25015/ }),
     ).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(screen.getByRole("button", { name: "선택한 2개 저장" }));
+    fireEvent.click(screen.getByRole("button", { name: "2개 저장하기" }));
 
     expect(onSave).toHaveBeenCalledWith([nearbyStop, secondNearbyStop]);
   });
@@ -161,10 +168,13 @@ describe("MapPicker", () => {
     );
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "현위치" }));
+    fireEvent.click(screen.getByRole("button", { name: "내 위치" }));
 
     await waitFor(() =>
-      expect(screen.getByText("37.54000, 127.13000")).toBeInTheDocument(),
+      expect(screen.getByTestId("map-center")).toHaveAttribute(
+        "data-lat",
+        "37.54",
+      ),
     );
     // A cached fix can be where the user WAS, not where they are.
     expect(options.at(-1)?.maximumAge).toBe(0);
@@ -174,11 +184,14 @@ describe("MapPicker", () => {
     stubGeolocation((success) => success(positionOf(37.6, 127.2, 50_000)));
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "현위치" }));
+    fireEvent.click(screen.getByRole("button", { name: "내 위치" }));
 
     // The fix is still accepted: the map center moves to the reported position.
     await waitFor(() =>
-      expect(screen.getByText("37.60000, 127.20000")).toBeInTheDocument(),
+      expect(screen.getByTestId("map-center")).toHaveAttribute(
+        "data-lat",
+        "37.6",
+      ),
     );
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "대략적인 위치(IP 기반)",
@@ -190,10 +203,13 @@ describe("MapPicker", () => {
     stubGeolocation((success) => success(positionOf(37.55, 127.14, 900)));
     render(<MapPicker initialStop={null} onClose={vi.fn()} onSave={vi.fn()} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "현위치" }));
+    fireEvent.click(screen.getByRole("button", { name: "내 위치" }));
 
     await waitFor(() =>
-      expect(screen.getByText("37.55000, 127.14000")).toBeInTheDocument(),
+      expect(screen.getByTestId("map-center")).toHaveAttribute(
+        "data-lat",
+        "37.55",
+      ),
     );
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "오차가 약 900m",

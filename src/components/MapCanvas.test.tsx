@@ -287,11 +287,10 @@ describe("MapCanvas visible marker styling contract", () => {
     expect(css).toMatch(ruleOf(".map-marker-bus", "--route-blue", "--surface"));
     expect(css).toMatch(ruleOf(".map-marker-subway", "--subway", "--surface"));
     expect(css).toMatch(ruleOf(".map-marker-pending", "--route-blue", "--surface"));
-    expect(
-      css.includes(
-        ".map-marker-bus.is-active,\n.map-marker-subway.is-active {\n  stroke: var(--ink);\n  fill: var(--signal);\n}",
-      ),
-    ).toBe(true);
+    expect(css).toMatch(ruleOf(".map-marker-bus.is-active", "--ink", "--signal"));
+    expect(css).toContain(
+      ".map-marker-subway.is-active {\n  stroke: var(--subway);\n  stroke-width: 4px;\n  fill: var(--signal);\n}",
+    );
     // Focus stays on the interactive hit circle only.
     expect(css).toMatch(/^\.leaflet-interactive:focus-visible \{/m);
   });

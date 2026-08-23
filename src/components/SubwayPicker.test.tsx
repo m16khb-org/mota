@@ -66,7 +66,7 @@ describe("SubwayPicker", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: "이 위치에서 지하철역 찾기" }),
+      screen.getByRole("button", { name: "주변 역 찾기" }),
     );
     fireEvent.click(
       await screen.findByRole("button", { name: "지하철 마커 천호" }),
@@ -81,7 +81,7 @@ describe("SubwayPicker", () => {
     expect(
       screen.getByRole("button", { name: /암사역사공원 지하철역/ }),
     ).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(screen.getByRole("button", { name: "선택한 2개 저장" }));
+    fireEvent.click(screen.getByRole("button", { name: "2개 저장하기" }));
 
     expect(onSave).toHaveBeenCalledWith(stations);
   });

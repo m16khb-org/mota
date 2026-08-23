@@ -1163,9 +1163,14 @@ select:focus-visible {
   fill: var(--surface);
 }
 
-.map-marker-bus.is-active,
-.map-marker-subway.is-active {
+.map-marker-bus.is-active {
   stroke: var(--ink);
+  fill: var(--signal);
+}
+
+.map-marker-subway.is-active {
+  stroke: var(--subway);
+  stroke-width: 4px;
   fill: var(--signal);
 }
 
@@ -2254,8 +2259,11 @@ select:focus-visible {
 }
 
 .brand-header {
+  z-index: 3;
+  flex: 0 0 auto;
   gap: 12px;
   padding: 20px 24px;
+  background: var(--surface);
 }
 
 .brand-mark {
@@ -2277,8 +2285,12 @@ select:focus-visible {
   line-height: 1;
 }
 
-.brand-header span {
+.brand-copy p {
   margin-top: 6px;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 760;
   letter-spacing: 0.05em;
 }
 
@@ -2363,11 +2375,48 @@ select:focus-visible {
 }
 
 .point-empty {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
   margin: 16px 0 0;
   padding: 16px 0 0;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 0.875rem;
+}
+
+.point-empty-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.point-empty-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.point-empty strong,
+.point-empty small {
+  display: block;
+}
+
+.point-empty strong {
+  color: var(--ink);
+  font-size: 0.875rem;
+}
+
+.point-empty small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
 }
 
 .point-list {
@@ -2441,6 +2490,17 @@ select:focus-visible {
   font-weight: 720;
 }
 
+.point-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.point-current svg {
+  width: 13px;
+  height: 13px;
+}
+
 .point-remove {
   display: grid;
   width: 44px;
@@ -2464,6 +2524,60 @@ select:focus-visible {
   padding: 24px;
 }
 
+.arrivals .section-heading {
+  align-items: start;
+}
+
+.arrivals .section-heading > div {
+  min-width: 0;
+}
+
+.arrivals .section-heading h2 {
+  overflow-wrap: anywhere;
+}
+
+.refresh-button {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 720;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.refresh-button:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+.refresh-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.refresh-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.refresh-button:disabled svg {
+  animation: refresh-spin 1s linear infinite;
+}
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .arrival-list {
   gap: 0;
   border-top: 1px solid var(--line);
@@ -2476,6 +2590,32 @@ select:focus-visible {
   border-radius: 0;
 }
 
+.route-identity-wrap {
+  display: flex;
+  min-width: 0;
+  align-items: start;
+  gap: 10px;
+}
+
+.arrival-rank {
+  display: inline-grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.route-identity-wrap .route-identity {
+  min-width: 0;
+}
+
 .eta-block strong {
   font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: 780;
@@ -2484,14 +2624,36 @@ select:focus-visible {
 
 .direction-tabs {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 0 0 16px;
 }
 
+.direction-group {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.direction-line {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.direction-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .direction-tabs button {
+  display: inline-flex;
   min-width: 0;
   min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -2500,6 +2662,11 @@ select:focus-visible {
   cursor: pointer;
   overflow-wrap: anywhere;
   transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.direction-tabs button svg {
+  width: 16px;
+  height: 16px;
 }
 
 .direction-tabs button[aria-selected="true"] {
@@ -2533,6 +2700,10 @@ select:focus-visible {
   height: 17px;
 }
 
+.stage-live-map .leaflet-tile-pane {
+  filter: saturate(0.72) contrast(0.94) brightness(1.03);
+}
+
 @media (max-width: 959px) {
   .brand-header {
     padding: 14px 20px;
@@ -2549,16 +2720,35 @@ select:focus-visible {
 
   .point-selector,
   .arrivals {
-    padding: 20px;
+    padding: 16px 20px;
   }
 
   .point-selector-heading {
-    margin-top: 20px;
+    margin-top: 16px;
+  }
+
+  .point-selector.has-points .point-list {
+    max-height: 128px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .arrivals .refresh-status {
+    margin: 10px 0 12px;
+  }
+
+  .arrivals .direction-tabs {
+    margin-bottom: 12px;
   }
 
   .map-stage {
     flex-basis: 30dvh;
     height: 30dvh;
+  }
+
+  .map-stage.has-selection:not(.is-expanded) {
+    flex-basis: 25dvh;
+    height: 25dvh;
   }
 
   .map-stage.is-expanded {
@@ -2568,15 +2758,6 @@ select:focus-visible {
 }
 
 @media (max-width: 420px) {
-  .point-selector-heading {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .add-point-button {
-    width: 100%;
-  }
-
   .arrival-row {
     grid-template-columns: minmax(0, 1fr) minmax(92px, auto);
   }
@@ -2587,12 +2768,28 @@ select:focus-visible {
   }
 }
 
+@media (max-width: 340px) {
+  .point-selector-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .add-point-button {
+    width: 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .transit-tab,
   .add-point-button,
   .point-select,
   .point-remove,
+  .refresh-button,
   .direction-tabs button {
     transition-duration: 1ms;
+  }
+
+  .refresh-button:disabled svg {
+    animation: none;
   }
 }
