@@ -1,4 +1,5 @@
 import { Accessibility, ArrowRight, Gauge, RefreshCw } from "lucide-react";
+import { useId } from "react";
 import type { BusArrival } from "../domain/bus";
 
 interface ArrivalListProps {
@@ -45,12 +46,17 @@ export function ArrivalList({
   hasStop,
   onRefresh,
 }: ArrivalListProps) {
+  const titleId = useId();
+  const refreshLabel =
+    stopName === null
+      ? "버스 도착정보 새로고침"
+      : `${stopName} 버스 도착정보 새로고침`;
   return (
-    <section className="arrivals" aria-labelledby="arrival-title">
+    <section className="arrivals" aria-labelledby={titleId}>
       <div className="section-heading">
         <div>
           <span className="eyebrow">곧 오는 순서</span>
-          <h2 id="arrival-title">
+          <h2 id={titleId}>
             {stopName === null ? "다음 버스" : `${stopName} 다음 버스`}
           </h2>
         </div>
@@ -60,7 +66,7 @@ export function ArrivalList({
             type="button"
             onClick={onRefresh}
             disabled={loading}
-            aria-label="버스 도착정보 새로고침"
+            aria-label={refreshLabel}
           >
             <RefreshCw aria-hidden="true" />
             <span>새로고침</span>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { MAX_SELECTED_BUS_STOPS } from "@mota/contracts/transit-settings";
 import { ArrivalList } from "./components/ArrivalList";
 import { BrandHeader } from "./components/BrandHeader";
 import { MapPicker } from "./components/MapPicker";
@@ -28,33 +29,38 @@ export function App() {
     selections,
     addBusStops,
     addSubwayStations,
-    selectBusStop,
+    toggleBusStop,
     selectSubwayStation,
     removeBusStop,
     removeSubwayStation,
     syncStatus,
   } = useTransitSelections(session);
 
-  const selectedStop =
-    selections.busStops.find(
-      (stop) => stop.id === selections.selectedBusStopId,
-    ) ?? null;
+  const stopsById = useMemo(
+    () => new Map(selections.busStops.map((stop) => [stop.id, stop])),
+    [selections.busStops],
+  );
+  const selectedStops = selections.selectedBusStopIds.flatMap((stopId) => {
+    const stop = stopsById.get(stopId);
+    return stop ? [stop] : [];
+  });
   const selectedStation =
     selections.subwayStations.find(
       (station) => station.id === selections.selectedSubwayStationId,
     ) ?? null;
-  const activeStop = mode === "bus" ? selectedStop : null;
+  const activeStops = mode === "bus" ? selectedStops : [];
   const activeStation = mode === "subway" ? selectedStation : null;
   const { busDetail, subwayDetail, refreshBusDetail, refreshSubwayDetail } =
     useArrivalDetail({
-      selectedStop: activeStop,
+      selectedStops: activeStops,
       selectedStation: activeStation,
     });
 
+  const firstSelectedStop = selectedStops[0] ?? null;
   const mapAnchor =
     mode === "bus"
-      ? (selectedStop ?? selectedStation)
-      : (selectedStation ?? selectedStop);
+      ? (firstSelectedStop ?? selectedStation)
+      : (selectedStation ?? firstSelectedStop);
   const mapCenter = mapAnchor
     ? { lat: mapAnchor.lat, lng: mapAnchor.lng }
     : DEFAULT_MAP_CENTER;
@@ -79,6 +85,27 @@ export function App() {
     setPickerMode(null);
   };
 
+  const toggleStopSelection = (stopId: BusStop["id"]) => {
+    const isSelected = selections.selectedBusStopIds.includes(stopId);
+    const stopName = stopsById.get(stopId)?.name ?? "정류장";
+    if (
+      !isSelected &&
+      selections.selectedBusStopIds.length >= MAX_SELECTED_BUS_STOPS
+    ) {
+      setSaveAnnouncement(
+        `정류장은 최대 ${MAX_SELECTED_BUS_STOPS}곳까지 함께 볼 수 있어요.`,
+      );
+      return;
+    }
+    toggleBusStop(stopId);
+    setSaveAnnouncement(
+      isSelected
+        ? `${stopName} 정류장 선택을 해제했어요.`
+        : `${stopName} 정류장을 함께 보게 했어요.`,
+    );
+    setMode("bus");
+  };
+
   return (
     <main className="app-shell">
       <p
@@ -96,14 +123,11 @@ export function App() {
             mode={mode}
             busStops={selections.busStops}
             subwayStations={selections.subwayStations}
-            selectedBusStopId={selections.selectedBusStopId}
+            selectedBusStopIds={selections.selectedBusStopIds}
             selectedSubwayStationId={selections.selectedSubwayStationId}
             onModeChange={setMode}
             onAdd={() => setPickerMode(mode)}
-            onSelectBusStop={(stopId) => {
-              selectBusStop(stopId);
-              setMode("bus");
-            }}
+            onSelectBusStop={toggleStopSelection}
             onSelectSubwayStation={(stationId) => {
               selectSubwayStation(stationId);
               setMode("subway");
@@ -113,15 +137,35 @@ export function App() {
           />
 
           {mode === "bus" ? (
-            <ArrivalList
-              stopName={selectedStop?.name ?? null}
-              arrivals={busDetail.arrivals}
-              loading={busDetail.loading}
-              error={busDetail.error}
-              updatedAt={busDetail.updatedAt}
-              hasStop={selectedStop !== null}
-              onRefresh={refreshBusDetail}
-            />
+            selectedStops.length === 0 ? (
+              <section className="arrivals" aria-labelledby="bus-arrival-empty-title">
+                <div className="section-heading">
+                  <div>
+                    <span className="eyebrow">곧 오는 순서</span>
+                    <h2 id="bus-arrival-empty-title">다음 버스</h2>
+                  </div>
+                </div>
+                <p className="arrival-empty">
+                  정류장을 고르면 가장 빠른 버스 3대를 보여드려요.
+                </p>
+              </section>
+            ) : (
+              selectedStops.map((stop) => {
+                const detail = busDetail(stop.id);
+                return (
+                  <ArrivalList
+                    key={stop.id}
+                    stopName={stop.name}
+                    arrivals={detail.arrivals}
+                    loading={detail.loading}
+                    error={detail.error}
+                    updatedAt={detail.updatedAt}
+                    hasStop
+                    onRefresh={refreshBusDetail}
+                  />
+                );
+              })
+            )
           ) : selectedStation !== null ? (
             <SubwayArrivalList
               key={selectedStation.id}
@@ -151,13 +195,12 @@ export function App() {
       <MapStage
         stops={selections.busStops}
         subwayStations={selections.subwayStations}
-        selectedStop={selectedStop}
+        selectedStops={selectedStops}
         selectedSubwayStation={selectedStation}
         center={mapCenter}
         isDesktop={isDesktop}
         onSelectStop={(stop) => {
-          selectBusStop(stop.id);
-          setMode("bus");
+          toggleStopSelection(stop.id);
         }}
         onSelectSubwayStation={(station) => {
           selectSubwayStation(station.id);

@@ -16,6 +16,15 @@ const busStop: BusStop = {
   distanceMeters: 151,
 };
 
+const busStop2: BusStop = {
+  id: "124000455" as BusStop["id"],
+  arsId: "25015" as BusStop["arsId"],
+  name: "강동농협",
+  lat: 37.5380123,
+  lng: 127.1260021,
+  distanceMeters: 210,
+};
+
 const subwayStation: SubwayStation = {
   id: "osm-node-5801572034" as SubwayStation["id"],
   name: "천호",
@@ -73,9 +82,14 @@ const subwayArrivals: readonly SubwayArrival[] = [
 
 vi.mock("./components/MapPicker", () => ({
   MapPicker: ({ onSave }: { onSave: (stops: readonly BusStop[]) => void }) => (
-    <button type="button" onClick={() => onSave([busStop])}>
-      테스트 정류장 선택
-    </button>
+    <div>
+      <button type="button" onClick={() => onSave([busStop])}>
+        테스트 정류장 선택
+      </button>
+      <button type="button" onClick={() => onSave([busStop2])}>
+        테스트 정류장 2 선택
+      </button>
+    </div>
   ),
 }));
 
@@ -189,6 +203,63 @@ describe("App minimal arrivals flow", () => {
       }),
     ).toHaveAttribute("aria-pressed", "true");
     await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith("25014"));
+  });
+
+  it("migrates a legacy single-selection document on load", async () => {
+    localStorage.setItem(
+      "mota:transit-selections:v1",
+      JSON.stringify({
+        busStops: [busStop],
+        subwayStations: [],
+        selectedBusStopId: busStop.id,
+        selectedSubwayStationId: null,
+      }),
+    );
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("button", {
+        name: "천호역 ARS 25014 지금 보는 곳",
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await screen.findByText("천호역 다음 버스");
+    await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith("25014"));
+  });
+
+  it("watches two stops at once and drops one on toggle", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "정류장 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 정류장 선택" }));
+    await screen.findByText("천호역 다음 버스");
+
+    fireEvent.click(screen.getByRole("button", { name: "정류장 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 정류장 2 선택" }));
+
+    expect(await screen.findByText("강동농협 다음 버스")).toBeInTheDocument();
+    expect(screen.getByText("천호역 다음 버스")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "천호역 버스 도착정보 새로고침" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "강동농협 버스 도착정보 새로고침" }),
+    ).toBeInTheDocument();
+    await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith("25014"));
+    await waitFor(() => expect(fetchArrivals).toHaveBeenCalledWith("25015"));
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "천호역 ARS 25014 지금 보는 곳",
+      }),
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText("천호역 다음 버스"),
+      ).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText("강동농협 다음 버스")).toBeInTheDocument();
   });
 
   it("selects a subway station and exposes arrival directions", async () => {

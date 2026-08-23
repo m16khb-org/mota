@@ -20,8 +20,9 @@ const selections: TransitSelections = {
     },
   ],
   subwayStations: [],
-  selectedBusStopId:
-    "124000454" as TransitSelections["selectedBusStopId"],
+  selectedBusStopIds: [
+    "124000454" as TransitSelections["selectedBusStopIds"][number],
+  ],
   selectedSubwayStationId: null,
 };
 

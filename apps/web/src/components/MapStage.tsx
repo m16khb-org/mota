@@ -12,7 +12,7 @@ interface Point {
 interface MapStageProps {
   readonly stops: readonly BusStop[];
   readonly subwayStations: readonly SubwayStation[];
-  readonly selectedStop: BusStop | null;
+  readonly selectedStops: readonly BusStop[];
   readonly selectedSubwayStation: SubwayStation | null;
   readonly center: Point;
   readonly isDesktop: boolean;
@@ -23,7 +23,7 @@ interface MapStageProps {
 export function MapStage({
   stops,
   subwayStations,
-  selectedStop,
+  selectedStops,
   selectedSubwayStation,
   center,
   isDesktop,
@@ -33,7 +33,7 @@ export function MapStage({
   const [mapCenter, setMapCenter] = useState<Point>(center);
   const [mapExpanded, setMapExpanded] = useState(false);
   const hasSelection =
-    selectedStop !== null || selectedSubwayStation !== null;
+    selectedStops.length > 0 || selectedSubwayStation !== null;
 
   useEffect(() => {
     setMapCenter(center);
@@ -50,7 +50,8 @@ export function MapStage({
         <MapCanvas
           center={mapCenter}
           stops={stops}
-          selectedStop={selectedStop}
+          selectedStop={null}
+          selectedStopIds={selectedStops.map((stop) => stop.id)}
           subwayStations={subwayStations}
           selectedSubwayStationIds={
             selectedSubwayStation === null

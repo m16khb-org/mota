@@ -39,13 +39,13 @@ const serverStop: BusStop = {
 const localSelections: TransitSelections = {
   busStops: [localStop],
   subwayStations: [],
-  selectedBusStopId: localStop.id,
+  selectedBusStopIds: [localStop.id],
   selectedSubwayStationId: null,
 };
 const serverSelections: TransitSelections = {
   busStops: [serverStop],
   subwayStations: [],
-  selectedBusStopId: serverStop.id,
+  selectedBusStopIds: [serverStop.id],
   selectedSubwayStationId: null,
 };
 const authenticatedSession: GatewaySessionState = {
@@ -142,12 +142,55 @@ describe("useTransitSelections authenticated synchronization", () => {
       expect(saveTransitSettings).toHaveBeenCalledWith({
         version: 2,
         selections: expect.objectContaining({
-          selectedBusStopId: nextStop.id,
+          selectedBusStopIds: [serverStop.id, nextStop.id],
           busStops: [serverStop, nextStop],
         }),
       }),
     );
     await waitFor(() => expect(result.current.syncStatus).toBe("synced"));
+  });
+
+  it("toggles stops in and out of the watched set up to the cap", async () => {
+    vi.mocked(fetchTransitSettings).mockResolvedValue({
+      version: 0,
+      selections: null,
+    });
+    vi.mocked(saveTransitSettings).mockImplementation(async (update) => ({
+      version: update.version + 1,
+      selections: update.selections,
+    }));
+    const extraStops = Array.from({ length: 4 }, (_, index) => ({
+      ...localStop,
+      id: `extra-stop-${index}` as BusStop["id"],
+      arsId: String(25100 + index) as BusStop["arsId"],
+      name: `추가 정류장 ${index}`,
+    }));
+    const { result } = renderHook(() =>
+      useTransitSelections(authenticatedSession),
+    );
+    await waitFor(() => expect(result.current.syncStatus).toBe("synced"));
+
+    act(() => result.current.addBusStops(extraStops.slice(0, 3)));
+    await waitFor(() =>
+      expect(result.current.selections.selectedBusStopIds).toEqual([
+        localStop.id,
+        ...extraStops.slice(0, 3).map((stop) => stop.id),
+      ]),
+    );
+
+    act(() => result.current.toggleBusStop(localStop.id));
+    await waitFor(() =>
+      expect(result.current.selections.selectedBusStopIds).toEqual(
+        extraStops.slice(0, 3).map((stop) => stop.id),
+      ),
+    );
+
+    act(() => result.current.addBusStops(extraStops.slice(3)));
+    await waitFor(() =>
+      expect(result.current.selections.selectedBusStopIds).toEqual(
+        extraStops.map((stop) => stop.id),
+      ),
+    );
   });
 
   it("restores anonymous settings after logout without exposing the previous user", async () => {

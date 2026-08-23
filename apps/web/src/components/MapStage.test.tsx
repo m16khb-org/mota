@@ -13,7 +13,7 @@ function renderStage(isDesktop: boolean) {
     <MapStage
       stops={[]}
       subwayStations={[]}
-      selectedStop={null}
+      selectedStops={[]}
       selectedSubwayStation={null}
       center={{ lat: 37.5366, lng: 127.1253 }}
       isDesktop={isDesktop}

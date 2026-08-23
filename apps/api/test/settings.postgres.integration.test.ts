@@ -19,7 +19,7 @@ integration("settings API with home-server Postgres", () => {
   const selections: TransitSelections = {
     busStops: [],
     subwayStations: [],
-    selectedBusStopId: null,
+    selectedBusStopIds: [],
     selectedSubwayStationId: null,
   };
   const app = createApp(fetch, {

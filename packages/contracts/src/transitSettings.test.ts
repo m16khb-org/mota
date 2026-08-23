@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { gatewaySessionResponseSchema } from "./auth";
 import {
+  MAX_SELECTED_BUS_STOPS,
   transitSelectionsSchema,
   transitSettingsSnapshotSchema,
 } from "./transitSettings";
@@ -8,7 +9,7 @@ import {
 const selections = {
   busStops: [],
   subwayStations: [],
-  selectedBusStopId: null,
+  selectedBusStopIds: [],
   selectedSubwayStationId: null,
 };
 
@@ -21,6 +22,41 @@ describe("shared transit settings contracts", () => {
         selections: null,
       }),
     ).toEqual({ version: 0, selections: null });
+  });
+
+  it("migrates the singular selectedBusStopId document to a one-element list", () => {
+    expect(
+      transitSelectionsSchema.parse({
+        busStops: [],
+        subwayStations: [],
+        selectedBusStopId: "124000454",
+        selectedSubwayStationId: null,
+      }),
+    ).toEqual({
+      ...selections,
+      selectedBusStopIds: ["124000454"],
+    });
+  });
+
+  it("rejects watching more stops than the product cap", () => {
+    expect(
+      transitSelectionsSchema.safeParse({
+        ...selections,
+        selectedBusStopIds: Array.from(
+          { length: MAX_SELECTED_BUS_STOPS + 1 },
+          (_, index) => `stop-${index}`,
+        ),
+      }).success,
+    ).toBe(false);
+  });
+
+  it("deduplicates repeated stop ids while migrating", () => {
+    expect(
+      transitSelectionsSchema.parse({
+        ...selections,
+        selectedBusStopIds: ["124000454", "124000454"],
+      }),
+    ).toEqual({ ...selections, selectedBusStopIds: ["124000454"] });
   });
 
   it("rejects malformed selection arrays and negative versions", () => {

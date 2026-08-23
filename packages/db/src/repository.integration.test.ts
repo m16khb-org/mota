@@ -19,7 +19,7 @@ integration("DrizzleUserSettingsRepository", () => {
   const emptySelections: TransitSelections = {
     busStops: [],
     subwayStations: [],
-    selectedBusStopId: null,
+    selectedBusStopIds: [],
     selectedSubwayStationId: null,
   };
 

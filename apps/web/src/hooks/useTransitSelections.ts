@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { TransitSelections } from "@mota/contracts/transit-settings";
+import {
+  MAX_SELECTED_BUS_STOPS,
+  type TransitSelections,
+} from "@mota/contracts/transit-settings";
 import {
   fetchTransitSettings,
   saveTransitSettings,
@@ -186,10 +189,16 @@ export function useTransitSelections(session: GatewaySessionState) {
         for (const stop of stops) {
           busStops.set(stop.id, stop);
         }
+        const selectedBusStopIds = [
+          ...new Set([
+            ...current.selectedBusStopIds,
+            ...stops.map((stop) => stop.id),
+          ]),
+        ].slice(0, MAX_SELECTED_BUS_STOPS);
         return {
           ...current,
           busStops: [...busStops.values()],
-          selectedBusStopId: stops[0]?.id ?? current.selectedBusStopId,
+          selectedBusStopIds,
         };
       });
     },
@@ -219,13 +228,22 @@ export function useTransitSelections(session: GatewaySessionState) {
     [mutate],
   );
 
-  const selectBusStop = useCallback(
+  const toggleBusStop = useCallback(
     (stopId: BusStop["id"]) => {
-      mutate((current) =>
-        current.busStops.some((stop) => stop.id === stopId)
-          ? { ...current, selectedBusStopId: stopId }
-          : current,
-      );
+      mutate((current) => {
+        if (!current.busStops.some((stop) => stop.id === stopId)) {
+          return current;
+        }
+        const selectedBusStopIds = current.selectedBusStopIds.includes(
+          stopId,
+        )
+          ? current.selectedBusStopIds.filter((id) => id !== stopId)
+          : [...current.selectedBusStopIds, stopId].slice(
+              0,
+              MAX_SELECTED_BUS_STOPS,
+            );
+        return { ...current, selectedBusStopIds };
+      });
     },
     [mutate],
   );
@@ -250,10 +268,9 @@ export function useTransitSelections(session: GatewaySessionState) {
         return {
           ...current,
           busStops,
-          selectedBusStopId:
-            current.selectedBusStopId === stopId
-              ? (busStops[0]?.id ?? null)
-              : current.selectedBusStopId,
+          selectedBusStopIds: current.selectedBusStopIds.filter(
+            (id) => id !== stopId,
+          ),
         };
       });
     },
@@ -284,7 +301,7 @@ export function useTransitSelections(session: GatewaySessionState) {
     syncStatus,
     addBusStops,
     addSubwayStations,
-    selectBusStop,
+    toggleBusStop,
     selectSubwayStation,
     removeBusStop,
     removeSubwayStation,

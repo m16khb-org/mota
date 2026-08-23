@@ -1,4 +1,5 @@
 import {
+  MAX_SELECTED_BUS_STOPS,
   transitSelectionsSchema,
   type TransitSelections,
 } from "@mota/contracts/transit-settings";
@@ -10,7 +11,7 @@ export type TransitSelectionStorage = Pick<Storage, "getItem" | "setItem">;
 const EMPTY_SELECTIONS: TransitSelections = {
   busStops: [],
   subwayStations: [],
-  selectedBusStopId: null,
+  selectedBusStopIds: [],
   selectedSubwayStationId: null,
 };
 
@@ -34,14 +35,19 @@ function uniqueById<T extends { readonly id: string }>(
 function normalize(selections: TransitSelections): TransitSelections {
   const busStops = uniqueById(selections.busStops);
   const subwayStations = uniqueById(selections.subwayStations);
+  const knownIds = new Set(busStops.map((stop) => stop.id));
+  const selectedBusStopIds = [
+    ...new Set(selections.selectedBusStopIds),
+  ].filter((stopId) => knownIds.has(stopId));
   return {
     busStops,
     subwayStations,
-    selectedBusStopId: busStops.some(
-      (stop) => stop.id === selections.selectedBusStopId,
-    )
-      ? selections.selectedBusStopId
-      : (busStops[0]?.id ?? null),
+    selectedBusStopIds:
+      selectedBusStopIds.length > 0
+        ? selectedBusStopIds.slice(0, MAX_SELECTED_BUS_STOPS)
+        : (busStops[0]
+          ? [busStops[0].id]
+          : []),
     selectedSubwayStationId: subwayStations.some(
       (station) => station.id === selections.selectedSubwayStationId,
     )

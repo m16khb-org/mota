@@ -35,44 +35,70 @@ const SUBWAY_ERROR =
   "지하철 도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.";
 
 interface ArrivalDetailInput {
-  readonly selectedStop: BusStop | null;
+  readonly selectedStops: readonly BusStop[];
   readonly selectedStation: SubwayStation | null;
 }
 
 export function useArrivalDetail({
-  selectedStop,
+  selectedStops,
   selectedStation,
 }: ArrivalDetailInput) {
-  const [busDetail, setBusDetail] = useState<BusDetailState>(EMPTY_BUS);
+  const [busDetails, setBusDetails] = useState<
+    ReadonlyMap<BusStop["id"], BusDetailState>
+  >(() => new Map());
   const [subwayDetail, setSubwayDetail] =
     useState<SubwayDetailState>(EMPTY_SUBWAY);
-  const busRequest = useRef(0);
+  const busDetailsRef = useRef<Map<BusStop["id"], BusDetailState>>(
+    new Map(),
+  );
+  const busRequests = useRef(new Map<BusStop["id"], number>());
   const subwayRequest = useRef(0);
 
-  const fetchBusDetail = useCallback(async (stop: BusStop) => {
-    const request = busRequest.current + 1;
-    busRequest.current = request;
-    setBusDetail((current) => ({ ...current, loading: true, error: null }));
-    try {
-      const result = await fetchArrivals(stop.arsId);
-      if (busRequest.current === request) {
-        setBusDetail({
-          arrivals: result.arrivals,
-          loading: false,
-          error: null,
-          updatedAt: result.updatedAt,
-        });
+  const readBusDetail = useCallback(
+    (stopId: BusStop["id"]): BusDetailState =>
+      busDetailsRef.current.get(stopId) ?? EMPTY_BUS,
+    [],
+  );
+
+  const writeBusDetail = useCallback(
+    (stopId: BusStop["id"], next: BusDetailState) => {
+      busDetailsRef.current.set(stopId, next);
+      setBusDetails(new Map(busDetailsRef.current));
+    },
+    [],
+  );
+
+  const fetchBusDetail = useCallback(
+    async (stop: BusStop) => {
+      const request = (busRequests.current.get(stop.id) ?? 0) + 1;
+      busRequests.current.set(stop.id, request);
+      writeBusDetail(stop.id, {
+        ...readBusDetail(stop.id),
+        loading: true,
+        error: null,
+      });
+      try {
+        const result = await fetchArrivals(stop.arsId);
+        if (busRequests.current.get(stop.id) === request) {
+          writeBusDetail(stop.id, {
+            arrivals: result.arrivals,
+            loading: false,
+            error: null,
+            updatedAt: result.updatedAt,
+          });
+        }
+      } catch {
+        if (busRequests.current.get(stop.id) === request) {
+          writeBusDetail(stop.id, {
+            ...readBusDetail(stop.id),
+            loading: false,
+            error: BUS_ERROR,
+          });
+        }
       }
-    } catch {
-      if (busRequest.current === request) {
-        setBusDetail((current) => ({
-          ...current,
-          loading: false,
-          error: BUS_ERROR,
-        }));
-      }
-    }
-  }, []);
+    },
+    [readBusDetail, writeBusDetail],
+  );
 
   const fetchSubwayDetail = useCallback(async (station: SubwayStation) => {
     const request = subwayRequest.current + 1;
@@ -104,13 +130,24 @@ export function useArrivalDetail({
   }, []);
 
   useEffect(() => {
-    if (selectedStop === null) {
-      busRequest.current += 1;
-      setBusDetail(EMPTY_BUS);
-      return;
+    const ids = new Set(selectedStops.map((stop) => stop.id));
+    let removed = false;
+    for (const stopId of busDetailsRef.current.keys()) {
+      if (!ids.has(stopId)) {
+        busDetailsRef.current.delete(stopId);
+        busRequests.current.delete(stopId);
+        removed = true;
+      }
     }
-    void fetchBusDetail(selectedStop);
-  }, [fetchBusDetail, selectedStop]);
+    if (removed) {
+      setBusDetails(new Map(busDetailsRef.current));
+    }
+    for (const stop of selectedStops) {
+      if (!busDetailsRef.current.has(stop.id)) {
+        void fetchBusDetail(stop);
+      }
+    }
+  }, [fetchBusDetail, selectedStops]);
 
   useEffect(() => {
     if (selectedStation === null) {
@@ -121,14 +158,20 @@ export function useArrivalDetail({
     void fetchSubwayDetail(selectedStation);
   }, [fetchSubwayDetail, selectedStation]);
 
+  const stopsRef = useRef(selectedStops);
+  stopsRef.current = selectedStops;
+
+  const refreshBusDetail = useCallback(() => {
+    for (const stop of stopsRef.current) {
+      void fetchBusDetail(stop);
+    }
+  }, [fetchBusDetail]);
+
   return {
-    busDetail,
+    busDetails,
+    busDetail: (stopId: BusStop["id"]) => readBusDetail(stopId),
     subwayDetail,
-    refreshBusDetail: () => {
-      if (selectedStop !== null) {
-        void fetchBusDetail(selectedStop);
-      }
-    },
+    refreshBusDetail,
     refreshSubwayDetail: () => {
       if (selectedStation !== null) {
         void fetchSubwayDetail(selectedStation);

@@ -88,7 +88,7 @@ describe("ArrivalList", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: "버스 도착정보 새로고침" }),
+      screen.getByRole("button", { name: "천호역 버스 도착정보 새로고침" }),
     );
 
     expect(onRefresh).toHaveBeenCalledOnce();

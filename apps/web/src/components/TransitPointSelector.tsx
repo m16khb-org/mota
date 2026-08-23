@@ -16,7 +16,7 @@ interface TransitPointSelectorProps {
   readonly mode: TransitMode;
   readonly busStops: readonly BusStop[];
   readonly subwayStations: readonly SubwayStation[];
-  readonly selectedBusStopId: BusStop["id"] | null;
+  readonly selectedBusStopIds: readonly BusStop["id"][];
   readonly selectedSubwayStationId: SubwayStation["id"] | null;
   readonly onModeChange: (mode: TransitMode) => void;
   readonly onAdd: () => void;
@@ -40,7 +40,7 @@ export function TransitPointSelector({
   mode,
   busStops,
   subwayStations,
-  selectedBusStopId,
+  selectedBusStopIds,
   selectedSubwayStationId,
   onModeChange,
   onAdd,
@@ -124,7 +124,7 @@ export function TransitPointSelector({
         <div className="point-list">
           {mode === "bus"
             ? busStops.map((stop) => {
-                const selected = stop.id === selectedBusStopId;
+                const selected = selectedBusStopIds.includes(stop.id);
                 return (
                   <div className={selected ? "point-row is-active" : "point-row"} key={stop.id}>
                     <button
