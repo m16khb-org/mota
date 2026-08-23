@@ -1,42 +1,27 @@
 {
   "name": "mota",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "type": "module",
+  "packageManager": "pnpm@11.21.0",
   "scripts": {
-    "dev:web": "vite",
-    "dev:api": "bun --watch server/index.ts",
-    "build": "vite build",
-    "start": "bun server/index.ts",
-    "typecheck": "tsc --noEmit",
-    "check": "biome lint .",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "playwright test"
-  },
-  "dependencies": {
-    "hono": "^4.9.2",
-    "jose": "^6.1.0",
-    "leaflet": "^1.9.4",
-    "lucide-react": "^0.539.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-leaflet": "^5.0.0",
-    "zod": "^4.0.17"
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@mota/web",
+    "dev:api": "turbo run dev --filter=@mota/api",
+    "build": "turbo run build",
+    "start": "pnpm --filter @mota/api start",
+    "typecheck": "turbo run typecheck",
+    "check": "turbo run check",
+    "test": "turbo run test",
+    "test:integration": "turbo run test:integration",
+    "test:watch": "pnpm --filter @mota/web test:watch",
+    "test:e2e": "pnpm --filter @mota/web test:e2e",
+    "db:generate": "pnpm --filter @mota/db generate",
+    "db:migrate": "pnpm --filter @mota/db migrate",
+    "db:studio": "pnpm --filter @mota/db studio"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
-    "@playwright/test": "^1.54.2",
-    "@testing-library/jest-dom": "6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/bun": "^1.2.20",
-    "@types/leaflet": "^1.9.20",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
-    "jsdom": "^26.1.0",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.2",
-    "vitest": "^3.2.4"
+    "turbo": "^2.5.6",
+    "typescript": "^5.9.2"
   }
 }

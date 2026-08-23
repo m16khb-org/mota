@@ -1,0 +1,42 @@
+{
+  "name": "@mota/contracts",
+  "version": "0.2.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./bus": {
+      "types": "./dist/bus.d.ts",
+      "default": "./dist/bus.js"
+    },
+    "./auth": {
+      "types": "./dist/auth.d.ts",
+      "default": "./dist/auth.js"
+    },
+    "./subway": {
+      "types": "./dist/subway.d.ts",
+      "default": "./dist/subway.js"
+    },
+    "./transit-settings": {
+      "types": "./dist/transitSettings.d.ts",
+      "default": "./dist/transitSettings.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "biome lint src",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

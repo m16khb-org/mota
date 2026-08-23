@@ -1,5 +1,18 @@
 packages:
-  - "."
+  - "apps/*"
+  - "packages/*"
+
+injectWorkspacePackages: true
+nodeLinker: hoisted
 
 allowBuilds:
+  '@nestjs/core': true
+  '@scarf/scarf': true
+  '@swc/core': true
   esbuild: true
+
+onlyBuiltDependencies:
+  - "@nestjs/core"
+  - "@scarf/scarf"
+  - "@swc/core"
+  - "esbuild"

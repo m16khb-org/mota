@@ -5,30 +5,43 @@ services:
     build:
       context: .
       target: runtime
+      args:
+        VITE_AUTH_GATEWAY_URL: ${VITE_AUTH_GATEWAY_URL:-https://auth.m16khb.xyz}
     restart: unless-stopped
     environment:
       HOST: 0.0.0.0
       PORT: 3000
+      AUTH_GATEWAY_URL: http://auth-gateway:3000
+      DATABASE_HOST: home-server-pg
+      DATABASE_PORT: 5432
+      DATABASE_NAME: mota
+      DATABASE_USER: mota
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?run compose with ../home-server-infra/.env}
+      WEB_DIST_PATH: /app/web
+      MIGRATIONS_PATH: /app/drizzle
     ports:
       - "127.0.0.1:3100:3000"
     networks:
       cloudflare-tunnel:
         aliases:
           - mota
+      home-server:
     healthcheck:
       test:
         - CMD
-        - bun
+        - node
         - -e
-        - 'fetch("http://127.0.0.1:3000/").then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))'
+        - 'fetch("http://127.0.0.1:3000/api/health").then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))'
       interval: 10s
       timeout: 3s
       retries: 5
-      start_period: 10s
+      start_period: 15s
     read_only: true
     security_opt:
       - no-new-privileges:true
 
 networks:
   cloudflare-tunnel:
+    external: true
+  home-server:
     external: true
