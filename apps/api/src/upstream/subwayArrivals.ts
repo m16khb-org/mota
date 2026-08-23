@@ -6,7 +6,7 @@ import {
 import { UPSTREAM_HEADERS } from "./seoulBus";
 import { UpstreamError } from "./upstreamError";
 
-const SUBWAY_ARRIVAL_UPSTREAM =
+export const SUBWAY_ARRIVAL_UPSTREAM_BASE =
   process.env.SUBWAY_ARRIVAL_UPSTREAM ??
   "https://k-skill-proxy.nomadamas.org";
 
@@ -19,7 +19,7 @@ type UpstreamFetch = (
 export async function fetchSubwayArrivals(
   upstreamFetch: UpstreamFetch,
   station: string,
-  upstreamBase = SUBWAY_ARRIVAL_UPSTREAM,
+  upstreamBase = SUBWAY_ARRIVAL_UPSTREAM_BASE,
 ): Promise<{ arrivals: SubwayArrival[]; updatedAt: string }> {
   const upstreamUrl = new URL("/v1/seoul-subway/arrival", upstreamBase);
   upstreamUrl.search = new URLSearchParams({

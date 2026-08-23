@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { SUBWAY_ARRIVAL_UPSTREAM_BASE } from "../upstream/subwayArrivals";
 import { loadEnv } from "./env";
 
 describe("API environment", () => {
@@ -11,7 +12,7 @@ describe("API environment", () => {
       host: "0.0.0.0",
       port: 3000,
       authGatewayUrl: "http://auth-gateway:3000",
-      subwayArrivalUpstream: "https://k-skill.m16khb.xyz/api/subway",
+      subwayArrivalUpstream: SUBWAY_ARRIVAL_UPSTREAM_BASE,
       databaseUrl: "postgres://mota:secret@localhost:5432/mota",
       webDistPath: "/app/web",
       migrationsPath: "/app/drizzle",

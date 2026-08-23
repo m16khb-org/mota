@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SUBWAY_ARRIVAL_UPSTREAM_BASE } from "../upstream/subwayArrivals";
 
 const envSchema = z.object({
   HOST: z.string().min(1).default("0.0.0.0"),
@@ -7,7 +8,7 @@ const envSchema = z.object({
   SUBWAY_ARRIVAL_UPSTREAM: z
     .string()
     .url()
-    .default("https://k-skill.m16khb.xyz/api/subway"),
+    .default(SUBWAY_ARRIVAL_UPSTREAM_BASE),
   DATABASE_URL: z.string().url().optional(),
   DATABASE_HOST: z.string().min(1).default("home-server-pg"),
   DATABASE_PORT: z.coerce.number().int().min(1).max(65_535).default(5432),
