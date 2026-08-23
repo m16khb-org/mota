@@ -93,7 +93,7 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js?v=5");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=6");
     expect(registeredWindowEvents).toEqual(["load"]);
   });
 

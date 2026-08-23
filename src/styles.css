@@ -3,7 +3,7 @@
 :root {
   color: var(--ink);
   background: var(--paper);
-  font-family: "Pretendard Variable", Pretendard, Inter, system-ui, sans-serif;
+  font-family: "Pretendard Variable", Pretendard, "Helvetica Neue", system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   --ink: #0b0b0b;
@@ -2246,4 +2246,353 @@ select:focus-visible {
   font-size: 0.75rem;
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+/* Minimal transit selection surface */
+.app-shell {
+  grid-template-columns: 420px minmax(0, 1fr);
+}
+
+.brand-header {
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  white-space: normal;
+}
+
+.brand-header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 780;
+  line-height: 1;
+}
+
+.brand-header span {
+  margin-top: 6px;
+  letter-spacing: 0.05em;
+}
+
+.point-selector {
+  padding: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.transit-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.transit-tab {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  font-weight: 720;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.transit-tab[aria-selected="true"] {
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+
+.transit-tab:hover:not([aria-selected="true"]) {
+  background: var(--surface);
+}
+
+.transit-tab:active,
+.add-point-button:active,
+.point-select:active,
+.point-remove:active,
+.direction-tabs button:active {
+  transform: scale(0.98);
+}
+
+.transit-tab svg,
+.add-point-button svg,
+.point-remove svg {
+  width: 18px;
+  height: 18px;
+}
+
+.point-selector-heading {
+  align-items: end;
+  margin-top: 24px;
+}
+
+.add-point-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  color: var(--on-ink);
+  background: var(--ink);
+  font-weight: 720;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.add-point-button:hover {
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+
+.point-empty {
+  margin: 16px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.point-list {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.point-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  min-width: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.point-row::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: transparent;
+  content: "";
+}
+
+.point-row.is-active {
+  background: var(--signal-soft);
+}
+
+.point-row.is-active::before {
+  background: var(--signal);
+}
+
+.point-select {
+  display: grid;
+  min-width: 0;
+  min-height: 64px;
+  align-content: center;
+  gap: 2px;
+  padding: 10px 12px 10px 16px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 120ms ease;
+}
+
+.point-select:hover {
+  background: rgb(11 11 11 / 4%);
+}
+
+.point-select strong,
+.point-select span,
+.point-select small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.point-select strong {
+  font-size: 0.9375rem;
+}
+
+.point-select span,
+.point-select small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.point-select small {
+  color: var(--signal-ink);
+  font-weight: 720;
+}
+
+.point-remove {
+  display: grid;
+  width: 44px;
+  min-height: 44px;
+  align-self: center;
+  place-items: center;
+  border: 0;
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.point-remove:hover {
+  color: var(--danger);
+  background: var(--danger-surface);
+}
+
+.arrivals {
+  padding: 24px;
+}
+
+.arrival-list {
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.arrival-row {
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.eta-block strong {
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 780;
+  line-height: 1;
+}
+
+.direction-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.direction-tabs button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-weight: 700;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.direction-tabs button[aria-selected="true"] {
+  border-color: var(--subway);
+  color: var(--on-ink);
+  background: var(--subway);
+}
+
+.map-expand-toggle {
+  position: absolute;
+  z-index: 500;
+  inset-inline-start: 50%;
+  bottom: 12px;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  color: var(--on-ink);
+  background: var(--ink);
+  box-shadow: var(--shadow-control);
+  font-weight: 720;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+.map-expand-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+@media (max-width: 959px) {
+  .brand-header {
+    padding: 14px 20px;
+  }
+
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .point-selector,
+  .arrivals {
+    padding: 20px;
+  }
+
+  .point-selector-heading {
+    margin-top: 20px;
+  }
+
+  .map-stage {
+    flex-basis: 30dvh;
+    height: 30dvh;
+  }
+
+  .map-stage.is-expanded {
+    flex-basis: 55dvh;
+    height: 55dvh;
+  }
+}
+
+@media (max-width: 420px) {
+  .point-selector-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .add-point-button {
+    width: 100%;
+  }
+
+  .arrival-row {
+    grid-template-columns: minmax(0, 1fr) minmax(92px, auto);
+  }
+
+  .eta-block span,
+  .eta-block small {
+    max-width: 112px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transit-tab,
+  .add-point-button,
+  .point-select,
+  .point-remove,
+  .direction-tabs button {
+    transition-duration: 1ms;
+  }
 }

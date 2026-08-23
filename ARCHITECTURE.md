@@ -1,173 +1,133 @@
 # ARCHITECTURE
 
-Architectural analysis and contract for 모타 (mota). This document maps the
-codebase onto DDD, hexagonal (ports & adapters), clean architecture, OOP, and
-SOLID, records the deliberate deviations, and defines the refactoring rules
-that follow from it. `DESIGN.md` remains the product/visual contract; this file
-is the code-structure contract. Update it before changing layer boundaries.
+## 제품 경계
 
-## Style in one paragraph
+모타의 활성 제품 경로는 하나다.
 
-Pragmatic layered/hexagonal architecture in a functional-first TypeScript
-idiom: immutable data, Zod-branded value objects, discriminated unions, and
-pure functions instead of class taxonomies. React owns presentation; a thin
-application layer of hooks orchestrates use cases; a pure `src/domain` shared
-kernel holds entities and domain services; adapters translate Seoul BIS,
-Overpass, the subway proxy, and localStorage into domain shapes. Dependencies
-point inward only — domain imports nothing outward.
-
-## Layer map
-
-| Layer | Location | Rules |
-|---|---|---|
-| Domain (shared kernel) | `src/domain/` | Pure: Zod schemas, branded value objects, estimators, query derivation, snapshot freshness. No React, no fetch, no storage imports. Imported by browser and server alike. |
-| Application | `src/hooks/` | Use-case orchestration bound to React: refresh controller, persistence effect, mutation façades, arrival-detail coordination. May import domain and adapters; never imported by domain. |
-| Presentation | `src/components/`, `src/App.tsx` | Rendering, a11y, layout. `App.tsx` is the composition root that wires ports into hooks. No schema parsing of upstream payloads, no persistence logic. |
-| Outbound adapters (browser) | `src/api/client.ts` | Transport + Zod re-validation of server JSON. Owns the concrete `liveArrivalsPort` implementation injected into the refresh controller. |
-| Persistence adapter | `src/hooks/commuteStopsStorage.ts` | Versioned localStorage repository (v1→v4 migration). No React imports; colocated with hooks as a documented boundary decision. |
-| Server (driving + driven) | `server/app.ts`, `server/upstream/` | `app.ts` owns Hono routing, request validation, and error mapping only. `server/upstream/*` are the driven adapters: Seoul BIS fetch, Overpass mirror race with cache/cooldown, subway arrival proxy. |
-| Composition roots | `src/main.tsx`, `src/App.tsx`, `server/index.ts` | Framework bootstrap. `createApp(upstreamFetch, deps)` receives the upstream port for in-memory tests. |
-
-## Clean architecture dependency rule
-
-```
-presentation (components, App)      server routes (app.ts)
-        │                                  │
-        ▼                                  ▼
-application (hooks) ─────────▶ domain (src/domain) ◀── normalization at the edge
-        │                                  ▲
-        ▼                                  │
-adapters (api/client, storage, server/upstream)
+```text
+정류장 또는 역 선택
+  → 선택 저장
+  → 해당 지점 도착 조회
+  → 버스 최대 3행 또는 지하철 방향별 최대 3행 표시
 ```
 
-- Domain depends on nothing but Zod and itself.
-- Adapters depend inward (they import domain types and schemas).
-- Application and presentation never appear in domain imports.
-- The single historical violation (domain `liveCommuteQueries` importing
-  `api/client`) was removed by introducing the `LiveArrivalsPort` abstraction;
-  the concrete port lives in `api/client.ts` and is injected by callers.
+회사·집, 이름 있는 장소, 통근 절차, 즐겨찾기, 출발 시각, 여정 ETA는
+활성 제품 모델이 아니다. 기존 v4 저장 데이터는 정류장과 역만 새 저장소로
+가져오기 위해 읽으며, 절차·장소·즐겨찾기 데이터는 새 저장소에 쓰지 않는다.
 
-## DDD mapping
+## 레이어
 
-| DDD concept | Code | Notes |
+| 레이어 | 위치 | 책임 |
 |---|---|---|
-| Entity | `SavedCommuteProcedure`, `CommuteFavorite` | Identity by branded id; lifecycle states modeled explicitly. |
-| Aggregate | `CommuteStops` → per-direction `DirectionCollection` → `CommutePlace` | Invariants enforced in `commuteTransitions.ts`: procedures must reference saved points, ready procedures never survive dangling references, favorites dedupe by identity key, cascade cleanup on point deletion. |
-| Value object | Branded ids (`StopId`, `ArsId`, `RouteId`, `CommuteProcedureId`, …), minute durations, `LiveQuery`, `LiveSnapshot` | Branded primitives + `strictObject` schemas; no behavior-bearing classes needed. |
-| Domain service | `estimateCommuteProcedure`, `deriveLiveQueries` + `snapshotBasis` | Pure; time is injected (`now`), never read from the wall clock inside. |
-| Repository | `commuteStopsStorage.ts` | Versioned localStorage persistence with migration; the only module allowed to touch the storage key family. |
-| Anti-corruption layer | `normalizeNearbyStops`, `normalizeArrivals`, `normalizeNearbySubwayStations`, `normalizeSubwayArrivals` + `apiStationName` aliasing | Upstream Seoul/OSM dialects are translated to domain shapes at the edge; UI never sees raw payloads. |
-| Ubiquitous language | 절차 (procedure), 즐겨찾기 (favorite), 회사/집 (company/home), 방면 (direction) | Korean UI copy maps 1:1 onto domain identifiers; keep new features aligned. |
+| 도메인 | `src/domain/bus.ts`, `src/domain/subway.ts` | 정류장·역·도착 스키마, 서울 API 정규화와 정렬 |
+| 애플리케이션 | `src/hooks/useTransitSelections.ts`, `src/hooks/useArrivalDetail.ts` | 선택 상태 변경, 선택 지점의 도착 조회와 재시도 |
+| 브라우저 어댑터 | `src/api/client.ts`, `src/hooks/transitSelectionStorage.ts` | HTTP와 localStorage 경계의 Zod 파싱, v4 지점 마이그레이션 |
+| 프레젠테이션 | `src/App.tsx`, `src/components/` | 교통수단·지점·방향 선택, 최대 3건 표시, 지도와 반응형 셸 |
+| 서버 라우트 | `server/app.ts` | 요청 파싱, upstream 호출, 고정 오류 형태 매핑 |
+| 서버 upstream | `server/upstream/seoulBus.ts`, `overpassStations.ts`, `subwayArrivals.ts` | 서울 버스·OSM·지하철 응답 정규화 |
 
-Key invariants (enforced by transitions, guarded by tests):
+의존성은 다음 방향만 허용한다.
 
-- Identity is exact, never fuzzy: bus `stopId+arsId+routeId+normalized direction`;
-  subway `stationId+apiStationName+subwayId+updnLine`. Display labels never
-  participate in matching.
-- A latest success is live for at most 90 seconds; leave guidance requires a
-  live first transit leg; nothing persisted contains snapshots, ETAs, or raw
-  payloads.
-- superseded v3 route options are discarded on migration (never kept as
-  drafts); zero/negative durations are unrepresentable (`int().min(1)`).
+```text
+presentation → application → domain
+                     ↓
+                  adapters
 
-## Hexagonal ports & adapters
+server routes → server upstream → shared domain schemas
+```
 
-Driving side (world → app): Hono routes in `server/app.ts`; React UI.
+`src/domain/**`는 React, 브라우저 API, hooks, components, server를 import하지 않는다.
 
-Driven side (app → world), each a named port with injected implementations:
+## 브라우저 조합
 
-| Port | Abstraction | Adapter | Injected at |
-|---|---|---|---|
-| Upstream fetch (server) | `UpstreamFetch = typeof fetch` | `server/upstream/*` call sites | `createApp(upstreamFetch, deps)` — tests pass an in-memory fake |
-| Live arrivals (browser) | `LiveArrivalsPort(query) → {updatedAt, arrivals}` | `liveArrivalsPort` in `api/client.ts` | `useLiveCommuteSnapshots` / tests pass it into `refreshLiveQueries` |
-| Persistence | `loadCommutes`/`saveCommutes` | `commuteStopsStorage.ts` | Module boundary; swappable in tests via storage fixtures |
-| Clock & timers | `now`, `sleep`, `AbortSignal.timeout` | callers of estimators/controllers | `estimateCommuteProcedure(..., now)`, `createApp` deps |
+`src/App.tsx`가 조합 루트다.
 
-Server upstream adapters (`server/upstream/`):
+1. `useTransitSelections`가 저장한 정류장, 역과 각각의 최근 선택 ID를 제공한다.
+2. `TransitPointSelector`가 버스·지하철 탭과 지점 목록을 렌더링한다.
+3. 현재 교통수단에 해당하는 선택만 `useArrivalDetail`에 전달한다.
+4. `useArrivalDetail`은 버스 또는 지하철 endpoint 하나만 호출한다.
+5. 버스는 `ArrivalList`, 지하철은 `SubwayArrivalList`가 표시를 담당한다.
+6. `MapStage`는 저장 지점과 현재 선택을 지도에 투영할 뿐 검색이나 저장을 소유하지 않는다.
+7. 검색과 저장은 `MapPicker`와 `SubwayPicker`의 명시적 행동으로만 발생한다.
 
-- `seoulBus.ts` — nearby-stops and ARS arrivals fetch + normalize.
-- `overpassStations.ts` — mirror race (1.5 s stagger, 16 s budget), 24 h result
-  cache, 60 s per-mirror failure cooldown, stale-cache fallback.
-- `subwayArrivals.ts` — k-skill proxy fetch + normalize.
+교통수단 전환은 저장을 삭제하지 않는다. 버스와 지하철의 최근 선택 ID는
+각각 독립적으로 유지된다.
 
-Routes stay thin: parse → call adapter → map `UpstreamError` details to the
-fixed 400/502 JSON shapes. Keep it that way; new endpoints follow the same
-split.
+## 저장소
 
-## OOP in this codebase
+활성 키는 `mota:transit-selections:v1`이다.
 
-The stack is React + Zod, so "object-oriented" is applied structurally, not by
-adding classes:
+```ts
+interface TransitSelections {
+  readonly busStops: readonly BusStop[];
+  readonly subwayStations: readonly SubwayStation[];
+  readonly selectedBusStopId: StopId | null;
+  readonly selectedSubwayStationId: SubwayStationId | null;
+}
+```
 
-- **Sum types over inheritance**: steps `walk | bus | subway`, favorites
-  `bus | subway`. Exhaustive `switch`
-  narrowing replaces visitor/polymorphism and is compiler-enforced.
-- **Interfaces for structure**: ports are structural function/object types,
-  not class hierarchies.
-- **Behavior near data, not on it**: transitions and estimators are free
-  functions over immutable shapes; mutation happens by producing new aggregate
-  values.
-- **Where classes exist** (`ApiError`, Leaflet wrappers), they are framework
-  boundaries or error taxonomy, not domain models.
+`transitSelectionStorage.ts`만 이 키를 읽고 쓴다.
 
-Rule: do not introduce abstract base classes or inheritance hierarchies into
-`src/domain`. Prefer a discriminated union plus an exhaustive switch.
+- 모든 값을 Zod로 파싱한다.
+- ID가 중복된 지점은 마지막 값을 사용한다.
+- 존재하지 않는 선택 ID는 첫 지점 또는 `null`로 복구한다.
+- 새 키가 없으면 `commute-bus-web:stops:v4`에서 모든 회사·집 장소의 정류장과
+  역만 평탄화하고 중복을 제거한다.
+- v4의 절차, 즐겨찾기, 출발지와 장소 이름은 마이그레이션하지 않는다.
 
-## SOLID mapping
+## 도착 조회
 
-- **S — Single responsibility**: one module, one reason to change. The former
-  490-LOC `commuteStopsSelectors.ts` was split into `commuteIdentity.ts` (id +
-  identity-key factories), `commuteProjections.ts` (read queries),
-  `commuteTransitions.ts` (aggregate state transitions), and
-  `commutePointCleanup.ts` (stop/station deletion cascades). `server/app.ts`
-  was split from routing-plus-upstream-IO into routing + `upstream/` adapters.
-- **O — Open/closed**: new arrival sources or storage versions extend by new
-  adapter implementations and schema versions; existing domain switches stay
-  closed (the compiler flags non-exhaustive handling).
-- **L — Liskov**: no subtype hierarchies; structural typing plus branded
-  primitives makes substitution trivial and makes illegal mixes (ARS id as
-  stop id) unrepresentable.
-- **I — Interface segregation**: ports are minimal — `LiveArrivalsPort` is a
-  single function; `UpstreamFetch` mirrors `fetch`; consumers depend on
-  exactly what they call.
-- **D — Dependency inversion**: domain and routes name abstractions
-  (`LiveArrivalsPort`, `UpstreamFetch`, injected `now`); concrete adapters are
-  bound only at composition roots (`App.tsx`/hooks, `createApp`).
+### 버스
 
-## Deliberate deviations (accepted, documented)
+- 브라우저는 선택 정류장의 5자리 ARS ID로 `/api/arrivals/:arsId`를 호출한다.
+- 서버는 서울 버스 응답을 `BusArrival[]`로 정규화하고 첫 ETA로 정렬한다.
+- 한 노선은 upstream 계약상 `first`와 선택적인 `second` 예측을 가진다.
+- 화면은 정렬된 노선 행 중 최대 세 행만 렌더링한다.
 
-- `App.tsx` is a ~380-LOC composition root. It wires ports and state, and its
-  internal units are extracted (MapStage, useCommuteDailyLive, useArrivalDetail).
-  Further splitting would scatter wiring without reducing risk.
-- The persistence repository lives in `src/hooks/` although it has no React
-  imports — colocated because every consumer is a hook; moving it would churn
-  imports for zero behavior change. Revisit only if a non-hook consumer
-  appears.
-- `src/domain` is a browser/server shared kernel rather than a separate
-  package (repo rule: no package boundaries, relative imports only).
-- Dev-only React StrictMode double-mount causes one extra refresh generation;
-  the generation guard already rejects stale results.
+### 지하철
 
-## Refactoring rules derived from this document
+- 브라우저는 선택 역명으로 `/api/subway/arrivals?station=...`을 호출한다.
+- 서버는 도착 열차 배열을 초 단위 ETA로 정렬한다.
+- 화면은 관찰된 `subwayId + updnLine`을 방향 탭으로 만든다.
+- 선택한 방향의 열차만 필터링한 뒤 최대 세 행을 렌더링한다.
 
-1. Domain purity is load-bearing: `src/domain/**` must not import React,
-   `src/api`, `src/hooks`, `src/components`, or `server/**`. If domain needs an
-   effect, define a port type in domain and implement it in an adapter.
-2. New upstream sources go into `server/upstream/` (or a browser adapter) with
-   normalization; routes only parse/validate/map errors.
-3. Aggregate changes go through `commuteTransitions.ts` (deletion cascades
-   live in `commutePointCleanup.ts`); keep invariants there, keep functions
-   pure, and extend tests in
-   `useCommuteStops.test.tsx`/`commuteStopsStorage.test.ts`.
-4. Do not grow god-modules: when a hooks- or server file crosses ~300 pure
-   LOC or gains a second responsibility, split it the way the selectors were
-   split.
-5. Ports stay narrow and injected; no module reaches outward for a concrete
-   implementation it can receive as an argument.
-6. Model domain variation with sum types (discriminated unions + exhaustive
-   `switch`), not inheritance: a new `kind` literal must make every consumer
-   fail to compile until handled. Do not introduce abstract base classes,
-   deep type hierarchies, or `instanceof` chains into `src/domain`; reserve
-   classes for framework boundaries and error taxonomy. Keep behavior near
-   data as pure functions over immutable values; aggregate invariants are
-   enforced in transitions, not in constructors or setters.
+표시 제한은 프레젠테이션 경계에만 적용한다. 어댑터와 도메인 정규화는
+전체 응답을 유지해야 한다.
+
+## 오류와 동시성
+
+`useArrivalDetail`은 버스와 지하철 요청 시퀀스를 각각 관리한다.
+
+- 지점을 바꾸면 이전 응답은 최신 상태를 덮어쓰지 못한다.
+- 새 요청 중에는 선택과 이전 성공 행을 유지한다.
+- 실패하면 선택을 지우지 않고 짧은 사용자 오류와 `다시 시도`를 제공한다.
+- 교통수단을 바꾸면 비활성 교통수단의 표시 상태를 비운다.
+
+브라우저와 서버 네트워크 경계는 기존 8초 timeout 계약을 유지한다.
+
+## 반응형 셸
+
+- 데스크톱: 420px 제어 레일과 나머지 지도 영역의 `100dvh` 2열 셸이다.
+- 모바일·태블릿: 위쪽 30dvh 지도와 아래 내부 스크롤 시트다.
+- `.rail-scroll`만 제어 영역의 세로 스크롤을 소유한다.
+- 문서와 지도는 제어 레일 스크롤에 따라 움직이지 않는다.
+- 지도 선택과 목록 선택은 같은 저장 ID를 사용한다.
+
+세부 시각·접근성 계약은 `DESIGN.md`가 소유한다.
+
+## 경계 규칙
+
+- 정류장명만으로 정체성을 판단하지 않는다. `StopId`와 5자리 `ArsId`를 보존한다.
+- 역명만으로 저장 정체성을 판단하지 않는다. OSM 기반 `SubwayStationId`를 보존한다.
+- 지하철 방향은 표시 문자열이 아니라 `subwayId + updnLine`으로 그룹화한다.
+- 외부 JSON과 localStorage는 반드시 Zod로 파싱한다.
+- 지도 이동만으로 주변 검색을 시작하지 않는다.
+- 선택 저장과 지도 검색을 도착 조회 hook 안에 넣지 않는다.
+- 도메인에 React, fetch, localStorage를 넣지 않는다.
+
+## 퇴역 코드
+
+이전 절차 제품을 구현하던 `commute*`, `autoCommute*`, `FavoriteDepartures`,
+procedure editor와 live-query 모듈은 활성 조합 루트에서 참조하지 않는다.
+새 기능은 이 모듈을 다시 연결하거나 확장하지 않는다. 기존 저장 데이터 읽기 외에는
+활성 제품 경로와 분리된 호환 기록으로 취급한다.

@@ -1,209 +1,79 @@
 import { useState } from "react";
 import { ArrivalList } from "./components/ArrivalList";
-import { AutoCommuteEta } from "./components/AutoCommuteEta";
-import { AutoProcedureEditor } from "./components/AutoProcedureEditor";
 import { BrandHeader } from "./components/BrandHeader";
-import { CommuteEta } from "./components/CommuteEta";
-import { CommutePlaceManager } from "./components/CommutePlaceManager";
-import { CommuteProcedureEditor } from "./components/CommuteProcedureEditor";
-import { requestCurrentPosition } from "./components/locate";
-import { CommuteSwitch } from "./components/CommuteSwitch";
-import { FavoriteDepartures } from "./components/FavoriteDepartures";
 import { MapPicker } from "./components/MapPicker";
 import { MapStage } from "./components/MapStage";
 import { SubwayArrivalList } from "./components/SubwayArrivalList";
 import { SubwayPicker } from "./components/SubwayPicker";
-import type { BusStop, CommuteDirection } from "./domain/bus";
-import type {
-  CommuteFavorite,
-  CommuteFavoriteId,
-  CommuteProcedureId,
-} from "./domain/commute";
-import type { SubwayStation } from "./domain/subway";
 import {
-  koreanDirectionParticle,
-  koreanObjectParticle,
-} from "./domain/koreanParticles";
-import type {
-  CommuteFavoriteInput,
-  CommuteProcedureInput,
-} from "./hooks/useCommuteProcedures";
-import { useCommuteDailyLive } from "./hooks/useCommuteDailyLive";
+  TransitPointSelector,
+  type TransitMode,
+} from "./components/TransitPointSelector";
+import type { BusStop } from "./domain/bus";
+import type { SubwayStation } from "./domain/subway";
 import { useArrivalDetail } from "./hooks/useArrivalDetail";
-import { getActivePlace, getActiveProcedure, getActiveStop, resolveAutoProcedurePoints, useCommuteStops } from "./hooks/useCommuteStops";
 import { useMediaQuery } from "./hooks/useMediaQuery";
+import { useTransitSelections } from "./hooks/useTransitSelections";
 
 const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
-const NO_FAVORITES: readonly CommuteFavorite[] = [];
 
 export function App() {
   const isDesktop = useMediaQuery("(min-width: 960px)");
-  const [direction, setDirection] = useState<CommuteDirection>("company");
-  const {
-    commutes,
-    addPlace,
-    renamePlace,
-    removePlace,
-    selectPlace,
-    setPlaceLocation,
-    addStop,
-    removeStop,
-    selectStop,
-    addSubwayStations,
-    removeSubwayStation,
-    addProcedure,
-    editProcedure,
-    removeProcedure,
-    reorderProcedure,
-    selectProcedure,
-    pinFavorite,
-    unpinFavorite,
-    updateFavorite,
-  } = useCommuteStops();
-  const [pickerMode, setPickerMode] = useState<"bus" | "subway" | null>(null);
+  const [mode, setMode] = useState<TransitMode>("bus");
+  const [pickerMode, setPickerMode] = useState<TransitMode | null>(null);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
-  const [selectedStation, setSelectedStation] = useState<SubwayStation | null>(
-    null,
-  );
-  const [editorTarget, setEditorTarget] = useState<
-    "new" | CommuteProcedureId | null
-  >(null);
-  const [stageSearchRequest, setStageSearchRequest] = useState(0);
+  const {
+    selections,
+    addBusStops,
+    addSubwayStations,
+    selectBusStop,
+    selectSubwayStation,
+    removeBusStop,
+    removeSubwayStation,
+  } = useTransitSelections();
 
-  const collection = commutes[direction];
-  const activePlace = getActivePlace(collection);
-  const selectedStop = getActiveStop(activePlace);
+  const selectedStop =
+    selections.busStops.find(
+      (stop) => stop.id === selections.selectedBusStopId,
+    ) ?? null;
+  const selectedStation =
+    selections.subwayStations.find(
+      (station) => station.id === selections.selectedSubwayStationId,
+    ) ?? null;
+  const activeStop = mode === "bus" ? selectedStop : null;
+  const activeStation = mode === "subway" ? selectedStation : null;
+  const { busDetail, subwayDetail, refreshBusDetail, refreshSubwayDetail } =
+    useArrivalDetail({
+      selectedStop: activeStop,
+      selectedStation: activeStation,
+    });
+
   const mapAnchor =
-    selectedStop ?? activePlace?.subwayStations[0] ?? null;
+    mode === "bus"
+      ? (selectedStop ?? selectedStation)
+      : (selectedStation ?? selectedStop);
   const mapCenter = mapAnchor
     ? { lat: mapAnchor.lat, lng: mapAnchor.lng }
     : DEFAULT_MAP_CENTER;
-  const activeProcedure = getActiveProcedure(activePlace);
-  const autoInput =
-    activePlace !== null && activeProcedure?.kind === "auto"
-      ? {
-          points: resolveAutoProcedurePoints(activePlace, activeProcedure),
-          origin: activePlace.location,
-        }
-      : null;
-  const favorites = activePlace?.favorites ?? NO_FAVORITES;
-  const readyProcedure =
-    activeProcedure?.kind === "ready" ? activeProcedure : null;
-
-  const live = useCommuteDailyLive(activeProcedure, favorites, autoInput);
-  const { busDetail, subwayDetail, refreshBusDetail, refreshSubwayDetail } =
-    useArrivalDetail({
-      selectedStop,
-      selectedStation,
-      live: {
-        queries: live.queries,
-        snapshots: live.snapshots,
-        refresh: live.refresh,
-      },
-    });
-
-  const handleDirectionChange = (next: CommuteDirection) => {
-    setDirection(next);
-    setSelectedStation(null);
-  };
-
-  const handleSelectStation = (station: SubwayStation) => {
-    setSelectedStation((current) =>
-      current?.id === station.id ? null : station,
-    );
-  };
-
-  const saveNearbySubwayStation = (station: SubwayStation) => {
-    if (!activePlace) {
-      return;
-    }
-    saveSubwayStations([station]);
-  };
-
-  
-const saveNearbyStop = (stop: BusStop) => {
-    if (!activePlace || activePlace.stops.some((saved) => saved.id === stop.id)) {
-      return;
-    }
-    addStop(direction, activePlace.id, stop);
-    setSaveAnnouncement(
-      `${stop.name} 정류장을 ${activePlace.name}에 저장했습니다.`,
-    );
-  };
 
   const saveStops = (stops: readonly BusStop[]) => {
-    if (!activePlace) {
-      return;
+    addBusStops(stops);
+    const first = stops[0];
+    if (first !== undefined) {
+      setSaveAnnouncement(`${first.name} 정류장을 선택했습니다.`);
     }
-    for (const stop of stops) {
-      addStop(direction, activePlace.id, stop);
-    }
-    setSaveAnnouncement(
-      `${stops.map((stop) => stop.name).join(", ")} ${stops.length}개 정류장을 ${
-        activePlace.name
-      }에 저장했습니다.`,
-    );
+    setMode("bus");
     setPickerMode(null);
   };
 
-  const saveSubwayStations = (stations: readonly SubwayStation[]) => {
-    if (!activePlace) {
-      return;
+  const saveStations = (stations: readonly SubwayStation[]) => {
+    addSubwayStations(stations);
+    const first = stations[0];
+    if (first !== undefined) {
+      setSaveAnnouncement(`${first.name}역을 선택했습니다.`);
     }
-    addSubwayStations(direction, activePlace.id, stations);
-    setSaveAnnouncement(
-      `${stations.map((station) => station.name).join(", ")} ${
-        stations.length
-      }개 지하철역을 ${activePlace.name} 경로에 저장했습니다.`,
-    );
+    setMode("subway");
     setPickerMode(null);
-  };
-
-  const editingProcedure =
-    editorTarget === null || editorTarget === "new"
-      ? null
-      : (activePlace?.procedures.find(
-          (procedure) => procedure.id === editorTarget,
-        ) ?? null);
-
-  const saveProcedure = (procedure: CommuteProcedureInput) => {
-    if (!activePlace) {
-      return;
-    }
-    if (editorTarget === "new") {
-      addProcedure(direction, activePlace.id, procedure);
-    } else if (editorTarget !== null) {
-      editProcedure(direction, activePlace.id, editorTarget, procedure);
-    }
-    setEditorTarget(null);
-    setSaveAnnouncement(`${procedure.name} 절차를 저장했습니다.`);
-  };
-
-  const editActiveProcedure = () => {
-    if (readyProcedure !== null) {
-      setEditorTarget(readyProcedure.id);
-    }
-  };
-
-  const handlePinFavorite = (favorite: CommuteFavoriteInput) => {
-    if (activePlace) {
-      pinFavorite(direction, activePlace.id, favorite);
-    }
-  };
-
-  const handleUnpinFavorite = (favoriteId: CommuteFavoriteId) => {
-    if (activePlace) {
-      unpinFavorite(direction, activePlace.id, favoriteId);
-    }
-  };
-
-  const handleUpdateFavorite = (
-    favoriteId: CommuteFavoriteId,
-    favorite: CommuteFavoriteInput,
-  ) => {
-    if (activePlace) {
-      updateFavorite(direction, activePlace.id, favoriteId, favorite);
-    }
   };
 
   return (
@@ -215,227 +85,95 @@ const saveNearbyStop = (stop: BusStop) => {
       >
         {saveAnnouncement}
       </p>
+
       <aside className="control-rail">
         <BrandHeader />
-
-        <CommuteSwitch value={direction} onChange={handleDirectionChange} />
-
-        <div
-          id="commute-panel"
-          className="rail-scroll"
-          role="tabpanel"
-          aria-labelledby={`commute-tab-${direction}`}
-        >
-          {activeProcedure?.kind === "ready" && live.estimate !== null ? (
-            <CommuteEta
-              procedure={activeProcedure}
-              result={live.estimate}
-              refreshing={live.refreshing}
-              onEditProcedure={editActiveProcedure}
-              onRefresh={live.refresh}
-            />
-          ) : null}
-          {activeProcedure?.kind === "auto" ? (
-            <AutoCommuteEta
-              procedure={activeProcedure}
-              plan={live.autoPlan}
-              refreshing={live.refreshing}
-              onEditProcedure={editActiveProcedure}
-              onRefresh={live.refresh}
-              onSetOrigin={() => {
-                if (activePlace) {
-                  void requestCurrentPosition().then((result) => {
-                    if (result.kind === "located") {
-                      setPlaceLocation(direction, activePlace.id, {
-                        lat: result.lat,
-                        lng: result.lng,
-                      });
-                    }
-                  });
-                }
-              }}
-            />
-          ) : null}
-
-          <CommutePlaceManager
-            key={`${direction}-${activePlace?.id ?? "empty"}`}
-            direction={direction}
-            collection={collection}
-            activePlace={activePlace}
-            onAddPlace={(name) => {
-              addPlace(direction, name);
-              setSaveAnnouncement(`${name} 장소를 추가했습니다.`);
+        <div className="rail-scroll">
+          <TransitPointSelector
+            mode={mode}
+            busStops={selections.busStops}
+            subwayStations={selections.subwayStations}
+            selectedBusStopId={selections.selectedBusStopId}
+            selectedSubwayStationId={selections.selectedSubwayStationId}
+            onModeChange={setMode}
+            onAdd={() => setPickerMode(mode)}
+            onSelectBusStop={(stopId) => {
+              selectBusStop(stopId);
+              setMode("bus");
             }}
-            onRenamePlace={(placeId, name) => {
-              renamePlace(direction, placeId, name);
-              setSaveAnnouncement(`${name}${koreanDirectionParticle(name)} 장소 이름을 변경했습니다.`);
+            onSelectSubwayStation={(stationId) => {
+              selectSubwayStation(stationId);
+              setMode("subway");
             }}
-            onRemovePlace={(placeId) => {
-              removePlace(direction, placeId);
-              setSaveAnnouncement(`${activePlace?.name ?? "선택한 장소"}${koreanObjectParticle(activePlace?.name ?? "장소")} 삭제했습니다.`);
-            }}
-            onSelectPlace={(placeId) => {
-              selectPlace(direction, placeId);
-              setSelectedStation(null);
-            }}
-            onSetPlaceLocation={(placeId, location) => {
-              setPlaceLocation(direction, placeId, location);
-            }}
-            onAddStop={() => {
-              if (isDesktop) {
-                setStageSearchRequest((current) => current + 1);
-                return;
-              }
-              setPickerMode("bus");
-            }}
-            onAddSubway={() => {
-              if (isDesktop) {
-                setStageSearchRequest((current) => current + 1);
-                return;
-              }
-              setPickerMode("subway");
-            }}
-            onRemoveStop={(stopId) => {
-              const stop = activePlace?.stops.find((item) => item.id === stopId);
-              if (activePlace) {
-                removeStop(direction, activePlace.id, stopId);
-                setSaveAnnouncement(
-                  `${stop?.name ?? "선택한 정류장"} 정류장을 삭제했습니다.`,
-                );
-              }
-            }}
-            onSelectStop={(stopId) => {
-              setSelectedStation(null);
-              activePlace && selectStop(direction, activePlace.id, stopId);
-            }}
-            selectedSubwayStationId={selectedStation?.id ?? null}
-            onSelectSubway={handleSelectStation}
-            onRemoveSubway={(stationId) => {
-              if (activePlace) {
-                removeSubwayStation(direction, activePlace.id, stationId);
-                if (selectedStation?.id === stationId) {
-                  setSelectedStation(null);
-                }
-                setSaveAnnouncement("지하철역을 경로에서 삭제했습니다.");
-              }
-            }}
-            onAddProcedure={() => setEditorTarget("new")}
-            onEditProcedure={(procedureId) => setEditorTarget(procedureId)}
-            onSelectProcedure={(procedureId) =>
-              activePlace &&
-              selectProcedure(direction, activePlace.id, procedureId)
-            }
-            onRemoveProcedure={(procedureId) => {
-              if (activePlace) {
-                removeProcedure(direction, activePlace.id, procedureId);
-                setSaveAnnouncement("통근 절차를 삭제했습니다.");
-              }
-            }}
-            onReorderProcedure={(procedureId, toIndex) =>
-              activePlace &&
-              reorderProcedure(direction, activePlace.id, procedureId, toIndex)
-            }
+            onRemoveBusStop={removeBusStop}
+            onRemoveSubwayStation={removeSubwayStation}
           />
 
-          {editorTarget !== null && activePlace ? (
-            editingProcedure?.kind === "ready" ? (
-              <CommuteProcedureEditor
-                direction={direction}
-                place={activePlace}
-                procedure={editingProcedure}
-                onSave={saveProcedure}
-                onCancel={() => setEditorTarget(null)}
-              />
-            ) : (
-              <AutoProcedureEditor
-                place={activePlace}
-                procedure={
-                  editingProcedure?.kind === "auto" ? editingProcedure : null
-                }
-                onSave={saveProcedure}
-                onCancel={() => setEditorTarget(null)}
-              />
-            )
-          ) : null}
-
-          <FavoriteDepartures
-            favorites={favorites}
-            snapshots={live.snapshots}
-            now={live.now}
-            onRefresh={live.refresh}
-            onUpdateFavorite={handleUpdateFavorite}
-            onUnpinFavorite={handleUnpinFavorite}
-          />
-
-          {selectedStation ? (
+          {mode === "bus" ? (
+            <ArrivalList
+              stopName={selectedStop?.name ?? null}
+              arrivals={busDetail.arrivals}
+              loading={busDetail.loading}
+              error={busDetail.error}
+              updatedAt={busDetail.updatedAt}
+              hasStop={selectedStop !== null}
+              onRefresh={refreshBusDetail}
+            />
+          ) : selectedStation !== null ? (
             <SubwayArrivalList
+              key={selectedStation.id}
               stationName={selectedStation.name}
               arrivals={subwayDetail.arrivals}
               loading={subwayDetail.loading}
               error={subwayDetail.error}
               updatedAt={subwayDetail.updatedAt}
-              onClose={() => setSelectedStation(null)}
               onRefresh={refreshSubwayDetail}
-              favoriteControls={{
-                station: selectedStation,
-                apiStationName: selectedStation.name,
-                favorites,
-                onPinFavorite: handlePinFavorite,
-                onUnpinFavorite: handleUnpinFavorite,
-              }}
             />
           ) : (
-            <ArrivalList
-              arrivals={busDetail.arrivals}
-              loading={busDetail.loading}
-              error={busDetail.error}
-              updatedAt={busDetail.updatedAt}
-              hasStop={Boolean(selectedStop)}
-              onRefresh={refreshBusDetail}
-              {...(selectedStop
-                ? {
-                    favoriteControls: {
-                      stop: selectedStop,
-                      favorites,
-                      onPinFavorite: handlePinFavorite,
-                      onUnpinFavorite: handleUnpinFavorite,
-                    },
-                  }
-                : {})}
-            />
+            <section className="arrivals" aria-labelledby="arrival-title">
+              <div className="section-heading">
+                <div>
+                  <span className="eyebrow">실시간 도착정보</span>
+                  <h2 id="arrival-title">도착 예정</h2>
+                </div>
+              </div>
+              <p className="arrival-empty">
+                역을 선택하면 방향별 도착 정보가 표시됩니다.
+              </p>
+            </section>
           )}
         </div>
       </aside>
 
       <MapStage
-        key={`stage-${direction}-${activePlace?.id ?? "empty"}`}
-        direction={direction}
-        place={activePlace}
+        stops={selections.busStops}
+        subwayStations={selections.subwayStations}
         selectedStop={selectedStop}
-        selectedSubwayStationId={selectedStation?.id ?? null}
+        selectedSubwayStation={selectedStation}
         center={mapCenter}
-        searchRequest={stageSearchRequest}
         isDesktop={isDesktop}
-        onSelectStop={(stopId) =>
-          activePlace && selectStop(direction, activePlace.id, stopId)
-        }
-        onSelectSubway={handleSelectStation}
-        onSaveStop={saveNearbyStop}
-        onSaveSubwayStation={saveNearbySubwayStation}
+        onSelectStop={(stop) => {
+          selectBusStop(stop.id);
+          setMode("bus");
+        }}
+        onSelectSubwayStation={(station) => {
+          selectSubwayStation(station.id);
+          setMode("subway");
+        }}
       />
 
-      {pickerMode === "bus" && activePlace ? (
+      {pickerMode === "bus" ? (
         <MapPicker
           initialStop={null}
           onClose={() => setPickerMode(null)}
           onSave={saveStops}
         />
       ) : null}
-      {pickerMode === "subway" && activePlace ? (
+      {pickerMode === "subway" ? (
         <SubwayPicker
           initialCenter={mapCenter}
           onClose={() => setPickerMode(null)}
-          onSave={saveSubwayStations}
+          onSave={saveStations}
         />
       ) : null}
     </main>

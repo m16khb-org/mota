@@ -4,12 +4,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { MapStage } from "./MapStage";
 
-vi.mock("../api/client", () => ({
-  fetchNearbyStops: vi.fn(),
-  fetchNearbySubwayStations: vi.fn(),
-  isServiceAreaError: vi.fn(),
-}));
-
 vi.mock("./MapCanvas", () => ({
   MapCanvas: () => <div data-testid="map-canvas" />,
 }));
@@ -17,41 +11,36 @@ vi.mock("./MapCanvas", () => ({
 function renderStage(isDesktop: boolean) {
   return render(
     <MapStage
-      direction="company"
-      place={null}
+      stops={[]}
+      subwayStations={[]}
       selectedStop={null}
-      selectedSubwayStationId={null}
+      selectedSubwayStation={null}
       center={{ lat: 37.5366, lng: 127.1253 }}
-      searchRequest={0}
       isDesktop={isDesktop}
       onSelectStop={vi.fn()}
-      onSelectSubway={vi.fn()}
-      onSaveStop={vi.fn()}
-      onSaveSubwayStation={vi.fn()}
+      onSelectSubwayStation={vi.fn()}
     />,
   );
 }
 
-describe("MapStage mobile map expansion", () => {
-  it("keeps the map collapsed by default and expands on the toggle", () => {
-    const { getByRole } = renderStage(false);
-    const stage = getByRole("region", { name: "선택한 통근 정류장 안내" });
+describe("MapStage responsive map", () => {
+  it("keeps the mobile map compact until the user expands it", () => {
+    renderStage(false);
+    const stage = screen.getByRole("region", {
+      name: "선택한 정류장과 역 지도",
+    });
     const toggle = screen.getByRole("button", { name: "지도 펼치기" });
 
     expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(stage.className).not.toContain("is-expanded");
+    expect(stage).not.toHaveClass("is-expanded");
 
     fireEvent.click(toggle);
+
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("button", { name: "지도 접기" })).toBe(toggle);
-    expect(stage.className).toContain("is-expanded");
-
-    fireEvent.click(toggle);
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(stage.className).not.toContain("is-expanded");
+    expect(stage).toHaveClass("is-expanded");
   });
 
-  it("does not render the map toggle on desktop", () => {
+  it("does not render an expansion control on desktop", () => {
     renderStage(true);
 
     expect(
