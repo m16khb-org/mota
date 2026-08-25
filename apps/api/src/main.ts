@@ -21,6 +21,10 @@ async function bootstrap() {
     AppModule.register({
       settingsRepository: repository,
       subwayArrivalUpstream: env.subwayArrivalUpstream,
+      transitCatalogRefreshMs: env.transitCatalogRefreshMs,
+      warmTransitCatalogs: true,
+      minimumBusCatalogItems: 10_000,
+      minimumSubwayCatalogItems: 100,
       oauthConfig: {
         supabaseUrl: env.oauth.supabaseUrl,
         anonKey: env.oauth.anonKey,

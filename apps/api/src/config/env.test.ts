@@ -21,6 +21,7 @@ describe("API environment", () => {
       databaseUrl: "postgres://mota:secret@localhost:5432/mota",
       webDistPath: "/app/web",
       migrationsPath: "/app/drizzle",
+      transitCatalogRefreshMs: 86_400_000,
       oauth: {
         supabaseUrl: "https://mionqcczituwkryrjsfh.supabase.co",
         anonKey: "sb_publishable_test_key",

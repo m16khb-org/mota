@@ -16,26 +16,18 @@ import {
   subwaySearchSchema,
 } from "@mota/contracts/subway";
 import { API_OPTIONS, type ApiOptions } from "../app.tokens";
-import { createOverpassStations } from "../upstream/overpassStations";
-import {
-  fetchArrivals,
-  fetchNearbyStops,
-} from "../upstream/seoulBus";
+import { fetchArrivals } from "../upstream/seoulBus";
 import { fetchSubwayArrivals } from "../upstream/subwayArrivals";
 import { errorDetail } from "../upstream/upstreamError";
+import { TransitCatalogService } from "./transitCatalog.service";
 
 @Controller("api")
 export class TransitController {
-  private readonly overpass;
-  private readonly options: ApiOptions;
-
-  constructor(@Inject(API_OPTIONS) options: ApiOptions) {
-    this.options = options;
-    this.overpass = createOverpassStations(options.upstreamFetch, {
-      now: options.now,
-      sleep: options.sleep,
-    });
-  }
+  constructor(
+    @Inject(API_OPTIONS) private readonly options: ApiOptions,
+    @Inject(TransitCatalogService)
+    private readonly catalogs: TransitCatalogService,
+  ) {}
 
   @Get("stops/nearby")
   async nearbyStops(@Query() queryValue: unknown) {
@@ -48,10 +40,7 @@ export class TransitController {
     }
     try {
       return {
-        stops: await fetchNearbyStops(
-          this.options.upstreamFetch,
-          query.data,
-        ),
+        stops: await this.catalogs.nearbyStops(query.data),
       };
     } catch (error) {
       throw TransitController.upstreamError(
@@ -72,7 +61,7 @@ export class TransitController {
     }
     try {
       return {
-        stations: await this.overpass.fetchNearbyStations(query.data),
+        stations: await this.catalogs.nearbySubway(query.data),
       };
     } catch (error) {
       throw TransitController.upstreamError(

@@ -66,6 +66,14 @@ const nearbyResponseSchema = z.object({
   }),
 });
 
+const stopCatalogResponseSchema = z.object({
+  ResponseVO: z.object({
+    data: z.object({
+      resultList: z.array(z.unknown()),
+    }),
+  }),
+});
+
 const rawArrivalSchema = z
   .object({
     busRouteId: RouteIdSchema,
@@ -90,14 +98,30 @@ const arrivalResponseSchema = z.object({
 export function normalizeNearbyStops(input: unknown): BusStop[] {
   const parsed = nearbyResponseSchema.parse(input);
 
-  return parsed.ResponseVO.data.resultList.map((stop) => ({
+  return parsed.ResponseVO.data.resultList.map(toBusStop);
+}
+
+/** Bulk location catalogs may contain isolated unpublished/invalid rows.
+ * Parse every row at the boundary and keep only complete selectable stops. */
+export function normalizeStopCatalog(input: unknown): BusStop[] {
+  const parsed = stopCatalogResponseSchema.parse(input);
+  return parsed.ResponseVO.data.resultList.flatMap((inputRow) => {
+    const row = nearbyStopSchema.safeParse(inputRow);
+    return row.success ? [toBusStop(row.data)] : [];
+  });
+}
+
+function toBusStop(
+  stop: z.infer<typeof nearbyStopSchema>,
+): BusStop {
+  return {
     id: stop.strid,
     arsId: stop.strno,
     name: stop.strnm,
     lat: stop.posY,
     lng: stop.posX,
     distanceMeters: stop.diffMeter,
-  }));
+  };
 }
 
 export function parseArrivalSeconds(message: string): number | null {

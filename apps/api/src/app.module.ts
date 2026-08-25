@@ -20,7 +20,11 @@ import { verifySupabaseSession } from "./auth/session";
 import { HealthController } from "./health/health.controller";
 import { SettingsController } from "./settings/settings.controller";
 import { TransitController } from "./transit/transit.controller";
+import { TransitCatalogService } from "./transit/transitCatalog.service";
 import { WebController } from "./web/web.controller";
+
+const DEFAULT_CATALOG_REFRESH_MS = 24 * 60 * 60 * 1_000;
+const DEFAULT_CATALOG_RETRY_MS = 15 * 60 * 1_000;
 
 class UnavailableSettingsRepository implements UserSettingsRepository {
   async find(_authUserId: string): Promise<StoredUserSettings | null> {
@@ -41,8 +45,13 @@ export interface AppModuleOptions {
   readonly settingsRepository?: UserSettingsRepository;
   readonly oauthConfig?: ApiOptions["oauthConfig"];
   readonly now?: (() => number) | undefined;
-  readonly sleep?: ((ms: number) => Promise<void>) | undefined;
   readonly subwayArrivalUpstream?: string | undefined;
+  readonly transitCatalogRefreshMs?: number | undefined;
+  readonly transitCatalogRetryMs?: number | undefined;
+  readonly warmTransitCatalogs?: boolean | undefined;
+  readonly minimumBusCatalogItems?: number | undefined;
+  readonly minimumSubwayCatalogItems?: number | undefined;
+  readonly random?: (() => number) | undefined;
 }
 
 @Module({})
@@ -66,8 +75,16 @@ export class AppModule {
         options.settingsRepository ?? new UnavailableSettingsRepository(),
       oauthConfig,
       now: options.now,
-      sleep: options.sleep,
       subwayArrivalUpstream: options.subwayArrivalUpstream,
+      transitCatalog: {
+        refreshMs:
+          options.transitCatalogRefreshMs ?? DEFAULT_CATALOG_REFRESH_MS,
+        retryMs: options.transitCatalogRetryMs ?? DEFAULT_CATALOG_RETRY_MS,
+        warmup: options.warmTransitCatalogs ?? false,
+        minimumBusItems: options.minimumBusCatalogItems ?? 1,
+        minimumSubwayItems: options.minimumSubwayCatalogItems ?? 1,
+        random: options.random ?? Math.random,
+      },
     };
     return {
       module: AppModule,
@@ -87,6 +104,7 @@ export class AppModule {
           useValue: apiOptions.settingsRepository,
         },
         { provide: AUTH_CONFIG, useValue: apiOptions.oauthConfig },
+        TransitCatalogService,
       ],
     };
   }

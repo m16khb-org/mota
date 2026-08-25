@@ -11,6 +11,15 @@ export type SessionVerifier = (
   onSetCookie?: (cookies: readonly string[]) => void,
 ) => Promise<AuthUser | null>;
 
+export interface TransitCatalogOptions {
+  readonly refreshMs: number;
+  readonly retryMs: number;
+  readonly warmup: boolean;
+  readonly minimumBusItems: number;
+  readonly minimumSubwayItems: number;
+  readonly random: () => number;
+}
+
 export interface ApiOptions {
   readonly upstreamFetch: UpstreamFetch;
   readonly verifySession: SessionVerifier;
@@ -22,8 +31,8 @@ export interface ApiOptions {
     readonly fetcher: UpstreamFetch;
   } | null;
   readonly now?: (() => number) | undefined;
-  readonly sleep?: ((ms: number) => Promise<void>) | undefined;
   readonly subwayArrivalUpstream?: string | undefined;
+  readonly transitCatalog: TransitCatalogOptions;
 }
 
 export const API_OPTIONS = Symbol("API_OPTIONS");

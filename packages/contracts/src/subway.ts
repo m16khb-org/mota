@@ -11,6 +11,16 @@ export interface SubwayStation {
   readonly distanceMeters: number;
 }
 
+export type SubwayStationPoint = Omit<SubwayStation, "distanceMeters">;
+
+const officialStationRowSchema = z.tuple([
+  z.string().trim().min(1),
+  z.string().trim().min(1),
+  z.string().trim().min(1),
+  z.coerce.number().finite(),
+  z.coerce.number().finite(),
+]);
+
 export const subwayStationSchema = z.object({
   id: SubwayStationIdSchema,
   name: z.string().min(1),
@@ -18,24 +28,6 @@ export const subwayStationSchema = z.object({
   lat: z.number().finite(),
   lng: z.number().finite(),
   distanceMeters: z.number().nonnegative(),
-});
-
-const overpassElementSchema = z.object({
-  id: z.number().int(),
-  type: z.enum(["node", "way", "relation"]),
-  lat: z.number().finite().optional(),
-  lon: z.number().finite().optional(),
-  center: z
-    .object({
-      lat: z.number().finite(),
-      lon: z.number().finite(),
-    })
-    .optional(),
-  tags: z.record(z.string(), z.string()).default({}),
-});
-
-const overpassResponseSchema = z.object({
-  elements: z.array(overpassElementSchema),
 });
 
 export const subwaySearchSchema = z.object({
@@ -105,31 +97,7 @@ const SUBWAY_LINE_NAMES: Readonly<Record<string, string>> = {
   "1077": "신분당선",
 };
 
-/** OSM `ref` codes (numeric) and `line` tags ("수도권 전철") need
- * translation to Korean line names for display. */
-const OSM_LINE_NAMES: Readonly<Record<string, string>> = {
-  "1": "1호선",
-  "2": "2호선",
-  "3": "3호선",
-  "4": "4호선",
-  "5": "5호선",
-  "6": "6호선",
-  "7": "7호선",
-  "8": "8호선",
-  "9": "9호선",
-  경의중앙: "경의중앙선",
-  경춘: "경춘선",
-  수인분당: "수인분당선",
-  신분당: "신분당선",
-  공항철도: "공항철도",
-  서해: "서해선",
-  김포: "김포골드라인",
-  우이신설: "우이신설경전철",
-  에버라인: "에버라인",
-};
-
-/** Major Seoul subway stations → serving line (first-listed). OSM nodes
- * for Seoul lack line tags, so name lookup fills the gap for display. */
+/** Legacy saved stations may need a display line inferred from the name. */
 const STATION_NAME_LINES: Readonly<Record<string, string>> = {
   "서울역": "1호선", "시청": "2호선", "종각": "1호선", "종로3가": "3호선",
   "종로5가": "1호선", "동대문": "4호선", "신설동": "1호선", "제기동": "1호선",
@@ -206,31 +174,6 @@ const STATION_NAME_LINES: Readonly<Record<string, string>> = {
   "서울숲": "수인분당선", "압구정로데오": "수인분당선", "한티": "수인분당선",
   "양재시민의숲": "신분당선", "계양": "공항철도",
 };
-
-function osmLineName(tags: Readonly<Record<string, string>>): string {
-  const raw = tags.ref ?? tags.line ?? "";
-  const ref = raw.split(";")[0]?.trim() ?? "";
-  if (OSM_LINE_NAMES[ref]) {
-    return OSM_LINE_NAMES[ref];
-  }
-  if (tags.line && tags.line !== "수도권 전철") {
-    const first = tags.line.split(";")[0]?.trim();
-    if (first) return first;
-  }
-  // Seoul station-code refs: 2xx→2호선, 3xx→3호선, … 9xx→9호선
-  if (/^[1-9]\d{2}$/.test(ref)) {
-    return `${ref[0] ?? ""}호선`;
-  }
-  // K-prefixed codes: K2xx→경의중앙선 등
-  if (ref.startsWith("K")) {
-    const kNum = ref.slice(1);
-    if (kNum.startsWith("2")) return "경의중앙선";
-    if (kNum.startsWith("4")) return "경춘선";
-    if (kNum.startsWith("9")) return "경강선";
-    if (kNum.startsWith("8")) return "서해선";
-  }
-  return STATION_NAME_LINES[tags.name ?? ""] ?? "지하철";
-}
 
 const upstreamSubwayArrivalSchema = z.object({
   errorMessage: z
@@ -315,55 +258,47 @@ export function normalizeSubwayArrivals(
   return { arrivals, updatedAt: parseSeoulTimestamp(latest) };
 }
 
-function distanceMeters(
-  center: { readonly lat: number; readonly lng: number },
-  point: { readonly lat: number; readonly lng: number },
-): number {
-  const radians = Math.PI / 180;
-  const latDelta = (point.lat - center.lat) * radians;
-  const lngDelta = (point.lng - center.lng) * radians;
-  const startLat = center.lat * radians;
-  const endLat = point.lat * radians;
-  const haversine =
-    Math.sin(latDelta / 2) ** 2 +
-    Math.cos(startLat) * Math.cos(endLat) * Math.sin(lngDelta / 2) ** 2;
-  return 2 * 6_371_000 * Math.asin(Math.sqrt(haversine));
-}
+/** Parse the official Seoul transport station-master CSV. Isolated malformed
+ * rows are ignored; the API cache applies a minimum-count gate before swap. */
+export function normalizeOfficialSubwayStationCatalog(
+  input: string,
+): SubwayStationPoint[] {
+  const lines = input.replace(/^\uFEFF/, "").trim().split(/\r?\n/);
+  const header = lines.shift()?.split(",");
+  z.tuple([
+    z.literal("외구간_역_수"),
+    z.literal("역한글명칭"),
+    z.literal("호선명칭"),
+    z.literal("환승역X좌표"),
+    z.literal("환승역Y좌표"),
+  ]).parse(header);
 
-export function normalizeNearbySubwayStations(
-  input: unknown,
-  center: { readonly lat: number; readonly lng: number },
-): SubwayStation[] {
-  const parsed = overpassResponseSchema.parse(input);
-  const stationsByName = new Map<string, SubwayStation>();
-
-  for (const element of parsed.elements) {
-    const lat = element.lat ?? element.center?.lat;
-    const lng = element.lon ?? element.center?.lon;
-    const name = element.tags["name:ko"] ?? element.tags.name;
-    if (lat === undefined || lng === undefined || !name) {
-      continue;
+  return lines.flatMap((line) => {
+    const row = officialStationRowSchema.safeParse(line.split(","));
+    if (!row.success) {
+      return [];
     }
-
-    const station: SubwayStation = {
-      id: SubwayStationIdSchema.parse(`osm-${element.type}-${element.id}`),
+    const [code, name, rawLine, lng, lat] = row.data;
+    return [{
+      id: SubwayStationIdSchema.parse(`seoul-${code}`),
       name,
-      line: osmLineName(element.tags),
+      line: officialLineName(rawLine),
       lat,
       lng,
-      distanceMeters: Math.round(distanceMeters(center, { lat, lng })),
-    };
-    const current = stationsByName.get(name);
-    if (!current || station.distanceMeters < current.distanceMeters) {
-      stationsByName.set(name, station);
-    }
-  }
+    }];
+  });
+}
 
-  return [...stationsByName.values()].sort(
-    (left, right) =>
-      left.distanceMeters - right.distanceMeters ||
-      left.name.localeCompare(right.name, "ko"),
-  );
+function officialLineName(line: string): string {
+  const base = line.replace(/\([^)]*\)$/, "");
+  switch (base) {
+    case "분당선":
+      return "수인분당선";
+    case "수도권 광역급행철도":
+      return "GTX-A";
+    default:
+      return base;
+  }
 }
 
 /** Resolve the display line name for a saved station whose persisted `line`

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { SUBWAY_ARRIVAL_UPSTREAM_BASE } from "../upstream/subwayArrivals";
 
+const DAY_MS = 24 * 60 * 60 * 1_000;
+
 const envSchema = z.object({
   HOST: z.string().min(1).default("0.0.0.0"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
@@ -19,6 +21,12 @@ const envSchema = z.object({
   DATABASE_PASSWORD: z.string().min(1).optional(),
   WEB_DIST_PATH: z.string().min(1).default("/app/web"),
   MIGRATIONS_PATH: z.string().min(1).default("/app/drizzle"),
+  TRANSIT_CATALOG_REFRESH_MS: z.coerce
+    .number()
+    .int()
+    .min(60_000)
+    .max(7 * DAY_MS)
+    .default(DAY_MS),
 });
 
 export interface ApiEnv {
@@ -28,6 +36,7 @@ export interface ApiEnv {
   readonly databaseUrl: string;
   readonly webDistPath: string;
   readonly migrationsPath: string;
+  readonly transitCatalogRefreshMs: number;
   readonly oauth: {
     readonly supabaseUrl: string;
     readonly anonKey: string;
@@ -58,6 +67,7 @@ export function loadEnv(
     databaseUrl,
     webDistPath: parsed.WEB_DIST_PATH,
     migrationsPath: parsed.MIGRATIONS_PATH,
+    transitCatalogRefreshMs: parsed.TRANSIT_CATALOG_REFRESH_MS,
     oauth: {
       supabaseUrl: parsed.SUPABASE_URL.replace(/\/$/, ""),
       anonKey: parsed.SUPABASE_ANON_KEY,
