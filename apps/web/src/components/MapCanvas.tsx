@@ -1,5 +1,6 @@
 import type { CircleMarker as LeafletCircleMarker } from "leaflet";
-import { useEffect, useRef, useState, type ReactNode } from "react";import {
+import { useEffect, useRef, type ReactNode } from "react";
+import {
   CircleMarker,
   MapContainer,
   Popup,
@@ -52,11 +53,25 @@ function AccessibleMarker({
   markerProps,
   onMarkerReady,
 }: AccessibleMarkerProps) {
-  const [marker, setMarker] = useState<LeafletCircleMarker | null>(null);
+  const markerRef = useRef<LeafletCircleMarker | null>(null);
   const onSelectRef = useRef(onSelect);
+  const onMarkerReadyRef = useRef(onMarkerReady);
   onSelectRef.current = onSelect;
+  onMarkerReadyRef.current = onMarkerReady;
 
   useEffect(() => {
+    const marker = markerRef.current;
+    if (marker === null) {
+      return;
+    }
+    onMarkerReadyRef.current?.(marker);
+    return () => {
+      onMarkerReadyRef.current?.(null);
+    };
+  }, []);
+
+  useEffect(() => {
+    const marker = markerRef.current;
     if (marker === null) {
       return;
     }
@@ -88,14 +103,11 @@ function AccessibleMarker({
     return () => {
       element.removeEventListener("keydown", handleKeydown);
     };
-  }, [marker, label, active]);
+  }, [label, active]);
 
   return (
     <CircleMarker
-      ref={(m: LeafletCircleMarker | null) => {
-        setMarker(m);
-        onMarkerReady?.(m);
-      }}
+      ref={markerRef}
       {...markerProps}
     >
       {children}
@@ -124,13 +136,12 @@ function MapPointMarker({
   readonly center: Point;
   readonly visualClassName: string;
 }) {
-  const [visualMarker, setVisualMarker] = useState<LeafletCircleMarker | null>(
-    null,
-  );
+  const visualMarkerRef = useRef<LeafletCircleMarker | null>(null);
   const hitMarkerRef = useRef<LeafletCircleMarker | null>(null);
   const [baseClass, suffix] = visualClassName.split(" ");
 
   useEffect(() => {
+    const visualMarker = visualMarkerRef.current;
     if (visualMarker === null) {
       return;
     }
@@ -140,12 +151,12 @@ function MapPointMarker({
     }
     element.classList.add(baseClass);
     element.classList.toggle("is-active", suffix === "is-active");
-  }, [visualMarker, baseClass, suffix]);
+  }, [baseClass, suffix]);
 
   return (
     <>
       <CircleMarker
-        ref={setVisualMarker}
+        ref={visualMarkerRef}
         center={center}
         radius={9}
         interactive={false}
@@ -188,12 +199,40 @@ function CenterObserver({
   readonly onCenterChange: (center: Point) => void;
 }) {
   const map = useMap();
+  const lastReportedCenterRef = useRef(center);
+  const pendingCenterRef = useRef<Point | null>(null);
+  const centerFrameRef = useRef<number | null>(null);
+  const onCenterChangeRef = useRef(onCenterChange);
+  lastReportedCenterRef.current = center;
+  onCenterChangeRef.current = onCenterChange;
   useMapEvents({
     moveend(event) {
       const nextCenter = event.target.getCenter();
       // Machine-consumed runtime truth for drag/bounds QA.
       map.getContainer().dataset.mapCenter = `${nextCenter.lat.toFixed(5)},${nextCenter.lng.toFixed(5)}`;
-      onCenterChange({ lat: nextCenter.lat, lng: nextCenter.lng });
+      const previousCenter = lastReportedCenterRef.current;
+      if (
+        Math.abs(previousCenter.lat - nextCenter.lat) < 0.0000001 &&
+        Math.abs(previousCenter.lng - nextCenter.lng) < 0.0000001
+      ) {
+        return;
+      }
+      lastReportedCenterRef.current = nextCenter;
+      pendingCenterRef.current = {
+        lat: nextCenter.lat,
+        lng: nextCenter.lng,
+      };
+      if (centerFrameRef.current !== null) {
+        return;
+      }
+      centerFrameRef.current = requestAnimationFrame(() => {
+        centerFrameRef.current = null;
+        const pendingCenter = pendingCenterRef.current;
+        pendingCenterRef.current = null;
+        if (pendingCenter !== null) {
+          onCenterChangeRef.current(pendingCenter);
+        }
+      });
     },
     popupopen(event) {
       // Re-dispatch as a bubbling CustomEvent so the frame-level Escape
@@ -211,6 +250,15 @@ function CenterObserver({
       );
     },
   });
+
+  useEffect(
+    () => () => {
+      if (centerFrameRef.current !== null) {
+        cancelAnimationFrame(centerFrameRef.current);
+      }
+    },
+    [],
+  );
 
   // Machine-consumed runtime truth: the REAL Leaflet instance options, so QA
   // can prove animation settings without relying on CSS.

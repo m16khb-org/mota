@@ -2,7 +2,8 @@
 
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { BusStop } from "../domain/bus";
 import { MapCanvas } from "./MapCanvas";
 
 interface MapContainerProps {
@@ -20,7 +21,17 @@ interface MapContainerProps {
   readonly markerZoomAnimation?: boolean;
 }
 
+interface MockMapEventHandlers {
+  readonly moveend?: (event: {
+    readonly target: {
+      getCenter: () => { readonly lat: number; readonly lng: number };
+    };
+  }) => void;
+}
+
 let reducedMotion = false;
+const circleMarkerRefs: unknown[] = [];
+let mapEventHandlers: MockMapEventHandlers = {};
 
 const mockMap = {
   getCenter: () => ({ lat: 37.5366, lng: 127.1253 }),
@@ -70,13 +81,30 @@ vi.mock("react-leaflet", () => ({
   TileLayer: ({ maxZoom }: { readonly maxZoom?: number }) => (
     <span data-testid="leaflet-tiles" data-max-zoom={String(maxZoom)} />
   ),
-  CircleMarker: ({ children }: { readonly children: ReactNode }) => children,
+  CircleMarker: ({
+    children,
+    ref,
+  }: {
+    readonly children: ReactNode;
+    readonly ref?: unknown;
+  }) => {
+    circleMarkerRefs.push(ref);
+    return children;
+  },
   Popup: ({ children }: { readonly children: ReactNode }) => children,
   useMap: () => mockMap,
-  useMapEvents: vi.fn(),
+  useMapEvents: vi.fn((handlers: MockMapEventHandlers) => {
+    mapEventHandlers = handlers;
+    return mockMap;
+  }),
 }));
 
 describe("MapCanvas", () => {
+  beforeEach(() => {
+    circleMarkerRefs.length = 0;
+    mapEventHandlers = {};
+  });
+
   it("keeps every zoom gesture anchored to the map center", () => {
     render(
       <MapCanvas
@@ -113,6 +141,48 @@ describe("MapCanvas", () => {
       "data-max-zoom",
       "19",
     );
+  });
+
+  it("keeps Leaflet marker refs stable when a drag updates the center", () => {
+    const stop: BusStop = {
+      id: "stop-1" as BusStop["id"],
+      arsId: "25014" as BusStop["arsId"],
+      name: "천호역",
+      lat: 37.5379,
+      lng: 127.1255,
+      distanceMeters: 151,
+    };
+    const commonProps = {
+      stops: [stop],
+      selectedStop: null,
+      onCenterChange: vi.fn(),
+      onSelect: vi.fn(),
+    };
+    const { rerender } = render(
+      <MapCanvas
+        {...commonProps}
+        center={{ lat: 37.5366, lng: 127.1253 }}
+      />,
+    );
+    const refsBeforeDrag = [...circleMarkerRefs];
+    circleMarkerRefs.length = 0;
+
+    rerender(
+      <MapCanvas
+        {...commonProps}
+        center={{ lat: 37.537, lng: 127.126 }}
+      />,
+    );
+
+    expect(refsBeforeDrag).toHaveLength(2);
+    expect(
+      refsBeforeDrag.every(
+        (ref) => typeof ref === "object" && ref !== null,
+      ),
+    ).toBe(true);
+    expect(circleMarkerRefs).toHaveLength(2);
+    expect(circleMarkerRefs[0]).toBe(refsBeforeDrag[0]);
+    expect(circleMarkerRefs[1]).toBe(refsBeforeDrag[1]);
   });
 });
 
@@ -355,5 +425,41 @@ describe("MapCanvas drag containment", () => {
     expect(map).toHaveAttribute("data-max-bounds-viscosity", "1");
     expect(map).toHaveAttribute("data-inertia", "true");
     expect(map).toHaveAttribute("data-inertia-max-speed", "2");
+  });
+
+  it("coalesces rapid moveend events into one center update per frame", async () => {
+    const onCenterChange = vi.fn();
+    render(
+      <MapCanvas
+        center={{ lat: 37.5366, lng: 127.1253 }}
+        stops={[]}
+        selectedStop={null}
+        onCenterChange={onCenterChange}
+        onSelect={vi.fn()}
+      />,
+    );
+    const moveend = mapEventHandlers.moveend;
+    if (moveend === undefined) {
+      throw new Error("Leaflet moveend handler was not registered");
+    }
+    for (let index = 0; index < 64; index += 1) {
+      moveend({
+        target: {
+          getCenter: () => ({
+            lat: 37.537 + index * 0.000001,
+            lng: 127.126 + index * 0.000001,
+          }),
+        },
+      });
+    }
+
+    expect(onCenterChange).not.toHaveBeenCalled();
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+    expect(onCenterChange).toHaveBeenCalledTimes(1);
+    const reportedCenter = onCenterChange.mock.calls[0]?.[0];
+    expect(reportedCenter?.lat).toBeCloseTo(37.537063);
+    expect(reportedCenter?.lng).toBeCloseTo(127.126063);
   });
 });

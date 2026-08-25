@@ -1842,6 +1842,7 @@ select:focus-visible {
 
 .inline-map-result-reel {
   display: flex;
+  min-inline-size: 0;
   gap: 8px;
   margin: 8px 0 0;
   padding: 0 0 2px;

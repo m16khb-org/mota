@@ -137,6 +137,15 @@ describe("MapStage responsive map", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("lets the result reel shrink inside its panel before scrolling", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const { resolve } = await import("node:path");
+    const css = await readFile(resolve(process.cwd(), "src/styles.css"), "utf8");
+    const reelRule = css.match(/\.inline-map-result-reel \{[^}]+\}/);
+
+    expect(reelRule?.[0]).toContain("min-inline-size: 0;");
+  });
+
   it("searches and saves bus stops on the existing map without a dialog", async () => {
     const { container } = renderStage(false, "bus");
 
