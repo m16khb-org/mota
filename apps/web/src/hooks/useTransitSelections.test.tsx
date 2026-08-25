@@ -36,17 +36,33 @@ const serverStop: BusStop = {
   lng: 127.13,
   distanceMeters: 200,
 };
-const localSelections: TransitSelections = {
-  busStops: [localStop],
+const emptyPointSelections = {
+  busStops: [],
   subwayStations: [],
-  selectedBusStopIds: [localStop.id],
+  selectedBusStopIds: [],
   selectedSubwayStationId: null,
 };
+const localSelections: TransitSelections = {
+  commutes: {
+    toWork: {
+      busStops: [localStop],
+      subwayStations: [],
+      selectedBusStopIds: [localStop.id],
+      selectedSubwayStationId: null,
+    },
+    toHome: emptyPointSelections,
+  },
+};
 const serverSelections: TransitSelections = {
-  busStops: [serverStop],
-  subwayStations: [],
-  selectedBusStopIds: [serverStop.id],
-  selectedSubwayStationId: null,
+  commutes: {
+    toWork: {
+      busStops: [serverStop],
+      subwayStations: [],
+      selectedBusStopIds: [serverStop.id],
+      selectedSubwayStationId: null,
+    },
+    toHome: emptyPointSelections,
+  },
 };
 const authenticatedSession: AuthSessionState = {
   authenticated: true,
@@ -136,14 +152,18 @@ describe("useTransitSelections authenticated synchronization", () => {
       expect(result.current.selections).toEqual(serverSelections),
     );
 
-    act(() => result.current.addBusStops([nextStop]));
+    act(() => result.current.addBusStops("toWork", [nextStop]));
 
     await waitFor(() =>
       expect(saveTransitSettings).toHaveBeenCalledWith({
         version: 2,
         selections: expect.objectContaining({
-          selectedBusStopIds: [serverStop.id, nextStop.id],
-          busStops: [serverStop, nextStop],
+          commutes: expect.objectContaining({
+            toWork: expect.objectContaining({
+              selectedBusStopIds: [serverStop.id, nextStop.id],
+              busStops: [serverStop, nextStop],
+            }),
+          }),
         }),
       }),
     );
@@ -170,26 +190,32 @@ describe("useTransitSelections authenticated synchronization", () => {
     );
     await waitFor(() => expect(result.current.syncStatus).toBe("synced"));
 
-    act(() => result.current.addBusStops(extraStops.slice(0, 3)));
+    act(() =>
+      result.current.addBusStops("toHome", extraStops.slice(0, 3)),
+    );
     await waitFor(() =>
-      expect(result.current.selections.selectedBusStopIds).toEqual([
-        localStop.id,
-        ...extraStops.slice(0, 3).map((stop) => stop.id),
-      ]),
+      expect(
+        result.current.selections.commutes.toHome.selectedBusStopIds,
+      ).toEqual(extraStops.slice(0, 3).map((stop) => stop.id)),
+    );
+    expect(
+      result.current.selections.commutes.toWork.selectedBusStopIds,
+    ).toEqual([localStop.id]);
+
+    act(() =>
+      result.current.toggleBusStop("toHome", extraStops[0]?.id ?? localStop.id),
+    );
+    await waitFor(() =>
+      expect(
+        result.current.selections.commutes.toHome.selectedBusStopIds,
+      ).toEqual(extraStops.slice(1, 3).map((stop) => stop.id)),
     );
 
-    act(() => result.current.toggleBusStop(localStop.id));
+    act(() => result.current.addBusStops("toHome", extraStops.slice(3)));
     await waitFor(() =>
-      expect(result.current.selections.selectedBusStopIds).toEqual(
-        extraStops.slice(0, 3).map((stop) => stop.id),
-      ),
-    );
-
-    act(() => result.current.addBusStops(extraStops.slice(3)));
-    await waitFor(() =>
-      expect(result.current.selections.selectedBusStopIds).toEqual(
-        extraStops.map((stop) => stop.id),
-      ),
+      expect(
+        result.current.selections.commutes.toHome.selectedBusStopIds,
+      ).toEqual(extraStops.slice(1).map((stop) => stop.id)),
     );
   });
 

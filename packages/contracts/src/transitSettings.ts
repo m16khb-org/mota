@@ -5,7 +5,11 @@ import { subwayStationSchema } from "./subway";
 /** How many saved bus stops can be watched at the same time. */
 export const MAX_SELECTED_BUS_STOPS = 4;
 
-const transitSelectionsInputSchema = z.object({
+export const COMMUTE_CONTEXTS = ["toWork", "toHome"] as const;
+export const commuteContextSchema = z.enum(COMMUTE_CONTEXTS);
+export type CommuteContext = z.infer<typeof commuteContextSchema>;
+
+const transitPointSelectionsInputSchema = z.object({
   busStops: z.array(busStopSchema),
   subwayStations: z.array(subwayStationSchema),
   /** Multi-watch selection (v2). Older documents carry the singular
@@ -20,8 +24,8 @@ const transitSelectionsInputSchema = z.object({
     .optional(),
 });
 
-export const transitSelectionsSchema = transitSelectionsInputSchema.transform(
-  (selections) => ({
+export const transitPointSelectionsSchema =
+  transitPointSelectionsInputSchema.transform((selections) => ({
     busStops: selections.busStops,
     subwayStations: selections.subwayStations,
     selectedBusStopIds: [
@@ -34,8 +38,31 @@ export const transitSelectionsSchema = transitSelectionsInputSchema.transform(
       ),
     ],
     selectedSubwayStationId: selections.selectedSubwayStationId ?? null,
+  }));
+
+export type TransitPointSelections = Readonly<
+  z.infer<typeof transitPointSelectionsSchema>
+>;
+
+const commuteSelectionsInputSchema = z.object({
+  commutes: z.object({
+    toWork: transitPointSelectionsSchema,
+    toHome: transitPointSelectionsSchema,
   }),
-);
+});
+
+export const transitSelectionsSchema = z
+  .union([commuteSelectionsInputSchema, transitPointSelectionsSchema])
+  .transform((selections) =>
+    "commutes" in selections
+      ? selections
+      : {
+          commutes: {
+            toWork: selections,
+            toHome: selections,
+          },
+        },
+  );
 
 export type TransitSelections = Readonly<
   z.infer<typeof transitSelectionsSchema>

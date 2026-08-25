@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  MAX_SELECTED_BUS_STOPS,
-  type TransitSelections,
+import type {
+  CommuteContext,
+  TransitSelections,
 } from "@mota/contracts/transit-settings";
 import {
   fetchTransitSettings,
@@ -13,6 +13,14 @@ import {
   loadTransitSelections,
   saveTransitSelections,
 } from "./transitSelectionStorage";
+import {
+  addBusStopsToCommute,
+  addSubwayStationsToCommute,
+  removeBusStopFromCommute,
+  removeSubwayStationFromCommute,
+  selectSubwayStationForCommute,
+  toggleBusStopForCommute,
+} from "./transitSelectionMutations";
 import type { AuthSessionState } from "./useAuthSession";
 
 export type TransitSyncStatus =
@@ -178,121 +186,67 @@ export function useTransitSelections(session: AuthSessionState) {
   );
 
   const addBusStops = useCallback(
-    (stops: readonly BusStop[]) => {
-      if (stops.length === 0) {
-        return;
-      }
-      mutate((current) => {
-        const busStops = new Map(
-          current.busStops.map((stop) => [stop.id, stop]),
-        );
-        for (const stop of stops) {
-          busStops.set(stop.id, stop);
-        }
-        const selectedBusStopIds = [
-          ...new Set([
-            ...current.selectedBusStopIds,
-            ...stops.map((stop) => stop.id),
-          ]),
-        ].slice(0, MAX_SELECTED_BUS_STOPS);
-        return {
-          ...current,
-          busStops: [...busStops.values()],
-          selectedBusStopIds,
-        };
-      });
-    },
+    (commute: CommuteContext, stops: readonly BusStop[]) =>
+      mutate((current) =>
+        addBusStopsToCommute(current, commute, stops),
+      ),
     [mutate],
   );
 
   const addSubwayStations = useCallback(
-    (stations: readonly SubwayStation[]) => {
-      if (stations.length === 0) {
-        return;
-      }
-      mutate((current) => {
-        const subwayStations = new Map(
-          current.subwayStations.map((station) => [station.id, station]),
-        );
-        for (const station of stations) {
-          subwayStations.set(station.id, station);
-        }
-        return {
-          ...current,
-          subwayStations: [...subwayStations.values()],
-          selectedSubwayStationId:
-            stations[0]?.id ?? current.selectedSubwayStationId,
-        };
-      });
-    },
+    (
+      commute: CommuteContext,
+      stations: readonly SubwayStation[],
+    ) =>
+      mutate((current) =>
+        addSubwayStationsToCommute(current, commute, stations),
+      ),
     [mutate],
   );
 
   const toggleBusStop = useCallback(
-    (stopId: BusStop["id"]) => {
-      mutate((current) => {
-        if (!current.busStops.some((stop) => stop.id === stopId)) {
-          return current;
-        }
-        const selectedBusStopIds = current.selectedBusStopIds.includes(
-          stopId,
-        )
-          ? current.selectedBusStopIds.filter((id) => id !== stopId)
-          : [...current.selectedBusStopIds, stopId].slice(
-              0,
-              MAX_SELECTED_BUS_STOPS,
-            );
-        return { ...current, selectedBusStopIds };
-      });
-    },
+    (commute: CommuteContext, stopId: BusStop["id"]) =>
+      mutate((current) =>
+        toggleBusStopForCommute(current, commute, stopId),
+      ),
     [mutate],
   );
 
   const selectSubwayStation = useCallback(
-    (stationId: SubwayStation["id"]) => {
+    (
+      commute: CommuteContext,
+      stationId: SubwayStation["id"],
+    ) =>
       mutate((current) =>
-        current.subwayStations.some((station) => station.id === stationId)
-          ? { ...current, selectedSubwayStationId: stationId }
-          : current,
-      );
-    },
+        selectSubwayStationForCommute(
+          current,
+          commute,
+          stationId,
+        ),
+      ),
     [mutate],
   );
 
   const removeBusStop = useCallback(
-    (stopId: BusStop["id"]) => {
-      mutate((current) => {
-        const busStops = current.busStops.filter(
-          (stop) => stop.id !== stopId,
-        );
-        return {
-          ...current,
-          busStops,
-          selectedBusStopIds: current.selectedBusStopIds.filter(
-            (id) => id !== stopId,
-          ),
-        };
-      });
-    },
+    (commute: CommuteContext, stopId: BusStop["id"]) =>
+      mutate((current) =>
+        removeBusStopFromCommute(current, commute, stopId),
+      ),
     [mutate],
   );
 
   const removeSubwayStation = useCallback(
-    (stationId: SubwayStation["id"]) => {
-      mutate((current) => {
-        const subwayStations = current.subwayStations.filter(
-          (station) => station.id !== stationId,
-        );
-        return {
-          ...current,
-          subwayStations,
-          selectedSubwayStationId:
-            current.selectedSubwayStationId === stationId
-              ? (subwayStations[0]?.id ?? null)
-              : current.selectedSubwayStationId,
-        };
-      });
-    },
+    (
+      commute: CommuteContext,
+      stationId: SubwayStation["id"],
+    ) =>
+      mutate((current) =>
+        removeSubwayStationFromCommute(
+          current,
+          commute,
+          stationId,
+        ),
+      ),
     [mutate],
   );
 

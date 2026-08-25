@@ -34,6 +34,15 @@ const subwayStation: SubwayStation = {
   distanceMeters: 228,
 };
 
+const subwayStation2: SubwayStation = {
+  id: "osm-node-11223344" as SubwayStation["id"],
+  name: "강남",
+  line: "2호선",
+  lat: 37.4979,
+  lng: 127.0276,
+  distanceMeters: 180,
+};
+
 const busArrivals: readonly BusArrival[] = [
   {
     routeId: "124900001" as BusArrival["routeId"],
@@ -99,9 +108,14 @@ vi.mock("./components/SubwayPicker", () => ({
   }: {
     onSave: (stations: readonly SubwayStation[]) => void;
   }) => (
-    <button type="button" onClick={() => onSave([subwayStation])}>
-      테스트 역 선택
-    </button>
+    <div>
+      <button type="button" onClick={() => onSave([subwayStation])}>
+        테스트 역 선택
+      </button>
+      <button type="button" onClick={() => onSave([subwayStation2])}>
+        테스트 역 2 선택
+      </button>
+    </div>
   ),
 }));
 
@@ -158,6 +172,14 @@ describe("App minimal arrivals flow", () => {
     render(<App />);
 
     expect(
+      screen.getByRole("tablist", { name: "출퇴근 선택" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "출근" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByRole("tab", { name: "퇴근" })).toBeInTheDocument();
+    expect(
       screen.getByRole("tablist", { name: "교통수단 선택" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "버스" })).toHaveAttribute(
@@ -169,10 +191,28 @@ describe("App minimal arrivals flow", () => {
     expect(
       screen.getByRole("link", { name: "Google로 로그인" }),
     ).toBeInTheDocument();
-    expect(screen.queryByText("회사로")).not.toBeInTheDocument();
-    expect(screen.queryByText("집으로")).not.toBeInTheDocument();
     expect(screen.queryByText(/절차/)).not.toBeInTheDocument();
     expect(screen.queryByText(/즐겨찾기/)).not.toBeInTheDocument();
+  });
+
+  it("keeps bus stop settings independent between commute contexts", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "정류장 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 정류장 선택" }));
+    expect(await screen.findByText("천호역 다음 버스")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "퇴근" }));
+    expect(screen.queryByText("천호역 다음 버스")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "정류장 찾기" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "테스트 정류장 2 선택" }),
+    );
+    expect(await screen.findByText("강동농협 다음 버스")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "출근" }));
+    expect(await screen.findByText("천호역 다음 버스")).toBeInTheDocument();
+    expect(screen.queryByText("강동농협 다음 버스")).not.toBeInTheDocument();
   });
 
   it("selects a bus stop and shows its next arrivals", async () => {
@@ -218,6 +258,12 @@ describe("App minimal arrivals flow", () => {
 
     render(<App />);
 
+    expect(
+      screen.getByRole("button", {
+        name: "천호역 ARS 25014 지금 보는 곳",
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("tab", { name: "퇴근" }));
     expect(
       screen.getByRole("button", {
         name: "천호역 ARS 25014 지금 보는 곳",
@@ -276,5 +322,24 @@ describe("App minimal arrivals flow", () => {
     expect(screen.getByRole("tab", { name: "8호선 상행" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "8호선 하행" })).toBeInTheDocument();
     await waitFor(() => expect(fetchSubwayArrivals).toHaveBeenCalledWith("천호"));
+  });
+
+  it("keeps subway stations independent between commute contexts", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("tab", { name: "지하철" }));
+    fireEvent.click(screen.getByRole("button", { name: "역 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 역 선택" }));
+    expect(await screen.findByText("천호 다음 열차")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "퇴근" }));
+    expect(screen.queryByText("천호 다음 열차")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "역 찾기" }));
+    fireEvent.click(screen.getByRole("button", { name: "테스트 역 2 선택" }));
+    expect(await screen.findByText("강남 다음 열차")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "출근" }));
+    expect(await screen.findByText("천호 다음 열차")).toBeInTheDocument();
+    expect(screen.queryByText("강남 다음 열차")).not.toBeInTheDocument();
   });
 });

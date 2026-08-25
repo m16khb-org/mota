@@ -16,11 +16,17 @@ integration("settings API with home-server Postgres", () => {
   const repository = new DrizzleUserSettingsRepository(database);
   const firstUser = `api-integration-${crypto.randomUUID()}`;
   const secondUser = `api-integration-${crypto.randomUUID()}`;
-  const selections: TransitSelections = {
+  const emptyPointSelections = {
     busStops: [],
     subwayStations: [],
     selectedBusStopIds: [],
     selectedSubwayStationId: null,
+  };
+  const selections: TransitSelections = {
+    commutes: {
+      toWork: emptyPointSelections,
+      toHome: emptyPointSelections,
+    },
   };
   const app = createApp(fetch, {
     settingsRepository: repository,

@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
-import { MAX_SELECTED_BUS_STOPS } from "@mota/contracts/transit-settings";
+import {
+  MAX_SELECTED_BUS_STOPS,
+  type CommuteContext,
+} from "@mota/contracts/transit-settings";
 import { ArrivalList } from "./components/ArrivalList";
 import { BrandHeader } from "./components/BrandHeader";
+import { CommuteContextSelector } from "./components/CommuteContextSelector";
 import { MapPicker } from "./components/MapPicker";
 import { MapStage } from "./components/MapStage";
 import { SubwayArrivalList } from "./components/SubwayArrivalList";
@@ -22,6 +26,7 @@ const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
 export function App() {
   const isDesktop = useMediaQuery("(min-width: 960px)");
   const session = useAuthSession();
+  const [commute, setCommute] = useState<CommuteContext>("toWork");
   const [mode, setMode] = useState<TransitMode>("bus");
   const [pickerMode, setPickerMode] = useState<TransitMode | null>(null);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
@@ -35,18 +40,26 @@ export function App() {
     removeSubwayStation,
     syncStatus,
   } = useTransitSelections(session);
+  const activeSelections = selections.commutes[commute];
+  const commuteLabel = commute === "toWork" ? "출근" : "퇴근";
 
   const stopsById = useMemo(
-    () => new Map(selections.busStops.map((stop) => [stop.id, stop])),
-    [selections.busStops],
+    () =>
+      new Map(
+        activeSelections.busStops.map((stop) => [stop.id, stop]),
+      ),
+    [activeSelections.busStops],
   );
-  const selectedStops = selections.selectedBusStopIds.flatMap((stopId) => {
+  const selectedStops = activeSelections.selectedBusStopIds.flatMap(
+    (stopId) => {
     const stop = stopsById.get(stopId);
     return stop ? [stop] : [];
-  });
+    },
+  );
   const selectedStation =
-    selections.subwayStations.find(
-      (station) => station.id === selections.selectedSubwayStationId,
+    activeSelections.subwayStations.find(
+      (station) =>
+        station.id === activeSelections.selectedSubwayStationId,
     ) ?? null;
   const activeStops = mode === "bus" ? selectedStops : [];
   const activeStation = mode === "subway" ? selectedStation : null;
@@ -66,42 +79,48 @@ export function App() {
     : DEFAULT_MAP_CENTER;
 
   const saveStops = (stops: readonly BusStop[]) => {
-    addBusStops(stops);
+    addBusStops(commute, stops);
     const first = stops[0];
     if (first !== undefined) {
-      setSaveAnnouncement(`${first.name} 정류장을 선택했습니다.`);
+      setSaveAnnouncement(
+        `${commuteLabel}에 ${first.name} 정류장을 선택했습니다.`,
+      );
     }
     setMode("bus");
     setPickerMode(null);
   };
 
   const saveStations = (stations: readonly SubwayStation[]) => {
-    addSubwayStations(stations);
+    addSubwayStations(commute, stations);
     const first = stations[0];
     if (first !== undefined) {
-      setSaveAnnouncement(`${first.name}역을 선택했습니다.`);
+      setSaveAnnouncement(
+        `${commuteLabel}에 ${first.name}역을 선택했습니다.`,
+      );
     }
     setMode("subway");
     setPickerMode(null);
   };
 
   const toggleStopSelection = (stopId: BusStop["id"]) => {
-    const isSelected = selections.selectedBusStopIds.includes(stopId);
+    const isSelected =
+      activeSelections.selectedBusStopIds.includes(stopId);
     const stopName = stopsById.get(stopId)?.name ?? "정류장";
     if (
       !isSelected &&
-      selections.selectedBusStopIds.length >= MAX_SELECTED_BUS_STOPS
+      activeSelections.selectedBusStopIds.length >=
+        MAX_SELECTED_BUS_STOPS
     ) {
       setSaveAnnouncement(
         `정류장은 최대 ${MAX_SELECTED_BUS_STOPS}곳까지 함께 볼 수 있어요.`,
       );
       return;
     }
-    toggleBusStop(stopId);
+    toggleBusStop(commute, stopId);
     setSaveAnnouncement(
       isSelected
-        ? `${stopName} 정류장 선택을 해제했어요.`
-        : `${stopName} 정류장을 함께 보게 했어요.`,
+        ? `${commuteLabel}의 ${stopName} 정류장 선택을 해제했어요.`
+        : `${commuteLabel}에서 ${stopName} 정류장을 함께 보게 했어요.`,
     );
     setMode("bus");
   };
@@ -123,21 +142,37 @@ export function App() {
           onLogout={session.logout}
         />
         <div className="rail-scroll">
+          <CommuteContextSelector
+            activeContext={commute}
+            commutes={selections.commutes}
+            onChange={(nextCommute) => {
+              setCommute(nextCommute);
+              setSaveAnnouncement(
+                `${nextCommute === "toWork" ? "출근" : "퇴근"} 설정을 보고 있어요.`,
+              );
+            }}
+          />
           <TransitPointSelector
             mode={mode}
-            busStops={selections.busStops}
-            subwayStations={selections.subwayStations}
-            selectedBusStopIds={selections.selectedBusStopIds}
-            selectedSubwayStationId={selections.selectedSubwayStationId}
+            busStops={activeSelections.busStops}
+            subwayStations={activeSelections.subwayStations}
+            selectedBusStopIds={activeSelections.selectedBusStopIds}
+            selectedSubwayStationId={
+              activeSelections.selectedSubwayStationId
+            }
             onModeChange={setMode}
             onAdd={() => setPickerMode(mode)}
             onSelectBusStop={toggleStopSelection}
             onSelectSubwayStation={(stationId) => {
-              selectSubwayStation(stationId);
+              selectSubwayStation(commute, stationId);
               setMode("subway");
             }}
-            onRemoveBusStop={removeBusStop}
-            onRemoveSubwayStation={removeSubwayStation}
+            onRemoveBusStop={(stopId) =>
+              removeBusStop(commute, stopId)
+            }
+            onRemoveSubwayStation={(stationId) =>
+              removeSubwayStation(commute, stationId)
+            }
           />
 
           {mode === "bus" ? (
@@ -197,8 +232,8 @@ export function App() {
       </aside>
 
       <MapStage
-        stops={selections.busStops}
-        subwayStations={selections.subwayStations}
+        stops={activeSelections.busStops}
+        subwayStations={activeSelections.subwayStations}
         selectedStops={selectedStops}
         selectedSubwayStation={selectedStation}
         center={mapCenter}
@@ -207,7 +242,7 @@ export function App() {
           toggleStopSelection(stop.id);
         }}
         onSelectSubwayStation={(station) => {
-          selectSubwayStation(station.id);
+          selectSubwayStation(commute, station.id);
           setMode("subway");
         }}
       />

@@ -6,11 +6,25 @@ import {
   transitSettingsSnapshotSchema,
 } from "./transitSettings";
 
-const selections = {
+const legacySelections = {
   busStops: [],
   subwayStations: [],
   selectedBusStopIds: [],
   selectedSubwayStationId: null,
+};
+
+const emptyContext = {
+  busStops: [],
+  subwayStations: [],
+  selectedBusStopIds: [],
+  selectedSubwayStationId: null,
+};
+
+const selections = {
+  commutes: {
+    toWork: emptyContext,
+    toHome: emptyContext,
+  },
 };
 
 describe("shared transit settings contracts", () => {
@@ -24,6 +38,12 @@ describe("shared transit settings contracts", () => {
     ).toEqual({ version: 0, selections: null });
   });
 
+  it("migrates a flat selection document into both commute contexts", () => {
+    expect(transitSelectionsSchema.parse(legacySelections)).toEqual(
+      selections,
+    );
+  });
+
   it("migrates the singular selectedBusStopId document to a one-element list", () => {
     expect(
       transitSelectionsSchema.parse({
@@ -33,19 +53,32 @@ describe("shared transit settings contracts", () => {
         selectedSubwayStationId: null,
       }),
     ).toEqual({
-      ...selections,
-      selectedBusStopIds: ["124000454"],
+      commutes: {
+        toWork: {
+          ...emptyContext,
+          selectedBusStopIds: ["124000454"],
+        },
+        toHome: {
+          ...emptyContext,
+          selectedBusStopIds: ["124000454"],
+        },
+      },
     });
   });
 
   it("rejects watching more stops than the product cap", () => {
     expect(
       transitSelectionsSchema.safeParse({
-        ...selections,
-        selectedBusStopIds: Array.from(
-          { length: MAX_SELECTED_BUS_STOPS + 1 },
-          (_, index) => `stop-${index}`,
-        ),
+        commutes: {
+          ...selections.commutes,
+          toWork: {
+            ...emptyContext,
+            selectedBusStopIds: Array.from(
+              { length: MAX_SELECTED_BUS_STOPS + 1 },
+              (_, index) => `stop-${index}`,
+            ),
+          },
+        },
       }).success,
     ).toBe(false);
   });
@@ -53,16 +86,27 @@ describe("shared transit settings contracts", () => {
   it("deduplicates repeated stop ids while migrating", () => {
     expect(
       transitSelectionsSchema.parse({
-        ...selections,
+        ...legacySelections,
         selectedBusStopIds: ["124000454", "124000454"],
       }),
-    ).toEqual({ ...selections, selectedBusStopIds: ["124000454"] });
+    ).toEqual({
+      commutes: {
+        toWork: {
+          ...emptyContext,
+          selectedBusStopIds: ["124000454"],
+        },
+        toHome: {
+          ...emptyContext,
+          selectedBusStopIds: ["124000454"],
+        },
+      },
+    });
   });
 
   it("rejects malformed selection arrays and negative versions", () => {
     expect(
       transitSelectionsSchema.safeParse({
-        ...selections,
+        ...legacySelections,
         busStops: "invalid",
       }).success,
     ).toBe(false);

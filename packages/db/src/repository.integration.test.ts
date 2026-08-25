@@ -16,11 +16,17 @@ integration("DrizzleUserSettingsRepository", () => {
   const repository = new DrizzleUserSettingsRepository(database);
   const firstUser = `integration-${crypto.randomUUID()}`;
   const secondUser = `integration-${crypto.randomUUID()}`;
-  const emptySelections: TransitSelections = {
+  const emptyPointSelections = {
     busStops: [],
     subwayStations: [],
     selectedBusStopIds: [],
     selectedSubwayStationId: null,
+  };
+  const emptySelections: TransitSelections = {
+    commutes: {
+      toWork: emptyPointSelections,
+      toHome: emptyPointSelections,
+    },
   };
 
   afterAll(async () => {

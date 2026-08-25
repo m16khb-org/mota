@@ -1,6 +1,7 @@
 import {
   MAX_SELECTED_BUS_STOPS,
   transitSelectionsSchema,
+  type TransitPointSelections,
   type TransitSelections,
 } from "@mota/contracts/transit-settings";
 
@@ -8,11 +9,18 @@ const STORAGE_KEY = "mota:transit-selections:v1";
 
 export type TransitSelectionStorage = Pick<Storage, "getItem" | "setItem">;
 
-const EMPTY_SELECTIONS: TransitSelections = {
+const EMPTY_POINT_SELECTIONS: TransitPointSelections = {
   busStops: [],
   subwayStations: [],
   selectedBusStopIds: [],
   selectedSubwayStationId: null,
+};
+
+const EMPTY_SELECTIONS: TransitSelections = {
+  commutes: {
+    toWork: EMPTY_POINT_SELECTIONS,
+    toHome: EMPTY_POINT_SELECTIONS,
+  },
 };
 
 function parseJson(value: string): unknown {
@@ -32,7 +40,9 @@ function uniqueById<T extends { readonly id: string }>(
   return [...new Map(values.map((value) => [value.id, value])).values()];
 }
 
-function normalize(selections: TransitSelections): TransitSelections {
+function normalizePointSelections(
+  selections: TransitPointSelections,
+): TransitPointSelections {
   const busStops = uniqueById(selections.busStops);
   const subwayStations = uniqueById(selections.subwayStations);
   const knownIds = new Set(busStops.map((stop) => stop.id));
@@ -53,6 +63,15 @@ function normalize(selections: TransitSelections): TransitSelections {
     )
       ? selections.selectedSubwayStationId
       : (subwayStations[0]?.id ?? null),
+  };
+}
+
+function normalize(selections: TransitSelections): TransitSelections {
+  return {
+    commutes: {
+      toWork: normalizePointSelections(selections.commutes.toWork),
+      toHome: normalizePointSelections(selections.commutes.toHome),
+    },
   };
 }
 

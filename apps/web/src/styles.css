@@ -295,6 +295,125 @@ button:disabled {
   overscroll-behavior: contain;
 }
 
+.commute-switcher {
+  position: sticky;
+  z-index: 4;
+  top: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--ink);
+  background: var(--surface);
+}
+
+.commute-switcher-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.commute-switcher-heading > span:last-child {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.commute-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.commute-tab {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 68px;
+  align-content: center;
+  gap: 4px;
+  padding: 9px 12px 10px;
+  border: 0;
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.commute-tab + .commute-tab {
+  border-left: 1px solid var(--ink);
+}
+
+.commute-tab::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: transparent;
+  content: "";
+}
+
+.commute-tab:hover:not([aria-selected="true"]) {
+  background: var(--paper);
+}
+
+.commute-tab[aria-selected="true"] {
+  color: var(--on-ink);
+  background: var(--ink);
+}
+
+.commute-tab[aria-selected="true"]::after {
+  background: var(--signal);
+}
+
+.commute-tab-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.commute-tab-title svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  color: var(--signal-ink);
+}
+
+.commute-tab[aria-selected="true"] .commute-tab-title svg {
+  color: var(--signal);
+}
+
+.commute-tab-title strong {
+  font-size: 0.875rem;
+}
+
+.commute-tab-title small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commute-tab-summary {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commute-tab[aria-selected="true"] .commute-tab-title small,
+.commute-tab[aria-selected="true"] .commute-tab-summary {
+  color: var(--stage-muted);
+}
+
 .arrivals {
   padding: 24px;
 }
@@ -1192,6 +1311,7 @@ select:focus-visible {
 }
 
 .transit-tab:active,
+.commute-tab:active,
 .add-point-button:active,
 .point-select:active,
 .point-remove:active,
@@ -1581,6 +1701,19 @@ select:focus-visible {
     padding: 16px 20px;
   }
 
+  .commute-switcher {
+    padding: 12px 20px;
+  }
+
+  .commute-switcher-heading {
+    margin-bottom: 6px;
+  }
+
+  .commute-tab {
+    min-height: 62px;
+    padding: 7px 10px 9px;
+  }
+
   .point-selector-heading {
     margin-top: 16px;
   }
@@ -1639,6 +1772,7 @@ select:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .transit-tab,
+  .commute-tab,
   .add-point-button,
   .point-select,
   .point-remove,

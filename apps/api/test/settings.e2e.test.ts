@@ -8,11 +8,13 @@ import {
 import { SupabaseUnavailableError } from "../src/auth/supabaseClient";
 import { createApp } from "./create-test-app";
 
-const selections: TransitSelections = {
+type PointSelections = TransitSelections["commutes"]["toWork"];
+
+const pointSelections: PointSelections = {
   busStops: [
     {
-      id: "124000454" as TransitSelections["busStops"][number]["id"],
-      arsId: "25014" as TransitSelections["busStops"][number]["arsId"],
+      id: "124000454" as PointSelections["busStops"][number]["id"],
+      arsId: "25014" as PointSelections["busStops"][number]["arsId"],
       name: "천호역",
       lat: 37.5379482005,
       lng: 127.1255385876,
@@ -21,9 +23,16 @@ const selections: TransitSelections = {
   ],
   subwayStations: [],
   selectedBusStopIds: [
-    "124000454" as TransitSelections["selectedBusStopIds"][number],
+    "124000454" as PointSelections["selectedBusStopIds"][number],
   ],
   selectedSubwayStationId: null,
+};
+
+const selections: TransitSelections = {
+  commutes: {
+    toWork: pointSelections,
+    toHome: pointSelections,
+  },
 };
 
 class MemorySettingsRepository implements UserSettingsRepository {
