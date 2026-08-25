@@ -106,7 +106,7 @@ describe("normalizeSubwayArrivals", () => {
           updnLine: "하행",
           trainLineNm: "모란행",
           barvlDt: "0",
-          arvlCd: "99",
+          arvlCd: "1",
           arvlMsg2: "[7]번째 전역 (별내)",
           recptnDt: "2026-08-20 12:10:20",
         },

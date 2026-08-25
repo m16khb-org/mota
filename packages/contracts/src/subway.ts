@@ -248,7 +248,6 @@ const upstreamSubwayArrivalSchema = z.object({
         trainLineNm: z.string().min(1),
         btrainSttus: z.string().default("일반"),
         barvlDt: z.string().nullable().optional(),
-        arvlCd: z.string().default(""),
         arvlMsg2: z.string().default(""),
         arvlMsg3: z.string().nullable().optional(),
         lstcarAt: z.string().nullable().optional(),
@@ -282,8 +281,10 @@ export function normalizeSubwayArrivals(
         row.barvlDt !== null &&
         row.barvlDt !== "" &&
         Number.isFinite(parsedSeconds);
+      const hasUnavailablePosition =
+        parsedSeconds === 0 && /^\[\d+\]번째 전역/.test(row.arvlMsg2);
       const seconds =
-        hasNumericEta && !(parsedSeconds === 0 && row.arvlCd === "99")
+        hasNumericEta && !hasUnavailablePosition
           ? parsedSeconds
           : null;
       return {
