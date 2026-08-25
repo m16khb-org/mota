@@ -9,7 +9,7 @@ Canonical index: [ADR.md](../ADR.md).
 
 ## Accepted decisions
 
-- [Auth gateway owns user identity](2026-08-23-auth-gateway-owns-user-identity.md)
+- [Mota owns its Supabase browser session](2026-08-25-mota-owns-its-supabase-browser-session.md)
 - [Turborepo, Nest/Fastify, and Drizzle topology](2026-08-23-turborepo-nest-fastify-and-drizzle-topology.md)
 
 ## Record criteria

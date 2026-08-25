@@ -27,7 +27,7 @@ Unknown API and non-HTML paths remain 404 responses.
 
 The `web` container joins:
 
-- `cloudflare-tunnel` as `mota` and to reach `auth-gateway`;
+- `cloudflare-tunnel` as `mota` for public ingress;
 - `home-server` to reach `home-server-pg`.
 
 The service is published locally at `127.0.0.1:3100`. The container filesystem

@@ -20,7 +20,7 @@ these modules:
 | `architecture/overview.md` | Architecture style, dependency graph, change placement |
 | `architecture/product-and-workspaces.md` | Product boundary, workspace ownership, browser composition |
 | `architecture/api-and-transit.md` | Nest HTTP surface and transit adapter flow |
-| `architecture/identity-and-settings.md` | auth-gateway identity and versioned settings persistence |
+| `architecture/identity-and-settings.md` | Supabase PKCE identity and versioned settings persistence |
 | `architecture/deployment.md` | Production image, static serving, networks, persistence |
 
 Every module links back to the canonical root. Other document families link

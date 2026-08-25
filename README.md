@@ -8,7 +8,7 @@ arrivals.
 | Workspace | Purpose |
 |---|---|
 | `apps/web` | React 19, Vite, Leaflet, PWA |
-| `apps/api` | NestJS 11, Fastify, auth-gateway integration |
+| `apps/api` | NestJS 11, Fastify, Supabase PKCE login and JWKS verification |
 | `packages/contracts` | Shared Zod contracts |
 | `packages/db` | Drizzle ORM, PostgreSQL migration and settings repository |
 
@@ -42,8 +42,8 @@ pnpm db:migrate
 pnpm db:studio
 ```
 
-Mota stores only `user_settings`. User identity is owned by auth-gateway and
-referenced by its shared `sub` value.
+Mota stores only `user_settings`. User identity is the Supabase `sub` claim
+verified from mota's own login; there is no local user table.
 
 ## Docker
 

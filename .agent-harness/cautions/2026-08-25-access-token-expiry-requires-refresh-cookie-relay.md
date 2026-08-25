@@ -1,25 +1,22 @@
 ---
 name: 2026-08-25-access-token-expiry-requires-refresh-cookie-relay
-description: Mota must refresh expired gateway access cookies and relay both rotated cookies.
+description: Mota must rotate expired access sessions from its own refresh cookie.
 ---
 
-# Access-token expiry requires refresh-cookie relay
+# Access-token expiry requires refresh rotation
 
 - Date: 2026-08-25
 - Trigger: A valid browser login appeared logged out after the Supabase access
   token lifetime elapsed.
-- Root cause: Mota forwarded only `agw-access` to auth-gateway `/me`. It mapped
-  a missing or rejected access cookie directly to anonymous even while the
-  30-day `agw-refresh` cookie was still valid.
-- Fix: When access verification cannot authenticate and `agw-refresh` exists,
-  call auth-gateway `POST /auth/refresh`, relay every returned `Set-Cookie`
-  header unchanged, then verify the rotated access token through `/me`.
-- Deployment requirement: auth-gateway must issue both cookies for the shared
-  parent domain so the browser sends them to Mota. Production runtime was
-  observed with `COOKIE_DOMAIN=.m16khb.xyz`.
+- Root cause: Treating a missing or rejected access cookie as anonymous even
+  while the 30-day refresh cookie was still valid.
+- Fix: When local verification cannot authenticate and the mota refresh cookie
+  exists, call the Supabase `grant_type=refresh_token` grant, relay both
+  rotated `Set-Cookie` headers to the browser, and verify the rotated access
+  token. Host-only `__Host-` cookies are mandatory; no `Domain` attribute.
 - Evidence:
-  - `apps/api/src/auth/gateway.ts`
-  - `apps/api/src/auth/gateway.test.ts`
+  - `apps/api/src/auth/session.ts`
+  - `apps/api/src/auth/supabaseClient.ts`
   - `apps/api/src/auth/auth.controller.ts`
   - `apps/api/src/settings/settings.controller.ts`
   - `apps/api/test/auth.e2e.test.ts`

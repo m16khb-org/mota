@@ -1,6 +1,6 @@
 ---
 name: identity-and-settings
-description: auth-gateway identity ownership and versioned Drizzle settings persistence.
+description: Supabase PKCE identity ownership and versioned Drizzle settings persistence.
 ---
 
 # Identity and Settings
@@ -9,21 +9,29 @@ Canonical index: [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## Authentication
 
-auth-gateway is the only authentication authority.
+Mota owns its Google login end to end. The auth-gateway login stays a
+separate, host-only session that never reaches this service.
 
-1. The browser navigates to `https://auth.m16khb.xyz/auth/google`.
-2. auth-gateway owns Google OAuth, Supabase, JWT validation, and its user DB.
-3. auth-gateway writes shared-domain `agw-access` and `agw-refresh` cookies.
-4. Mota sends `agw-access` as Bearer auth to the internal `auth-gateway /me`
-   endpoint.
-5. When the access cookie is absent or rejected, Mota sends `agw-refresh` to
-   `auth-gateway /auth/refresh`, relays both rotated `Set-Cookie` headers to
-   the browser, and verifies the new access token through `/me`.
-6. Mota uses only the returned `sub` as the shared `auth_user_id`.
+1. The browser navigates to `GET /api/auth/google` with a same-site
+   `return_to` path. The API issues short-lived host-only PKCE flow cookies
+   (`mota-oauth-verifier`, `mota-oauth-state`, `mota-return-url`) and
+   redirects to Supabase `/auth/v1/authorize` (Google, S256).
+2. Supabase calls back at `GET /api/auth/callback` (allow-listed in the
+   Supabase URL configuration). The API validates `state`, exchanges the code
+   server-side, clears the flow cookies, and sets host-only session cookies
+   `__Host-mota-access` (session lifetime) and `__Host-mota-refresh` (30 days)
+   — httpOnly, Secure, SameSite=Lax, Path=/, never a `Domain` attribute.
+3. Access tokens are verified locally with `jose` against the project JWKS:
+   ES256, issuer `$SUPABASE_URL/auth/v1`, audience `authenticated`, and
+   `role === "authenticated"`. No per-request gateway or Supabase call.
+4. When the access token is missing, expired, or rejected and the refresh
+   cookie exists, the API rotates the session with the Supabase refresh-token
+   grant and relays both rotated cookies to the browser.
+5. Mota uses only the verified `sub` claim as `auth_user_id`. The shared
+   Supabase project keeps the user id identical across sibling services.
 
-Mota does not verify Supabase tokens, query Supabase, or create a duplicate
-user table. A rejected refresh becomes an anonymous session; gateway outages
-return `503`.
+Mota stores no user rows. A rejected refresh becomes an anonymous session;
+Supabase Auth outages surface as `503`.
 
 ## Settings database
 
@@ -40,8 +48,10 @@ user_settings
   updated_at   timestamptz not null
 ```
 
-`auth_user_id` references the auth-gateway identity logically; there is no
-cross-database foreign key or local user copy.
+`auth_user_id` references the Supabase identity logically; there is no
+cross-database foreign key or local user copy. Existing rows written under
+the previous gateway-era flow keep working because the `sub` value is the
+same Supabase user id.
 
 Writes use compare-and-swap versions:
 

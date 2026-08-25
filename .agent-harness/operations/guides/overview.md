@@ -51,7 +51,7 @@ pnpm start
 docker compose --env-file ../home-server-infra/.env up -d --build
 ```
 
-The service binds `127.0.0.1:3100`, reaches auth-gateway on `cloudflare-tunnel`, and PostgreSQL on `home-server`. Compose obtains the shared password from the sibling infra environment file.
+The service binds `127.0.0.1:3100`, reaches Supabase Auth over outbound HTTPS, and PostgreSQL on `home-server`. Compose obtains the shared password and Supabase credentials from the sibling infra environment file.
 
 ## Smoke checks
 

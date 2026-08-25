@@ -25,7 +25,7 @@ packages/db         Drizzle ORM schema, migration, and repository
 ```
 
 - `apps/web` owns UI, browser transport, and anonymous local storage.
-- `apps/api` owns HTTP mapping, transit adapters, auth-gateway delegation, and static serving.
+- `apps/api` owns HTTP mapping, transit adapters, the Supabase PKCE login, and static serving.
 - `packages/contracts` owns shared wire and persistence schemas.
 - `packages/db` owns Drizzle schema, migrations, and settings repository.
 
@@ -35,8 +35,8 @@ Dependency direction is normative in [overview.md](overview.md).
 
 `apps/web/src/App.tsx` is the React composition root.
 
-- `useGatewaySession` reads the same-origin `/api/auth/session`.
-- `GoogleLogin` redirects anonymous users to the public auth-gateway.
+- `useAuthSession` reads the same-origin `/api/auth/session`.
+- `GoogleLogin` sends anonymous users to the same-origin `/api/auth/google` PKCE login.
 - `useTransitSelections` keeps anonymous selections in localStorage.
 - Authenticated selections load and save through `/api/settings`.
 - Authenticated settings never overwrite the anonymous localStorage document.

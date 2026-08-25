@@ -12,7 +12,9 @@ Mota exposes NestJS controllers but does not currently configure Swagger or gene
 | Endpoint | Responsibility |
 |---|---|
 | `GET /api/health` | service health |
-| `GET /api/auth/session` | auth-gateway-backed anonymous/authenticated session |
+| `GET /api/auth/session` | anonymous/authenticated session from mota's own cookies |
+| `GET /api/auth/google` | starts the Google PKCE login (host-only flow cookies) |
+| `GET /api/auth/callback` | completes login, sets mota session cookies, redirects |
 | `GET /api/settings` | authenticated user's versioned settings |
 | `PUT /api/settings` | compare-and-swap settings update |
 | `GET /api/stops/nearby` | nearby Seoul bus stops |
@@ -34,10 +36,10 @@ Parse query/body/upstream/browser JSON at the boundary with Zod. Keep controller
 ## Error semantics
 
 - `400`: invalid query/body.
-- `401`: settings endpoint without an authenticated gateway user.
+- `401`: settings endpoint without an authenticated session; invalid OAuth callback.
 - `409`: settings version conflict.
 - `502`: transit upstream failure.
-- `503`: auth-gateway unavailable or malformed.
+- `503`: Supabase Auth unavailable or auth unconfigured.
 - `404`: unknown API or non-HTML path.
 
 When an endpoint changes, update the shared schema, controller, browser client, and in-memory Nest tests together. Add Swagger/OpenAPI gates only if generation is introduced as a real project capability.

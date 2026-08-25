@@ -11,7 +11,7 @@ Canonical index: [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 Mota is a modular monorepo and a single deployable service. It uses selective ports-and-adapters boundaries where substitution is useful:
 
-- `SessionVerifier` isolates auth-gateway session verification from Nest controllers.
+- `SessionVerifier` isolates Supabase session verification from Nest controllers.
 - `UserSettingsRepository` isolates Drizzle/PostgreSQL from the settings controller.
 - Shared Zod packages define wire/persistence shapes used by both applications.
 
