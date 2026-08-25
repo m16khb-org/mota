@@ -1,10 +1,10 @@
 import { Clock3 } from "lucide-react";
-import type { GatewaySessionState } from "../hooks/useGatewaySession";
+import type { AuthSessionState } from "../hooks/useAuthSession";
 import type { TransitSyncStatus } from "../hooks/useTransitSelections";
 import { GoogleLogin } from "./GoogleLogin";
 
 interface BrandHeaderProps {
-  readonly session: GatewaySessionState;
+  readonly session: AuthSessionState;
   readonly syncStatus: TransitSyncStatus;
 }
 

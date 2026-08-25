@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { userSettings } from "./schema";
 
 describe("userSettings schema", () => {
-  it("stores only auth-gateway identity and versioned selections", () => {
+  it("stores only Supabase identity and versioned selections", () => {
     const table = getTableConfig(userSettings);
 
     expect(table.name).toBe("user_settings");

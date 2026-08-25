@@ -1,26 +1,26 @@
 import {
-  gatewaySessionResponseSchema,
-  type GatewayUser,
+  authSessionResponseSchema,
+  type AuthUser,
 } from "@mota/contracts/auth";
 import { useEffect, useState } from "react";
 
-export interface GatewaySessionState {
+export interface AuthSessionState {
   readonly authenticated: boolean;
   readonly checked: boolean;
-  readonly user: GatewayUser | null;
+  readonly user: AuthUser | null;
   readonly error: string | null;
 }
 
-const INITIAL_SESSION: GatewaySessionState = {
+const INITIAL_SESSION: AuthSessionState = {
   authenticated: false,
   checked: false,
   user: null,
   error: null,
 };
 
-export function useGatewaySession(): GatewaySessionState {
+export function useAuthSession(): AuthSessionState {
   const [session, setSession] =
-    useState<GatewaySessionState>(INITIAL_SESSION);
+    useState<AuthSessionState>(INITIAL_SESSION);
 
   useEffect(() => {
     let mounted = true;
@@ -33,7 +33,7 @@ export function useGatewaySession(): GatewaySessionState {
         if (!response.ok) {
           throw new Error("session request failed");
         }
-        return gatewaySessionResponseSchema.parse(await response.json());
+        return authSessionResponseSchema.parse(await response.json());
       })
       .then((result) => {
         if (!mounted) {

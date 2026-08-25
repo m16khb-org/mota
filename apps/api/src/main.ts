@@ -10,7 +10,6 @@ import {
   migrateDatabase,
 } from "@mota/db";
 import { AppModule } from "./app.module";
-import { verifyGatewaySession } from "./auth/gateway";
 import { loadEnv } from "./config/env";
 
 async function bootstrap() {
@@ -22,11 +21,12 @@ async function bootstrap() {
     AppModule.register({
       settingsRepository: repository,
       subwayArrivalUpstream: env.subwayArrivalUpstream,
-      verifySession: (cookie, onSetCookie) =>
-        verifyGatewaySession(cookie, {
-          baseUrl: env.authGatewayUrl,
-          onSetCookie,
-        }),
+      oauthConfig: {
+        supabaseUrl: env.oauth.supabaseUrl,
+        anonKey: env.oauth.anonKey,
+        publicUrl: env.oauth.publicUrl,
+        fetcher: fetch,
+      },
     }),
     new FastifyAdapter({
       logger: true,

@@ -130,8 +130,8 @@ vi.mock("./api/client", async (importOriginal) => {
   };
 });
 
-vi.mock("./hooks/useGatewaySession", () => ({
-  useGatewaySession: () => ({
+vi.mock("./hooks/useAuthSession", () => ({
+  useAuthSession: () => ({
     authenticated: false,
     checked: true,
     user: null,

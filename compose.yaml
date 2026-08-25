@@ -5,13 +5,13 @@ services:
     build:
       context: .
       target: runtime
-      args:
-        VITE_AUTH_GATEWAY_URL: ${VITE_AUTH_GATEWAY_URL:-https://auth.m16khb.xyz}
     restart: unless-stopped
     environment:
       HOST: 0.0.0.0
       PORT: 3000
-      AUTH_GATEWAY_URL: http://auth-gateway:3000
+      SUPABASE_URL: ${SUPABASE_URL:?run compose with ../home-server-infra/.env}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:?run compose with ../home-server-infra/.env}
+      PUBLIC_URL: https://mota.m16khb.xyz
       DATABASE_HOST: home-server-pg
       DATABASE_PORT: 5432
       DATABASE_NAME: mota

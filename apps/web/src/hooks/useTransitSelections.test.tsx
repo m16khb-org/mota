@@ -8,7 +8,7 @@ import {
 } from "../api/client";
 import type { BusStop } from "../domain/bus";
 import type { TransitSelections } from "@mota/contracts/transit-settings";
-import type { GatewaySessionState } from "./useGatewaySession";
+import type { AuthSessionState } from "./useAuthSession";
 import { useTransitSelections } from "./useTransitSelections";
 
 vi.mock("../api/client", async (importOriginal) => {
@@ -48,13 +48,13 @@ const serverSelections: TransitSelections = {
   selectedBusStopIds: [serverStop.id],
   selectedSubwayStationId: null,
 };
-const authenticatedSession: GatewaySessionState = {
+const authenticatedSession: AuthSessionState = {
   authenticated: true,
   checked: true,
   user: { sub: "auth-user-1", email: "user@example.com" },
   error: null,
 };
-const anonymousSession: GatewaySessionState = {
+const anonymousSession: AuthSessionState = {
   authenticated: false,
   checked: true,
   user: null,
@@ -199,7 +199,7 @@ describe("useTransitSelections authenticated synchronization", () => {
       selections: serverSelections,
     });
     const { result, rerender } = renderHook(
-      ({ session }: { session: GatewaySessionState }) =>
+      ({ session }: { session: AuthSessionState }) =>
         useTransitSelections(session),
       { initialProps: { session: authenticatedSession } },
     );

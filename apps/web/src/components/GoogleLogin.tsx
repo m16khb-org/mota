@@ -1,9 +1,9 @@
 import { CircleCheck, LogIn } from "lucide-react";
-import type { GatewaySessionState } from "../hooks/useGatewaySession";
+import type { AuthSessionState } from "../hooks/useAuthSession";
 import type { TransitSyncStatus } from "../hooks/useTransitSelections";
 
 interface GoogleLoginProps {
-  readonly session: GatewaySessionState;
+  readonly session: AuthSessionState;
   readonly syncStatus?: TransitSyncStatus;
 }
 
@@ -35,16 +35,12 @@ export function GoogleLogin({
     );
   }
 
-  const gatewayUrl =
-    import.meta.env.VITE_AUTH_GATEWAY_URL || "https://auth.m16khb.xyz";
-  const loginUrl = new URL("/auth/google", gatewayUrl);
-  loginUrl.searchParams.set(
-    "return_to",
-    window.location.origin + window.location.pathname,
-  );
+  const loginUrl = `/api/auth/google?return_to=${encodeURIComponent(
+    window.location.pathname + window.location.search,
+  )}`;
 
   return (
-    <a className="google-login" href={loginUrl.toString()}>
+    <a className="google-login" href={loginUrl}>
       <LogIn aria-hidden="true" />
       Google로 로그인
     </a>

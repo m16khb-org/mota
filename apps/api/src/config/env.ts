@@ -4,7 +4,9 @@ import { SUBWAY_ARRIVAL_UPSTREAM_BASE } from "../upstream/subwayArrivals";
 const envSchema = z.object({
   HOST: z.string().min(1).default("0.0.0.0"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
-  AUTH_GATEWAY_URL: z.string().url().default("http://auth-gateway:3000"),
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_ANON_KEY: z.string().min(1),
+  PUBLIC_URL: z.string().url().default("http://localhost:5173"),
   SUBWAY_ARRIVAL_UPSTREAM: z
     .string()
     .url()
@@ -22,11 +24,15 @@ const envSchema = z.object({
 export interface ApiEnv {
   readonly host: string;
   readonly port: number;
-  readonly authGatewayUrl: string;
   readonly subwayArrivalUpstream: string;
   readonly databaseUrl: string;
   readonly webDistPath: string;
   readonly migrationsPath: string;
+  readonly oauth: {
+    readonly supabaseUrl: string;
+    readonly anonKey: string;
+    readonly publicUrl: string;
+  };
 }
 
 export function loadEnv(
@@ -48,10 +54,14 @@ export function loadEnv(
   return {
     host: parsed.HOST,
     port: parsed.PORT,
-    authGatewayUrl: parsed.AUTH_GATEWAY_URL,
     subwayArrivalUpstream: parsed.SUBWAY_ARRIVAL_UPSTREAM,
     databaseUrl,
     webDistPath: parsed.WEB_DIST_PATH,
     migrationsPath: parsed.MIGRATIONS_PATH,
+    oauth: {
+      supabaseUrl: parsed.SUPABASE_URL.replace(/\/$/, ""),
+      anonKey: parsed.SUPABASE_ANON_KEY,
+      publicUrl: parsed.PUBLIC_URL.replace(/\/$/, ""),
+    },
   };
 }

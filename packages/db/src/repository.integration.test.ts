@@ -33,7 +33,7 @@ integration("DrizzleUserSettingsRepository", () => {
     await client.end();
   });
 
-  it("isolates shared auth-gateway users and enforces versions", async () => {
+  it("isolates Supabase users and enforces versions", async () => {
     const first = await repository.save(firstUser, 0, emptySelections);
     const second = await repository.save(secondUser, 0, emptySelections);
 

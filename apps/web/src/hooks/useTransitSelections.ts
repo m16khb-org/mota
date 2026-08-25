@@ -13,7 +13,7 @@ import {
   loadTransitSelections,
   saveTransitSelections,
 } from "./transitSelectionStorage";
-import type { GatewaySessionState } from "./useGatewaySession";
+import type { AuthSessionState } from "./useAuthSession";
 
 export type TransitSyncStatus =
   | "local"
@@ -22,7 +22,7 @@ export type TransitSyncStatus =
   | "synced"
   | "error";
 
-export function useTransitSelections(session: GatewaySessionState) {
+export function useTransitSelections(session: AuthSessionState) {
   const [selections, setSelections] =
     useState<TransitSelections>(loadTransitSelections);
   const [syncStatus, setSyncStatus] =

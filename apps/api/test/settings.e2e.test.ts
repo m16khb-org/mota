@@ -5,7 +5,7 @@ import {
   type StoredUserSettings,
   type UserSettingsRepository,
 } from "@mota/db";
-import { GatewayUnavailableError } from "../src/auth/gateway";
+import { SupabaseUnavailableError } from "../src/auth/supabaseClient";
 import { createApp } from "./create-test-app";
 
 const selections: TransitSelections = {
@@ -59,7 +59,7 @@ function createSettingsApp(repository = new MemorySettingsRepository()) {
     app: createApp(fetch, {
       settingsRepository: repository,
       verifySession: async (cookie) => {
-        const match = /agw-access=(user-[^;]+)/.exec(cookie ?? "");
+        const match = /mota-access=(user-[^;]+)/.exec(cookie ?? "");
         return match?.[1] ? { sub: match[1], email: `${match[1]}@example.com` } : null;
       },
     }),
@@ -67,7 +67,7 @@ function createSettingsApp(repository = new MemorySettingsRepository()) {
 }
 
 describe("authenticated user settings routes", () => {
-  it("requires a verified auth-gateway user", async () => {
+  it("requires a verified authenticated user", async () => {
     const { app } = createSettingsApp();
 
     expect((await app.request("/api/settings")).status).toBe(401);
@@ -82,27 +82,27 @@ describe("authenticated user settings routes", () => {
     ).toBe(401);
   });
 
-  it("reports auth-gateway outages instead of treating them as anonymous", async () => {
+  it("reports auth upstream outages instead of treating them as anonymous", async () => {
     const app = createApp(fetch, {
       settingsRepository: new MemorySettingsRepository(),
       verifySession: async () => {
-        throw new GatewayUnavailableError();
+        throw new SupabaseUnavailableError();
       },
     });
 
     const response = await app.request("/api/settings", {
-      headers: { Cookie: "agw-access=token" },
+      headers: { Cookie: "mota-access=token" },
     });
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({
-      error: "AUTH_GATEWAY_UNAVAILABLE",
+      error: "AUTH_UPSTREAM_UNAVAILABLE",
     });
   });
 
-  it("relays rotated gateway cookies while loading settings", async () => {
+  it("relays rotated session cookies while loading settings", async () => {
     const setCookies = [
-      "agw-access=fresh-access; Max-Age=3600; Domain=.m16khb.xyz; Path=/; HttpOnly; Secure; SameSite=Lax",
-      "agw-refresh=fresh-refresh; Max-Age=2592000; Domain=.m16khb.xyz; Path=/; HttpOnly; Secure; SameSite=Lax",
+      "mota-access=fresh-access; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=Lax",
+      "mota-refresh=fresh-refresh; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Lax",
     ];
     const app = createApp(fetch, {
       settingsRepository: new MemorySettingsRepository(),
@@ -113,21 +113,21 @@ describe("authenticated user settings routes", () => {
     });
 
     const response = await app.request("/api/settings", {
-      headers: { Cookie: "agw-refresh=refresh-token" },
+      headers: { Cookie: "mota-refresh=refresh-token" },
     });
 
     expect(response.status).toBe(200);
     expect(response.headers.getSetCookie()).toEqual(setCookies);
   });
 
-  it("stores settings under the shared auth-gateway user id", async () => {
+  it("stores settings under the shared authenticated user id", async () => {
     const { app, repository } = createSettingsApp();
 
     const savedResponse = await app.request("/api/settings", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Cookie: "agw-access=user-1",
+        Cookie: "mota-access=user-1",
       },
       body: JSON.stringify({ version: 0, selections }),
     });
@@ -140,7 +140,7 @@ describe("authenticated user settings routes", () => {
     expect(repository.records.has("user-2")).toBe(false);
 
     const otherUserResponse = await app.request("/api/settings", {
-      headers: { Cookie: "agw-access=user-2" },
+      headers: { Cookie: "mota-access=user-2" },
     });
     await expect(otherUserResponse.json()).resolves.toEqual({
       version: 0,
@@ -148,7 +148,7 @@ describe("authenticated user settings routes", () => {
     });
 
     const originalUserResponse = await app.request("/api/settings", {
-      headers: { Cookie: "agw-access=user-1" },
+      headers: { Cookie: "mota-access=user-1" },
     });
     await expect(originalUserResponse.json()).resolves.toMatchObject({
       version: 1,
@@ -160,7 +160,7 @@ describe("authenticated user settings routes", () => {
     const { app } = createSettingsApp();
     const headers = {
       "Content-Type": "application/json",
-      Cookie: "agw-access=user-1",
+      Cookie: "mota-access=user-1",
     };
 
     const invalid = await app.request("/api/settings", {

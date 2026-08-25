@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { gatewaySessionResponseSchema } from "./auth";
+import { authSessionResponseSchema } from "./auth";
 import {
   MAX_SELECTED_BUS_STOPS,
   transitSelectionsSchema,
@@ -74,15 +74,15 @@ describe("shared transit settings contracts", () => {
     ).toBe(false);
   });
 
-  it("requires auth-gateway identity on authenticated sessions", () => {
+  it("requires user identity on authenticated sessions", () => {
     expect(
-      gatewaySessionResponseSchema.parse({
+      authSessionResponseSchema.parse({
         authenticated: true,
         user: { sub: "auth-user-1", email: "user@example.com" },
       }),
     ).toMatchObject({ authenticated: true });
     expect(
-      gatewaySessionResponseSchema.safeParse({
+      authSessionResponseSchema.safeParse({
         authenticated: true,
       }).success,
     ).toBe(false);

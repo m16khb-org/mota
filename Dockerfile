@@ -5,8 +5,6 @@ WORKDIR /app
 
 FROM base AS build
 
-ARG VITE_AUTH_GATEWAY_URL=https://auth.m16khb.xyz
-ENV VITE_AUTH_GATEWAY_URL=$VITE_AUTH_GATEWAY_URL
 ENV CI=true
 
 COPY . .

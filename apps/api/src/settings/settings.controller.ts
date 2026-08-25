@@ -20,12 +20,10 @@ import {
 import {
   SESSION_VERIFIER,
   SETTINGS_REPOSITORY,
-} from "../app.tokens";
-import {
-  type GatewayUser,
-  GatewayUnavailableError,
   type SessionVerifier,
-} from "../auth/gateway";
+} from "../app.tokens";
+import { type AuthUser } from "@mota/contracts/auth";
+import { SupabaseUnavailableError } from "../auth/supabaseClient";
 
 @Controller("api/settings")
 export class SettingsController {
@@ -46,15 +44,15 @@ export class SettingsController {
     cookie: string | undefined,
     reply: FastifyReply,
   ) {
-    let user: GatewayUser | null;
+    let user: AuthUser | null;
     try {
       user = await this.verifySession(cookie, (cookies) => {
         reply.header("set-cookie", [...cookies]);
       });
     } catch (error) {
-      if (error instanceof GatewayUnavailableError) {
+      if (error instanceof SupabaseUnavailableError) {
         throw new ServiceUnavailableException({
-          error: "AUTH_GATEWAY_UNAVAILABLE",
+          error: "AUTH_UPSTREAM_UNAVAILABLE",
           message: "로그인 상태를 확인하지 못했습니다.",
         });
       }

@@ -2,14 +2,14 @@
 
 import { renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { useGatewaySession } from "./useGatewaySession";
+import { useAuthSession } from "./useAuthSession";
 
-describe("useGatewaySession", () => {
+describe("useAuthSession", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
-  it("keeps the verified gateway user identity", async () => {
+  it("keeps the verified user identity", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -21,7 +21,7 @@ describe("useGatewaySession", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    const { result } = renderHook(() => useGatewaySession());
+    const { result } = renderHook(() => useAuthSession());
 
     await waitFor(() => expect(result.current.checked).toBe(true));
     expect(result.current).toMatchObject({
@@ -50,7 +50,7 @@ describe("useGatewaySession", () => {
       .mockRejectedValueOnce(new TypeError("network unavailable"));
     vi.stubGlobal("fetch", fetchMock);
 
-    const anonymous = renderHook(() => useGatewaySession());
+    const anonymous = renderHook(() => useAuthSession());
     await waitFor(() => expect(anonymous.result.current.checked).toBe(true));
     expect(anonymous.result.current).toMatchObject({
       authenticated: false,
@@ -59,7 +59,7 @@ describe("useGatewaySession", () => {
     });
     anonymous.unmount();
 
-    const failed = renderHook(() => useGatewaySession());
+    const failed = renderHook(() => useAuthSession());
     await waitFor(() => expect(failed.result.current.checked).toBe(true));
     expect(failed.result.current).toMatchObject({
       authenticated: false,

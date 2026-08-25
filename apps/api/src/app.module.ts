@@ -7,16 +7,16 @@ import type {
 } from "@mota/db";
 import {
   API_OPTIONS,
+  AUTH_CONFIG,
   SESSION_VERIFIER,
   SETTINGS_REPOSITORY,
   type ApiOptions,
+  type SessionVerifier,
   type UpstreamFetch,
 } from "./app.tokens";
 import { AuthController } from "./auth/auth.controller";
-import {
-  verifyGatewaySession,
-  type SessionVerifier,
-} from "./auth/gateway";
+import { OAuthController } from "./auth/oauth.controller";
+import { verifySupabaseSession } from "./auth/session";
 import { HealthController } from "./health/health.controller";
 import { SettingsController } from "./settings/settings.controller";
 import { TransitController } from "./transit/transit.controller";
@@ -39,6 +39,7 @@ export interface AppModuleOptions {
   readonly upstreamFetch?: UpstreamFetch;
   readonly verifySession?: SessionVerifier;
   readonly settingsRepository?: UserSettingsRepository;
+  readonly oauthConfig?: ApiOptions["oauthConfig"];
   readonly now?: (() => number) | undefined;
   readonly sleep?: ((ms: number) => Promise<void>) | undefined;
   readonly subwayArrivalUpstream?: string | undefined;
@@ -48,14 +49,22 @@ export interface AppModuleOptions {
 // biome-ignore lint/complexity/noStaticOnlyClass: Nest dynamic modules expose a static registration factory.
 export class AppModule {
   static register(options: AppModuleOptions = {}): DynamicModule {
+    const oauthConfig = options.oauthConfig ?? null;
+    const verifySession: SessionVerifier =
+      options.verifySession ??
+      (oauthConfig === null
+        ? unconfiguredSessionVerifier
+        : (cookie, onSetCookie) =>
+            verifySupabaseSession(cookie, {
+              config: oauthConfig,
+              onSetCookie,
+            }));
     const apiOptions: ApiOptions = {
       upstreamFetch: options.upstreamFetch ?? fetch,
-      verifySession:
-        options.verifySession ??
-        ((cookie, onSetCookie) =>
-          verifyGatewaySession(cookie, { onSetCookie })),
+      verifySession,
       settingsRepository:
         options.settingsRepository ?? new UnavailableSettingsRepository(),
+      oauthConfig,
       now: options.now,
       sleep: options.sleep,
       subwayArrivalUpstream: options.subwayArrivalUpstream,
@@ -65,6 +74,7 @@ export class AppModule {
       controllers: [
         HealthController,
         AuthController,
+        OAuthController,
         SettingsController,
         TransitController,
         WebController,
@@ -76,7 +86,12 @@ export class AppModule {
           provide: SETTINGS_REPOSITORY,
           useValue: apiOptions.settingsRepository,
         },
+        { provide: AUTH_CONFIG, useValue: apiOptions.oauthConfig },
       ],
     };
   }
 }
+
+const unconfiguredSessionVerifier: SessionVerifier = () => {
+  throw new Error("Supabase auth is not configured.");
+};

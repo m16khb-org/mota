@@ -2,10 +2,10 @@
 
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { GatewaySessionState } from "../hooks/useGatewaySession";
+import type { AuthSessionState } from "../hooks/useAuthSession";
 import { GoogleLogin } from "./GoogleLogin";
 
-const anonymousSession: GatewaySessionState = {
+const anonymousSession: AuthSessionState = {
   authenticated: false,
   checked: true,
   user: null,
@@ -13,13 +13,13 @@ const anonymousSession: GatewaySessionState = {
 };
 
 describe("GoogleLogin", () => {
-  it("links anonymous users to auth-gateway with this page as return target", () => {
+  it("starts the local PKCE login with this page as return target", () => {
     render(<GoogleLogin session={anonymousSession} />);
 
     const login = screen.getByRole("link", { name: "Google로 로그인" });
     expect(login).toHaveAttribute(
       "href",
-      "https://auth.m16khb.xyz/auth/google?return_to=http%3A%2F%2Flocalhost%3A3000%2F",
+      "/api/auth/google?return_to=%2F",
     );
   });
 

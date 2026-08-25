@@ -25,7 +25,7 @@ integration("settings API with home-server Postgres", () => {
   const app = createApp(fetch, {
     settingsRepository: repository,
     verifySession: async (cookie) => {
-      const authUserId = /agw-access=([^;]+)/.exec(cookie ?? "")?.[1];
+      const authUserId = /mota-access=([^;]+)/.exec(cookie ?? "")?.[1];
       return authUserId ? { sub: authUserId } : null;
     },
   });
@@ -40,19 +40,19 @@ integration("settings API with home-server Postgres", () => {
     await client.end();
   });
 
-  it("persists and isolates auth-gateway users through the HTTP boundary", async () => {
+  it("persists and isolates authenticated users through the HTTP boundary", async () => {
     const saved = await app.request("/api/settings", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `agw-access=${firstUser}`,
+        Cookie: `mota-access=${firstUser}`,
       },
       body: JSON.stringify({ version: 0, selections }),
     });
     expect(saved.status).toBe(200);
 
     const first = await app.request("/api/settings", {
-      headers: { Cookie: `agw-access=${firstUser}` },
+      headers: { Cookie: `mota-access=${firstUser}` },
     });
     await expect(first.json()).resolves.toEqual({
       version: 1,
@@ -60,7 +60,7 @@ integration("settings API with home-server Postgres", () => {
     });
 
     const second = await app.request("/api/settings", {
-      headers: { Cookie: `agw-access=${secondUser}` },
+      headers: { Cookie: `mota-access=${secondUser}` },
     });
     await expect(second.json()).resolves.toEqual({
       version: 0,

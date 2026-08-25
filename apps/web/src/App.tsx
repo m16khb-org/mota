@@ -13,7 +13,7 @@ import {
 import type { BusStop } from "./domain/bus";
 import type { SubwayStation } from "./domain/subway";
 import { useArrivalDetail } from "./hooks/useArrivalDetail";
-import { useGatewaySession } from "./hooks/useGatewaySession";
+import { useAuthSession } from "./hooks/useAuthSession";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { useTransitSelections } from "./hooks/useTransitSelections";
 
@@ -21,7 +21,7 @@ const DEFAULT_MAP_CENTER = { lat: 37.5366, lng: 127.1253 };
 
 export function App() {
   const isDesktop = useMediaQuery("(min-width: 960px)");
-  const session = useGatewaySession();
+  const session = useAuthSession();
   const [mode, setMode] = useState<TransitMode>("bus");
   const [pickerMode, setPickerMode] = useState<TransitMode | null>(null);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");

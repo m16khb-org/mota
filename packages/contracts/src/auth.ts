@@ -1,18 +1,18 @@
 import { z } from "zod";
 
-export const gatewayUserSchema = z.object({
+export const authUserSchema = z.object({
   sub: z.string().min(1),
   email: z.string().email().optional(),
 });
 
-export type GatewayUser = Readonly<z.infer<typeof gatewayUserSchema>>;
+export type AuthUser = Readonly<z.infer<typeof authUserSchema>>;
 
-export const gatewaySessionResponseSchema = z.discriminatedUnion(
+export const authSessionResponseSchema = z.discriminatedUnion(
   "authenticated",
   [
     z.object({
       authenticated: z.literal(true),
-      user: gatewayUserSchema,
+      user: authUserSchema,
     }),
     z.object({
       authenticated: z.literal(false),
@@ -20,6 +20,6 @@ export const gatewaySessionResponseSchema = z.discriminatedUnion(
   ],
 );
 
-export type GatewaySessionResponse = Readonly<
-  z.infer<typeof gatewaySessionResponseSchema>
+export type AuthSessionResponse = Readonly<
+  z.infer<typeof authSessionResponseSchema>
 >;
