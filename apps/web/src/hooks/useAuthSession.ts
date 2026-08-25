@@ -81,6 +81,8 @@ export function useAuthSession(): AuthSessionState & {
   }, []);
 
   const logout = useCallback(async () => {
+    // 낙관적 전환: 서버 왕복(최대 수 초) 전에 UI를 익명으로 되돌린다.
+    setSession(ANONYMOUS_SESSION);
     try {
       await fetch("/api/auth/logout", {
         method: "POST",
@@ -88,9 +90,8 @@ export function useAuthSession(): AuthSessionState & {
         signal: AbortSignal.timeout(8_000),
       });
     } catch {
-      // 서버 쿠키 정리 실패여도 로컬 상태는 익명으로 되돌린다
+      // 서버 쿠키 정리 실패 시 다음 로드에서 세션이 복원될 수 있다
     }
-    setSession(ANONYMOUS_SESSION);
   }, []);
 
   return { ...session, logout };

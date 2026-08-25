@@ -74,6 +74,41 @@ describe("useAuthSession", () => {
     );
   });
 
+  it("flips to anonymous optimistically without waiting for the server", async () => {
+    let resolveLogout: ((value: Response) => void) | undefined;
+    const pendingLogout = new Promise<Response>((resolve) => {
+      resolveLogout = resolve;
+    });
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) =>
+      String(input).includes("/api/auth/logout")
+        ? pendingLogout
+        : Promise.resolve(
+            new Response(
+              JSON.stringify({
+                authenticated: true,
+                user: { sub: "user-1", email: "mota@example.com" },
+              }),
+              { status: 200, headers: { "Content-Type": "application/json" } },
+            ),
+          ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { result } = renderHook(() => useAuthSession());
+    await waitFor(() => expect(result.current.authenticated).toBe(true));
+
+    let logoutDone = false;
+    void result.current.logout().then(() => { logoutDone = true; });
+    await waitFor(() => expect(result.current.authenticated).toBe(false));
+    expect(result.current.checked).toBe(true);
+    expect(logoutDone).toBe(false);
+
+    resolveLogout?.(
+      new Response(JSON.stringify({ status: "ok" }), { status: 200 }),
+    );
+    await waitFor(() => expect(logoutDone).toBe(true));
+  });
+
   it("distinguishes an anonymous session from a failed session check", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()

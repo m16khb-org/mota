@@ -232,6 +232,7 @@ button:disabled {
 .account-logout:hover {
   color: var(--ink);
   border-color: var(--ink);
+  background: var(--signal-soft);
 }
 
 .account-logout svg {
