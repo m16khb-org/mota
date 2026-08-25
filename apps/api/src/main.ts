@@ -22,8 +22,11 @@ async function bootstrap() {
     AppModule.register({
       settingsRepository: repository,
       subwayArrivalUpstream: env.subwayArrivalUpstream,
-      verifySession: (cookie) =>
-        verifyGatewaySession(cookie, { baseUrl: env.authGatewayUrl }),
+      verifySession: (cookie, onSetCookie) =>
+        verifyGatewaySession(cookie, {
+          baseUrl: env.authGatewayUrl,
+          onSetCookie,
+        }),
     }),
     new FastifyAdapter({
       logger: true,

@@ -7,9 +7,11 @@ import {
   Headers,
   Inject,
   Put,
+  Res,
   ServiceUnavailableException,
   UnauthorizedException,
 } from "@nestjs/common";
+import type { FastifyReply } from "fastify";
 import { transitSettingsUpdateSchema } from "@mota/contracts/transit-settings";
 import {
   SettingsVersionConflictError,
@@ -40,10 +42,15 @@ export class SettingsController {
     this.repository = repository;
   }
 
-  private async requireUser(cookie: string | undefined) {
+  private async requireUser(
+    cookie: string | undefined,
+    reply: FastifyReply,
+  ) {
     let user: GatewayUser | null;
     try {
-      user = await this.verifySession(cookie);
+      user = await this.verifySession(cookie, (cookies) => {
+        reply.header("set-cookie", [...cookies]);
+      });
     } catch (error) {
       if (error instanceof GatewayUnavailableError) {
         throw new ServiceUnavailableException({
@@ -63,8 +70,11 @@ export class SettingsController {
   }
 
   @Get()
-  async find(@Headers("cookie") cookie: string | undefined) {
-    const user = await this.requireUser(cookie);
+  async find(
+    @Headers("cookie") cookie: string | undefined,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    const user = await this.requireUser(cookie, reply);
     const stored = await this.repository.find(user.sub);
     return stored
       ? { version: stored.version, selections: stored.selections }
@@ -74,9 +84,10 @@ export class SettingsController {
   @Put()
   async save(
     @Headers("cookie") cookie: string | undefined,
+    @Res({ passthrough: true }) reply: FastifyReply,
     @Body() body: unknown,
   ) {
-    const user = await this.requireUser(cookie);
+    const user = await this.requireUser(cookie, reply);
     const parsed = transitSettingsUpdateSchema.safeParse(body);
     if (!parsed.success) {
       throw new BadRequestException({

@@ -50,7 +50,10 @@ export class AppModule {
   static register(options: AppModuleOptions = {}): DynamicModule {
     const apiOptions: ApiOptions = {
       upstreamFetch: options.upstreamFetch ?? fetch,
-      verifySession: options.verifySession ?? verifyGatewaySession,
+      verifySession:
+        options.verifySession ??
+        ((cookie, onSetCookie) =>
+          verifyGatewaySession(cookie, { onSetCookie })),
       settingsRepository:
         options.settingsRepository ?? new UnavailableSettingsRepository(),
       now: options.now,

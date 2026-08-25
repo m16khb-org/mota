@@ -45,9 +45,22 @@ export function createApp(
         headers: Object.fromEntries(new Headers(init.headers).entries()),
         ...(payload === undefined ? {} : { payload }),
       });
+      const headers = new Headers();
+      for (const [name, value] of Object.entries(response.headers)) {
+        if (value === undefined) {
+          continue;
+        }
+        if (Array.isArray(value)) {
+          for (const item of value) {
+            headers.append(name, item);
+          }
+          continue;
+        }
+        headers.set(name, String(value));
+      }
       return new Response(response.body, {
         status: response.statusCode,
-        headers: response.headers as HeadersInit,
+        headers,
       });
     },
   };

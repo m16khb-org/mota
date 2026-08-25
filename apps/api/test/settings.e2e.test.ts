@@ -99,6 +99,27 @@ describe("authenticated user settings routes", () => {
     });
   });
 
+  it("relays rotated gateway cookies while loading settings", async () => {
+    const setCookies = [
+      "agw-access=fresh-access; Max-Age=3600; Domain=.m16khb.xyz; Path=/; HttpOnly; Secure; SameSite=Lax",
+      "agw-refresh=fresh-refresh; Max-Age=2592000; Domain=.m16khb.xyz; Path=/; HttpOnly; Secure; SameSite=Lax",
+    ];
+    const app = createApp(fetch, {
+      settingsRepository: new MemorySettingsRepository(),
+      verifySession: async (_cookie, onSetCookie) => {
+        onSetCookie?.(setCookies);
+        return { sub: "user-1", email: "user-1@example.com" };
+      },
+    });
+
+    const response = await app.request("/api/settings", {
+      headers: { Cookie: "agw-refresh=refresh-token" },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.getSetCookie()).toEqual(setCookies);
+  });
+
   it("stores settings under the shared auth-gateway user id", async () => {
     const { app, repository } = createSettingsApp();
 
