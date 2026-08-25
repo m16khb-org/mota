@@ -45,6 +45,22 @@ pnpm start
 
 `pnpm start` expects built workspace artifacts and the web distribution path configured for the Nest static server.
 
+## Transit catalog cache
+
+The production API asynchronously warms complete bus-stop and subway-station
+catalogs, answers nearby searches by local distance filtering, and refreshes
+each source independently. `TRANSIT_CATALOG_REFRESH_MS` sets the successful
+refresh interval and defaults to `86400000` (24 hours); accepted values are 1
+minute through 7 days. A failed refresh keeps the last complete snapshot and
+retries after 15 minutes.
+
+`GET /api/health` remains a 200 liveness endpoint even while a catalog is
+warming or an upstream source is unavailable. Inspect
+`transitCatalogs.bus` and `transitCatalogs.subway` for `ready`, `count`,
+`updatedAt`, `lastErrorAt`, and `nextRefreshAt`. Production startup rejects
+implausible successful replacements below 10,000 bus stops or 100 subway
+station elements, but this does not make process liveness fail.
+
 ## Docker deployment
 
 ```bash
@@ -64,7 +80,7 @@ curl -fsS -o /dev/null -w '%{http_code}
 ' http://127.0.0.1:3100/
 ```
 
-Expected anonymous results are health 200, `{ "authenticated": false }`, settings 401, and SPA 200. Also exercise one real transit endpoint when outbound network is available.
+Expected anonymous results are health 200, `{ "authenticated": false }`, settings 401, and SPA 200. Also exercise one real transit endpoint when outbound network is available. After a fresh production start, wait for both `transitCatalogs.*.ready` values before treating nearby search warmup as complete.
 
 ## Unknown / not confirmed
 

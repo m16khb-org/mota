@@ -11,7 +11,7 @@ Mota exposes NestJS controllers but does not currently configure Swagger or gene
 
 | Endpoint | Responsibility |
 |---|---|
-| `GET /api/health` | service health |
+| `GET /api/health` | service liveness plus non-gating transit catalog state |
 | `GET /api/auth/session` | anonymous/authenticated session from mota's own cookies |
 | `GET /api/auth/google` | starts the Google PKCE login (host-only flow cookies, account chooser) |
 | `GET /api/auth/callback` | completes login, sets mota session cookies, redirects |
@@ -24,6 +24,14 @@ Mota exposes NestJS controllers but does not currently configure Swagger or gene
 | `GET /api/subway/arrivals` | subway arrivals |
 
 The HTML-only catch-all serves the SPA. `/api/*` and non-HTML unknown paths remain 404 responses.
+
+## Health response
+
+`GET /api/health` always returns HTTP 200 while the process is live. Its
+`transitCatalogs.bus` and `transitCatalogs.subway` objects expose `ready`,
+`count`, `updatedAt`, `lastErrorAt`, and `nextRefreshAt`. A warming or failed
+catalog is observable there but does not fail service liveness; nearby transit
+routes continue to use the established 502 error when no snapshot is available.
 
 ## Contract ownership
 
