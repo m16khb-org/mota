@@ -3,7 +3,9 @@ import {
   BadRequestException,
   Controller,
   Get,
+  HttpCode,
   Inject,
+  Post,
   Query,
   Redirect,
   Req,
@@ -20,11 +22,13 @@ import {
 } from "./pkce";
 import {
   clearFlowCookieStrings,
+  clearSessionCookieStrings,
   flowCookieNames,
   readCookieValue,
   secureCookies,
   serializeFlowCookies,
   serializeSessionCookies,
+  sessionCookieNames,
 } from "./sessionCookies";
 import {
   SupabaseAuthClient,
@@ -71,6 +75,7 @@ export class OAuthController {
 
     const authorizeUrl = new URL(`${config.supabaseUrl}/auth/v1/authorize`);
     authorizeUrl.searchParams.set("provider", "google");
+    authorizeUrl.searchParams.set("prompt", "select_account");
     const callbackUrl = new URL(`${config.publicUrl}/api/auth/callback`);
     callbackUrl.searchParams.set("state", state);
     authorizeUrl.searchParams.set("redirect_to", callbackUrl.toString());
@@ -131,6 +136,32 @@ export class OAuthController {
       ...serializeSessionCookies(secure, session),
     ]);
     return { url: redirectTo };
+  }
+
+  @Post("logout")
+  @HttpCode(200)
+  async logout(
+    @Req() request: FastifyRequest,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ): Promise<{ status: "ok" }> {
+    const config = this.requireConfig();
+    const secure = secureCookies(config.publicUrl);
+    const names = sessionCookieNames(secure);
+    const accessToken = readCookieValue(request.headers.cookie, names.access);
+    const refreshToken = readCookieValue(request.headers.cookie, names.refresh);
+    reply.header("set-cookie", clearSessionCookieStrings(secure));
+    if (accessToken !== null && refreshToken !== null) {
+      // 쿠키는 이미 지웠다 — 서버측 세션 폐기 실패가 로그아웃을 실패시키지 않는다
+      try {
+        await new SupabaseAuthClient(config).revokeSession(
+          accessToken,
+          refreshToken,
+        );
+      } catch {
+        // best-effort
+      }
+    }
+    return { status: "ok" };
   }
 
   private requireConfig(): OAuthConfig {

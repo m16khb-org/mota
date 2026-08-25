@@ -1,10 +1,11 @@
-import { CircleCheck, LogIn } from "lucide-react";
+import { CircleCheck, LogIn, LogOut } from "lucide-react";
 import type { AuthSessionState } from "../hooks/useAuthSession";
 import type { TransitSyncStatus } from "../hooks/useTransitSelections";
 
 interface GoogleLoginProps {
   readonly session: AuthSessionState;
   readonly syncStatus?: TransitSyncStatus;
+  readonly onLogout?: (() => void | Promise<void>) | undefined;
 }
 
 const syncLabel: Record<TransitSyncStatus, string> = {
@@ -18,6 +19,7 @@ const syncLabel: Record<TransitSyncStatus, string> = {
 export function GoogleLogin({
   session,
   syncStatus = "local",
+  onLogout,
 }: GoogleLoginProps) {
   if (!session.checked) {
     return <span className="account-checking">로그인 확인 중</span>;
@@ -25,12 +27,24 @@ export function GoogleLogin({
 
   if (session.authenticated && session.user) {
     return (
-      <span className="account-user">
-        <CircleCheck aria-hidden="true" />
-        <span>
-          <strong>{session.user.email ?? "로그인됨"}</strong>
-          <small>{syncLabel[syncStatus]}</small>
+      <span className="account">
+        <span className="account-user">
+          <CircleCheck aria-hidden="true" />
+          <span>
+            <strong>{session.user.email ?? "로그인됨"}</strong>
+            <small>{syncLabel[syncStatus]}</small>
+          </span>
         </span>
+        {onLogout ? (
+          <button
+            type="button"
+            className="account-logout"
+            onClick={() => void onLogout()}
+          >
+            <LogOut aria-hidden="true" />
+            로그아웃
+          </button>
+        ) : null}
       </span>
     );
   }

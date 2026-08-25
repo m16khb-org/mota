@@ -6,9 +6,10 @@ import { GoogleLogin } from "./GoogleLogin";
 interface BrandHeaderProps {
   readonly session: AuthSessionState;
   readonly syncStatus: TransitSyncStatus;
+  readonly onLogout?: (() => void | Promise<void>) | undefined;
 }
 
-export function BrandHeader({ session, syncStatus }: BrandHeaderProps) {
+export function BrandHeader({ session, syncStatus, onLogout }: BrandHeaderProps) {
   return (
     <header className="brand-header">
       <div className="brand-mark" aria-hidden="true">
@@ -18,7 +19,11 @@ export function BrandHeader({ session, syncStatus }: BrandHeaderProps) {
         <h1>모타</h1>
         <p>지금, 뭐 타?</p>
       </div>
-      <GoogleLogin session={session} syncStatus={syncStatus} />
+      <GoogleLogin
+        session={session}
+        syncStatus={syncStatus}
+        onLogout={onLogout}
+      />
     </header>
   );
 }

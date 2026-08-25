@@ -2,7 +2,7 @@ import {
   authSessionResponseSchema,
   type AuthUser,
 } from "@mota/contracts/auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface AuthSessionState {
   readonly authenticated: boolean;
@@ -18,7 +18,16 @@ const INITIAL_SESSION: AuthSessionState = {
   error: null,
 };
 
-export function useAuthSession(): AuthSessionState {
+const ANONYMOUS_SESSION: AuthSessionState = {
+  authenticated: false,
+  checked: true,
+  user: null,
+  error: null,
+};
+
+export function useAuthSession(): AuthSessionState & {
+  readonly logout: () => Promise<void>;
+} {
   const [session, setSession] =
     useState<AuthSessionState>(INITIAL_SESSION);
 
@@ -71,5 +80,18 @@ export function useAuthSession(): AuthSessionState {
     };
   }, []);
 
-  return session;
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        signal: AbortSignal.timeout(8_000),
+      });
+    } catch {
+      // 서버 쿠키 정리 실패여도 로컬 상태는 익명으로 되돌린다
+    }
+    setSession(ANONYMOUS_SESSION);
+  }, []);
+
+  return { ...session, logout };
 }

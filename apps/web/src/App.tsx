@@ -117,7 +117,11 @@ export function App() {
       </p>
 
       <aside className="control-rail">
-        <BrandHeader session={session} syncStatus={syncStatus} />
+        <BrandHeader
+          session={session}
+          syncStatus={syncStatus}
+          onLogout={session.logout}
+        />
         <div className="rail-scroll">
           <TransitPointSelector
             mode={mode}

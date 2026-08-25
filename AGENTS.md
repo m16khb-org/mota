@@ -28,8 +28,11 @@ packages/db/          Drizzle Postgres schema, migration, repository
 
 ## Authentication and settings
 
-- Public login: `/api/auth/google` (PKCE, host-only flow cookies).
+- Public login: `/api/auth/google` (PKCE, host-only flow cookies,
+  `prompt=select_account` so Google always shows its account chooser).
 - OAuth callback: `/api/auth/callback` (allow-listed in Supabase URL config).
+- Logout: `POST /api/auth/logout` clears mota cookies and revokes the
+  Supabase session best-effort.
 - Session cookies: host-only `__Host-mota-access` / `__Host-mota-refresh`;
   never a `Domain` attribute, never forwarded to another service.
 - Token verification is local: JWKS, ES256, issuer, audience, `role`

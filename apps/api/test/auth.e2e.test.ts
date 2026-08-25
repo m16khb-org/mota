@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "./create-test-app";
 import { startFakeSupabase, type FakeSupabase } from "./fake-supabase";
 
@@ -7,6 +7,10 @@ describe("auth routes", () => {
 
   beforeAll(async () => {
     supabase = await startFakeSupabase();
+  });
+
+  beforeEach(() => {
+    supabase.signoutRequests.length = 0;
   });
 
   afterAll(async () => {
@@ -100,6 +104,7 @@ describe("auth routes", () => {
       `${supabase.url}/auth/v1/authorize`,
     );
     expect(location.searchParams.get("provider")).toBe("google");
+    expect(location.searchParams.get("prompt")).toBe("select_account");
     expect(location.searchParams.get("code_challenge_method")).toBe("S256");
     expect(location.searchParams.get("code_challenge")).toMatch(/^[\w-]+$/);
     const redirectTo = new URL(
@@ -206,6 +211,44 @@ describe("auth routes", () => {
     );
 
     expect(response.status).toBe(401);
+  });
+
+  it("logs out by clearing session cookies and revoking the session", async () => {
+    const app = createAuthApp();
+
+    const response = await app.request("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        Cookie: "mota-access=token; mota-refresh=refresh-token",
+      },
+    });
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ status: "ok" });
+    const cookies = response.headers.getSetCookie();
+    expect(cookies.length).toBe(2);
+    for (const cookie of cookies) {
+      expect(cookie).toContain("Max-Age=0");
+      expect(cookie).not.toContain("Domain=");
+    }
+    expect(supabase.signoutRequests).toEqual([
+      { refreshToken: "refresh-token" },
+    ]);
+
+    const session = await app.request("/api/auth/session");
+    await expect(session.json()).resolves.toEqual({ authenticated: false });
+  });
+
+  it("logs out anonymously without calling Supabase", async () => {
+    const app = createAuthApp();
+
+    const response = await app.request("/api/auth/logout", {
+      method: "POST",
+    });
+
+    expect(response.status).toBe(200);
+    expect(supabase.signoutRequests).toEqual([]);
+    expect(response.headers.getSetCookie().length).toBe(2);
   });
 
   it("rotates an expired access token from the refresh cookie", async () => {

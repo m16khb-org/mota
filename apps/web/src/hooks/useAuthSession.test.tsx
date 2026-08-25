@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useAuthSession } from "./useAuthSession";
 
@@ -35,6 +35,42 @@ describe("useAuthSession", () => {
         credentials: "include",
         signal: expect.any(AbortSignal),
       }),
+    );
+  });
+
+  it("resets to an anonymous session after logout", async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ authenticated: true, user: { sub: "user-1", email: "mota@example.com" } }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ status: "ok" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { result } = renderHook(() => useAuthSession());
+    await waitFor(() => expect(result.current.authenticated).toBe(true));
+
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    expect(result.current).toMatchObject({
+      authenticated: false,
+      checked: true,
+      user: null,
+      error: null,
+    });
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      "/api/auth/logout",
+      expect.objectContaining({ method: "POST", credentials: "include" }),
     );
   });
 

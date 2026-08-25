@@ -5,6 +5,7 @@ export interface FakeSupabase {
   readonly url: string;
   readonly issuer: string;
   readonly jwksUrl: string;
+  readonly signoutRequests: { readonly refreshToken: string }[];
   close(): Promise<void>;
   signAccessToken(claims: {
     readonly sub: string;
@@ -20,6 +21,7 @@ export interface FakeSupabase {
 export async function startFakeSupabase(): Promise<FakeSupabase> {
   const { publicKey, privateKey } = await generateKeyPair("ES256");
   const publicJwk = await exportJWK(publicKey);
+  const signoutRequests: { refreshToken: string }[] = [];
 
   const server: Server = createServer((request, response) => {
     const url = new URL(request.url ?? "/", "http://localhost");
@@ -43,6 +45,23 @@ export async function startFakeSupabase(): Promise<FakeSupabase> {
           expires_in: 3600,
           token_type: "bearer",
         });
+      });
+      return;
+    }
+    if (request.method === "POST" && url.pathname === "/auth/v1/signout") {
+      let body = "";
+      request.on("data", (chunk: Buffer) => {
+        body += chunk.toString();
+      });
+      request.on("end", () => {
+        let refreshToken = "";
+        try {
+          refreshToken = String(JSON.parse(body || "{}").refresh_token ?? "");
+        } catch {
+          refreshToken = "";
+        }
+        signoutRequests.push({ refreshToken });
+        respond(response, 200, {});
       });
       return;
     }
@@ -83,6 +102,7 @@ export async function startFakeSupabase(): Promise<FakeSupabase> {
     url,
     issuer: `${url}/auth/v1`,
     jwksUrl: `${url}/auth/v1/.well-known/jwks.json`,
+    signoutRequests,
     async signAccessToken(claims) {
       return signToken(claims);
     },

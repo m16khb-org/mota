@@ -203,6 +203,43 @@ button:disabled {
   white-space: nowrap;
 }
 
+.account {
+  display: inline-flex;
+  min-width: 0;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-logout {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 720;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.account-logout:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.account-logout svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
 .account-user {
   display: grid;
   min-width: 0;
@@ -976,6 +1013,15 @@ select:focus-visible {
     padding-inline-start: 8px;
   }
 
+  .account {
+    gap: 4px;
+  }
+
+  .account-logout {
+    gap: 4px;
+    padding: 0 8px;
+  }
+
   .picker-footer {
     align-items: stretch;
     flex-direction: column;
@@ -1004,6 +1050,7 @@ select:focus-visible {
   .primary-button,
   .secondary-button,
   .google-login,
+  .account-logout,
   .stop-result {
     transition-duration: 1ms;
   }

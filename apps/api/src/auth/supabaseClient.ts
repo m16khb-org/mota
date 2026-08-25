@@ -57,6 +57,33 @@ export class SupabaseAuthClient {
     });
   }
 
+  async revokeSession(
+    accessToken: string,
+    refreshToken: string,
+  ): Promise<void> {
+    let response: Response;
+    try {
+      response = await this.config.fetcher(
+        `${this.config.supabaseUrl}/auth/v1/signout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: this.config.anonKey,
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+          signal: AbortSignal.timeout(10_000),
+        },
+      );
+    } catch {
+      throw new SupabaseUnavailableError();
+    }
+    if (!response.ok) {
+      throw new SupabaseAuthError("signout");
+    }
+  }
+
   private async requestSession(
     grantQuery: string,
     body: Record<string, string>,

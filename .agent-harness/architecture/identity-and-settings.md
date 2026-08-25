@@ -15,7 +15,8 @@ separate, host-only session that never reaches this service.
 1. The browser navigates to `GET /api/auth/google` with a same-site
    `return_to` path. The API issues short-lived host-only PKCE flow cookies
    (`mota-oauth-verifier`, `mota-oauth-state`, `mota-return-url`) and
-   redirects to Supabase `/auth/v1/authorize` (Google, S256).
+   redirects to Supabase `/auth/v1/authorize` (Google, S256,
+   `prompt=select_account` so Google always shows its account chooser).
 2. Supabase calls back at `GET /api/auth/callback` (allow-listed in the
    Supabase URL configuration). The API validates `state`, exchanges the code
    server-side, clears the flow cookies, and sets host-only session cookies
@@ -29,6 +30,9 @@ separate, host-only session that never reaches this service.
    grant and relays both rotated cookies to the browser.
 5. Mota uses only the verified `sub` claim as `auth_user_id`. The shared
    Supabase project keeps the user id identical across sibling services.
+6. `POST /api/auth/logout` clears both session cookies and revokes the
+   Supabase session server-side (best-effort); anonymous selections are
+   restored from localStorage.
 
 Mota stores no user rows. A rejected refresh becomes an anonymous session;
 Supabase Auth outages surface as `503`.

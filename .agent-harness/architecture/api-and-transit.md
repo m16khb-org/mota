@@ -23,6 +23,7 @@ GET  /api/health
 GET  /api/auth/session
 GET  /api/auth/google
 GET  /api/auth/callback
+POST /api/auth/logout
 GET  /api/settings
 PUT  /api/settings
 GET  /api/stops/nearby

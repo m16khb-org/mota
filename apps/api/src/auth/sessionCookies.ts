@@ -114,6 +114,13 @@ export function clearFlowCookieStrings(secure: boolean): string[] {
   );
 }
 
+export function clearSessionCookieStrings(secure: boolean): string[] {
+  const names = sessionCookieNames(secure);
+  return [names.access, names.refresh].map((name) =>
+    serialize(name, "", { ...cookieOptions(secure), maxAge: 0 }),
+  );
+}
+
 function cookieOptions(secure: boolean): CookieOptions {
   return {
     httpOnly: true,

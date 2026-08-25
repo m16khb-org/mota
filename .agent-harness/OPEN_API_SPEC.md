@@ -13,8 +13,9 @@ Mota exposes NestJS controllers but does not currently configure Swagger or gene
 |---|---|
 | `GET /api/health` | service health |
 | `GET /api/auth/session` | anonymous/authenticated session from mota's own cookies |
-| `GET /api/auth/google` | starts the Google PKCE login (host-only flow cookies) |
+| `GET /api/auth/google` | starts the Google PKCE login (host-only flow cookies, account chooser) |
 | `GET /api/auth/callback` | completes login, sets mota session cookies, redirects |
+| `POST /api/auth/logout` | clears mota session cookies, revokes the Supabase session |
 | `GET /api/settings` | authenticated user's versioned settings |
 | `PUT /api/settings` | compare-and-swap settings update |
 | `GET /api/stops/nearby` | nearby Seoul bus stops |
