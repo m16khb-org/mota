@@ -122,14 +122,15 @@ button:disabled {
   display: grid;
   width: 48px;
   height: 48px;
+  flex: 0 0 48px;
   place-items: center;
-  color: var(--signal);
-  background: var(--ink);
+  overflow: hidden;
 }
 
-.brand-mark svg {
-  width: 26px;
-  height: 26px;
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .brand-copy {

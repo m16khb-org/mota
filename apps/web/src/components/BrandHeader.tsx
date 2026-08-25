@@ -1,4 +1,3 @@
-import { Clock3 } from "lucide-react";
 import type { AuthSessionState } from "../hooks/useAuthSession";
 import type { TransitSyncStatus } from "../hooks/useTransitSelections";
 import { GoogleLogin } from "./GoogleLogin";
@@ -13,7 +12,12 @@ export function BrandHeader({ session, syncStatus, onLogout }: BrandHeaderProps)
   return (
     <header className="brand-header">
       <div className="brand-mark" aria-hidden="true">
-        <Clock3 />
+        <img
+          src="/pwa-icon.svg"
+          alt=""
+          width="48"
+          height="48"
+        />
       </div>
       <div className="brand-copy">
         <h1>모타</h1>
