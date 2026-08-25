@@ -12,6 +12,7 @@ Canonical index: [CAUTIONS.md](../CAUTIONS.md).
 - [Fastify static fallback route collisions](2026-08-23-fastify-static-fallback-route-collisions.md)
 - [Docker runtime must include workspace packages](2026-08-23-docker-runtime-must-include-workspace-packages.md)
 - [Authenticated settings must not leak to anonymous storage](2026-08-23-authenticated-settings-must-not-leak-to-anonymous-storage.md)
+- [Access-token expiry requires refresh-cookie relay](2026-08-25-access-token-expiry-requires-refresh-cookie-relay.md)
 
 ## Recording rule
 

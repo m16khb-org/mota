@@ -13,13 +13,17 @@ auth-gateway is the only authentication authority.
 
 1. The browser navigates to `https://auth.m16khb.xyz/auth/google`.
 2. auth-gateway owns Google OAuth, Supabase, JWT validation, and its user DB.
-3. auth-gateway writes the `agw-access` cookie.
-4. Mota extracts that cookie token and sends it as Bearer auth to the internal
-   `auth-gateway /me` endpoint.
-5. Mota uses only the returned `sub` as the shared `auth_user_id`.
+3. auth-gateway writes shared-domain `agw-access` and `agw-refresh` cookies.
+4. Mota sends `agw-access` as Bearer auth to the internal `auth-gateway /me`
+   endpoint.
+5. When the access cookie is absent or rejected, Mota sends `agw-refresh` to
+   `auth-gateway /auth/refresh`, relays both rotated `Set-Cookie` headers to
+   the browser, and verifies the new access token through `/me`.
+6. Mota uses only the returned `sub` as the shared `auth_user_id`.
 
 Mota does not verify Supabase tokens, query Supabase, or create a duplicate
-user table. Gateway outages return `503`, not an anonymous session.
+user table. A rejected refresh becomes an anonymous session; gateway outages
+return `503`.
 
 ## Settings database
 
