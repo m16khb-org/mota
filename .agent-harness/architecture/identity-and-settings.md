@@ -1,6 +1,6 @@
 ---
 name: identity-and-settings
-description: Supabase PKCE identity ownership and versioned Drizzle settings persistence.
+description: Supabase PKCE identity ownership and versioned Drizzle commute settings persistence.
 ---
 
 # Identity and Settings
@@ -56,6 +56,18 @@ user_settings
 cross-database foreign key or local user copy. Existing rows written under
 the previous gateway-era flow keep working because the `sub` value is the
 same Supabase user id.
+
+The canonical `selections` document contains two independent contexts:
+
+```text
+selections.commutes.toWork  -> bus stops, watched stop ids, subway stations, selected station id
+selections.commutes.toHome  -> bus stops, watched stop ids, subway stations, selected station id
+```
+
+A mutation targets exactly one context. A legacy flat selection document is
+parsed at the shared Zod boundary and copied into both contexts so existing
+anonymous and authenticated users lose no saved points; the next save writes
+the canonical nested shape. The JSONB column needs no SQL migration.
 
 Writes use compare-and-swap versions:
 

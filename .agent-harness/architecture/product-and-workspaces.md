@@ -9,11 +9,13 @@ Canonical index: [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## Product boundary
 
-Mota does one job: select a Seoul bus stop or subway station/direction and
-show at most the next three arrivals.
+Mota does one job: choose the `출근` or `퇴근` context, select that context's
+Seoul bus stops or subway station/direction, and show at most the next three
+arrivals.
 
-The active product does not include commute procedures, named home/company
-places, favorites, journey ETA calculation, or route-station planning.
+The two contexts separate saved transit points only. The active product still
+does not include ordered commute procedures, named home/company places,
+favorites, journey ETA calculation, or route-station planning.
 
 ## Workspace ownership
 
@@ -37,7 +39,8 @@ Dependency direction is normative in [overview.md](overview.md).
 
 - `useAuthSession` reads the same-origin `/api/auth/session`.
 - `GoogleLogin` sends anonymous users to the same-origin `/api/auth/google` PKCE login.
-- `useTransitSelections` keeps anonymous selections in localStorage.
+- `CommuteContextSelector` switches between independent `toWork` and `toHome` selections.
+- `useTransitSelections` keeps anonymous selections in localStorage and scopes every mutation to one commute context.
 - Authenticated selections load and save through `/api/settings`.
 - Authenticated settings never overwrite the anonymous localStorage document.
 - `ArrivalList` and `SubwayArrivalList` render at most three rows.
