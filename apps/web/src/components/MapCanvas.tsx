@@ -434,40 +434,54 @@ export function MapCanvas({
         })}
         {pendingStops
           .filter((stop) => !savedStopIds.has(stop.id))
-          .map((stop) => (
-            <MapPointMarker
-              key={`pending-${stop.id}`}
-              label={`${stop.name} 정류장, ARS ${stop.arsId}, 눌러서 추가`}
-              active={false}
-              onSelect={() => onAddPending?.(stop)}
-              center={{ lat: stop.lat, lng: stop.lng }}
-              visualClassName="map-marker-pending"
-            >
-              <Popup>
-                <strong>{stop.name}</strong>
-                <br />
-                ARS {stop.arsId} · 눌러서 경로에 추가
-              </Popup>
-            </MapPointMarker>
-          ))}
+          .map((stop) => {
+            const active = selectedStopIds.includes(stop.id);
+            return (
+              <MapPointMarker
+                key={`pending-${stop.id}`}
+                label={`${stop.name} 정류장, ARS ${stop.arsId}, 눌러서 추가`}
+                active={active}
+                onSelect={() => onAddPending?.(stop)}
+                center={{ lat: stop.lat, lng: stop.lng }}
+                visualClassName={
+                  active
+                    ? "map-marker-pending is-active"
+                    : "map-marker-pending"
+                }
+              >
+                <Popup>
+                  <strong>{stop.name}</strong>
+                  <br />
+                  ARS {stop.arsId} · 눌러서 선택
+                </Popup>
+              </MapPointMarker>
+            );
+          })}
         {pendingSubwayStations
           .filter((station) => !savedStationIds.has(station.id))
-          .map((station) => (
-            <MapPointMarker
-              key={`pending-subway-${station.id}`}
-              label={`${station.name} 지하철역, ${stationDisplayLine(station)}, 눌러서 추가`}
-              active={false}
-              onSelect={() => onAddPendingSubway?.(station)}
-              center={{ lat: station.lat, lng: station.lng }}
-              visualClassName="map-marker-pending-subway"
-            >
-              <Popup>
-                <strong>{station.name}</strong>
-                <br />
-                {stationDisplayLine(station)} · 눌러서 경로에 추가
-              </Popup>
-            </MapPointMarker>
-          ))}
+          .map((station) => {
+            const active = selectedSubwayStationIds.includes(station.id);
+            return (
+              <MapPointMarker
+                key={`pending-subway-${station.id}`}
+                label={`${station.name} 지하철역, ${stationDisplayLine(station)}, 눌러서 추가`}
+                active={active}
+                onSelect={() => onAddPendingSubway?.(station)}
+                center={{ lat: station.lat, lng: station.lng }}
+                visualClassName={
+                  active
+                    ? "map-marker-pending-subway is-active"
+                    : "map-marker-pending-subway"
+                }
+              >
+                <Popup>
+                  <strong>{station.name}</strong>
+                  <br />
+                  {stationDisplayLine(station)} · 눌러서 선택
+                </Popup>
+              </MapPointMarker>
+            );
+          })}
         {subwayStations.map((station) => {
           const active = selectedSubwayStationIds.includes(station.id);
           return (

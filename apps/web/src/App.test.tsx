@@ -89,49 +89,61 @@ const subwayArrivals: readonly SubwayArrival[] = [
   },
 ];
 
-vi.mock("./components/MapPicker", () => ({
-  MapPicker: ({ onSave }: { onSave: (stops: readonly BusStop[]) => void }) => (
-    <div>
-      <button type="button" onClick={() => onSave([busStop])}>
-        테스트 정류장 선택
-      </button>
-      <button type="button" onClick={() => onSave([busStop2])}>
-        테스트 정류장 2 선택
-      </button>
-    </div>
-  ),
-}));
-
-vi.mock("./components/SubwayPicker", () => ({
-  SubwayPicker: ({
-    onSave,
-  }: {
-    onSave: (stations: readonly SubwayStation[]) => void;
-  }) => (
-    <div>
-      <button type="button" onClick={() => onSave([subwayStation])}>
-        테스트 역 선택
-      </button>
-      <button type="button" onClick={() => onSave([subwayStation2])}>
-        테스트 역 2 선택
-      </button>
-    </div>
-  ),
-}));
-
 vi.mock("./components/MapStage", () => ({
   MapStage: ({
     stops,
     subwayStations,
+    searchMode,
+    onSaveBusStops,
+    onSaveSubwayStations,
   }: {
     stops: readonly BusStop[];
     subwayStations: readonly SubwayStation[];
+    searchMode: "bus" | "subway" | null;
+    onSaveBusStops: (stops: readonly BusStop[]) => void;
+    onSaveSubwayStations: (
+      stations: readonly SubwayStation[],
+    ) => void;
   }) => (
     <section
       aria-label="선택한 정류장과 역 지도"
       data-stop-count={stops.length}
       data-station-count={subwayStations.length}
-    />
+      data-search-mode={searchMode ?? ""}
+    >
+      {searchMode === "bus" ? (
+        <>
+          <button
+            type="button"
+            onClick={() => onSaveBusStops([busStop])}
+          >
+            테스트 정류장 선택
+          </button>
+          <button
+            type="button"
+            onClick={() => onSaveBusStops([busStop2])}
+          >
+            테스트 정류장 2 선택
+          </button>
+        </>
+      ) : null}
+      {searchMode === "subway" ? (
+        <>
+          <button
+            type="button"
+            onClick={() => onSaveSubwayStations([subwayStation])}
+          >
+            테스트 역 선택
+          </button>
+          <button
+            type="button"
+            onClick={() => onSaveSubwayStations([subwayStation2])}
+          >
+            테스트 역 2 선택
+          </button>
+        </>
+      ) : null}
+    </section>
   ),
 }));
 
@@ -193,6 +205,23 @@ describe("App minimal arrivals flow", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText(/절차/)).not.toBeInTheDocument();
     expect(screen.queryByText(/즐겨찾기/)).not.toBeInTheDocument();
+  });
+
+  it("opens bus and subway finding on the current map instead of a dialog", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "정류장 찾기" }));
+    expect(
+      screen.getByRole("region", { name: "선택한 정류장과 역 지도" }),
+    ).toHaveAttribute("data-search-mode", "bus");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "지하철" }));
+    fireEvent.click(screen.getByRole("button", { name: "역 찾기" }));
+    expect(
+      screen.getByRole("region", { name: "선택한 정류장과 역 지도" }),
+    ).toHaveAttribute("data-search-mode", "subway");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("keeps bus stop settings independent between commute contexts", async () => {

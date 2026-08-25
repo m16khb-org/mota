@@ -6,10 +6,8 @@ import {
 import { ArrivalList } from "./components/ArrivalList";
 import { BrandHeader } from "./components/BrandHeader";
 import { CommuteContextSelector } from "./components/CommuteContextSelector";
-import { MapPicker } from "./components/MapPicker";
 import { MapStage } from "./components/MapStage";
 import { SubwayArrivalList } from "./components/SubwayArrivalList";
-import { SubwayPicker } from "./components/SubwayPicker";
 import {
   TransitPointSelector,
   type TransitMode,
@@ -28,7 +26,7 @@ export function App() {
   const session = useAuthSession();
   const [commute, setCommute] = useState<CommuteContext>("toWork");
   const [mode, setMode] = useState<TransitMode>("bus");
-  const [pickerMode, setPickerMode] = useState<TransitMode | null>(null);
+  const [searchMode, setSearchMode] = useState<TransitMode | null>(null);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
   const {
     selections,
@@ -78,6 +76,13 @@ export function App() {
     ? { lat: mapAnchor.lat, lng: mapAnchor.lng }
     : DEFAULT_MAP_CENTER;
 
+  const closeSearch = () => {
+    setSearchMode(null);
+    queueMicrotask(() => {
+      document.getElementById("point-search-trigger")?.focus();
+    });
+  };
+
   const saveStops = (stops: readonly BusStop[]) => {
     addBusStops(commute, stops);
     const first = stops[0];
@@ -87,7 +92,7 @@ export function App() {
       );
     }
     setMode("bus");
-    setPickerMode(null);
+    closeSearch();
   };
 
   const saveStations = (stations: readonly SubwayStation[]) => {
@@ -99,7 +104,7 @@ export function App() {
       );
     }
     setMode("subway");
-    setPickerMode(null);
+    closeSearch();
   };
 
   const toggleStopSelection = (stopId: BusStop["id"]) => {
@@ -146,6 +151,7 @@ export function App() {
             activeContext={commute}
             commutes={selections.commutes}
             onChange={(nextCommute) => {
+              setSearchMode(null);
               setCommute(nextCommute);
               setSaveAnnouncement(
                 `${nextCommute === "toWork" ? "출근" : "퇴근"} 설정을 보고 있어요.`,
@@ -160,8 +166,16 @@ export function App() {
             selectedSubwayStationId={
               activeSelections.selectedSubwayStationId
             }
-            onModeChange={setMode}
-            onAdd={() => setPickerMode(mode)}
+            searching={searchMode === mode}
+            onModeChange={(nextMode) => {
+              setSearchMode(null);
+              setMode(nextMode);
+            }}
+            onAdd={() =>
+              setSearchMode((current) =>
+                current === mode ? null : mode,
+              )
+            }
             onSelectBusStop={toggleStopSelection}
             onSelectSubwayStation={(stationId) => {
               selectSubwayStation(commute, stationId);
@@ -238,6 +252,10 @@ export function App() {
         selectedSubwayStation={selectedStation}
         center={mapCenter}
         isDesktop={isDesktop}
+        searchMode={searchMode}
+        onCancelSearch={closeSearch}
+        onSaveBusStops={saveStops}
+        onSaveSubwayStations={saveStations}
         onSelectStop={(stop) => {
           toggleStopSelection(stop.id);
         }}
@@ -246,21 +264,6 @@ export function App() {
           setMode("subway");
         }}
       />
-
-      {pickerMode === "bus" ? (
-        <MapPicker
-          initialStop={null}
-          onClose={() => setPickerMode(null)}
-          onSave={saveStops}
-        />
-      ) : null}
-      {pickerMode === "subway" ? (
-        <SubwayPicker
-          initialCenter={mapCenter}
-          onClose={() => setPickerMode(null)}
-          onSave={saveStations}
-        />
-      ) : null}
     </main>
   );
 }

@@ -848,6 +848,7 @@ select:focus-visible {
 
 .map-marker-pending {
   stroke: var(--route-blue);
+  stroke-dasharray: 5 3;
   fill: var(--surface);
 }
 
@@ -855,6 +856,13 @@ select:focus-visible {
   stroke: var(--subway);
   stroke-dasharray: 5 3;
   fill: var(--surface);
+}
+
+.map-marker-pending.is-active,
+.map-marker-pending-subway.is-active {
+  stroke: var(--ink);
+  stroke-dasharray: none;
+  fill: var(--signal);
 }
 
 .map-marker-bus.is-active {
@@ -1352,6 +1360,11 @@ select:focus-visible {
   background: var(--signal);
 }
 
+.add-point-button.is-active {
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+
 .point-empty {
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr);
@@ -1678,6 +1691,210 @@ select:focus-visible {
   height: 17px;
 }
 
+.inline-map-search {
+  position: absolute;
+  z-index: 600;
+  inset: 16px;
+  pointer-events: none;
+}
+
+.inline-map-search:focus {
+  outline: none;
+}
+
+.inline-map-search-toolbar,
+.inline-map-search-results {
+  pointer-events: auto;
+}
+
+.inline-map-search-toolbar {
+  display: flex;
+  width: min(520px, calc(100% - 64px));
+  min-height: 72px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  color: var(--on-ink);
+  background: var(--ink-overlay-panel);
+  box-shadow: var(--shadow-control);
+}
+
+.inline-map-search-toolbar > div:first-child {
+  min-width: 0;
+}
+
+.inline-map-search-toolbar .eyebrow {
+  color: var(--stage-muted);
+}
+
+.inline-map-search-toolbar strong {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 0.9375rem;
+}
+
+.inline-map-search-toolbar strong svg,
+.inline-map-search-actions svg,
+.inline-map-search-status button svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.inline-map-search-toolbar strong svg {
+  color: var(--signal);
+}
+
+.inline-map-search-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.map-search-secondary,
+.map-search-primary,
+.inline-map-search-status button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 720;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.map-search-secondary {
+  border: 1px solid var(--stage-line);
+  color: var(--on-ink);
+  background: var(--ink-overlay-quiet);
+}
+
+.map-search-secondary:hover {
+  border-color: var(--on-ink);
+  background: var(--ink);
+}
+
+.map-search-primary {
+  border: 1px solid var(--signal);
+  color: var(--signal-ink);
+  background: var(--signal);
+}
+
+.map-search-primary:hover:not(:disabled) {
+  border-color: var(--on-ink);
+}
+
+.map-search-secondary:active,
+.map-search-primary:active:not(:disabled),
+.inline-map-search-status button:active:not(:disabled),
+.inline-map-result-reel button:active {
+  transform: scale(0.98);
+}
+
+.inline-map-search-results {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: min(680px, 100%);
+  padding: 12px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.inline-map-search-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inline-map-search-status p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.inline-map-search-status button {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.inline-map-search-status button:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--paper);
+}
+
+.inline-map-result-reel {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0 0 2px;
+  border: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+}
+
+.inline-map-result-reel button {
+  display: grid;
+  min-width: min(152px, 70vw);
+  min-height: 52px;
+  align-content: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  text-align: left;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 120ms ease;
+}
+
+.inline-map-result-reel button:hover,
+.inline-map-result-reel button[aria-pressed="true"] {
+  border-color: var(--ink);
+}
+
+.inline-map-result-reel button[aria-pressed="true"] {
+  background: var(--signal-soft);
+  box-shadow: inset 4px 0 var(--signal);
+}
+
+.inline-map-result-reel strong,
+.inline-map-result-reel small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inline-map-result-reel strong {
+  font-size: 0.8125rem;
+}
+
+.inline-map-result-reel small {
+  color: var(--muted);
+  font-size: 0.6875rem;
+}
+
 .stage-live-map .leaflet-tile-pane {
   filter: saturate(0.72) contrast(0.94) brightness(1.03);
 }
@@ -1746,6 +1963,39 @@ select:focus-visible {
     flex-basis: 55dvh;
     height: 55dvh;
   }
+
+  .inline-map-search {
+    inset: 12px;
+  }
+
+  .inline-map-search-toolbar {
+    width: calc(100% - 56px);
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .inline-map-search-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inline-map-search-results {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .inline-map-search-status {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .inline-map-search-status button {
+    width: 100%;
+  }
 }
 
 @media (max-width: 420px) {
@@ -1774,6 +2024,10 @@ select:focus-visible {
   .transit-tab,
   .commute-tab,
   .add-point-button,
+  .map-search-secondary,
+  .map-search-primary,
+  .inline-map-search-status button,
+  .inline-map-result-reel button,
   .point-select,
   .point-remove,
   .refresh-button,

@@ -2,7 +2,10 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { BusStop } from "../domain/bus";
 import type { SubwayStation } from "../domain/subway";
+import { useInlineMapSearch } from "../hooks/useInlineMapSearch";
+import { InlineMapSearchControls } from "./InlineMapSearchControls";
 import { MapCanvas } from "./MapCanvas";
+import type { TransitMode } from "./TransitPointSelector";
 
 interface Point {
   readonly lat: number;
@@ -16,6 +19,12 @@ interface MapStageProps {
   readonly selectedSubwayStation: SubwayStation | null;
   readonly center: Point;
   readonly isDesktop: boolean;
+  readonly searchMode: TransitMode | null;
+  readonly onCancelSearch: () => void;
+  readonly onSaveBusStops: (stops: readonly BusStop[]) => void;
+  readonly onSaveSubwayStations: (
+    stations: readonly SubwayStation[],
+  ) => void;
   readonly onSelectStop: (stop: BusStop) => void;
   readonly onSelectSubwayStation: (station: SubwayStation) => void;
 }
@@ -27,6 +36,10 @@ export function MapStage({
   selectedSubwayStation,
   center,
   isDesktop,
+  searchMode,
+  onCancelSearch,
+  onSaveBusStops,
+  onSaveSubwayStations,
   onSelectStop,
   onSelectSubwayStation,
 }: MapStageProps) {
@@ -34,6 +47,13 @@ export function MapStage({
   const [mapExpanded, setMapExpanded] = useState(false);
   const hasSelection =
     selectedStops.length > 0 || selectedSubwayStation !== null;
+  const searching = searchMode !== null;
+  const search = useInlineMapSearch({
+    mode: searchMode,
+    center: mapCenter,
+    savedStops: stops,
+    savedStations: subwayStations,
+  });
 
   useEffect(() => {
     setMapCenter(center);
@@ -41,9 +61,11 @@ export function MapStage({
 
   return (
     <section
-      className={`map-stage${mapExpanded ? " is-expanded" : ""}${
+      className={`map-stage${
+        mapExpanded || searching ? " is-expanded" : ""
+      }${
         hasSelection ? " has-selection" : ""
-      }`}
+      }${searching ? " is-searching" : ""}`}
       aria-label="선택한 정류장과 역 지도"
     >
       <div className="stage-live-map">
@@ -51,20 +73,57 @@ export function MapStage({
           center={mapCenter}
           stops={stops}
           selectedStop={null}
-          selectedStopIds={selectedStops.map((stop) => stop.id)}
+          selectedStopIds={[
+            ...selectedStops.map((stop) => stop.id),
+            ...search.selectedBusStops.map((stop) => stop.id),
+          ]}
+          pendingStops={search.busStops}
           subwayStations={subwayStations}
+          pendingSubwayStations={search.stations}
           selectedSubwayStationIds={
-            selectedSubwayStation === null
-              ? []
-              : [selectedSubwayStation.id]
+            [
+              ...(selectedSubwayStation === null
+                ? []
+                : [selectedSubwayStation.id]),
+              ...search.selectedStations.map((station) => station.id),
+            ]
           }
           onCenterChange={setMapCenter}
           onSelect={onSelectStop}
+          onAddPending={search.toggleBusStop}
           onSelectSubway={onSelectSubwayStation}
+          onAddPendingSubway={search.toggleStation}
         />
       </div>
 
-      {!isDesktop ? (
+      {searchMode !== null ? (
+        <InlineMapSearchControls
+          mode={searchMode}
+          loading={search.loading}
+          error={search.error}
+          busStops={search.busStops}
+          stations={search.stations}
+          selectedBusStopIds={search.selectedBusStops.map(
+            (stop) => stop.id,
+          )}
+          selectedStationIds={search.selectedStations.map(
+            (station) => station.id,
+          )}
+          onSearch={search.search}
+          onToggleBusStop={search.toggleBusStop}
+          onToggleStation={search.toggleStation}
+          onCancel={onCancelSearch}
+          onSave={() => {
+            if (searchMode === "bus") {
+              onSaveBusStops(search.selectedBusStops);
+              return;
+            }
+            onSaveSubwayStations(search.selectedStations);
+          }}
+        />
+      ) : null}
+
+      {!isDesktop && !searching ? (
         <button
           className="map-expand-toggle"
           type="button"

@@ -18,6 +18,7 @@ interface TransitPointSelectorProps {
   readonly subwayStations: readonly SubwayStation[];
   readonly selectedBusStopIds: readonly BusStop["id"][];
   readonly selectedSubwayStationId: SubwayStation["id"] | null;
+  readonly searching: boolean;
   readonly onModeChange: (mode: TransitMode) => void;
   readonly onAdd: () => void;
   readonly onSelectBusStop: (stopId: BusStop["id"]) => void;
@@ -42,6 +43,7 @@ export function TransitPointSelector({
   subwayStations,
   selectedBusStopIds,
   selectedSubwayStationId,
+  searching,
   onModeChange,
   onAdd,
   onSelectBusStop,
@@ -98,9 +100,15 @@ export function TransitPointSelector({
           <span className="eyebrow">어디서 탈까요?</span>
           <h2 id="point-selector-title">{heading}</h2>
         </div>
-        <button className="add-point-button" type="button" onClick={onAdd}>
+        <button
+          id="point-search-trigger"
+          className={`add-point-button${searching ? " is-active" : ""}`}
+          type="button"
+          aria-pressed={searching}
+          onClick={onAdd}
+        >
           <MapPinPlus aria-hidden="true" />
-          {label} 찾기
+          {searching ? "찾기 취소" : `${label} 찾기`}
         </button>
       </div>
 
