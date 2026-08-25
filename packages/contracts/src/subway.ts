@@ -248,6 +248,7 @@ const upstreamSubwayArrivalSchema = z.object({
         trainLineNm: z.string().min(1),
         btrainSttus: z.string().default("일반"),
         barvlDt: z.string().nullable().optional(),
+        arvlCd: z.string().default(""),
         arvlMsg2: z.string().default(""),
         arvlMsg3: z.string().nullable().optional(),
         lstcarAt: z.string().nullable().optional(),
@@ -274,25 +275,31 @@ export function normalizeSubwayArrivals(
 ): { arrivals: SubwayArrival[]; updatedAt: string } {
   const parsed = upstreamSubwayArrivalSchema.parse(input);
   const arrivals: SubwayArrival[] = parsed.realtimeArrivalList.map(
-    (row) => ({
-      id: `${row.subwayId}-${row.updnLine}-${row.trainLineNm}`,
-      subwayId: row.subwayId,
-      updnLine: row.updnLine,
-      line: SUBWAY_LINE_NAMES[row.subwayId] ?? "기타",
-      direction: row.trainLineNm,
-      trainLineNm: row.trainLineNm,
-      trainStatus: row.btrainSttus || "일반",
-      seconds:
+    (row) => {
+      const parsedSeconds = Number(row.barvlDt);
+      const hasNumericEta =
         row.barvlDt !== undefined &&
         row.barvlDt !== null &&
         row.barvlDt !== "" &&
-        Number.isFinite(Number(row.barvlDt))
-          ? Number(row.barvlDt)
-          : null,
-      message: row.arvlMsg2,
-      location: row.arvlMsg3?.trim() || null,
-      isLastTrain: row.lstcarAt === "1",
-    }),
+        Number.isFinite(parsedSeconds);
+      const seconds =
+        hasNumericEta && !(parsedSeconds === 0 && row.arvlCd === "99")
+          ? parsedSeconds
+          : null;
+      return {
+        id: `${row.subwayId}-${row.updnLine}-${row.trainLineNm}`,
+        subwayId: row.subwayId,
+        updnLine: row.updnLine,
+        line: SUBWAY_LINE_NAMES[row.subwayId] ?? "기타",
+        direction: row.trainLineNm,
+        trainLineNm: row.trainLineNm,
+        trainStatus: row.btrainSttus || "일반",
+        seconds,
+        message: row.arvlMsg2,
+        location: row.arvlMsg3?.trim() || null,
+        isLastTrain: row.lstcarAt === "1",
+      };
+    },
   );
   arrivals.sort(
     (left, right) =>

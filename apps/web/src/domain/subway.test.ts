@@ -87,6 +87,38 @@ describe("normalizeSubwayArrivals", () => {
 
     expect(result.arrivals).toEqual([]);
   });
+
+  it("distinguishes an unavailable zero ETA from a train arriving now", () => {
+    const { arrivals } = normalizeSubwayArrivals({
+      errorMessage: { code: "INFO-000", message: "정상 처리되었습니다." },
+      realtimeArrivalList: [
+        {
+          subwayId: "1008",
+          updnLine: "상행",
+          trainLineNm: "별내행",
+          barvlDt: "0",
+          arvlCd: "1",
+          arvlMsg2: "천호 도착",
+          recptnDt: "2026-08-20 12:10:20",
+        },
+        {
+          subwayId: "1008",
+          updnLine: "하행",
+          trainLineNm: "모란행",
+          barvlDt: "0",
+          arvlCd: "99",
+          arvlMsg2: "[7]번째 전역 (별내)",
+          recptnDt: "2026-08-20 12:10:20",
+        },
+      ],
+    });
+    const secondsByMessage = new Map(
+      arrivals.map((arrival) => [arrival.message, arrival.seconds]),
+    );
+
+    expect(secondsByMessage.get("천호 도착")).toBe(0);
+    expect(secondsByMessage.get("[7]번째 전역 (별내)")).toBeNull();
+  });
 });
 
 describe("display identity baseline", () => {
