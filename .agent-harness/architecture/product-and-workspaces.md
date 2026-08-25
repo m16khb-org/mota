@@ -44,7 +44,8 @@ Dependency direction is normative in [overview.md](overview.md).
 - Authenticated selections load and save through `/api/settings`.
 - Authenticated settings never overwrite the anonymous localStorage document.
 - `ArrivalList` and `SubwayArrivalList` render at most three rows.
-- `MapPicker` and `SubwayPicker` perform explicit nearby searches.
+- `MapStage` owns the one persistent map. `useInlineMapSearch` and `InlineMapSearchControls` add nearby bus/subway candidates to that map without a modal, backdrop, or duplicate map.
+- Entering search performs one request at the current center; panning alone is local and `이 위치 다시 찾기` explicitly requests the new center.
 
 Presentation, responsive behavior, Korean content, and accessibility are
 owned by [DESIGN.md](../../DESIGN.md).
