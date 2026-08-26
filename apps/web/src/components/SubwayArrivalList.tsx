@@ -1,6 +1,8 @@
 import { ArrowDown, ArrowRight, ArrowUp, RefreshCw } from "lucide-react";
 import { useMemo, useState, type KeyboardEvent } from "react";
 import type { SubwayArrival } from "../domain/subway";
+import { subwayEtaDisplay } from "../domain/subwayEta";
+import { useElapsedSeconds } from "../hooks/useElapsedSeconds";
 
 interface SubwayArrivalListProps {
   readonly stationName: string;
@@ -58,6 +60,7 @@ export function SubwayArrivalList({
   updatedAt,
   onRefresh,
 }: SubwayArrivalListProps) {
+  const elapsedSeconds = useElapsedSeconds(updatedAt);
   const directions = useMemo(() => {
     const options = new Map<string, DirectionOption>();
     for (const arrival of arrivals) {
@@ -214,38 +217,45 @@ export function SubwayArrivalList({
       ) : null}
 
       <div className="arrival-list">
-        {visibleArrivals.map((arrival, index) => (
-          <article
-            className={`arrival-row is-subway${
-              arrival.seconds === null ? " is-inactive" : ""
-            }`}
-            key={`${arrival.id}-${arrival.direction}-${arrival.message}`}
-          >
-            <div className="route-identity-wrap">
-              <span className="arrival-rank" aria-hidden="true">
-                {index + 1}
-              </span>
-              <span className="sr-only">
-                {index + 1}번째로 빠른 열차
-              </span>
-              <div className="route-identity">
-                <span className="subway-line-badge">{arrival.line}</span>
-                <span className="subway-direction">{arrival.direction}</span>
+        {visibleArrivals.map((arrival, index) => {
+          const eta = subwayEtaDisplay(
+            arrival.seconds,
+            arrival.message,
+            elapsedSeconds,
+          );
+          return (
+            <article
+              className={`arrival-row is-subway${
+                eta.remainingSeconds === null ? " is-inactive" : ""
+              }`}
+              key={`${arrival.id}-${arrival.direction}-${arrival.message}`}
+            >
+              <div className="route-identity-wrap">
+                <span className="arrival-rank" aria-hidden="true">
+                  {index + 1}
+                </span>
+                <span className="sr-only">
+                  {index + 1}번째로 빠른 열차
+                </span>
+                <div className="route-identity">
+                  <span className="subway-line-badge">{arrival.line}</span>
+                  <span className="subway-direction">{arrival.direction}</span>
+                </div>
               </div>
-            </div>
-            <div className="arrival-meta">
-              <span>{arrival.trainStatus}</span>
-              {arrival.isLastTrain ? <span>막차</span> : null}
-            </div>
-            <div className="eta-block">
-              <strong>{formatEta(arrival.seconds)}</strong>
-              <span>{arrival.message}</span>
-              {arrival.location ? (
-                <small>{arrival.location} 부근</small>
-              ) : null}
-            </div>
-          </article>
-        ))}
+              <div className="arrival-meta">
+                <span>{arrival.trainStatus}</span>
+                {arrival.isLastTrain ? <span>막차</span> : null}
+              </div>
+              <div className="eta-block">
+                <strong>{formatEta(eta.remainingSeconds)}</strong>
+                <span>{eta.message}</span>
+                {arrival.location ? (
+                  <small>{arrival.location} 부근</small>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

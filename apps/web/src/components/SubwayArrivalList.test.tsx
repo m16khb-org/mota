@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SubwayArrival } from "../domain/subway";
 import { SubwayArrivalList } from "./SubwayArrivalList";
 
@@ -35,6 +35,53 @@ const arrivals: readonly SubwayArrival[] = [
 ];
 
 describe("SubwayArrivalList", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("counts down received ETAs and expires estimates that are overdue", () => {
+    // Given
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-26T11:00:00.000Z"));
+    const baseArrival = arrivals[0];
+    if (baseArrival === undefined) {
+      throw new Error("Expected a subway arrival fixture.");
+    }
+    const countdownArrival: SubwayArrival = {
+      ...baseArrival,
+      seconds: 180,
+      message: "3분 후",
+    };
+    render(
+      <SubwayArrivalList
+        stationName="천호"
+        arrivals={[countdownArrival]}
+        loading={false}
+        error={null}
+        updatedAt="2026-08-26T11:00:00.000Z"
+        onRefresh={vi.fn()}
+      />,
+    );
+
+    // When
+    act(() => {
+      vi.advanceTimersByTime(120_000);
+    });
+
+    // Then
+    expect(screen.getByText("1분")).toBeInTheDocument();
+    expect(screen.getByText("도착 예상")).toBeInTheDocument();
+
+    // When
+    act(() => {
+      vi.advanceTimersByTime(151_000);
+    });
+
+    // Then
+    expect(screen.getByText("정보 없음")).toBeInTheDocument();
+    expect(screen.getByText("새로고침 필요")).toBeInTheDocument();
+  });
+
   it("filters one direction and shows at most its next three trains", () => {
     const directionalArrivals: readonly SubwayArrival[] = [
       ...[1, 2, 3, 4].map(
