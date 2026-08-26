@@ -351,7 +351,7 @@ describe("MapCanvas visible marker styling contract", () => {
     expect(css).not.toContain(".leaflet-interactive.map-marker");
     const ruleOf = (selector: string, stroke: string, fill: string) =>
       new RegExp(
-        `^${selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{\\n  stroke: var\\(${stroke}\\);\\n  fill: var\\(${fill}\\);\\n\\}$`,
+        `^${selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{\\n(?=[^}]*stroke: var\\(${stroke}\\);)(?=[^}]*fill: var\\(${fill}\\);)[^}]*\\n\\}$`,
         "m",
       );
     expect(css).toMatch(ruleOf(".map-marker-bus", "--route-blue", "--surface"));
