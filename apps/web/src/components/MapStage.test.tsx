@@ -82,10 +82,11 @@ function renderStage(
   isDesktop: boolean,
   searchMode: "bus" | "subway" | null = null,
 ) {
+  const onCloseMobileMap = vi.fn();
   const onCancelSearch = vi.fn();
   const onSaveBusStops = vi.fn();
   const onSaveSubwayStations = vi.fn();
-  return render(
+  const view = render(
     <MapStage
       stops={[]}
       subwayStations={[]}
@@ -94,6 +95,7 @@ function renderStage(
       center={{ lat: 37.5366, lng: 127.1253 }}
       isDesktop={isDesktop}
       searchMode={searchMode}
+      onCloseMobileMap={onCloseMobileMap}
       onCancelSearch={onCancelSearch}
       onSaveBusStops={onSaveBusStops}
       onSaveSubwayStations={onSaveSubwayStations}
@@ -101,6 +103,7 @@ function renderStage(
       onSelectSubwayStation={vi.fn()}
     />,
   );
+  return { ...view, onCloseMobileMap };
 }
 
 describe("MapStage responsive map", () => {
@@ -113,27 +116,19 @@ describe("MapStage responsive map", () => {
     ]);
   });
 
-  it("keeps the mobile map compact until the user expands it", () => {
-    renderStage(false);
-    const stage = screen.getByRole("region", {
-      name: "선택한 정류장과 역 지도",
-    });
-    const toggle = screen.getByRole("button", { name: "지도 펼치기" });
+  it("lets the user close an open mobile map", () => {
+    const { onCloseMobileMap } = renderStage(false);
 
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(stage).not.toHaveClass("is-expanded");
+    fireEvent.click(screen.getByRole("button", { name: "지도 닫기" }));
 
-    fireEvent.click(toggle);
-
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(stage).toHaveClass("is-expanded");
+    expect(onCloseMobileMap).toHaveBeenCalledOnce();
   });
 
   it("does not render an expansion control on desktop", () => {
     renderStage(true);
 
     expect(
-      screen.queryByRole("button", { name: "지도 펼치기" }),
+      screen.queryByRole("button", { name: "지도 닫기" }),
     ).not.toBeInTheDocument();
   });
 
@@ -161,7 +156,6 @@ describe("MapStage responsive map", () => {
     ).toHaveFocus();
     expect(container.querySelector(".map-stage")).toHaveClass(
       "is-searching",
-      "is-expanded",
     );
 
     fireEvent.click(
@@ -175,7 +169,7 @@ describe("MapStage responsive map", () => {
     fireEvent.click(screen.getByRole("button", { name: "1곳 저장" }));
 
     expect(
-      screen.queryByRole("button", { name: "지도 펼치기" }),
+      screen.queryByRole("button", { name: "지도 닫기" }),
     ).not.toBeInTheDocument();
   });
 

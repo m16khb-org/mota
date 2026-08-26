@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { BusStop } from "../domain/bus";
 import type { SubwayStation } from "../domain/subway";
@@ -20,6 +20,7 @@ interface MapStageProps {
   readonly center: Point;
   readonly isDesktop: boolean;
   readonly searchMode: TransitMode | null;
+  readonly onCloseMobileMap: () => void;
   readonly onCancelSearch: () => void;
   readonly onSaveBusStops: (stops: readonly BusStop[]) => void;
   readonly onSaveSubwayStations: (
@@ -37,6 +38,7 @@ export function MapStage({
   center,
   isDesktop,
   searchMode,
+  onCloseMobileMap,
   onCancelSearch,
   onSaveBusStops,
   onSaveSubwayStations,
@@ -44,7 +46,6 @@ export function MapStage({
   onSelectSubwayStation,
 }: MapStageProps) {
   const [mapCenter, setMapCenter] = useState<Point>(center);
-  const [mapExpanded, setMapExpanded] = useState(false);
   const hasSelection =
     selectedStops.length > 0 || selectedSubwayStation !== null;
   const searching = searchMode !== null;
@@ -62,8 +63,6 @@ export function MapStage({
   return (
     <section
       className={`map-stage${
-        mapExpanded || searching ? " is-expanded" : ""
-      }${
         hasSelection ? " has-selection" : ""
       }${searching ? " is-searching" : ""}`}
       aria-label="선택한 정류장과 역 지도"
@@ -125,17 +124,12 @@ export function MapStage({
 
       {!isDesktop && !searching ? (
         <button
-          className="map-expand-toggle"
+          className="map-close-toggle"
           type="button"
-          aria-expanded={mapExpanded}
-          onClick={() => setMapExpanded((current) => !current)}
+          onClick={onCloseMobileMap}
         >
-          {mapExpanded ? (
-            <ChevronUp aria-hidden="true" />
-          ) : (
-            <ChevronDown aria-hidden="true" />
-          )}
-          {mapExpanded ? "지도 접기" : "지도 펼치기"}
+          <ChevronUp aria-hidden="true" />
+          지도 닫기
         </button>
       ) : null}
     </section>

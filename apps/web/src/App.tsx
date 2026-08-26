@@ -3,6 +3,7 @@ import {
   MAX_SELECTED_BUS_STOPS,
   type CommuteContext,
 } from "@mota/contracts/transit-settings";
+import { Map as MapIcon } from "lucide-react";
 import { ArrivalList } from "./components/ArrivalList";
 import { BrandHeader } from "./components/BrandHeader";
 import { CommuteContextSelector } from "./components/CommuteContextSelector";
@@ -27,6 +28,7 @@ export function App() {
   const [commute, setCommute] = useState<CommuteContext>("toWork");
   const [mode, setMode] = useState<TransitMode>("bus");
   const [searchMode, setSearchMode] = useState<TransitMode | null>(null);
+  const [mobileMapOpen, setMobileMapOpen] = useState(false);
   const [saveAnnouncement, setSaveAnnouncement] = useState("");
   const {
     selections,
@@ -146,6 +148,16 @@ export function App() {
           syncStatus={syncStatus}
           onLogout={session.logout}
         />
+        {!isDesktop && !mobileMapOpen && searchMode === null ? (
+          <button
+            className="mobile-map-open"
+            type="button"
+            onClick={() => setMobileMapOpen(true)}
+          >
+            <MapIcon aria-hidden="true" />
+            지도 열기
+          </button>
+        ) : null}
         <div className="rail-scroll">
           <CommuteContextSelector
             activeContext={commute}
@@ -245,25 +257,28 @@ export function App() {
         </div>
       </aside>
 
-      <MapStage
-        stops={activeSelections.busStops}
-        subwayStations={activeSelections.subwayStations}
-        selectedStops={selectedStops}
-        selectedSubwayStation={selectedStation}
-        center={mapCenter}
-        isDesktop={isDesktop}
-        searchMode={searchMode}
-        onCancelSearch={closeSearch}
-        onSaveBusStops={saveStops}
-        onSaveSubwayStations={saveStations}
-        onSelectStop={(stop) => {
-          toggleStopSelection(stop.id);
-        }}
-        onSelectSubwayStation={(station) => {
-          selectSubwayStation(commute, station.id);
-          setMode("subway");
-        }}
-      />
+      {isDesktop || mobileMapOpen || searchMode !== null ? (
+        <MapStage
+          stops={activeSelections.busStops}
+          subwayStations={activeSelections.subwayStations}
+          selectedStops={selectedStops}
+          selectedSubwayStation={selectedStation}
+          center={mapCenter}
+          isDesktop={isDesktop}
+          searchMode={searchMode}
+          onCloseMobileMap={() => setMobileMapOpen(false)}
+          onCancelSearch={closeSearch}
+          onSaveBusStops={saveStops}
+          onSaveSubwayStations={saveStations}
+          onSelectStop={(stop) => {
+            toggleStopSelection(stop.id);
+          }}
+          onSelectSubwayStation={(station) => {
+            selectSubwayStation(commute, station.id);
+            setMode("subway");
+          }}
+        />
+      ) : null}
     </main>
   );
 }

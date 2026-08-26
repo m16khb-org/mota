@@ -7,6 +7,10 @@ import { fetchArrivals, fetchSubwayArrivals } from "./api/client";
 import type { BusArrival, BusStop } from "./domain/bus";
 import type { SubwayArrival, SubwayStation } from "./domain/subway";
 
+const { mediaQueryState } = vi.hoisted(() => ({
+  mediaQueryState: { matches: false },
+}));
+
 const busStop: BusStop = {
   id: "124000454" as BusStop["id"],
   arsId: "25014" as BusStop["arsId"],
@@ -94,12 +98,16 @@ vi.mock("./components/MapStage", () => ({
     stops,
     subwayStations,
     searchMode,
+    isDesktop,
+    onCloseMobileMap,
     onSaveBusStops,
     onSaveSubwayStations,
   }: {
     stops: readonly BusStop[];
     subwayStations: readonly SubwayStation[];
     searchMode: "bus" | "subway" | null;
+    isDesktop: boolean;
+    onCloseMobileMap: () => void;
     onSaveBusStops: (stops: readonly BusStop[]) => void;
     onSaveSubwayStations: (
       stations: readonly SubwayStation[],
@@ -111,6 +119,11 @@ vi.mock("./components/MapStage", () => ({
       data-station-count={subwayStations.length}
       data-search-mode={searchMode ?? ""}
     >
+      {!isDesktop && searchMode === null ? (
+        <button type="button" onClick={onCloseMobileMap}>
+          지도 닫기
+        </button>
+      ) : null}
       {searchMode === "bus" ? (
         <>
           <button
@@ -147,6 +160,10 @@ vi.mock("./components/MapStage", () => ({
   ),
 }));
 
+vi.mock("./hooks/useMediaQuery", () => ({
+  useMediaQuery: () => mediaQueryState.matches,
+}));
+
 vi.mock("./api/client", async (importOriginal) => {
   const original = await importOriginal<typeof import("./api/client")>();
   return {
@@ -168,6 +185,7 @@ vi.mock("./hooks/useAuthSession", () => ({
 describe("App minimal arrivals flow", () => {
   beforeEach(() => {
     localStorage.clear();
+    mediaQueryState.matches = false;
     vi.mocked(fetchArrivals).mockReset();
     vi.mocked(fetchSubwayArrivals).mockReset();
     vi.mocked(fetchArrivals).mockResolvedValue({
@@ -205,6 +223,45 @@ describe("App minimal arrivals flow", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText(/절차/)).not.toBeInTheDocument();
     expect(screen.queryByText(/즐겨찾기/)).not.toBeInTheDocument();
+  });
+
+  it("keeps the map closed on mobile until the user opens it", () => {
+    render(<App />);
+
+    expect(
+      screen.queryByRole("region", {
+        name: "선택한 정류장과 역 지도",
+      }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "지도 열기" }));
+    expect(
+      screen.getByRole("region", {
+        name: "선택한 정류장과 역 지도",
+      }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "지도 닫기" }));
+    expect(
+      screen.queryByRole("region", {
+        name: "선택한 정류장과 역 지도",
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps the map visible on desktop", () => {
+    mediaQueryState.matches = true;
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("region", {
+        name: "선택한 정류장과 역 지도",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "지도 열기" }),
+    ).not.toBeInTheDocument();
   });
 
   it("opens bus and subway finding on the current map instead of a dialog", () => {
