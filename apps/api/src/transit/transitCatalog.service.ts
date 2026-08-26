@@ -12,7 +12,11 @@ import type {
 } from "@mota/contracts/subway";
 import { API_OPTIONS, type ApiOptions } from "../app.tokens";
 import { fetchSubwayStationCatalog } from "../upstream/officialSubwayStations";
-import { fetchStopCatalog } from "../upstream/seoulBus";
+import {
+  fetchNearbyStops as fetchLiveNearbyStops,
+  fetchStopCatalog,
+} from "../upstream/seoulBus";
+import { UpstreamError } from "../upstream/upstreamError";
 import {
   ManagedCatalog,
   type CatalogEvent,
@@ -32,7 +36,9 @@ export class TransitCatalogService implements OnModuleInit, OnModuleDestroy {
   private readonly bus: ManagedCatalog<BusStopPoint>;
   private readonly subway: ManagedCatalog<SubwayStationPoint>;
 
-  constructor(@Inject(API_OPTIONS) options: ApiOptions) {
+  constructor(
+    @Inject(API_OPTIONS) private readonly options: ApiOptions,
+  ) {
     const now = options.now ?? Date.now;
     const schedule = options.transitCatalog.warmup;
     const common = {
@@ -76,7 +82,15 @@ export class TransitCatalogService implements OnModuleInit, OnModuleDestroy {
   }
 
   async nearbyStops(location: Location): Promise<BusStop[]> {
-    const points = await this.bus.read();
+    let points: readonly BusStopPoint[];
+    try {
+      points = await this.bus.read();
+    } catch (error) {
+      if (error instanceof UpstreamError) {
+        return fetchLiveNearbyStops(this.options.upstreamFetch, location);
+      }
+      throw error;
+    }
     return points
       .map((point) => ({
         ...point,
