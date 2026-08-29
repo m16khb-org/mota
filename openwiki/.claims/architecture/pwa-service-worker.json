@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d8f45ff96bc52b1064ed8507484cf8384b8e9f60502d9a5a739a27703b5da8db",
+  "claims": [
+    {
+      "id": "claim_bf7b03cf38694772a9cf07c7c3291e97",
+      "statement": "The service worker is registered by a classic script loaded from index.html via <script src=\"/register-sw.js?v=6\">; register-sw.js registers \"/sw.js?v=6\" from a one-shot window load listener, so registration happens after first paint and a registration failure only logs to console, leaving a working non-PWA page.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/index.html#L14-L18",
+          "version": "repo-lines-v1:sha256:b64331d379a01d2fc86987db469f530aa32712f96e22c4586a76fef73832e994:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2M1M2E1NzM3ZjAxZjZkMjFiZWI4YTk1NzU1ZWEyZTExY2JmZWI2Y2FjYmQ0NzhiNWUwMDY1MWQ2MjMzY2MwMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWZlZGJjNjJmZTg1Y2U1OWQ1ZjNhZDA3ZTA5YzQ1YzA5Y2Y2NDA0YmVlOWUzYzE3MTNiZmFlNmNhMTkyNDA1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGEwZDc5MTIwMzk3MjhhM2I3NTgxY2Y5MDFiYTk5YThiZjVlNjJiMjE0Yjc2NmJmODk5NGMyYjIyZjY3YTE3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWY3NjI3ZWU2YWZkM2E3YmZkOTY4YTIwNjMxZTIxNTU3ZDEzZDBiMzlmMTkwZjUyZTI3MDM0ZjNhNjY5OTkwMSJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/register-sw.js#L1-L11",
+          "version": "repo-lines-v1:sha256:4d2bca57eb73109e81b43dbdbda0be8b19bf559d7f9b6d34462e15ba586053b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyZDAxNGRmYWExOTlkNWMzZmI3NWM4NTQ4ODNmNmU0ZmI5NjQ3ZDY1MjdiNzRkMDk3MmZiZGM2MGUxNmJjNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_660fb2821e844e4fab2e162d71e8dd59",
+      "statement": "The shell cache is a single versioned cache named mota-shell-v6 (SHELL_CACHE), and the cache version — not per-asset invalidation — is the deployment takeover mechanism: activating deletes every cache whose name differs.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L1-L1",
+          "version": "repo-lines-v1:sha256:9fcbef56cf0c15de8bb09377fd39513f3c172b02739c159e20869ded7592f608:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZjYmVmNTZjZjBjMTVkZThiYjA5Mzc3ZmQzOTUxM2YzYzE3MmIwMjczOWMxNTllMjA4NjlkZWQ3NTkyZjYwOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZjYmVmNTZjZjBjMTVkZThiYjA5Mzc3ZmQzOTUxM2YzYzE3MmIwMjczOWMxNTllMjA4NjlkZWQ3NTkyZjYwOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTE0ZTc0M2EzNjkzODdjNzU4YTg3ODM5ZmUxYTQ2MjE2MTUzZTBiMjNkZTA0Yzg0MTg5YzdiMzM1NTU0OTI3NiJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L34-L46",
+          "version": "repo-lines-v1:sha256:f6bca503ceab52e0727ab327fd73e45dec20b40bf1e9d654db2e31fe386ca2fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYjNkN2EyY2E1N2JkODg5MjJmYmQzZWJmNjMxOWZiYzNhMWRlODdjOWQ2NDQ5NjZiZWRmYzY1MzNkMmY4ZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGQyZGQ0ZjI4OWQyNmRjNzU3YzJiNjVhMDZjMzkyMjdhNjcxN2M0YjQ4YjVhMzk3OTJjOWYxMWU0MWFlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllZThkZjcyZTEzYTVhMmIwY2Q3NjZmNWExNDZiZjQwY2I2NzBhYzdlMjEyMDI5OGFiN2FkYjRhODRjNTkwNmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3b7504f1f25948ddb924e5d3b0608c7d",
+      "statement": "At install the worker fetches \"/\" with { cache: \"reload\" } and derives the shell asset list by regex-matching (?:src|href)=\"([^\"]+)\" over the HTML and keeping only root-relative paths, unioned (deduplicated via Set) with REQUIRED_SHELL; this picks up Vite's hashed /assets/* bundles from each deployment's own document without the worker knowing the hash scheme.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L10-L14",
+          "version": "repo-lines-v1:sha256:ef12747203193715267321786d51b128dcb8fe66d30e0e8d20198766e2d75f6c:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZmZmUxOWYxMmQ1YzBlY2JiMDY0NTEwYmU5NmE2YmRlNzgwMDM2ZmQyZWMzOWIxODk2NDZmMWFmNWFiZTE0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjQ4MGYzMDRlYzYzNGUxMWQ0NjRmMjgzMjg4YWExZDVjYmZlYzY5YjkxNTk3NzdmMzdlMWE5NGQxMDE1Njc4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmM5OTI3ZDI0ZDU1NjA3OGIzZWI5OTcxZjA4NWE5NmNhYjRjOGJlYzIzMTA4NmI3ODNiMmI3YjFlNzNiMTViNiJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L16-L32",
+          "version": "repo-lines-v1:sha256:7cf037fb81b6a21592889f350e0d20439d6c0ff512d52ab29a1107742fc0d894:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYjQyYmQ3M2Q1YmQ0MGViNmQ1ZjczMjkyMWUwZWZjYzY4NjAwMjQwZmJmYWFiMmJmMzAwYjRkMThiZGU3NjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2M2RiMzdjNDU2YWMyZDU3NzAwNTZhNjQzMGIwZDkxZmY5YzNmOGRkNjgwNDk4YzMyZmFhMTMzM2Q1ZjdmNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YmU2ZWE3Y2UyMGZmODFhMjE5ZDQyYWRhMWNhMmI5NmE1OTAzNDI4NDY5NDEzNjk0N2JhZmU3OTNhNzA2ZmIifQ"
+        },
+        {
+          "resource": "repo://dist/index.html#L19-L20",
+          "version": "repo-lines-v1:sha256:4a787eda78e83ce0fbb6e03de2dde3b5537bd70bfaa1cd8b40dc3874dc0d3792:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODBlNjBmMTJkMjU5MDI5NjAwYmZhMTQxMGYxNjQ3NDk1NzhkYTc0ZmRhMTA2MmYzZWIzZTg5ZTQ0ZWYwZmZjNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJjYmM2N2EyOWJlOTYwNGVlYTRiOTk4NzAzOWNlZWFjN2M1ZWM2ZjlhNjg0NTBkN2QyNTRhZmRmMzEzZjMwMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGRkOTMyMjY1NmRhZjMwODUzMGZhZWY0YjU1NjE4YzE3ZGRiNDk1ZjU3MWYzZTMxZTNhOWIwZmJjMDQxM2ViOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWY3NjI3ZWU2YWZkM2E3YmZkOTY4YTIwNjMxZTIxNTU3ZDEzZDBiMzlmMTkwZjUyZTI3MDM0ZjNhNjY5OTkwMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c15994e6ca44f3fb2f45ae092575059",
+      "statement": "REQUIRED_SHELL hard-codes the five assets the HTML does not self-describe — /manifest.webmanifest, /pwa-icon-192.png, /pwa-icon-512.png, /pwa-icon.svg, and /register-sw.js?v=6 — while sw.js itself is deliberately absent because the browser's service-worker update path fetches the worker file independently.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/register-sw.js#L5-L5",
+          "version": "repo-lines-v1:sha256:5fcad57f67b45f6a5549a18aff969d8730cc7d2141a9fc674ffdfe4852ee8272:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjYWQ1N2Y2N2I0NWY2YTU1NDlhMThhZmY5NjlkODczMGNjN2QyMTQxYTlmYzY3NGZmZGZlNDg1MmVlODI3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjYWQ1N2Y2N2I0NWY2YTU1NDlhMThhZmY5NjlkODczMGNjN2QyMTQxYTlmYzY3NGZmZGZlNDg1MmVlODI3MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQzODZhMmVlNWI0YTc3ZjBlODJkZDQ4ODY3YWIyYmNiMTY2YmIwMzhkNDMzNjI3ZjdhZTQ5YmMyYjA3NWZjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWY0MDI5ZGZjMDRmOTI3OTY1ZWJmMTljMWQ1YmQ2MDUyYTZhYTNkMjVlOWE1ZDNhZDIzZThkZmY4MzMyYjQ4MiJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L1-L8",
+          "version": "repo-lines-v1:sha256:92dec35befaaf19433fefd3dad62da7d5791c09c2148ca8cfbbf70a68ba6d3a7:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZjYmVmNTZjZjBjMTVkZThiYjA5Mzc3ZmQzOTUxM2YzYzE3MmIwMjczOWMxNTllMjA4NjlkZWQ3NTkyZjYwOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAyZDJjMGQ2ZGM1ZTc0ZDkyZmExNGI5MWRiZWEyNjQwOTBiZWIzNWZkYjkxODhkOWIzNDExODFkY2U5ZjRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGRjMDExYzY0NmJjNjgzNzA4NDE2ZTQ5OTY2NjkxNTkyYWMwMjFkZDFhOTgzMTJlNmQwMDZkODk0MzY5MGUzNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_eb3fc55271ac4d6a935cac3b975bbde1",
+      "statement": "A non-OK root response aborts installation: the install handler throws before any cache.put, and event.waitUntil propagates the rejection so the browser keeps the previous worker in control; cache.addAll has the same all-or-nothing semantics for the asset list, so a broken or missing asset also aborts the install rather than caching a half-populated shell.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L16-L32",
+          "version": "repo-lines-v1:sha256:7cf037fb81b6a21592889f350e0d20439d6c0ff512d52ab29a1107742fc0d894:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYjQyYmQ3M2Q1YmQ0MGViNmQ1ZjczMjkyMWUwZWZjYzY4NjAwMjQwZmJmYWFiMmJmMzAwYjRkMThiZGU3NjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2M2RiMzdjNDU2YWMyZDU3NzAwNTZhNjQzMGIwZDkxZmY5YzNmOGRkNjgwNDk4YzMyZmFhMTMzM2Q1ZjdmNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YmU2ZWE3Y2UyMGZmODFhMjE5ZDQyYWRhMWNhMmI5NmE1OTAzNDI4NDY5NDEzNjk0N2JhZmU3OTNhNzA2ZmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7d2f9826a3904fc989ba7edb73f5686b",
+      "statement": "self.skipWaiting() runs inside install's waitUntil after the cache is fully populated, and activate then calls self.clients.claim(), so a new version takes control of existing clients in one page-load cycle instead of waiting for tabs to close.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L29-L29",
+          "version": "repo-lines-v1:sha256:3b1ef899324804b7ae4c9dd2d1d3ab5a69f0949b2dd504ca85533611f6b93b1b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2IxZWY4OTkzMjQ4MDRiN2FlNGM5ZGQyZDFkM2FiNWE2OWYwOTQ5YjJkZDUwNGNhODU1MzM2MTFmNmI5M2IxYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2IxZWY4OTkzMjQ4MDRiN2FlNGM5ZGQyZDFkM2FiNWE2OWYwOTQ5YjJkZDUwNGNhODU1MzM2MTFmNmI5M2IxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmRmMzhhMWVkNWFhZDc1ZjEwZWIwNmRiOGVkYjRmZGI1Zjg0ODFhYWVkMzQ1ZmVhYWE2ZTJmZjAzMmE2YzlhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzAyMjIwMjg3YmQ1ZmY5ODgyYTZmMDE3NzZlM2QwMTI1Yzg3NDJkYjFiNmFjNDNmOGY4MDg4YzgwOTNiNWZlZCJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L34-L46",
+          "version": "repo-lines-v1:sha256:f6bca503ceab52e0727ab327fd73e45dec20b40bf1e9d654db2e31fe386ca2fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwYjNkN2EyY2E1N2JkODg5MjJmYmQzZWJmNjMxOWZiYzNhMWRlODdjOWQ2NDQ5NjZiZWRmYzY1MzNkMmY4ZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGQyZGQ0ZjI4OWQyNmRjNzU3YzJiNjVhMDZjMzkyMjdhNjcxN2M0YjQ4YjVhMzk3OTJjOWYxMWU0MWFlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllZThkZjcyZTEzYTVhMmIwY2Q3NjZmNWExNDZiZjQwY2I2NzBhYzdlMjEyMDI5OGFiN2FkYjRhODRjNTkwNmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7b8b5711870412faa88d1f3edb0bc61",
+      "statement": "The fetch handler bails out without responding for any request that is non-GET, cross-origin, or whose pathname starts with /api/; the service worker therefore never serves or caches /api/* — stated as a hard rule in AGENTS.md — so transit data, settings sync, and auth probes always hit the server or fail, and OpenStreetMap map tiles (cross-origin) pass through untouched.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L74-L74",
+          "version": "repo-lines-v1:sha256:bae314e15c091d94efd1df96e6cd043ba3602ef94e4f3b154f09248517ac8ed6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFlMzE0ZTE1YzA5MWQ5NGVmZDFkZjk2ZTZjZDA0M2JhMzYwMmVmOTRlNGYzYjE1NGYwOTI0ODUxN2FjOGVkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFlMzE0ZTE1YzA5MWQ5NGVmZDFkZjk2ZTZjZDA0M2JhMzYwMmVmOTRlNGYzYjE1NGYwOTI0ODUxN2FjOGVkNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmU1NzM1YTMyYzU1NTAyNDExM2U3Y2Y4YWM1Njk5MTBmMGRkNDFmMjYxMzU3NGIwNjViOTg0ZjdmYThmNmUyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWIxYmM1YmM0YTIzN2Y1NzhlNmFmNGE0MTVkMDY0N2Y5OTEwYjAzYjM2NGUxZTI3YzFmMWRiYWE3NDNkMDNiYSJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L48-L57",
+          "version": "repo-lines-v1:sha256:71072482cd61d911421b7d3c003f348da25bc3ef3b895b0353109ee8fd73b643:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlODgyODNkMTE1NzJmZjkwNmY3MTAxY2ZiZjAyNGFmYWY4NzhhOTNmMGJjYTVmNTdlNmQxZDQ4ZjNkY2ZiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGQyZGQ0ZjI4OWQyNmRjNzU3YzJiNjVhMDZjMzkyMjdhNjcxN2M0YjQ4YjVhMzk3OTJjOWYxMWU0MWFlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YTU0NTk3M2IwNWQ1MjkyMzI0OTFmNWZjNDI3YmUyMzE4MTYxNzM2NGRkZTJkNDhmMDg5NzYzNDAwYjA4NWEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L118-L164",
+          "version": "repo-lines-v1:sha256:31b32569ffb2f9100004aaad13a2d36b45cd14e299f801f2146d8845134f1061:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiNGU2OGU0ZjE2NDg3ZGVhMzM3ZGRmMDJhZGQ4YzI2MmZjMDBhOGYzODJlOGJkNGYzNWFiOTBiYTBkNTU0OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMjMyNTdhNTY2ZWY2MDMwNGMxNDNmYjgwYjRiYWUyMGFhODM2NGE1YzJiNjE2MTZiYWZmOWI1NTQzZTlkYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiN2EyZDc2YmY2NTljMmRmYjI1NDA3MmZmZmFlOWE2MWU1YmExM2NiODViYzA3MGE0MWUxODkwMTNiMzJjYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkMmEzMDkxYmExNWUwNjEwYmU5Nzk5ODI4MmNkZDI3YTc0NDQyY2RmMGRkMTdiOWU5M2E1Y2ExNTkwOWUzNzgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L452-L456",
+          "version": "repo-lines-v1:sha256:b6ccdc10fcb89456171866928b93d5628015b86ef16763c99f25fd25cc14e953:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk0ZjJjNTlhNjM5YzI5ODRjYzYzMzc2MzBkMDRhNDE2NDZlMTgyZTA2Y2MyMjhhYTMwYmE1NWU2OTM5YzRiOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmRhNTkzZWI4M2M3OWZlOWM2ZDI2OGQxYzFiODc4N2EwOTI4MTA4NjJiMjFmZThhMWQxNjJmNGYxZDFmMzExYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDMwOGU4YjNjNWM0NTA5NDRiZDZlYTI5ZTM2M2Y1NGVmOTE3YTU4MWZmYWIzMmMxOGE4MDgwZDBjZDZiZDM3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2FhNGIzY2I5NDQyMzhiNmM1YWE5YTJiYjMzOWI5ZmRjYjY3YjQwZTI0ZmE0MDlhYWNhZjM4MjRhNTYzYzUwNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_fcf288ad519040da89cdda694ded44ec",
+      "statement": "Navigations (request.mode === \"navigate\") are network-first: a successful response is cached under the literal key \"/\" regardless of the requested URL, and on network failure the handler serves caches.match(\"/\") as the fallback, rethrowing the original error only if no cached shell exists — so offline deep links still boot the app via the root document.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L59-L78",
+          "version": "repo-lines-v1:sha256:e73622b7ca03bb5171b8102b1a5206bfbdb1e6cb7ce2d0bf61a9ef1633c78f45:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkY2I3MWQ1MDAyNWNlNjc0N2UxYjFjNDI3ZWI3MjhlNzU2Y2I4OTAyZGU4MGZlODBmZDZhZmM0YjY4Y2QyNTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2ZTUxZTBkMDA4ZjE2YzdhMmI3MDAyZThiYzQ2NTQ4N2FlMmY1YTMzYjA4ZjczZjUzNWQwMGJmMjhiODdmZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxZDc1Y2UwM2MxYWRiNTFhZjgxNzViOWM1ZjliMzFmYjM0NGY2NTk5MmE5ZTdlOGI0YjRiZjU4NTNkYjUwOTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1f4581dfcba64fd18171639d661db2ca",
+      "statement": "Non-navigation same-origin GET requests use a cache-first strategy: caches.match first, and on a miss the network response is written into SHELL_CACHE if OK; the branch has no offline fallback, so only navigations and already-cached assets work offline.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L80-L92",
+          "version": "repo-lines-v1:sha256:169f19c9f4e9a9cdcc0c1bd6c151d4ed489cbcd9bc75c439ff034be8ca61c554:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZDBiNzhlNzRlNGU0MmIzMWE3NDAyZWEwMzBiYmUwMWJiOWE4NTM2MDk4NTEwZWU4NjQ2MDA0ZWQ0OWZiMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2ZTUxZTBkMDA4ZjE2YzdhMmI3MDAyZThiYzQ2NTQ4N2FlMmY1YTMzYjA4ZjczZjUzNWQwMGJmMjhiODdmZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_00d2a0f1985d4f6699a5d7a594da0df1",
+      "statement": "manifest.webmanifest declares id, start_url, and scope all \"/\", display \"standalone\", lang \"ko-KR\", theme_color #0b0b0b, background_color #f7f7f3, and four icons (192x192 PNG any, 512x512 PNG any, the same 512x512 PNG maskable, and /pwa-icon.svg any); it deliberately omits orientation because a manifest orientation value overrides the OS rotation lock (Chromium issue 40880635).",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/manifest.webmanifest#L1-L38",
+          "version": "repo-lines-v1:sha256:e1d464aed20145ae9c583d2c2bdc466f436362850966e50aa701ca7e4b3df71c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts#L64-L72",
+          "version": "repo-lines-v1:sha256:a7e9c9beb4aa0d8446ee9eed46429d6b6b54eb4aa5553d4e17ead2d009d6eb47:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2RkODM4NmFiZDdjZTlmNjE5YjQzOWZmYjFlYWJmYWY2NzE1ODFhNjJkY2Y5Yzg5MjRlYTg4ODA1YmI2NzYzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzIwZmM5ZTY3ZGIwN2VkMjM5YmIzYWQyMzEyZWFhYjlhNzBlMWY2ZmJhMDEyODhiMGJhNmU2MWQ3ZjhlZTc4OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmMwY2JhZGYxNWM5ZmY1MGMxYmE2MzFhM2UwYmUwNzYzMzUyODYzMzllMDE4MDFiNTI5ZDAyYTJlYTY4MzExNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9a0863aa6da74d37aca9c8a110ea96e0",
+      "statement": "Raster PNG icons at 192x192 and 512x512 are required because Samsung Internet will not install the app without them; pwa.test.ts validates them by checking PNG magic bytes and decoding the IHDR width/height at offsets 16 and 20, so a mis-sized or corrupt icon fails the suite.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/manifest.webmanifest#L12-L30",
+          "version": "repo-lines-v1:sha256:2a13b40bed7d43bed1a3ea42a803e1e7f8cd0c186e94e0f47d4649e671656e7e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2NDkwMjJlMTEzZTgwODU0ZTgxNTQwODQzZmNjNzQwYTEzNzdhMGEzN2JmNWNhNmI3ZGJhNzZkZTc4ZTk2ZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjYzA4YjkzZDRlM2I2NjJkODE2MmYzNWNiOThiMTEwMzIyYTAyZWMzODc4MjcyMDk0MTliOGJhNDM1YzNmYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxNmFjZjhhZTg2ZDJkNWEyODhjZDlkOTUxZTM1MDJiOTFlNzQ5YzliZGNmMWQ3N2U1NmE4ODU3MzI3NDE4NjQifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts#L41-L62",
+          "version": "repo-lines-v1:sha256:f7afb56f9477ad4375b767fed65afb6271f7975cbe96d7fc6fe1347041a69ccf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlZTEyNDM1NzRiZDFmYjg2MjE4ZjJlMGFlMjAyMzA1NWRmNDRmMDMyMDMxOTA5OWZkYzBmYzg3MWZkNTgwMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMGEwY2NiN2QyNWI1NmVlNzdjYTQzZjAxOTBkMDVhZjhhOTUyYzNjNWVjNDQ2Y2ZlZThjMzY5NDc1YzliMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyYTU5YmQ4MTlkMjhlOTgzYjRiOTI2YWFjMDEyNjYxOWYyMjA5OWM3OWE4YzQ5NjY0MzU2NGY4Y2RjMmMxYzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f99d944853f14d0eab6462d9ff1d449c",
+      "statement": "One asset /pwa-icon.svg is simultaneously the browser tab favicon (link rel=\"icon\" in index.html), a manifest icon, and the 48×48 in-app brand mark rendered by BrandHeader, while apple-touch-icon points at the rasterized /pwa-icon-192.png — keeping installed icon, tab icon, and header mark identical by construction, asserted in BrandHeader.test.tsx.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/index.html#L15-L16",
+          "version": "repo-lines-v1:sha256:ade1d39cc1308a4cba49c1eb1af023a0b95951bd8bae7a9ed0865bf122fd7e9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGNhNDBhNzJmNjJjZWE0MGNiYjFjNTM4Nzk5YWZiYmU1YzgwNDkwODYwZWRiYWVmOTFhNTY0Y2E5ODM2YzYyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjhkNTRlZWI2ZTQ1OTA5Njc0ZDk5MDAwMTNjOTA5NmU4N2U3ZTg2Yjg5ZmFjYzgxZjQ0MTNmNzZjMGI2NDM1MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjVkMzI2OWJhYTY3OGM1ZmM3MDYyODJjNmIxZTcyYmViMWQwYjM4Yzc3MjdhNWZhNjhmYTVhMzRmOWZlMWJiMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWU4ZWY0OGM0YzIxMmU4NGNlZGFmY2M4YjdlOGIxMjg2YjBiNzFmYTg5NDQxNTA2ZjRjMzFmZThmZWI3OWVmYyJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/manifest.webmanifest#L31-L36",
+          "version": "repo-lines-v1:sha256:9dbce4f3506eb3c168c4467eede37b1ead4a58f4fd208ec6d0caf42dced42ca0:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjljYTg5MWJmZjdhYzFmN2NlYWFlNDBlZjA1MTA2NmJlOWVmZTQ3YjRlNDI4MWU4NmMzMTliZTJjNTVlYmNlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjliMzNiNDkzNzczMzE0MjZlZjYyYTdmNmE4NGZmMWZlZmYzZTlkY2ZhZTlhMTU3NjRhNzA3NjBiMjVjZWU3YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTdmNjk5NmUzYjE1ZGZiNDM4NjMwMDFjNzJkM2E1MzlkZTcwZTM4ZTJhOWVkMjBkZTU5MTEwNGE4Mjg2NGY2NiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/BrandHeader.test.tsx#L27-L32",
+          "version": "repo-lines-v1:sha256:730992a4a15549ed1eb8d321ca3689fa3284cedc57bb3836417e082f88f3e424:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDkyNmEwODQ4ODNkYmI3MTVjNmJkYzRjMzlkNTdhZmI2MTczODZkYjczNWEzYTgwODM2MDFmZGE2MDc4ZmI1MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhlNjEwOTA4OWViYjFlOGNlYzE0NDNiZGZjMmFjZGU5ZWU2NzgwOWZjOTFmZTBjOWY4ZTcxYWVmYmEwODc1NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjFiMjEyOGI1NWViODFjZDgwYzNmNDdlN2I4MWIzNWFhNzk0YTA2MTc2OWUxNjBkNDk1YmI1Y2RjY2I5ZmFlZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2U2NDRmNTQzNjI0ZjZmNjI3NzA0MTA1ZGM4NmRhYmNlNTdlMDFiOGI4ZTYzOGQyYjI0OTRiYjUxZGQ5OGRhZiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/BrandHeader.tsx#L14-L21",
+          "version": "repo-lines-v1:sha256:5cb4e656b6a8e74d43538f43cc211d66183fe488ab6fce89057ffdbcd8fcf364:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDBjODQzNTgwNjQxODBlZjhhNDljNTVjMGIxMmE0MDQ4ZDYxMjVmY2MyZjIyNzc0NDE1OWMxY2VkOWQ3YmQ5MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODJmM2NmZDExZGE2MTUwMTk3YWNlZWQwODQwNmFjNjRiMDUwMzQwZGU3YmMwNDEyNGE0Y2I3ZWZhNjcxMzQwYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGExZmMxZDBlZDJmOGFkYjEwYmNiNjZhMjk3YjViOWNkMWEwNmQ1NjI2ZmQzYTQ4Yjk1M2U2NTY3MmNkNjZiNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmQyMTc3MDVmNTY3NTllMTliY2I5MGQ5NWQxMDEyYmNlMmEyZDZjN2I1ZjU1ODJhMzY2YWIwNDkyZjNjN2I1ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ca95caa642984319a99d30b46aca7008",
+      "statement": "pwa.test.ts enforces that the shell version number matches across four markers — the register-sw.js?v=N src in index.html, the sw.js?v=N registration URL in register-sw.js, the cache name mota-shell-vN in sw.js, and the precached /register-sw.js?v=N in sw.js (regex tolerating the legacy commute-bus prefix) — so releasing a new shell requires a coordinated bump in all four places.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/register-sw.js#L5-L5",
+          "version": "repo-lines-v1:sha256:5fcad57f67b45f6a5549a18aff969d8730cc7d2141a9fc674ffdfe4852ee8272:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjYWQ1N2Y2N2I0NWY2YTU1NDlhMThhZmY5NjlkODczMGNjN2QyMTQxYTlmYzY3NGZmZGZlNDg1MmVlODI3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjYWQ1N2Y2N2I0NWY2YTU1NDlhMThhZmY5NjlkODczMGNjN2QyMTQxYTlmYzY3NGZmZGZlNDg1MmVlODI3MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQzODZhMmVlNWI0YTc3ZjBlODJkZDQ4ODY3YWIyYmNiMTY2YmIwMzhkNDMzNjI3ZjdhZTQ5YmMyYjA3NWZjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWY0MDI5ZGZjMDRmOTI3OTY1ZWJmMTljMWQ1YmQ2MDUyYTZhYTNkMjVlOWE1ZDNhZDIzZThkZmY4MzMyYjQ4MiJ9"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L1-L8",
+          "version": "repo-lines-v1:sha256:92dec35befaaf19433fefd3dad62da7d5791c09c2148ca8cfbbf70a68ba6d3a7:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZjYmVmNTZjZjBjMTVkZThiYjA5Mzc3ZmQzOTUxM2YzYzE3MmIwMjczOWMxNTllMjA4NjlkZWQ3NTkyZjYwOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAyZDJjMGQ2ZGM1ZTc0ZDkyZmExNGI5MWRiZWEyNjQwOTBiZWIzNWZkYjkxODhkOWIzNDExODFkY2U5ZjRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGRjMDExYzY0NmJjNjgzNzA4NDE2ZTQ5OTY2NjkxNTkyYWMwMjFkZDFhOTgzMTJlNmQwMDZkODk0MzY5MGUzNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts#L100-L122",
+          "version": "repo-lines-v1:sha256:b5d2d2869fbbca885357a1b2259e090453260f6e912e73194bf3904e6591f7cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4ZTk3OGMyYzVlZjFhZmRhNmNjNzhkZTEyYzA5YzU3MWFjMDMxMDc3NTVmMzc2NzYyNzFhNjI5Zjc5MjcyNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3YzEzOWQ2ZDIxYjUwZjdkMDMzMmE5Y2UwMDBlOWVjN2NmNjNhM2VhYmUzNTdmNDdkNjM1NTFjMzA5OTg0M2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkNDM5YjZhMWI3YzI4YmY5YTMzNmEzODdjYWE3OGRhZTcxMmIzZWNkODFiNzg4ZTlhNmM3Y2U3OGM3ZGRiZGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_83be5043ab344b7b85b5f01f0f852cdb",
+      "statement": "The worker and registration script have no exports, so the tests execute them as data: register-sw.js runs in node:vm.runInNewContext with a stubbed navigator.serviceWorker.register and a capturing window.addEventListener (asserting register was called with exactly \"/sw.js?v=6\" on the load event), and sw.js runs in a fresh VM with a stubbed self recording addEventListener, asserting exactly [\"install\", \"activate\", \"fetch\"].",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts#L124-L137",
+          "version": "repo-lines-v1:sha256:f2bc7742816e6e556ffaf961c249a673ae169d0ea10c008d2708e4ecf59e65e5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljODUxMjRjY2JjNDdkNDAyYmVlZmYyOTMwMDI4NDA3Y2IzZjRhZjhmY2E2ZDU0NjA3ZDZjMzZmZTZlODVhNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMmZlM2NiZmFlMzhiOGFjYTNiZWE1ZjBiMTgyZDE4NWQwOWZhOGQ5MGZiMWYyNDYyM2I4MGM2ZmQzM2JlZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts#L74-L98",
+          "version": "repo-lines-v1:sha256:bccdfc1ad4d1ddd75904592aeb5fde249ef3475c15f15acaa64a42883c7c121c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZmQwMDk0ZjE4NDliZDJmZDkyZjNhMmQxYjNlYTBhZjg0YTA1OWExNTcxYWQ1NmM3NzMyYzNlZGJlOGRlYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NjZmY2E3NmFhZDE3MDU4YWJlNThmNDg3ODdjZTlkMzZmNjQzY2Y3YTE3NDBhN2NjNzA4ZjZmYzhlZThjYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwMjcxYmE1MDE4Nzg3NTU4YjQ1ODI1OTI0YzJkZDEyZDE2ZWFlZDY0ODQ4Mzg2OWI2M2Y3ZmVlMzEwOGNmM2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4e317a0f3b5046d6a2067d9a449257a7",
+      "statement": "In production the worker, registration script, manifest, and icons are static files from the Vite build served by the NestJS Fastify app: main.ts mounts useStaticAssets with root env.webDistPath (default /app/web, set to the copied apps/web/dist in the Dockerfile) at prefix \"/\" with wildcard false, and WebController's @Get(\"*\") returns index.html only for text/html requests not under /api/, otherwise 404 — so /api/* can never fall through to the shell.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L33-L33",
+          "version": "repo-lines-v1:sha256:d4b9a7128e13a3f5654ec2dd6d5f0d6e50d5985e174a1f0ec49120d829dcfdf7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRiOWE3MTI4ZTEzYTNmNTY1NGVjMmRkNmQ1ZjBkNmU1MGQ1OTg1ZTE3NGExZjBlYzQ5MTIwZDgyOWRjZmRmNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRiOWE3MTI4ZTEzYTNmNTY1NGVjMmRkNmQ1ZjBkNmU1MGQ1OTg1ZTE3NGExZjBlYzQ5MTIwZDgyOWRjZmRmNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWFjMzY5NmVjOGIxY2Q2OTM5ODgzZDdiZWQ0OTI3NzZlYzJjYWYwYTY4OGY3NmI2ZDY5MzM2NjZlMzhlOGIwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjYxNmJjYTNkNDRmMmQzMjFkOGMxZjdhZDlkNWZjYzQxOGY1MGU3YzllZmU0ZWI5MmE5Y2UyYzA0ZDIxZDQ2YSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L22-L22",
+          "version": "repo-lines-v1:sha256:b632938477d6609f62207ffb9c7a015443c7a13b16f52fa482d7e8dfeb6597ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjYzMjkzODQ3N2Q2NjA5ZjYyMjA3ZmZiOWM3YTAxNTQ0M2M3YTEzYjE2ZjUyZmE0ODJkN2U4ZGZlYjY1OTdjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjYzMjkzODQ3N2Q2NjA5ZjYyMjA3ZmZiOWM3YTAxNTQ0M2M3YTEzYjE2ZjUyZmE0ODJkN2U4ZGZlYjY1OTdjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDEwMWZkZDc3OGY1Y2VmNTNlZjNlMGQyY2JlZGY3N2I0NjdlYjY0MjA3YTZiNDVkMWNiMmY3MzEyMDFlOGJjYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWViMTRhOWYyMGViZTk3MWJlNzNlNGQ2NzZkYTc1YmFjYTMyZTY0MmVmMTYxYzAwZDZhMjc3N2MxNmFkMDE2NyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L40-L45",
+          "version": "repo-lines-v1:sha256:c2d0593db88f534e2c432247e656d66c81e0f5bd6253f7503c9ecd2a335ff5cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmJlYzcyYjRhNDkxYjE2ZTI1YmQyMmE0MTk0MDUzNWViMGEzMjZkODI5OGU2ZDg3OWJlNmFjMzc4N2YwMWQyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZmNjMxZGM5MDJmNDJjZWQ5ZTU4YjczYWM5YTExM2YyMGUxOGVkYmM4NmI2YWU1MjliOWE0OGEyMzgzZTkzNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDkwMTAyMjQyMTBhMjI5ZDBmZmFhZThjOTc3YmQ3NTc3NDdhMTIwYzg4MDNiMDM5YTJjYTliOWQ5YjNmZGVhOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/web/web.controller.ts#L14-L27",
+          "version": "repo-lines-v1:sha256:1447266b9c0b592376649f38dd27ff02c0109091e32058c941905e4509935ba8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5YzE2MjYxYmFmMzY3Y2E3MDU1ZGMzZWFhOWZlNTFhNzQ2YzlmNWIzZWZiNTI5YmFkMTE0Yjc5ZDMyN2FhMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwYmE2YTI2NjM5OTIyNWE4MzYwNTE5NDgyNTc0NWZkMWY1MjlmMTlhMDA3YTJlM2RjMjU3NGEwMGE5OWRmZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_06dcb05238784cc98c11602f3d306b8b",
+      "statement": "The worker is hand-written with no Workbox, precache generator, or build-time plugin: apps/web/public/sw.js is copied verbatim by Vite into the build output (byte-identical to the emitted dist/sw.js), and its offline guarantee covers only the shell, not application data.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/dist/sw.js#L1-L93",
+          "version": "repo-lines-v1:sha256:b972ce6e6f3b62979b2ae58117071576d4a37662291ed58f22413a055403a561:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmY2JlZjU2Y2YwYzE1ZGU4YmIwOTM3N2ZkMzk1MTNmM2MxNzJiMDI3MzljMTU5ZTIwODY5ZGVkNzU5MmY2MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/web/public/sw.js#L1-L93",
+          "version": "repo-lines-v1:sha256:b972ce6e6f3b62979b2ae58117071576d4a37662291ed58f22413a055403a561:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmY2JlZjU2Y2YwYzE1ZGU4YmIwOTM3N2ZkMzk1MTNmM2MxNzJiMDI3MzljMTU5ZTIwODY5ZGVkNzU5MmY2MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4abcac97df2047acba2decd7fadf4311",
+      "statement": "The single cached root document is a correct offline fallback because the SPA has no client-side routing: it is one view whose durable state is anonymous localStorage under the key mota:transit-selections:v1 rather than in the URL; introducing a router would invalidate the cache-only-\"/\" assumption in the navigation branch.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L59-L78",
+          "version": "repo-lines-v1:sha256:e73622b7ca03bb5171b8102b1a5206bfbdb1e6cb7ce2d0bf61a9ef1633c78f45:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkY2I3MWQ1MDAyNWNlNjc0N2UxYjFjNDI3ZWI3MjhlNzU2Y2I4OTAyZGU4MGZlODBmZDZhZmM0YjY4Y2QyNTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2ZTUxZTBkMDA4ZjE2YzdhMmI3MDAyZThiYzQ2NTQ4N2FlMmY1YTMzYjA4ZjczZjUzNWQwMGJmMjhiODdmZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxZDc1Y2UwM2MxYWRiNTFhZjgxNzViOWM1ZjliMzFmYjM0NGY2NTk5MmE5ZTdlOGI0YjRiZjU4NTNkYjUwOTAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L8-L8",
+          "version": "repo-lines-v1:sha256:4416ce9e717ba6d413a63e5703759521ddaa10a11b3bcf2070ebfb85c8a96c88:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQxNmNlOWU3MTdiYTZkNDEzYTYzZTU3MDM3NTk1MjFkZGFhMTBhMTFiM2JjZjIwNzBlYmZiODVjOGE5NmM4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQxNmNlOWU3MTdiYTZkNDEzYTYzZTU3MDM3NTk1MjFkZGFhMTBhMTFiM2JjZjIwNzBlYmZiODVjOGE5NmM4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmQ2NTk5NzhiZThkZGEzMGYzZWJjZjAwOTk1OTkyMWM4NDg2ZTUxMzc4ODk5NTM3NDllZjI4MDk4YjEzYjBjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTVkNGFiY2NlZDc2NTA4ZjEwMjI3MjE2ZWY5ODFhODM5ZmFkZmVmN2QzYjQ2Yzc2OWU1MGU1NmFhMDI4YTYwOCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/main.tsx#L1-L18",
+          "version": "repo-lines-v1:sha256:e1800a1e9ff9254e3eb86de873d9474bc70d18688fc75d2f349ef31a8677bac3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYmExYjEyYjI4YzUxZjI2NzQwNWY3MTEzYWE4ZjRlMGY3NTU3MTVlYTViOWM4MDRkZTZhYzU3MDkxNWQ2ZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjYzc0MGQ4ODEwMTI2MTg1ZDg5YWI4YzQxNjZjNzY0MTdlODE5MWFiNmYyMjZkYmE4ZjQxYjI5YmIwNmIzYTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

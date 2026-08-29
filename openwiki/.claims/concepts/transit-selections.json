@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8957f1d11e7d420084906c46aaeea9f01312fbe18921110d5ee8b4973ebdf3c5",
+  "claims": [
+    {
+      "id": "claim_65e9f005a2d54f34855973ef7482f538",
+      "statement": "The saved-selection document is a single `TransitSelections` value of shape `{commutes: {toWork: TransitPointSelections, toHome: TransitPointSelections}}`, where each `TransitPointSelections` carries exactly four canonical fields — `busStops`, `subwayStations`, `selectedBusStopIds`, `selectedSubwayStationId` — produced by the Zod transform, and `COMMUTE_CONTEXTS = [\"toWork\", \"toHome\"]` is a closed Zod enum so indexing `commutes[commute]` is exhaustive by construction.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L27-L69",
+          "version": "repo-lines-v1:sha256:24dc57e2ad3aff1e14b509dee4f079cc742fb3d807ff740d7dc870dfc20f82b6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4YjlmM2I3NWM3YTJjNDRmNzNiMzM4ODIzMTk3MGRkZmQ2NmM1Nzk3NmI0MjU5NDk3NjhjZDQxYjMzODY3YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjOTAwNjkwODUxNWNhYjM0ZDE0ZmE5ODAxYWQ1NWJjN2EwZjVmMzdmNDcwYTgzOTQ5M2Q2ZmI1MDIyZGZjMWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYTg1MWMwNjQ4MTliM2Q0ZjE5NWFlNjZmMzRhOTExZWZjZjE5ZmQwZTUzNzM1MTIyNDU0NTI5YWMwZjgxMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4OTQzNWUyNWUzMzk4YmZkOWFmZWViZWEzY2E1MjQ2MmFlMjlmODJlYWMzZDlhYzhmNWU1ZTMwOTMwNWU4YTEifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L8-L10",
+          "version": "repo-lines-v1:sha256:2fd2fe12b6aab02698570df4866fa2b19aff80a319ee6aee168afae9820b4bd2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjliMDcxZDg2MzhlNTJkMTg1M2RlMjNiZWRiN2M1YjI4M2Q2ODkwMDMxNzNlZDlkY2JkYjVhMjczM2Y5MTFlYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGI4ZTY0MDcyMjY5YzQzNjA1NGYxMmMxNTEwMGRlYzkwOGMxMGFmMzQwYmM2OWU5NmM4OTAxZTc0ZTJjYThjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQ2MmIzMTRhZGIwMTAyMzhhYzM0MjZhYTI1MWNjNWFiNTMxNjE1YWVlZWNkOWIyNDViZDg3ODBjYTMzN2VjOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY5MmQxNDllODM1NTdmYjhiNGRhN2E3MTQ3NjRhNzFjM2UwYTE1MzVmNjg4ZGM5YmQ2OGVlZTAzYjJhNmI5NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ced06b3598df4938b80c416c48aa5ada",
+      "statement": "The two selection kinds are deliberately asymmetric: bus stops are multi-watch (an unbounded saved `busStops` list plus a `selectedBusStopIds` subset capped by `MAX_SELECTED_BUS_STOPS = 4`, each selected stop rendering its own arrival section), while subway stations are single-watch (unbounded saved list, single nullable `selectedSubwayStationId`). This asymmetry is product scope from DESIGN.md §1 and is why only the bus path required a v2 multi-watch migration.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L12-L14",
+          "version": "repo-lines-v1:sha256:17d200a74ad4dd90540783f0d7872b1bace863dddc3dbac083be2dc676dc454e:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg1MDBkYTdjOGY5NTRiYTFmN2VhNzY0YmExNDQ4MTkzMGQ0MjlmZDU0YzQxZTVjYzc3OGYxNGNjZDE2MTkxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTI0ODM3N2IwOTNhOTcxYmZkZDdjNzYzNjBkY2UzMjA3MWY2NzAzMmQ0MzU4MGIwMGM1NzRjMzk1MGUyNmEwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzI2YWM3NjE4ZGE0MDk0NDQxNmYyM2YyNzFkODUzMWUwMDRjNDY3MzIxOTk3NWI5ZTFjZGZkZTA0MzJiN2JlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGY5ZGI4MWQ2NzJlNjczMTAxMWJiZTZmNTFkMTI3NDVhNGYzYTE4MzM3ZjFkMzBiMDgwZDBkMTMyYTQzNTBiNSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L5-L6",
+          "version": "repo-lines-v1:sha256:feaeab93b18992b621eef6d1e3868c6e143e6e01bd07405476b4b3712c20c059:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYThlMzkzN2ZiMWMxZDRiZWE4MWUwODMzZTdkMTY1MTE3NWJjYTc2ZjRjMGU0NDI5M2IyNzgwZmQ0ZjQyYjYyNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjI2OTRjOTc5NWNhYjZlMWQ1ZDJiNGFjMTc1NmVmMTg4NjUyMTEzYmNmMTkxZDlhMDY2OTEwNjBjNzBhMjJhMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjZkNTFmOWFkNGM5MGJiZGY0NDhlOWE5OGU3YTU2ZWU3MDc0YWUyMjhiNWVmNWJlM2MxOTMxM2NiYzAyY2IzNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDZmYmU2NWRkMjdlMzc4ZjhjNzdhZGNlNmZkNzg1YTc5ZTE1M2QzMzJjOTQ4OWY3M2U1ZTI4MTI5MTJkMmI2NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_65725268fd0246c9852116f6fb449adb",
+      "statement": "`transitSelectionsSchema` is a `z.union` of the per-commute document (`{commutes: {toWork, toHome}}`) and a legacy flat point-selection document; the outer transform promotes a flat document by placing the same point-selection object into both `toWork` and `toHome`. This one-time duplication is the only operation that ever writes both contexts at once and implements DESIGN.md's rule that legacy single-storage stops and stations are preserved in both commute contexts.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L24-L25",
+          "version": "repo-lines-v1:sha256:447c241bb8a1acfa2d024502e8e90119a7ecc42f9c0ebd93b3f621f1aa5a8518:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJiODkwNTEzMDZjOTA4NjdkZTllYmZmNmFjNmNiZDY5YjA0MjZkN2MzNDcwYWY3OTNkYzYyNzdlY2I2Mjg5MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQ0YmIxYTc0YTQ3ZWUxM2ZiNDNhODQ1MTQxOGY2MjlhZDkxYTA5YThkZWU1OWM0NDhjNGQ2YzAwYmUxNWJmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDc1N2NlNzYzMzQ0MTdjNzM4YzY0Mjg5ZTU5MTk4NTY1MzQ1MDQxN2JhMmU2NjkxMDk5MTAxYmMwMjZmNWZhYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmM2MWQ4NmE3NDk4ZTg1OTVlNGI3MTVhNTZmNDhlZjk5OGE2OWE2MjBiNDhiNWFmYWJmMGIzYmUxNTc5OGM3OSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L47-L65",
+          "version": "repo-lines-v1:sha256:57bfcf095c3af17a72b5bbf40deb9b70762907ac6c01f9367ad440916ef6609a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkY2Q3ZGI1NWFlYzE5YzEwMzM3NzE4MjJkODIxNjk3NDgzNTM1MDc2N2U2MDllYThjZDc1MWFjYmRhZTJlODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4ZDMyN2UzYzllNDkzODYzNTQ3YmE1Y2VhZGU0MjkzYWQwOGNhNjIwMmRmYjdlYmVkY2Y4MDY3YTM1YzIyOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4N2JlMTg3ZjU0M2UzZjE3NGY5ODhhOTQ5ZTE5ZTA0NzY1YTEyYmFmNDUwYjg4ZDcwOWIyZDI3ZTE5MjM4YzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_79f14c5168854c03bcb1a110bbb4ca7a",
+      "statement": "The v2 multi-watch migration runs inside `transitPointSelectionsSchema`: the input schema declares both `selectedBusStopIds` (array, capped) and the legacy singular `selectedBusStopId` (nullable) as optional, and the transform produces the canonical `selectedBusStopIds` list by taking the array when present, otherwise wrapping a non-null singular id into a one-element list, otherwise an empty list, deduplicating through a `Set` in every case; `selectedSubwayStationId` is normalized with `?? null`. Because the point schema is the union member, the oldest shape — a flat document carrying only `selectedBusStopId` — migrates through both rungs in a single `safeParse` call.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.test.ts#L47-L67",
+          "version": "repo-lines-v1:sha256:6a1786fa587bef4c3c9d69712601e79bf1b902ba23a3d0cf0857a6223c927968:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhNTI1N2Y5YjRlZWMxYjQ3ZGU3ODcwMWYyNmQ0ODI3YzU2YjRmNGI0NzhkYmU3ZDkwOGNkZDlkZWRjYTY3YjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzNmFjMzQ4ZWMyNzcyMGQ3NTgzNGI0NzMyOTBkMjcxODllYTM0YjcxYzQ0Yzk1YjU2MWQ3OTdkMjc2Yjg1ZjkifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L12-L41",
+          "version": "repo-lines-v1:sha256:d4182bf4925b65d88ad379b35c278cd78d05860675f405f755fdc8961331fd51:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjMjVkZDk3MGU2ZTZiMWYwMDYzODYwNmNjNzFlNTk2NDEzYTA3MTM4NTZmM2Q3NGI0NzAzMDc5NGRkYmUxOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOTgzNTQ5OWU1YmE5MWY4NzI2N2M5NTJiNzhlYWVkZDZjNDY2Zjk1YjY4ODFiMDdiNDZjY2FlYzBjZGYxNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0NGQ3ODkwMTk1MWRiYzliYjk3ZGFjZjhhNzhlYzBhMjY4MzQ3ZDY3YTk1ZWU3YzVkZmZlYjhmNzQwYmFlNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyYjg5NWM4MTc2ZDQ3M2VhZjFmMWM5N2M3ODkyYjFhNTYzNGRlMGZkZWVlOTNlZTIzZjJkNGE3MDVkYjc0Y2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_217ee6b92c9c47839d5e1dead48e3e6e",
+      "statement": "`MAX_SELECTED_BUS_STOPS = 4` is applied with two different semantics: the schema's `.max(MAX_SELECTED_BUS_STOPS)` makes a document with five or more watched ids fail to parse (asserted by `safeParse(...).success === false` in the contract test), while the storage layer's normalizer truncates with `.slice(0, MAX_SELECTED_BUS_STOPS)`. Consequence: changing the constant alters what the shared schema rejects from the server, so lowering it is a data-compat break for previously-valid stored documents re-parsed in `packages/db` and the browser client.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L55-L57",
+          "version": "repo-lines-v1:sha256:5e14fa95ac998d4cd46ced312739d1d3341ea7df8484a38a84917b404a547d52:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGU3YzU1MTVkYTYxYjEwOGZhOGU5ZDBjZjMyMWRmNGY5MjA5ZmFmMWE4MTA1MjVjNzQxNWRiYjlmNGFjMTNkNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBjYzg0OWY4NTdkZTJiOWE1NDJjMWZkZTgyZjJkYTE0MzBkYTgzOWU0MzY5OTUyZGZjOWZkY2VhZDg4Yzk5ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGZlMTllNTQ2YTc2MjY3OWUwYThiYzU1ZTlhYjM3MWE1NWEzMzRjYjFhM2E4Mzk3YjkwNmI5ZDYyZmRiZTE5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjE3MGJjNmM2NmM4ZTBkMTc2OTY0OGFhY2RmNWE2ZTQ5NTMwZDJlYTJiN2RhMDA3ZDM0NGE5MDRhY2JjYzViNSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.test.ts#L69-L84",
+          "version": "repo-lines-v1:sha256:9c4d76479206cee488e84105088325b03e0137733a8a45c6889d5c7d9dc655bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiN2RjZTM3ZGEzN2JiY2Y3ZTViYjE0NWFlYzRjZTBiODJlYjc2YTgxOGU3NGIwN2Y3YTNkNDk3ZGFiY2VkNGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlkNzI3YzAxMjY3YjMwYjAwZTgwZjk1MWEyMTVlZGVkY2M0Njk1ZTk4MTBmNWRhZTg4NTgzNDlmZWEyOGJiNGMifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L17-L20",
+          "version": "repo-lines-v1:sha256:c012310c3d311b3601f23584a0bc5c385f52bdedc78856bb19b799c0813883ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDIyN2EwMTJiZDVlNGM3ODQzMjdhMzczOTBhYTgxY2NiYTUwYmIxNWM3ZjdlOTY5NDZjZDZkMGE0OTNmNmY5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2UyNWNjMGFhNTk1MjcwMjVjNDQ2ZDk3MzQ3MTQxZWEyYWNlMDdkYjNhOTBjYmVlNDhmMmM5ZDNiOWYxMTcwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODg1NTlhNmVlZjMxMzM1MzQ3MTdhNjM3ODhiODVlOGNjZjU2OTg0N2NjZmJjZDRiNmZlMjZkNGRjOGY3NDA4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDU4MmRhZDc5ZTk3OGY2ZDBjOTIxYWU2M2M3ZjM4MmE5ZmE3YTAyMzg1NmE0MzQ2NDlkZTY5NWU5OTVhYjcxYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d91fb3720183432ea9206e8e9c320402",
+      "statement": "All six mutation helpers in `transitSelectionMutations.ts` route through one private `updateCommute` helper that spreads `selections.commutes` and replaces only the slot named by the `commute` argument, passing the sibling context through untouched by reference. There is no code path in the module that can reach the sibling context, which is the whole enforcement of DESIGN.md's success criterion 7 (the two contexts never modify each other and are stored independently) and its QA criterion that deleting on one side preserves the other.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L36-L36",
+          "version": "repo-lines-v1:sha256:7a276fa957b875bcf3b83072dd9f44098a9b69cc2df560fae820e88c1384a4ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EyNzZmYTk1N2I4NzViY2YzYjgzMDcyZGQ5ZjQ0MDk4YTliNjljYzJkZjU2MGZhZTgyMGU4OGMxMzg0YTRlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EyNzZmYTk1N2I4NzViY2YzYjgzMDcyZGQ5ZjQ0MDk4YTliNjljYzJkZjU2MGZhZTgyMGU4OGMxMzg0YTRlZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzQ1NTQxMDZmZDhlMDE1MDM1YmE1ZTIwMjNkMDFlZTA2MWJjOTAzMjNiNzMxY2ZlZWE2N2JkNzZiOWVjZWNmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzVkMmQ2MDllYmY3YzYzMDdjZDk1ZGIyYzgwNjA4MGNjN2M2NTQ3ZDg5NDc4M2NhZTM3Yzg3YWQxZDZkYzQ2MyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L284-L302",
+          "version": "repo-lines-v1:sha256:2580261e9a59d3d002412b1b0b13f170607541749f44e9d52cfed4ca423c0477:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzMmMyODNiY2YxNWQ1Mjc4MzJkY2UyZjJhMDJkNGYxNTIwYTZiNzRlOGVlM2YwN2JjMWYxY2I2NjI0MjU4YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0M2FlYTBiYzg5ZjZiMzk5NGE3ZWNkMDhmY2RiZmVjYzlhMTdiNDFkZTcyYzYzYzUzOGQzNjcwNGZmMjU4NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlM2QzZThhNGI2OTU4MzFkN2I2NmVjZmU1MzdhMjY3NjM1NmE5N2MyOTA2YmRhNDcyZTRjMjAzZGViZTc1MGYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L10-L23",
+          "version": "repo-lines-v1:sha256:d2448f06c739489acd0eda146117740299118c4b820c45b6fc794a7bb6f419d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYTUwN2VlNjE0MmUxODRlY2JlYjhjMWRhYmJkYTVjYTczOWRiMDExYjliZGJiOGY0MGJmM2I1ZWFkZjAyNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyZGUyZTkyYjFiMzI0MzM0N2M5Y2I3MmQxMWYxZGZjMjlkZTJkNzBhOTk1NDFkMDNhZTgxMTM3OTM0NjFhODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmNTgwM2Q3M2IwMDk1Y2Q0MjIwZjRjMWJhZTE4YjUwYThjYzIzZjY3NzRhZGZmYTM0M2NmOGUyNTRlNjgyZTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6c67409985b43ea9188f38788331d35",
+      "statement": "`addBusStopsToCommute` is a no-op on an empty batch; otherwise saved stops are deduped through a `Map` keyed by id so re-adding an already-saved stop updates its record in place without reordering, and the selection ids are unioned (existing ids first, new ids appended) then sliced to 4. The consequence is that when the context already has 4 watched stops, a newly saved stop is silently dropped from the selection while still being saved in `busStops` — the slice is the real guard on this batch-add path, because `App`'s cap announcement only guards the list-row toggle.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L112-L126",
+          "version": "repo-lines-v1:sha256:affee4e1cbb6c16302129fb004ae8c3c59bcedea7c2e57bd6c93d4f142d035c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMDBmOWY4NDA2ZGIyZWM1NGI3OTA3MTdkNTgwNzZjMWQ4YmJmYTYyNzQzMDViZTE1YmViZWFiZDM4NTM0ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjRiZDVmZGYwMjkxODQyMmViYjBhMTIyODY3NDk0NTdlMTBkYThjMmUyMDY3OGJjNWI5ZTFlZjkzNWQ5ZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlMjA4NmFmN2ZlMzE3OTVhYThiMWFiYWVkODlmODBmYzIxNjNlMmI1YTlmMGI3YTYwYmM2NTU0ODk2ODg1ZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4MmM5YjIzNjhjMTAyODAxNmFmNDgxYzc5MmQyM2JjYjBmOWE1NDk0ZjNhNmRjMDg5YzRlZDNjNmU5Y2NjYjUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L25-L51",
+          "version": "repo-lines-v1:sha256:34bb4dfa4dbefa9c3d908b00cc861da7e42223b4ac7b8c602f113ddcd5fac0a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhOWQ5MDdlNTc4YmNkOTFjNTI4OTM4YzE0MjBkNzFlYTlhMzBlYTk4MDkxYTY0OWY2NTIyOGQ3MWM5NzAzODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwODdkOTc2YmVmNTAxMWUyMWE1ZjljZTM5OTAwZWU1NDQzZjE1ZmYwZjlmYjQ3MGRlNTI2MGRhOWEyOGVlYzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5fc116edbf7b41ebb9ba11493e832765",
+      "statement": "`toggleBusStopForCommute` is a strict no-op when the stop id is not in the saved `busStops` list (an unsaved stop cannot be watched); otherwise it removes the id when present or appends it and slices to 4 when absent. `removeBusStopFromCommute` filters the stop out of `busStops` and prunes its id from `selectedBusStopIds` in the same transition, so deleting a stop never leaves a dangling selection.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L114-L128",
+          "version": "repo-lines-v1:sha256:060eb59959c88b419ff40a45c3c2c93802264612fd402ef5abf029b2df7defcb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYjYzZTVmYTQ4Y2JjMjIwYTE5MzBkMWQ0YTE4MzJmMWJmZDA2ZDg4ODhiMWVlYTg3MWI2N2ZmMTY1ZGIyOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGZjMGMxNzNkMWVjM2ZjNTAxZDdkZmE5Mjg1NTAxYzUyN2NmYjQ3MTI1ODNkYTNjYzM2MTgwNTY2YjRiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyZDY4ZWE0ZGVkNjA2ZDBlNzE5NDM5ZTYwOGRlODRlNmM3MzMxYmVmN2Y5ODRjMzA0YWE0ZmFkOTQ2ZDk4ZjIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L80-L98",
+          "version": "repo-lines-v1:sha256:85082b0670abff51fc2e1d4dfb751dcc812b1ec0ffa245bbcdfa1fefde19b74e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MzNlZDMxYmM2N2Y1Mzk1OWMxN2M1MzIxYWFjZjI1YTFmYWQ2MWM2NTRlNjY0YmVmN2U2NjIwODM1MmE2MTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NGMxZTQ1NmYwNzU3YWI1ZThlN2Q3MGViOGM5MWY5NzdjZjJmOWU2MTIyOGU0NGQ1MTY2M2Q2YWM4MWNlZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e493c0b4d0614537b630ad6f1319c295",
+      "statement": "Subway mutations make the first of a newly added batch win: `addSubwayStationsToCommute` sets `selectedSubwayStationId` to `stations[0]?.id ?? previous`, so saving a new station immediately switches the watch to it. `selectSubwayStationForCommute` no-ops unless the id exists in the saved `subwayStations`, and `removeSubwayStationFromCommute` falls back to `subwayStations[0]?.id ?? null` only when the removed station was the selected one, preserving the selection otherwise.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L100-L148",
+          "version": "repo-lines-v1:sha256:404a9981f0016f62eec9f4c47cf99be704eba0de82ea72f921f947e18c2df1ba:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkZmZhM2I4ZjNlYzQxYjAxM2IyZWRkNmVjMzQwYzM5YzI3OGVkMzFhNzIwZGI1NGJkNTc5MTdmODQ3MDcyZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L53-L78",
+          "version": "repo-lines-v1:sha256:f1d185c6edc6bc9f26172b2737dff8d01fd783440b51f9175777dc1859668027:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmMjMwYTgyMjNkZDVhN2IxZTQyNmVlODM2NjFkYWUyMzQzMGRjNmMxZjYwYzliYjI4OTY4YzgzODE4MTA4NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjNGIyY2M5ZmQ1NjZiM2YzOWRlMGJlMzg2Yjg3NjQ0NDkyNjNlMTg1NzMxZGJmN2E1NTQ0MWYzMjE3MTUzNmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_18563c412f8c421aaaf28be90a553291",
+      "statement": "Per AGENTS.md's boundary rule that localStorage values are untrusted and parsed with Zod, `loadTransitSelections` resolves an injectable store (`Pick<Storage, \"getItem\" | \"setItem\">`, defaulting to `window.localStorage`, and returning the empty document when `typeof window === \"undefined\"` for SSR safety), reads the key, JSON-parses, and validates with `transitSelectionsSchema.safeParse` so the migration transforms apply. `parseJson` swallows only `SyntaxError` (returning `null`) and rethrows anything else; every failure path — no window, missing key, bad JSON, failed Zod parse — returns `EMPTY_SELECTIONS` and the function never throws, which is what lets `useTransitSelections` seed state with it as a lazy `useState` initializer on the first render.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L26-L26",
+          "version": "repo-lines-v1:sha256:20d33837dddc024079c9cf88e7c42fa9a24d5eff382438bacb2ca012f8120f5e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBkMzM4MzdkZGRjMDI0MDc5YzljZjg4ZTdjNDJmYTlhMjRkNWVmZjM4MjQzOGJhY2IyY2EwMTJmODEyMGY1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBkMzM4MzdkZGRjMDI0MDc5YzljZjg4ZTdjNDJmYTlhMjRkNWVmZjM4MjQzOGJhY2IyY2EwMTJmODEyMGY1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzBlNTlmNjBiODFlNTYzOGMwNjJjYTMzNzYwOGVkYzlmMjFlYzNmZWVkMDg3MTJiOWE2NjJkZTIxMDFkNTk3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZkYmRhYTI4YzRkZmI4ZjQ4Y2M2Nzc0NGI3OWY4MGQwOWNlNTQ4MDliMTQzY2I1NjM5NTlhMzdiNTFiMDQyZiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L26-L96",
+          "version": "repo-lines-v1:sha256:a49e275f5fcd565e9175e3c13aa7e83778a02d16d36b8c54332f0ce2cb45ae54:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2MWNiZjA1OWNmZDBlODhhYzA0YWM2ODViMGM3NmUzM2QxOWM1ZThjZDI4OTQ2NTIwNGI3MjUyYzU0ZmFhZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxM2QzZjU4NjZkOTIwMDdmYzUwNTExMmFmNTA1YjYyNWVhZTBiOTYzYjdhYWJmNTBjNmRkZjgxN2U5NTFhNjYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L33-L35",
+          "version": "repo-lines-v1:sha256:2cb9315213431e5d40fc49d14e4f9598aa88fa110b383ae90acb82b3954c02ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjFiZjEyZWI1MTI1M2UyYWQ5YWU3YzhjNmEyMGFkYWI3MGQ0YjE5YmU1Nzc0MTZiMGFmNWMyOTZhMDM1OGUwYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzUwZTU1NTE0ODk1OGJhZTc4NGU1YWQ0ZjgwOWQzOTgxMzJmMjU2YWRjMTI1ODUzMTJiOTUwZDU2MThlMjQzMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzA4MDIzNjMzOWU5ODBmOTY4YzkyNTkwMDMwZmZkYWViNzc0MDg0ZWYxYmY0NmQxYzUxNGQ0NGQ4ODk2M2NhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2E2YTk2ZGVhMTk0OTkxNjEyMDAyNGVmMDVmMWNlMDlmODNjYWIzMDk4NjI5ZWEyZDU1YTg2Y2YxNzY0MDJhMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f8b060b5f8b4a06875647740ab0abd2",
+      "statement": "`normalizePointSelections` runs on both commute contexts on every successful read, in this order: dedupe `busStops` and `subwayStations` by id via a `Map` (last occurrence wins); drop `selectedBusStopIds` entries that do not resolve to a known deduped stop; cap the surviving non-empty list at `MAX_SELECTED_BUS_STOPS`; if the list ended up empty — stored empty or entirely dangling — fall back to `[busStops[0].id]` when any stop is saved, else an empty list; and let `selectedSubwayStationId` survive only if it matches a saved station, otherwise fall back to `subwayStations[0]?.id ?? null`. Net effect: a user with saved points always has at least one watched point per mode, so the arrivals panel is never blank for a non-empty commute.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L37-L76",
+          "version": "repo-lines-v1:sha256:67e2991127c4abe5e5a036a10d26c9361931414de19680137e1e9c21125c8d4a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZjViNGNmY2YyNGNhMjViYzFjOWFiOTZhZWExYTk3NmZmYmIyNzdhMzNmMWVlNzc5MTc3ZGQ4MDZiNTVhN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4YzBmYjg2MDk5OTNhM2IxNzQ1MmI3MDFlOGE5Yzc4OWRiNmQ5NTI1NzNmZTRlZjYyNDQ2MjQ2ZmRlZTQ2NzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_65022da3e6b843eca99976e37fe66416",
+      "statement": "`saveTransitSelections` is deliberately dumber than its read counterpart: it `JSON.stringify`s the document under the same storage key with no validation and no normalization, so the invariants are enforced on read rather than on write — writers may be sloppy, every successful read re-establishes the contract, and the stored document is allowed to be ragged (duplicate rows, stale ids, over-cap lists) while the in-memory document never is.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L98-L104",
+          "version": "repo-lines-v1:sha256:6248ee6a88726d85989eacba4cbb5e3bd5893ad0ddbd08563aa50ee00be7ed26:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNGNhMTk1NDhlNjQzNWEyMmVmMzBiZWU1MDIzZTg1NGIzODkyMzA4ZmM1ODdiZDJlMWIyMTg0Njc1NWRlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTY1ZWVlOWJjNDdiNDcxNzAxNDBkNTE2ZWY3YTE3ZmZhZmM5MjRlZWI1YzEwYjM5Y2Q0MmNiZjg5OTJkMWM3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_495b9202379d436093127e57a783bb53",
+      "statement": "Anonymous selections persist under the localStorage key `mota:transit-selections:v1`, and the storage abstraction is narrow enough (`Pick<Storage, \"getItem\" | \"setItem\">`) that tests substitute a stub rather than a full `Storage` implementation.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L40-L40",
+          "version": "repo-lines-v1:sha256:11d9e09fbbaa92caaa7630bd02ef5d191b6f929cd6b37bf99bfcb4a65bca81a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFkOWUwOWZiYmFhOTJjYWFhNzYzMGJkMDJlZjVkMTkxYjZmOTI5Y2Q2YjM3YmY5OWJmY2I0YTY1YmNhODFhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFkOWUwOWZiYmFhOTJjYWFhNzYzMGJkMDJlZjVkMTkxYjZmOTI5Y2Q2YjM3YmY5OWJmY2I0YTY1YmNhODFhMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDA3NWExNDNlNDU4NTI0YmU2NTU1NTczY2MxZWRhYmZlNDIxOGNkMmZkODAzMmQ3MGFhODhjMDg5MmQyYWRlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzUwZGUyYzY4OWU0N2E4MGFlZmQyMzQ5YmJlOTQzMDg1YmYyNTY3ZDEwMzI1NDEyNzgyMjI1Y2JlNDFhM2YyOSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L8-L10",
+          "version": "repo-lines-v1:sha256:43aa451e7b29f09cfe8e551ab211ede88adbb412d6ebf1f74fb62e59d2b5391d:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQxNmNlOWU3MTdiYTZkNDEzYTYzZTU3MDM3NTk1MjFkZGFhMTBhMTFiM2JjZjIwNzBlYmZiODVjOGE5NmM4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2UyMjM4NDQ2Mjc0ZGQ0MTliYWZiYWFiMjcxMWM1MGNlOWNmYWFiOTdhYzgxZjhhNTQ3OTc0ZTYxYTg5ZmI0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmQ2NTk5NzhiZThkZGEzMGYzZWJjZjAwOTk1OTkyMWM4NDg2ZTUxMzc4ODk5NTM3NDllZjI4MDk4YjEzYjBjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM5NzdlYWZkMzJhYzUyODcwMmY0YjRmNTlhNzNkNzU5OTQzOTZhOTUzOTI5NmIxM2M2NTA3MmNhYjg0ZDA5ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_db9bf9e2fad74896850a491990c9c4e1",
+      "statement": "The authenticated lane reuses the same schema rather than a parallel definition: the browser parses `GET /api/settings` with `transitSettingsSnapshotSchema` (`{version: non-negative integer, selections: TransitSelections | null}`), the API validates `PUT` bodies with `transitSettingsUpdateSchema` (which requires a non-null `selections`), and `packages/db`'s `toStored` re-parses the `user_settings.selections` jsonb column with `transitSelectionsSchema`, throwing `InvalidStoredSettingsError` on a bad row instead of repairing it. `SettingsController` maps a failed body parse to `INVALID_SETTINGS` (400) and `SettingsVersionConflictError` to `SETTINGS_VERSION_CONFLICT` (409); a fresh account reads as `{version: 0, selections: null}`, the signal the client uses to bootstrap from the anonymous document.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L82-L112",
+          "version": "repo-lines-v1:sha256:faf6be8bbe8e720db0f512df39f1790d55fe3898713b5fb4fae640320bc22c97:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOGRjYmI0OTJkMzNiYzlmZmNkZTYyYmRmYThiM2E0OWE3NGEyYzc3MmQyY2E0MTczZjdjMWYwYWFjMThkNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1NjFhYzQwZWMzNzQ0ZmM4NmI2NmU5NzRhOTVhMGMwNzExNzBlMmNiNzUyNDM5Y2E4NWNkZjBmMTNhN2Q5OGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L156-L166",
+          "version": "repo-lines-v1:sha256:81088a664621fc7d43e5a8f615fc47601a6e67e5c4d228bd6ce4e7bb15e47d63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiOWIzYWQ0OWFiOTdjNTJiNjcxNTIyMzRjZjZlY2Q2YmQzMGQ4ZmZjNzQ2ZmUzNDVkNmIyODVlMTg3N2JiNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L71-L87",
+          "version": "repo-lines-v1:sha256:1c3f35a2f74c76bd352f033de9639f337cf19a64eafba39a1f9bb477a022d4dd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkZGI2NmM2ZDE1M2E3ZDkyOGRjNTIwMDE5MjkwZTUxYWM5ZWNhODY1YzgyNGY2NWY2ZGRhNWYyMzE1NzZmMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjOTAwNjkwODUxNWNhYjM0ZDE0ZmE5ODAxYWQ1NWJjN2EwZjVmMzdmNDcwYTgzOTQ5M2Q2ZmI1MDIyZGZjMWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmZjcwNjEzMGE1ZWU3MWE1ZjU1YjVlY2EyZDY5MGQ0ODVlYzUwZDk2ZDdhZGIxNzEyZGZiNGM4MTBjOTE2ZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L43-L56",
+          "version": "repo-lines-v1:sha256:5b7c36733e7761f79200c16a88aa189385cda3311b039b1162d3c49a26f361c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MTQ2ZmI2MGZiMjU4NzgzODlkOGE3ZmM1YjJiMTcyNThkODBlYjUxOTdiY2IxNzA0M2FkZjVhZWM0N2MyODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5YjY1MWY0YjcxOGZjYWFiNDRkYTI4MjE4NzZlNDhlOTY1MmNiMmY5NWE1ZDdmOTE2ZTNkNzUxMjhlZGIwNGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a30cbb57ca6f4fcf96534963f418eb1e",
+      "statement": "The `normalizePointSelections` repair layer runs only in the localStorage lane. A server snapshot is migrated by the schema (union transform plus v2 list migration) but is placed into state directly by `useTransitSelections` without a normalization pass, and persistence lane choice is made by session state in the hook's `mutate` — anonymous sessions write through `saveTransitSelections` immediately, authenticated sessions enqueue `saveTransitSettings` on a serialized promise chain.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L175-L186",
+          "version": "repo-lines-v1:sha256:01f57ad4ef1cdaeca0714e17fb6e7ef5db6e8d963a9b0745b9a25eda36e730a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZmM0N2YzZTA4YzVmZTdjZGRhMDk0ZjFiYTUwOGUyOGU0Njc0Nzg1ZjIyMWIxMjVkOTE5NWUzMDYwNmU2NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5YTY5MjMxYjIzZWZiMjQ5NzJiMWJkNzlhZmM1YTUxMjljZWYwYmVjYzMzNzMzMjVlMWY4MTVlMGNkNjk4MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxYzE2NWY5NDk4N2RkZThmNTQwYzk3N2Y3ODhhZWUwMWI1MmZjZDY1ZDMzMTAyNjZjMzgyNjIxNWQ0OTQ4YjIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L85-L95",
+          "version": "repo-lines-v1:sha256:066122cfd05c131de3b3ea6b450b2b17492068ef82daca222e6920266b26be4a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiZWI3ZmU0NTNmODQzZGMwYzFhZGIzZWZjMWY4YTc5MjA5NWQxYzFkMzkzZWE1YWEwNTFhZDY5NGU2MjY1ZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1NGUyMWZkMzM3NDgwZTVkOGEwOTA3OTI0MjFjODdkMDc0NTBkY2ZlN2MzY2ViNGM2ZDcxYmRkZjhhOWZkMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiMGRjZTdjM2Q1MDAzMzBlYjVjOTNjODI2NWIyYjJiMjc3N2ExYTRmZDk4MjhkNWFiZTJhMTllMWY4ZjJkZTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dafb93010fdc4c3a872b12a88469ebb9",
+      "statement": "The document model is pinned at four layers: `packages/contracts/src/transitSettings.test.ts` asserts the migration ladder (flat document lands in both commutes, singular `selectedBusStopId` yields a one-element list in both contexts), dedupe during migration, over-cap rejection, and malformed-array rejection; `apps/web/src/App.test.tsx` asserts end-to-end commute independence for both modes and that a seeded legacy `selectedBusStopId` document produces an active selection in both tabs on the next render; `apps/web/src/hooks/useTransitSelections.test.tsx` asserts hook-level independence (adding stops to `toHome` leaves `toWork` untouched) and cap behavior up to four watched ids; and `packages/db/src/repository.integration.test.ts` asserts the jsonb round trip and compare-and-swap version enforcement behind the authenticated lane.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L284-L430",
+          "version": "repo-lines-v1:sha256:e2fec3214983d0bd4443b99cfa05ebcf3eb79f01a51a363ec659b87811f58654:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2MzJjMjgzYmNmMTVkNTI3ODMyZGNlMmYyYTAyZDRmMTUyMGE2Yjc0ZThlZTNmMDdiYzFmMWNiNjYyNDI1OGJmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4NDNhZWEwYmM4OWY2YjM5OTRhN2VjZDA4ZmNkYmZlY2M5YTE3YjQxZGU3MmM2M2M1MzhkMzY3MDRmZjI1ODc3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIn0"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.test.tsx#L133-L220",
+          "version": "repo-lines-v1:sha256:d3b631619a5a6a9464f2b77b72b61fa984d6ef1817014c596592394db802f583:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljYmQ3Zjg1MTg2N2QxMWIzZWZmMDliOWE4MDJlNGFmM2E2ZGU0YjM0YTgxOTU4MWEyNGQ4MzBkMzZkYjIwYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhMWY4MTg1ZWQ0YzRmYzQ2YjVkNzRjYjFjOGMxMDgzZDA3YTI0NzgxNDFiZGM5MWEzM2RhMjc4ODk2Mjc2MjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkY2U2Y2I2Mzg3NWRkYzRhMDU1NDhhODcwMWQzMDNhOTExNjhlMWFmMjg0NzI2Y2ZmYWU1ZmE5OTJhYmQwNzcifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.test.ts#L41-L104",
+          "version": "repo-lines-v1:sha256:d34c8e9ec8e65f8120b0b21c64ad9cc9b30c1485baa2872b1cfad47925949f57:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZTg3NDZkNjkyMzFjNGNhODIwOTM1YWE0MjYyNjYwYTY4MjcyNGNiOTI5ZDE2NWRjN2Y1OWYwNTdiYTVjNjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzMWUzYjkxMDZkZjIxZjE2MTM5YjAxMDhmODBmMTgxODQ0ZDA0Mzk5NjNjMmE1ZmExYzhiM2U3NjJmM2FhODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1MWQ0N2VlOTIzNDRlOWNmOWI4YjFlNDc1ZTJjMTVjNDFlNTdmYWViYTg0ZmNmMTBlN2UwZjg4MWZlOGZlZWYifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.integration.test.ts#L42-L56",
+          "version": "repo-lines-v1:sha256:22aeebe7fb46299c99b9c9aa4eede14645ef361f5af38590411d5497eaa6e313:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZWY0OWQ5ODFlZjBkMzFkZDQ4MTM0ZGI0ZGRiODlkZjc0NmQ3NDMyYjg2NjBhYzMyNTgzMDkzMWU5NmQxYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDFlMDcwOWU1NDAwNjBjZGNiNzE4NmRlNjU2MzRiOWJjNjA0MjBjYjdiYTUyM2FkYjQ1NmZjMzk5Yjg5YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

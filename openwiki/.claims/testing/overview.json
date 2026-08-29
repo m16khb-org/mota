@@ -1,0 +1,506 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7f38480f10a636a5e902dd3d7a48387e99fb644d96ff620889107eb9fb549001",
+  "claims": [
+    {
+      "id": "claim_e574fed77a29415eaf85654f6d9e0c17",
+      "statement": "Mota's verification is entirely vitest-based and comes in three postures: colocated unit tests (run by `pnpm test` in every workspace), API e2e tests in `apps/api/test` that boot the real Nest module through `createApp`, and Postgres integration tests gated on a present `DATABASE_URL` and run via `pnpm test:integration`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/vitest.config.mts",
+          "version": "repo-file-v1:sha256:9cfbd07c305a028c640075a559eedd8b9d43a951097c188d740d9b6293b76ffd"
+        },
+        {
+          "resource": "repo://package.json#L14-L15",
+          "version": "repo-lines-v1:sha256:67b3196ad74355c5ff753b49f4b28fb8dd006162b66294b56080b3de22df8a80:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGE4MmJlMjcxNmYzZDNmZmM4NjgwNjhhYjBlMGYwZmU2ZjczNDc1ZGEyNWU3ZGEzZmVjNDNlOGU2MDVlODQ5YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJmNWEyZGZlOTUyMGY4MGJlOWE0ZWE1NGU5ZTk0ZDhhZTMyYjQ1NmJkOTA4NTU0YzQ5NzQyNTY5OGI2MWJmMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTIwMzFiNjEzM2I0Y2E3YzFjYmNlM2Y0NzFiNjcwN2NhOTU2MTJmNmRhNDViYWY3MDEwNzQ1ZWI4YjAwNjY1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmRjNjJjN2RkYjBmNzg1NWZhOThiNWE2NTU0OWRiMTM5NDA1ODVhNjg2YWY0NDlkOWM2NzE1OWM4YWI5NTQ4NCJ9"
+        },
+        {
+          "resource": "repo://turbo.json",
+          "version": "repo-file-v1:sha256:d67a7a4f6196d8842ac056b3e883d2d9f88558a1cc3eb7c5653e2c49283d50a5"
+        }
+      ]
+    },
+    {
+      "id": "claim_0320d7a0c568424ba53b3285c394e81d",
+      "statement": "Turbo's `test`, `typecheck`, and `test:integration` tasks all declare `dependsOn: [\"^build\"]`, which is a functional prerequisite rather than an optimization: `apps/api` and `packages/db` resolve `@mota/contracts` (and `apps/api` resolves `@mota/db`) through the workspace symlink and the packages' `exports` maps pointing at `./dist`, with no `paths` mapping, so those `dist` trees must exist before any Node-side test can import the shared Zod schemas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/tsconfig.json",
+          "version": "repo-file-v1:sha256:63e8e3a392fa04488c528a4df769818face6dc4b886203f979ddfa282a873880"
+        },
+        {
+          "resource": "repo://packages/contracts/package.json#L5-L10",
+          "version": "repo-lines-v1:sha256:8f60d760f714b3560ea311dac05f77372a884613599c2d5da9ef11ec9b4572aa:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWZkMDQzZGRlN2UyMWIyNDE1YTFiMDc0YjFkNDUzMTQwMWI2ODJlNDdkNDI1NjAzMzI2ZTNhNzJjZTEzOWI0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY5MDIzOGQxYmE4N2JlZjFkZTJiOTAyM2MzMTkwYTY2OTZiNjgxMGU2NzUzZmU5NGU5NTk1ZWY0YTc5ZDk1OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODcxZDAwMzQwZTdiZDRjOTcxOTQ3ZDNmYjMyNmRkMWMxNjA0MjQ2OGNhMTAyZGY2MWQ4NGMxZGRmNTYxMDAxOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg4MzhiNDEzNWM3MTM3ZTdjYWZhYTRkNjBkNWU1ZTc3MTVmYjk0MGJiMzZjOWE5NzE2NzkyZjhmYzQzZTcyNiJ9"
+        },
+        {
+          "resource": "repo://packages/db/package.json#L5-L6",
+          "version": "repo-lines-v1:sha256:c65ce37890176872f502bc6cc275ba5073b26179a2abfbd07920823931c689c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWZkMDQzZGRlN2UyMWIyNDE1YTFiMDc0YjFkNDUzMTQwMWI2ODJlNDdkNDI1NjAzMzI2ZTNhNzJjZTEzOWI0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzZjZjc0MDgxOGNmMzRmMzYwNjI1YTI1NDE5Njg2MzlhYjNhZGJjZTdjMmQyMzZjNDZmNDJhMWJjNjI0Y2M1OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjY2NjE2YjU4MTQ1NTMxNTM5Mzc4MWFhNWU2MTYzMDlkZDBhMjFiODM4YWU2NDQxNjFiZTZlMjhkZmYyZGY5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM1OGY1YmRkYmIzZGUwMDhiNmZhOWFkZTFiOTMzYzIxZWU4MWQ4ZTZiNTQwMWU3ZmQ1MzY1MjkyYjIwN2Y4NyJ9"
+        },
+        {
+          "resource": "repo://turbo.json#L3-L24",
+          "version": "repo-lines-v1:sha256:a9641c125758008c0eead5e059e5da7e42df6160ec2dc2308b526e7b6970d05b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZTIzYjQ5ZWQ3ODBkMzgwMzk3YWVhNzllM2NkZTgwZmU5NGM4YzU3YmZmODc1MjJjODMxNjM4MDhmN2M3OTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmMzNiNWVhZmYwODE4NWQ1ZDViOWM4NmQ5NjIwMTUyM2NlYThhNjA2ZjYyMWE2ODRkODA1NmFhOGI4NmVlMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhOThjZjEyYjY1NGJmMmFkMThmYzY3NWY1YjYwOWQ4YjZjOGY2MWZlMTUwNjYwMGM4MTI3NDdiNzhhNTlkNTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_38e5e06d612448338820937d780b266c",
+      "statement": "The web app is exempt from that build prerequisite: `apps/web/vite.config.ts` aliases `@mota/contracts` and `@mota/contracts/transit-settings` directly to `packages/contracts/src`, mirrored by `compilerOptions.paths` in `apps/web/tsconfig.json`, so web tests and typechecks read the contracts TypeScript source regardless of whether the packages were built.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/tsconfig.json#L11-L16",
+          "version": "repo-lines-v1:sha256:7905d1a76a209c09b929f642a548710a0ea3a6792716e83f2721f60a5293acb8:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjI4MzZiYzc0ZmQ5YTIyYzY5YTgzMzM1ZDRlYmMzZjYxODMwNmU1MmUwMGZlY2VjZTQ3NjMzOTI1ZWMwMDc3MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODQ3OGViZDVkYWMwMThmNjM2ODE5NDRmODk4NjBkNjZkYTA4MTI5NGU0ZDNjOWVmNDMyZTY3MWVlYTY5MzMxNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGRmODc5MzE2MGFkODg1ZGI2MTVhNzQ1NzMwNGVkNjdmMzM1NTMwNGJhYjEwZWEwYjIyNjJjNjI2YTRjMzI4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTY2NTk0M2NiYzQ5ODNhYmYyMDkyOGM1MmIwYjA1NzA3Mjk1NmFjMzFmMGY5NDY0Yzk5NzgxNDdiYjcwZmE1MiJ9"
+        },
+        {
+          "resource": "repo://apps/web/vite.config.ts#L11-L26",
+          "version": "repo-lines-v1:sha256:85707392e17101dbdbda6a4b477a9d784e3ebbedbece959ec8c35ad64c949eb4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyYTYyMTEzZWQ3MGU2M2RjMmM5OTg4MTQ0YWI3ZmQxNWZjODc5ODNhNWViYmQ0MDA3Mzg2MzE3ZDhhNjgzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2M2Q1MzVjZTM4MDYzZDZiNGM1MWQ4YzM4NmE3ZjliM2U1ODBhMTRhMTBjMDdiMTk4ZGZhZjE5YzkzYTNiZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkM2FiOTVhMDEwNzliYzViMTZiY2ZlZTc1YjE1ZmE3NjM4OGVjYzI1ZDRiMjE1NDE3ZTMyNjNkYjAzNzdkMzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1ZTZhYzBlMTQ5OTVkMWE2NjhiZDNiMWI5YTRkZjlkNDE3ZTQzYmFlZGRjZDZhZjk1NTVlYmNmOTM4NWZjMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_beef7fc050b94f1f9aae78445f25bf89",
+      "statement": "The `test:integration` turbo task declares `cache: false` and `env: [\"DATABASE_URL\"]` (plus `dependsOn: [\"^build\"]` and no outputs), so its result is never stored in or replayed from `.turbo/cache` and the database URL value participates in the task hash.",
+      "evidence": [
+        {
+          "resource": "repo://turbo.json#L19-L24",
+          "version": "repo-lines-v1:sha256:d55520e122297f8f0e4475b70dca265b5a24bf3f6cc7df7057cc12c3dfa4ec94:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDE5MTQ3MDVjYTAwODY2NGI5ODc2MjI0OWY4ZjY3MmMxNmVlNjgyMDMwMzM0ZGM5OWJkZDliMzBiYWY1MTkxYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDA1MmFlZTZjOWY3NGNjYTA1MmEwZWJiZjkyNjhlM2IwMjAzMzIzZDU4OGFjNjUzNDZiNGIzZjNhYzg2MTMyMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWE5OGNmMTJiNjU0YmYyYWQxOGZjNjc1ZjViNjA5ZDhiNmM4ZjYxZmUxNTA2NjAwYzgxMjc0N2I3OGE1OWQ1NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4230b7242bce432c8b1cb2d202294642",
+      "statement": "`createApp` in `apps/api/test/create-test-app.ts` builds the application once and memoizes it: `Test.createTestingModule` imports `AppModule.register({ ...options, upstreamFetch })`, compiles it, creates a `NestFastifyApplication` on a plain `FastifyAdapter`, calls `app.init()` and awaits `getHttpAdapter().getInstance().ready()`, then reuses that same application promise for every subsequent `request()` call — which is what lets catalog-caching tests observe one upstream call across several HTTP requests, while two `createApp()` calls yield two independent applications.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L113-L135",
+          "version": "repo-lines-v1:sha256:d87f6989b087dcc9d8efb1f7921765c01e5d79034d53a1c33fa28a0a02f34194:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5ZDMzMmM3MzQ1YTc0NDdlNmU1NTAwOTBlZDRlOTY2YjJlNjMxYmM4MmZkOTg1YjQ5OWM4Yjk0NDZkMzZmZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkNmEyN2JlMDdiYzRjNzhiYmQ4NmE3ZGU2N2EwYTU1YjY1YjI1MjhkNDM5MTBjYmE3YmJkMTMxYjQ2MDFiODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjYTJiNjRhOWE2N2EzYWZhMzFjOGFjOWUzM2M1OTQxYjVkNTg1NDA3YTcxMGE1YmE4MzZiYWQ0ZDExZmUyYmMifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/create-test-app.ts#L11-L26",
+          "version": "repo-lines-v1:sha256:c9f90d001f9b56f5759a161ba65d2d48c960662275facecc9673dd6167ab12d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0YzU0NTg3ZGIxZGU1MWRmZWZjYzYxZWIwYTM2YmNjNGY0NDc3YWJmOWNjNGQxZDk3MTQ2NGM2YWFmODhhNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4ZDIyZDRiZGMwZWFjZTlkY2QxODMzOWQwOTljYTVlZDI4ZjJmMzU0YjdiYTRkYjNjYjE5OTI0MTRlZGU2MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5YTQwMDU3ODhlOTI3ZDJiOTA3MmVlODZmMjljZmQ4ZWQwMzEzYzA5NjZiMjI2ZDA4NWQxNjRmODQ1MTJiYzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d562bc049a5b49cc9654b23af8174a07",
+      "statement": "`createApp`'s `request()` drives Fastify's `inject` and wraps the result in a real `Response`: it copies inject headers into a `Headers` object (appending repeated headers individually), and constructs `new Response(response.body, { status, headers })`, enabling tests to use `response.json()`, `response.status`, and `response.headers.getSetCookie()` for multi-cookie assertions; request bodies other than `string` or `Buffer` are dropped rather than serialized, so JSON bodies are always `JSON.stringify(...)` strings.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L168-L188",
+          "version": "repo-lines-v1:sha256:7f3d699d9a49b6a7fd645731ae4bd4af5fc7953a5a702133c3a2ff974315c279:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ZDZhMjAzMWJmMWQ2YjY0MzFiN2JiZmE3YWU4OTA1ODg1ZWVkNzYyYWE5ZTQ0MWJkY2MzN2M3ZmJlYjBhMTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhODQ2YzYwNTk3OTFhZWM0OWI2MWJhY2FhODYxYWIwNWJlYzhhNDFhNTZjOTgyMGZhZTY3NzAzYWE5NjNlYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxZTI2Njg4MzkyZTAyYzczYmEyMjZiMGIzNzUyMWUxZmM4Nzk1N2ZkNmE3NDA5NmU1YzA1MWQ3YmIyNTdmODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmYmFiMjUzZWM5YjE2M2NkOTkzNTMyMmQxNWQ4ZDBhNjE4ZjE5ODljYzViZTcyMTFhNzkyZmY5YjIwOGE3MjUifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/create-test-app.ts#L28-L65",
+          "version": "repo-lines-v1:sha256:a10b89c004f156b7cf2d8a58f384dbf9e5511604badf38931efc04d96e0006c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjNzY2NmRkNDI2N2Y4NGI3M2MzMDE5YzkzMThiOWJmMGUwNWY1OGJmYzJiYzAyMzcxYWU0ZjZjOWNjNjg4YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNDQ2MmQwNzIyZmRmYzA2YmE3YmZlNWMyMTA5ZThhM2RlZDY0N2U3MGNjYTY4MTU1NzBhOWU4MzE1ZDBkM2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b306d6b1efc0423390299efd8b314d92",
+      "statement": "The e2e harness is only possible because `AppModuleOptions` is the composition root: `upstreamFetch`, `verifySession`, `settingsRepository`, `oauthConfig`, `now`, `subwayArrivalUpstream`, and the transit catalog knobs (`refreshMs`, `retryMs`, warmup, minimum item counts, `random`) are all injectable through `AppModule.register`, so tests swap collaborators without patching production code.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L42-L55",
+          "version": "repo-lines-v1:sha256:6d1adf19e13fd5c9302e55e1e07a9010b94b0b37311ae0cea15b4dd98eedc0c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhNjdlOTJiNzBiYmFkZWYwYTJkMTM2M2Q0OWVhZjE3Yzg4OWJmYjU1NzQyMzE1NGZiYTViZTlhNDk5ZGI5ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyNmE4MzFkZTY5YTI5YjhiNmRiMjAwY2I4NDQyZjBmZmE3OWU1MTkwZTczN2ViNWJmOGM3OGE2NDQxNTRiM2QifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.tokens.ts#L23-L41",
+          "version": "repo-lines-v1:sha256:ab555387f78bb644b4bc1bef8ff3127da504bb7a830dc1c211d14e4e33f60e66:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyMzU4OTljODI4OTAxNzY1ZjU4YTAxMmVmMmEzNzUyZjBiNDc1MTU5YjBkYzE0MzFkZjk1M2U1YWE4OWEyMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZTFkMmFhZTI5OWQ1NWMzZGJkY2FiODhmOGYyNDc2ZTY1ZDY0MDFmYmZiNjY5NmFkZTJmYjAzZDY4MzZmNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NDA3YTY4N2JjNjczMDFhMzUyZTJlOWNhMGFiODIzOWM4ZjY0YWU5YzdjMWMxYjE5NGExZTc1Yzc3YjFhZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a21cf4b7fea2473fbce335ad44197313",
+      "statement": "The `AppModule.register` defaults are chosen for testability and fail-loud behavior: `warmup` defaults to `false` (no timers or warmup network), minimum catalog items default to `1` so a one-row fixture passes the completeness gate, and a missing repository or verifier throws a descriptive error (`Settings repository is not configured.` / `Supabase auth is not configured.`) instead of returning empty data — while production `main.ts` passes the opposite values (warmup on, 10,000 bus / 100 subway minimums, a real Drizzle repository).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L113-L115",
+          "version": "repo-lines-v1:sha256:bf2f3b66addb3696e3731ab9481b2eaa95a9418513909bf8750f57262420b196:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhmZGNhN2NkNmU3NGI4ZTA5YzEwN2Y5ZjRhM2E1NzBjNGUwNjk4NWZmOTExNTJhZWJmOGNiY2RmMTIwZWNkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI1ODBlOTY0ZjgzYTQ3M2Y0M2Q0NDM4NDYyOTQ5ZDY4YjU2MDBmZGE3ODdmMTYzNzQ1ZDAwZGU4OWNiZjM2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L26-L40",
+          "version": "repo-lines-v1:sha256:26ecde811dbe885a85d8adef4105c9c71c3b632e7666d7cd23fe220fbb1a2e48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiMWRhNTNiZTdmZDBmOTkwODhkMWE1NzQzMzc1NzZmODk4MDhiOTE1MmUzZTI5YTI2NjQ0NjU4ODczNmQxOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5NjYxZjM3M2VlNjNiYzdjOTQxOWVlMjRlZDNiN2ZlYzQ0MjdkMTg3NDY5MTlmMjA3YTNjNTk5ZDdkYzIzZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxYmY5Njc4NjhkNWYwMzc3ZjFhNTIyYzUyZDg4NWM1MzMxOTc4ZTU0MmRjN2EwMmUxM2EwNDUwNzQ2OTk4MzYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L71-L88",
+          "version": "repo-lines-v1:sha256:ae35cda6ce681b45414ec5b86fb383a36ac0623fd8bb4520522b729a048945a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZmQyNGY0N2ZmMDQ5ODJkNTQzYWI1ZDBhMDY1ZDY0ZGIxNGY1NzcyYzI4YzdkOGQ4ZDRhNjExYjQzNWY1ZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1N2Q1MzdjOGE4MDI2Mjc4NjljODRiZDcwMzBmYTZhNDFiNGZjY2JkZjBhMDczYzE4MGZmYjlhNDE0N2NmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2MTYwZTMyYmM2MDczYTgzNzBhODczM2VjNTVhMGI0MTVjODYyNmU4ZGU2NTNkNzNhYTU5YmZmYTg0MDJmOTcifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L20-L33",
+          "version": "repo-lines-v1:sha256:c8d9e71370e9d6f3b864c94931ad54600508922597d09a07dcf02e8b6b85b8a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNjNjYjVhYmI2YzJkNDkyNzJhMTZjZjhkOGNmMTUyZTg4NTY3MjExYmYwNWZkODcyMjhjZGRhMDgyYWRiY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2N2MxZWJmMmM5N2M2YzUzMTBkYmUxMzQ2YTQwY2I1NWE1NmYwZWUxMTVhYWYwOTBlNGIzMzNhNjM1MmY4NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiZmQ3ZmU3ZWIxMDI4ZjE2ZmRiZjA2NmY4MjdhZmI0YmQ4MGU1MjM5NGI5N2MyOTkzMmFmZjM1MWUzZDY0YzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1fdffbc93dd546ce8d2b3a5db2c3b01e",
+      "statement": "Transit e2e tests inject a `vi.fn()` as `upstreamFetch` and treat it as an argument contract — asserting the exact upstream URL called, that `signal: expect.any(AbortSignal)` was passed (the adapters' timeouts), and the call count — while the settings e2e suite stubs `verifySession` by regexing the user id out of the `mota-access` cookie, keeping the HTTP boundary and controller logic real.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L78-L81",
+          "version": "repo-lines-v1:sha256:92095853f5f476a565bb7646eec82b5d6cf64a7ec5ae96b52e6e7dad6722a07c:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU3NjkxMmI1ODg2ZmI3NWIyZjY1OGRjNTI2MTM5ZjE1ZTRiMmI1YjUxNWRjODM4ZWMzZTY0ZDhkNjVmNTE1MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNDIwOGNkNmZmYjhjNGEzNTQ3YjJmNTRhZGExOTk3OGMzZjM2NWU3OGY5NTAyZWY1MTQ1Y2RkMmFhODU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTBhNGFiZWFhMzYwZmEwZWNhNGYwYzljODJlYWJlM2RkYzFlYTQ3OGNjNzYwYjM2ZjkzZTVlM2E4MmU0MGJlZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODA3Yjk3NDQyZjU5ZjdkNmJkMmI0YjhiMWM5YmI4NTFlZTNjYWYzYWNiZDQzNjg1NzBhMWMwOTZlMjk1ZjM4ZSJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L65-L76",
+          "version": "repo-lines-v1:sha256:d8064dd6f8fed213756142cf6e92ec2be2793969a39032145f326f0423cef85b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZjdhNjY3ZjBlYmUxM2ViYjRhMzkwM2M4MTE3ZTcyNDE0YzBmYjg2YTEwNTg5ODVmN2E3NGZhMWRjZDA3YmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwYzkyZmFhYmYxM2Q1ZGYzOTYwNDA2NzRjZDM2Y2U4Y2VjZjc4N2EwMmE3YzMyODVmYzBlOTA1N2M4ZWJlZWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5f0e4a8168aa41528934c15f81bcf77d",
+      "statement": "The settings e2e suite injects `MemorySettingsRepository`, a `Map`-backed implementation of `@mota/db`'s `UserSettingsRepository` interface that throws `SettingsVersionConflictError` when `expectedVersion` does not match, letting the suite prove per-user isolation, `409 SETTINGS_VERSION_CONFLICT`, and `400 INVALID_SETTINGS` with no database.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L168-L193",
+          "version": "repo-lines-v1:sha256:68e7f990e793971e5106ef5ea75bc1ed35d771106176cf8258c7064838740c23:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZGI0YTA4ODYyZWM3ZGE1NmM5NTMyYTBjNTJkMmE1YTcxNTQyZTA0MzhkNGJmYzE5ZjA1M2M4ZDVjZGNiYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L38-L76",
+          "version": "repo-lines-v1:sha256:7f7dd6ac5f27fba900ea5b1b2ec6335b94eb2631b93222fe610a4e9a6c3d49d5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiOTdkNTE5MzM5ZWI0NDFjMzk1MDQ3NTdlYmFjMWZmNDcxNTI3ZDk0MzFmYWJiYWI2NzkzMjdlOGVjY2FjZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwYzkyZmFhYmYxM2Q1ZGYzOTYwNDA2NzRjZDM2Y2U4Y2VjZjc4N2EwMmE3YzMyODVmYzBlOTA1N2M4ZWJlZWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_22fb6f8e10cb4627b3719662a1f27b90",
+      "statement": "The settings suite proves two auth-failure behaviors at the HTTP boundary that a stubbed verifier alone cannot: when `verifySession` throws `SupabaseUnavailableError`, `GET /api/settings` returns `503 AUTH_UPSTREAM_UNAVAILABLE` rather than treating the user as anonymous; and when `verifySession` invokes its `onSetCookie` callback, the rotated session cookies are relayed on the settings response.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L68",
+          "version": "repo-lines-v1:sha256:5e0985e38fa0c640ab717554ddb177a8cc475d1346fa0caa4579b052ec8ca3f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYWMwZDBjZTg4NzI5ZmFmNDNkMjAwMWU0ZmJlMzMwMzM0YWIxN2RlZDE0NmUwNjE2YWNhZTgzMjY5YzVkYTYifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L94-L130",
+          "version": "repo-lines-v1:sha256:2d45ff0f751c4555ccd9f6241d769c4b65bcc51525368418821cb8c5b6636e82:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiNTRiYjVkYzk4YTllODYxNjczN2FhYmVmYmZiMmMyZGNkZDk2MDQ1NjIwMmFhOWIzYmIxOTI5Yzc2NmM4YWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0MDg1N2UzNWI5Y2ZmNjQxZjllNjIxYWI1NWVhNjQ0ZTVmZDdhNDdjNWQ0MmI5ZGE0MTM2ZjRlMDFiOWJkMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlkNWQ2NjgwZWRiYzA3YjdkNzk2ZDJjODJjYjNlOGI4YjVjZGUzNWMwYjhmMTJlZDRiM2NhZTBlYjQzOTMwZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2a3d9d3b09cf4142b6bf0e2af878ae97",
+      "statement": "`apps/api/test/fake-supabase.ts` starts a real `node:http` server on `127.0.0.1` on an ephemeral port that generates a genuine ES256 keypair with `jose` and serves the public half as a JWK at `GET /auth/v1/.well-known/jwks.json` under `kid: \"test-key\"`, `alg: \"ES256\"`, `use: \"sig\"`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/fake-supabase.ts#L21-L35",
+          "version": "repo-lines-v1:sha256:3110ce9396de843cedada3cb3f480b0e0174a80314439555a11db1eb21b439ce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiMjRiZGFiZGJlNzZlMWY0MTJiZjQyZWNiYTM2Mjc5OGZjMTcyODg5Mzk0MWE4ODExNWMyOTMyNWZiZDQxYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3OTJmODQ3YmIyMWNiMjkyZGQwOWY3ZmE2ZTdjYWM0YThjMTRkOTdkMzg5NjMzYjNkMTUyMGVhMTRiNWIxZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5M2NiMWE3YzkzN2E3NzM2N2RjMjY5NDY2MDM1YWVmZTJlNTlkYjA2OTAxNTQyNDQzYjIyYzZlZjI1MTZiYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZjEwNDAwYjMzYzY2ZGRmMGY1ZGJiZTMzZGYxYWE0NDQ4YWM3ZjM5ZTE5NWFiYzY3YjMwNWNjMTJlMmE3MTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f7e1f110d8e949fcb9e0ce8de28c1b63",
+      "statement": "The fake Supabase handles both token grants the app uses: `POST /auth/v1/token` reads `grant_type` from the query (`pkce` and `refresh_token`) and returns a signed `access_token`, a random `refresh_token`, `expires_in: 3600`, and `token_type: bearer` — matching `SupabaseAuthClient.exchangeCode` and `.refresh`. It also records `POST /auth/v1/signout` refresh-token bodies into a `signoutRequests` array so tests can assert the exact token revoked and that anonymous logout revokes nothing.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L44-L58",
+          "version": "repo-lines-v1:sha256:67a42d827800ccebb2e3e8fa2be249d9aff8310c6e7498ac6e7ea0857558ea8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4NzM0M2Q5ZmUwNWFlMWE5YjM2NjIwMjVjZWZiYjA0NmE1OTQ4NzJiMThjNjdjNTQxZTdiNmIyMmFjZThlOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyMjQ5ZmIwNjdhY2Q4OTUyMDZlM2FhZjYzMzQxNzVjNzAzZmY2MjgzNmIyOTZhYjUwMGZkYzIwOWJlMmZhNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMzVhZDI4Y2M5OGJhYzY0NjA1OTBiMWQ0YTkzNDk4MjYxOTA2YTVlNjNiOWU3MTllYzRkOTZkMDU3MDYzZWEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L216-L252",
+          "version": "repo-lines-v1:sha256:00ff142bb58143a11e89b5575bfa5f954a876fff25e5a20d95a69a3da0cdfa8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMDc5NzJjMTgyMDA4Mzc5ZDI2NTcxZWNmMGEwMTExNGI3YTJmM2Q5MzlkOWMxOTkzMzUzNjIzOTlkZjE4MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxZjc4ZTA5MzlkMjJjYzE3Zjk3Y2VkYmZiYzFmYzNlOWM0NjVlZDc5YzEzYjBmNmM1ODFhMzFjMGFiZGZlZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NzljMjIyYTQ5Yzk2MGU5NGM1YzU2NzBhOTZiMDYyZDIyMDdhNGI2YzU3NDYxOTA1MjVlNTM4MzQzMjBhMjYifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/fake-supabase.ts#L37-L67",
+          "version": "repo-lines-v1:sha256:6de53d5d049336c71c9ec7869b22149031281e6ff3399e4a5adf7b29f3814062:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhNTRmMjRkZjZmNmU0MzI2YzQyMjE2YzRkNWMxMTY2N2U5OTg5MDBmZDJhZDk0ODNiZGJmZTNmNjY0YTkxMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkZGZhYzA4NWEwMTFkOGU5ZWQ1MTE3NDFlYzU1NmM2YTRlY2Q0ZWRjM2I0Zjg1MjI5OWJiYWIwNWU3MzZiODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4MDU3ZmRmMjExNTkyOThkNmRlYWZkZjRiYTJkMTM0NGJhMDZjYzliZWQzZmI5ZWIzNDRjM2ZkMTVhOTA0ZmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a13484cbede7405fa5852ea902baedeb",
+      "statement": "Because the fake's keys are real, the auth e2e tests verify actual JWT semantics rather than a mocked verifier: the app fetches the JWKS over HTTP, performs real ES256 signature verification against the real issuer (`${url}/auth/v1`), audience and `role` claims, and a token minted with `expiresIn: -60` is genuinely expired and reported as anonymous. Tests inject the fake via `oauthConfig.supabaseUrl`, so issuer, JWKS, and token endpoints are all derived from the fake's address.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L36-L53",
+          "version": "repo-lines-v1:sha256:895f915f605e48034d57b4ca46e0f5e712dfc4a8b4907b3bf27605672977f379:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMzFjNDA5OWE2OWQ1ZjhkMmY3NTYwMTE0OWEwNGY2MGRmMWUzM2NhYWY5NDdmMTBkMWI0ZTgyMDI3ZDA5ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkOGYzM2VlMDM4OTVhNzA4ODI0MzgzMWUwMjgyNGQ4YmFlZTY1NjdhNDYwYmU0NjExZmViNjIyNzQzMTgyMGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3YTNjMDhlMjBlYjM5OTczODk3OTBhMDQxNGMzODljNTNlMDNiODE0ODJkYTlmZWIzZTYxYmE2M2JiZmNmZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzM2I0NmJiMzE1MTZmMThhMzk2N2Q0ZmQxMDdhNzVjNDIzY2RhZjY3MmU3M2IzYTYzZTA0MDIxYmM0NWZmMzUifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L20-L55",
+          "version": "repo-lines-v1:sha256:ca469e9c34bfafe741390ee49900ad6d0d648b089dbb37de8553173c9928ad66:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYzI4MTIxYmYyZjAzYTdiNWUwNzQwMGU4NGU5NjBiZmY0ZjE3ZDMzODdhOTBhZmJmNmIyMGZkYTk2OTdjOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzNjVhM2Q1YTI4ZDdhNmNiNmE3YTE4OTA3OTI1ZTgyYzQ0YWUwMjUzNDBlYWU3ZDk5NjM5NTNlZTgyYmY1ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxZmU4MTk1NDA4ZDViOWQyNTIzNmVhMTg3NzBjOGU5OGY3ZjVmMjhmMzI3ZGEwNmU2NTY1ODQyYjYxYTg1YTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L79-L92",
+          "version": "repo-lines-v1:sha256:da556c6309d1113f09f2d0409bdf88ef3c94e80b4567f7290307f773b8f1579c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1YzlkOGFmZmU5Nzg0MTQxN2U5MWMxOWIzOTQxNDk3NGNlOGI1OTY2NjNmNGM3MDc3Y2Y3MjA5OGYxOTAyMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1ZDhmNDU3NmE3ZmJiZGY2YmU0NWUwOWJkZjBmOTA1NjIxYjQyYzI3NTBmNGMyY2M3MGMwMGQwYWQ5ZWI0YzcifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/fake-supabase.ts#L80-L99",
+          "version": "repo-lines-v1:sha256:727a4c88bf5e2f7e4c3e5395180ee95f4cc178c564fe468c523194eb5cdbb608:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMmNiMmM4M2RlNzg4NjYxOGQyNjQyYjA0NDE3OGRkYWZkNDIzMjFhNTU0OWJhZjkwZGI5MzFiZDVhMTU3MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViN2U5MTQxZDgzYWQxODFhODE3ODBkYTM3NzE1MmNlMmUyMjU0ZWZhYTQ1MDRhN2QyZjNmMjNhNzM5NjI2MGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTViMjJhZWZiY2JjZDQ4ZmQzNzk5NjM2ODBmYTEwODc4ZTVmMGJhMGY1YjczNGY5YzRmODI5YTJmMjU0NjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0MzQ0NDJmOGVkZDdkZTM4ZmVlYzM4OGZlOTUwNjBmMmQ5NDVlZWJiYThmYTE2YWU5M2IxZTAyOGI3YjJmZTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e977fd1819494906a0d85c976d9e97d8",
+      "statement": "The same `startFakeSupabase` fake is reused by the unit-level `src/auth/supabaseJwt.test.ts`, which targets `verifyAccessToken` directly — accepting a signed token with its claims and rejecting garbage tokens as anonymous — so the unit and e2e layers share one fake identity provider.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.test.ts",
+          "version": "repo-file-v1:sha256:a58eb96bdbd01338a75b00e5718bf42402c49de282d1c2361e555361d2e292dd"
+        }
+      ]
+    },
+    {
+      "id": "claim_53d373854daa45d9821130ec33270927",
+      "statement": "`apps/api/vitest.config.mts` sets `environment: \"node\"` and includes both `src/**/*.test.ts` and `test/**/*.test.ts`. That include is what puts the Postgres integration file inside `pnpm test`, which is why the `describe.runIf` gate is load-bearing rather than dead code.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L11-L12",
+          "version": "repo-lines-v1:sha256:abd4e6c52f17797375fa2da0f70235237e5eeb8fd10cb726137ad2c605198d01:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQxZmMyNDllZmE3MWIwZTdhOTdmN2Y0ZWI4Yjg5NDk0YTU5Y2IzZjg3ZDcxYmU2YWFkNjNhYTNiYTVlM2QzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODc3ZDIyYWNmMjBjNTI1YmNjYjAzYmQ3NjZmN2IzYmY0NzU3NjExNTkxNTI2NDc0YmU2N2M5MThiMjE4OGQzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWU3ZmQxOTY1Y2IwMjBmY2ZhYmFmNTE4Njg4YTY3OWI5NGM4ZDljYjk5MWFkNWYzZDgxMWUxMTY2Y2MyYThlNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGM3MDY5MGE4ZjJhOWJmNTk2ZWUyZDZiNzdhMDVjOGMzNzRlOTAxMWE1ZWI0ZTUwMjFhNTg5N2JhOTdjMDUxZiJ9"
+        },
+        {
+          "resource": "repo://apps/api/vitest.config.mts",
+          "version": "repo-file-v1:sha256:9cfbd07c305a028c640075a559eedd8b9d43a951097c188d740d9b6293b76ffd"
+        }
+      ]
+    },
+    {
+      "id": "claim_6be8664dbadd46179b40de6412029c61",
+      "statement": "Both Postgres integration files use the same gate — `const databaseUrl = process.env.DATABASE_URL; const integration = describe.runIf(Boolean(databaseUrl));` — so without `DATABASE_URL` vitest collects the file but the describe body never runs (reported skipped, not failed), keeping `pnpm test` green on a database-less machine.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L11-L14",
+          "version": "repo-lines-v1:sha256:a575abb77841b712cd4ab5628c51195e2f6074081072e8c2bd4802eda8444e03:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk4ZjMyZDc3YjE3ODFmZDUwYTJjYjUzNzg3M2RlZTA3YTA1NjJkNzk2YjAzMmI4MTA2NWQ0YzQwMTM4MjE2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODFhMzE0MTJjNmNlOWM0MGYzYzExZTY0Nzg2M2RmOWJlOWU3ODRjZTgwODJiZTE4MGVmNjIxZjJlMWEwOWQyYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjhiNzNkNjZiN2Y4OWIzNDJlN2NmOTI1ODc3OGQyZDAyNTdiNDFmZWRkZDc5NTdhN2E4OTk4YjY0YjFlYzc4NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTM1ZGIyZDI1NDQyYzcyOTdlMTQ3MjVhNTQzZGY2MjE2MGY0MDAzNDEwZDI0NWQ0ZDI3YzFiYzNlODkyZTM4MCJ9"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.integration.test.ts#L11-L14",
+          "version": "repo-lines-v1:sha256:21f6ad84055b4c1b3d61241c432c238776439cfd52d60348f5a580d9beea94e2:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk4ZjMyZDc3YjE3ODFmZDUwYTJjYjUzNzg3M2RlZTA3YTA1NjJkNzk2YjAzMmI4MTA2NWQ0YzQwMTM4MjE2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2E1YzBiMzU4OGUyMmZmZTc5YTE1OTVjMTYwZGQxOTBiMjY0M2RmN2U4M2M3OGI0ZWY5MDhhZTlhNTNiZGE5NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODhlMWU0ODY0ZDA2M2E4MzM0NmIzYmJiNTQyMzdlMmNmODQxM2ZiZmI4OTU1ZjM5YWE3ZTYwMzY3NjU5OGQyMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzZhNjc3MWU3YTAxNzk5NDVlMGQ0YWFhNDUzZTI5Y2NiNzE4MDdkYTg1MTZlODdjZDc2ODc1NTU5OGJhZjVhMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2e6db34268d34f9eb15b89fd90806197",
+      "statement": "`test:integration` runs exactly one named vitest file per workspace: `@mota/db` runs `src/repository.integration.test.ts` (repository-level: two uniquely-keyed users saved at version 1, `find` returning `null` for an unknown user, and a stale-version `save` rejecting with `SettingsVersionConflictError`), while `@mota/api` runs `test/settings.postgres.integration.test.ts` (the same persistence semantics through the HTTP boundary with `DrizzleUserSettingsRepository` injected and a stubbed `verifySession`).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L12-L12",
+          "version": "repo-lines-v1:sha256:877d22acf20c525bccb03bd766f7b3bf4757611591526474be67c918b2188d3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODc3ZDIyYWNmMjBjNTI1YmNjYjAzYmQ3NjZmN2IzYmY0NzU3NjExNTkxNTI2NDc0YmU2N2M5MThiMjE4OGQzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODc3ZDIyYWNmMjBjNTI1YmNjYjAzYmQ3NjZmN2IzYmY0NzU3NjExNTkxNTI2NDc0YmU2N2M5MThiMjE4OGQzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDM5MDE2YTJiNDZmMzQ3NjIxMjg5ZTczYmU2NWU0YjdiNjZiMGYwMTYzZWMyYThjNzU3NjE4MDcxODkzYjEyMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGM3MDY5MGE4ZjJhOWJmNTk2ZWUyZDZiNzdhMDVjOGMzNzRlOTAxMWE1ZWI0ZTUwMjFhNTg5N2JhOTdjMDUxZiJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L31-L75",
+          "version": "repo-lines-v1:sha256:dd7f8f3d2f0d4bcf1e6a4306713d4af15dc1313381235fdf9dd6420581ebe371:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlYzhiOWMxYzM4NGNkYjk1NWZhYWMwZWNkYWY2NDA5YzFjM2RmYWQ1ZGRhZWU2N2RmZWJiZDcxZjBhMWViYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjY2YxNmZkNDZkNTA3NzBkYmM4NjE4OWE5ZmJjOTQ0NzhjNWI2MGY5MjAzM2JjNTc1MDJhNjNkZmM1OGMxMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/db/package.json#L12-L12",
+          "version": "repo-lines-v1:sha256:4ffec8de52a17686d3408cdbad3c7d7771500bb46f002bf8dbc81b8f0d5916d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGZmZWM4ZGU1MmExNzY4NmQzNDA4Y2RiYWQzYzdkNzc3MTUwMGJiNDZmMDAyYmY4ZGJjODFiOGYwZDU5MTZkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGZmZWM4ZGU1MmExNzY4NmQzNDA4Y2RiYWQzYzdkNzc3MTUwMGJiNDZmMDAyYmY4ZGJjODFiOGYwZDU5MTZkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODcwNjA5NzRiYWNjZDhmM2FhZGYxZTc5ZGZiYWFlM2E1ZjllYmJmYTI0ZTMzMGFhYTRmY2E3Zjc5YjYyZWE0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDIwODliZmQzNWQzZDcwMmMxYjIxZWI1NGUyYjY4YmI4OGI5YjY5ZmZhMjcxNmRkYTdlMTk5OWZjMTE1MzE0ZSJ9"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.integration.test.ts#L42-L56",
+          "version": "repo-lines-v1:sha256:22aeebe7fb46299c99b9c9aa4eede14645ef361f5af38590411d5497eaa6e313:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZWY0OWQ5ODFlZjBkMzFkZDQ4MTM0ZGI0ZGRiODlkZjc0NmQ3NDMyYjg2NjBhYzMyNTgzMDkzMWU5NmQxYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDFlMDcwOWU1NDAwNjBjZGNiNzE4NmRlNjU2MzRiOWJjNjA0MjBjYjdiYTUyM2FkYjQ1NmZjMzk5Yjg5YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4f30205ae3f247fc9347a58461560b48",
+      "statement": "Both integration files construct their connection with `createDatabase` — the same `postgres(..., { max: 5, prepare: false })` pool production uses — key their rows with `crypto.randomUUID()`-suffixed auth user ids (`integration-…` and `api-integration-…`) so they never collide with real users even against the shared `mota` database, and clean up in `afterAll` by deleting their rows and ending the client.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L16-L47",
+          "version": "repo-lines-v1:sha256:00eee64ee0b766b37d31729ae9b61b968f18ff18f494ac42cac66e14c492fa50:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlNjA4YjYxOWQ2NjAwMGQ2ZDdlNTQyMTRkMDNiNzdmM2IwMzhmNDRhNzAxNzY4NDZiZjRlODIyMmRiZTg3NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZGViOTc2NjE5YmY4NjdlMmMzMGY3YjQyODYzYmVkYzZhMGI4NTY4YjA3MmI4ZmUwYmIyMzk0M2JmOTNlZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNWUwMDRlNWI4YTFlYTBkMGU5NDdiYTA5MGQyM2IyOGFkNTYwZmFjNTE2NmRjZjRmZmNmMWNmMjY0NmMzN2YifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/client.ts",
+          "version": "repo-file-v1:sha256:3e49e3088693d5d6c6306baccd70ee4c154d6cc15b1d0780af1d1cd872d6ba95"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.integration.test.ts#L15-L40",
+          "version": "repo-lines-v1:sha256:7784517e8137b6b062d3df56154cd5d26feea552369709dd539f8c9568970083:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5NDU1YmMzZGJhYzU4YmQyNzRhNDNiZjkzMmM5YWUzYTIyNjc4MWYxMTkyMGMxMjlhNTJkNDQwYzVkNjRhYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1YzM3NzQ3NDlhZGI1MGE5OGYwYzI3OTM3ZGVlNmQ5ODRhYzA0MTg5ZmE3YzIxNTQ4ZGVjY2FmMzBiMmFhM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiMzc0MTk0YzcyOGFlMDgxYzY2MjhmYjk5NTlhMGI3Yjc1MDhlZmU5OWVjMjlhZmViMjU5OGVmZmMzOWEyNGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eb79ba86eac046708cee754d4674bc5d",
+      "statement": "The `apps/api` transit e2e suite pins the adapter boundary invariants: nearby searches are served from one cached complete catalog (single upstream call across multiple requests), concurrent cold requests share one pending catalog load (proven by manually releasing a promise), malformed upstream rows are dropped while valid ones survive, stale cached stations are still served after the upstream fails, bus arrival lookups stay realtime rather than catalog-cached, out-of-bounds coordinates return `400` without any upstream call, and `/api/health` reports non-gating `transitCatalogs` readiness.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L175-L219",
+          "version": "repo-lines-v1:sha256:9d88a813b2e8a6c1105bb34c042eeec3713132d12008012a44bd984d888a7b2c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiODRhMjY5MzUxZmNiYzE0NzZmN2M5MjhlMDlhMzRlOTk0MzFiZjQ2NGQzOGQ2MWUzMzYxZTE3ODkzZTY0ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMDdlZGQ4ZGU5YTFlNzgwY2UwYjEzZDM4ODhmZGEyYjE3MzVjNTc5ZGI3NzEyYzMyM2I1NjMxMDE4M2ViNDQifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L430-L474",
+          "version": "repo-lines-v1:sha256:e17ea9f8bbbc37cee32d9de6892199a28a31071bf4ace1a3592cda485ece5f1e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNzQyNTRlNTAyODI3Mzc1NmM1MThjMDgzNDEyMzM2ZTM1ZGMxYjMzN2FkY2RjMTQ4NGNhYjBhYjMyNWQ3NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwYzlkNWNhNjUzMzI1OWEzOWJiODUzOWZhNjI4ODc3MjJkZTA5NjZjNzE2MDgzMGI3OWU5ZWFhZGI1N2U0NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwYmE1OTc4MDIxODg0NDE1MWEzNGFiNDk0MGQ0N2E5MzNkZmI2NTJiZDg1NmY1YjU1YTIwZGRiMmUxZmI3MDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L649-L693",
+          "version": "repo-lines-v1:sha256:8e8f3296312a0e9443dea33a5ef81d7d91fca7eb3bdaf9b429518ca152920e1a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkOWM1MmZlMTBiZTc4MGExMjgyNjg4MmI1NTM0MWE3MzNiM2NlNTUyNGIyYWJiMmE5OWZlNWI5NTI5OGJhNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkOGNlMWRiYmRmYzBlZDBhZWU2NjUyMThmNzVlYjgwN2Y4ODljOTBlYTJhMzNhZmFhNjY1ZGFmMWUyYjZiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L84-L135",
+          "version": "repo-lines-v1:sha256:00ed7153e795ceab933042d205fa39dee94eb4ad889b8e8995c0cd7c1e84cda1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0MmU2MTVlMzdjYjQ0YWNmYTJiMmExYzVhMWU2ZDU0MTBhYjUxNWQ5M2FjZDYxZWY5MmY5ZjU1NmYxNjdmYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjYTJiNjRhOWE2N2EzYWZhMzFjOGFjOWUzM2M1OTQxYjVkNTg1NDA3YTcxMGE1YmE4MzZiYWQ0ZDExZmUyYmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_644b360f07f944a989802e2a7a7bbe9d",
+      "statement": "`apps/api/test/transit-catalog-fallback.e2e.test.ts` is the only place the bus catalog completeness-gate fallback is observable: with `minimumBusCatalogItems: 2` and a one-row upstream payload, the complete catalog is rejected and the controller falls back to the location-scoped live lookup (`kiloMeter=0.8`) instead of `kiloMeter=45`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/transit-catalog-fallback.e2e.test.ts",
+          "version": "repo-file-v1:sha256:20086e4ec4ac3e732240f5aeca51e5965a90f8477f32c88e3753b33bae7f4850"
+        }
+      ]
+    },
+    {
+      "id": "claim_38c40e0b52004a93a2bd78ca9ca33a68",
+      "statement": "The auth e2e suite encodes the full OAuth/session contract: PKCE redirect URL parameters (`provider=google`, `prompt=select_account`, `code_challenge_method=S256`, a state-carrying `redirect_to`), three host-only flow cookies (`Max-Age=600`, `HttpOnly`, `SameSite=Lax`, no `Domain`), cross-site `return_to` rejection, the callback exchange setting five cookies (two session plus three cleared flow), state-mismatch rejection with `401`, logout clearing cookies and revoking server-side, and refresh-cookie rotation setting new access and refresh cookies.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L254-L298",
+          "version": "repo-lines-v1:sha256:9f44a46e2d5dd9b3107b9411e0f1df10c55ec3141b35e25ebdca17fa12449383:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MDFmMjdmZGI0ZTBmZmNlNWIwZTEwZWVhMjFhN2RiNjRiY2Q4NDZiNTc4Y2JlZjA0MWI3MjBkYmU1YmRiNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhZDlhYWFjMDU3YTYwOTBiNjEwMzZmZGNlZjRhYTc2OTQ3YThjZWM4OGJkN2Y0MmQwMzkzMTdhYzNkNzY0NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L94-L252",
+          "version": "repo-lines-v1:sha256:d3e2ac66658955502a566692950388e05b4fa140321a4d1859a167e60a008ab5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2OGYxODVkMTcwNGJkMWQ0NzRkNmM3MmNiY2MyOTdkZThlMjc1YmU5M2ZkOWIwNDBkODIwNjU3ZDZkOWQ3ZTMxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMDhjODZlZTc0MzQ0MDNlNDlmOWFmNGM1Y2UwMmI0YzI3ZjdkOGE5YmY5ZDJmZjJmZjEzOTc5MGFiZjVmZmJhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0OTc5YzIyMmE0OWM5NjBlOTRjNWM1NjcwYTk2YjA2MmQyMjA3YTRiNmM1NzQ2MTkwNTI1ZTUzODM0MzIwYTI2In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_256386000c0a48429945eaef9d947551",
+      "statement": "The colocated unit tests pin the pure contracts: `pkce.test.ts` (base64url verifier/state shape, RFC 7636 appendix B S256 vector), `sessionCookies.test.ts` (`__Host-` prefixing only for https origins, `Max-Age`/`HttpOnly`/`SameSite=Lax` serialization, never a `Domain` attribute, cookie header parsing), `env.test.ts` (`loadEnv` defaults, `DATABASE_*` URL encoding, startup failure without database or Supabase credentials), `transitSettings.test.ts` (legacy selection-document migration into both commute contexts, singular-id to one-element list, dedupe, and the `MAX_SELECTED_BUS_STOPS` cap), and `schema.test.ts` (`user_settings` name, exact four-column order, `auth_user_id` as the inline primary key).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/pkce.test.ts",
+          "version": "repo-file-v1:sha256:f980f83a7f4aeb6d543c3158b1a62a15564c0dc68ba33b242c988867467d33c6"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.test.ts",
+          "version": "repo-file-v1:sha256:cb37e8d77ca63526f54d01d0a5646bd9eae1bc02208563480fa50624664ffd5a"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.test.ts",
+          "version": "repo-file-v1:sha256:f2cc5f4f3a22d9d89fbe892a334547c016d2e9ec1a0b19e63f7c43a90eb5399d"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.test.ts",
+          "version": "repo-file-v1:sha256:adf1ad314b0587105668e5b927606368c4f18b99d8a55d2f2e0adeb72d759dcb"
+        },
+        {
+          "resource": "repo://packages/db/src/schema.test.ts",
+          "version": "repo-file-v1:sha256:f2269d20f73af5edf5dc982d0864e8e2c7e15d849cab6d3442caf56007965616"
+        }
+      ]
+    },
+    {
+      "id": "claim_be8612f158294d4b9208c738ab067ada",
+      "statement": "`managedCatalog.test.ts` pins the catalog state machine in isolation — single-flight cold load shared across concurrent readers, atomic snapshot swap when a refresh becomes due, stale data kept when a refresh fails, and, under `vi.useFakeTimers()`, that the proactive refresh timer fires and is cleared by `stop()` leaving zero timers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.test.ts",
+          "version": "repo-file-v1:sha256:fa849f26a0774bd867c34821a7f3335ec095ae880f31645f9b329866485b39b1"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8b9da66659c4a348ce67a714d7411d8",
+      "statement": "Web tests are colocated as `*.test.tsx` next to their sources (`src/App.test.tsx`, `src/components/*.test.tsx`, `src/hooks/*.test.tsx`) with a per-file `@vitest-environment jsdom` docblock; `apps/web/vitest.config.ts` declares no `include` (vitest default discovery) but sets `setupFiles: [\"./vitest.setup.ts\"]` and `clearMocks: true`, and the setup registers `@testing-library/jest-dom/vitest` and unmounts the tree in an `afterEach` cleanup.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L1-L1",
+          "version": "repo-lines-v1:sha256:8e517231884f5aee75dd3b0509f10b318c87d19f7f3d49a452f86ec583b381cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU1MTcyMzE4ODRmNWFlZTc1ZGQzYjA1MDlmMTBiMzE4Yzg3ZDE5ZjdmM2Q0OWE0NTJmODZlYzU4M2IzODFjYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU1MTcyMzE4ODRmNWFlZTc1ZGQzYjA1MDlmMTBiMzE4Yzg3ZDE5ZjdmM2Q0OWE0NTJmODZlYzU4M2IzODFjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTMzMGRmM2FhMDUxOTBlZjdlMDE2N2IzOTNlMzdhZDY4NGQxODdhMDI5MDg2YzQyNDYwODg0M2IzNDBhNTBlNiJ9"
+        },
+        {
+          "resource": "repo://apps/web/vitest.config.ts",
+          "version": "repo-file-v1:sha256:b89b89449cd40a259ffd6b7fa73f85acd287365da2492725c3a593214179e656"
+        },
+        {
+          "resource": "repo://apps/web/vitest.setup.ts",
+          "version": "repo-file-v1:sha256:f6dacd0c48caa5c15c870a23f157a9801eea0c792f9c6e4d9a29374fa10b3e39"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4fe200742084feca05bb5582b138018",
+      "statement": "`apps/web/src/App.test.tsx` uses a `vi.hoisted` mutable `mediaQueryState` object shared with a `vi.mock` factory that replaces `useMediaQuery` with `() => mediaQueryState.matches`; flipping `mediaQueryState.matches` inside a test switches `App`'s `useMediaQuery(\"(min-width: 960px)\")` between the desktop and mobile layouts without needing a jsdom `matchMedia` implementation.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L10-L12",
+          "version": "repo-lines-v1:sha256:86201cf743c4091bf1563cbbf1b0438073cb76cdb87570bd607db6363cd324a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk2OWE0NTRkMTAzMzEwOTA5YjU0NGQ3NGE5YWJjYTRkNDI0Yzg1ZDBkOTE2MjA2MmI5MjY0NDU5Y2VjOGExMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWI3NDFkMmMwOGU2ZjUxMGI3ZTlhMjY0ZjM3OGY5Y2UwMDQ5YTUwNGUwZTdlZjVkNjdjZDNlYTgxM2Y4NTQ3NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjA5NmY5ZWE5ODA1MzY3ZWY1NDdjZjc0ZjI4ODcwZGExMmQyYWExYzY1M2FiYjFjNTNhOTFlZGE5OThhNDAzYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGYxZjQ4NTkzMjU0Mjg1YTNjMWI2MTg2YjY1N2VkZDYyNGMxZjU2OWYyNGIzOGQ4NTcwMTcxZmMyZjNhNmViNCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L163-L165",
+          "version": "repo-lines-v1:sha256:037db0c76fefb028501753a7f3ea09c799de33484ae9e7051f9750e7dcce9621:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQ5MzYxZmM5MTMzOTFhYjU4NjEyZWFjMDgyMzI3YzFlZjMxZWNiZDA2ZGVmYjc5MDVhZTdhOWM2NzNkODVkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWI3NDFkMmMwOGU2ZjUxMGI3ZTlhMjY0ZjM3OGY5Y2UwMDQ5YTUwNGUwZTdlZjVkNjdjZDNlYTgxM2Y4NTQ3NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjMyOWUwMmI2OGZjNjJmYmFmZjYyZTJjMTdlZGZlZjUyM2ViZDU5MjZiM2MxNGM1ZGIzMzI3ZTIxMjFhMWIyMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTUxODE0MjBlMTc0MzI3ZmVkY2I2Y2E4Y2U3MzZjNDU0MDQ3NGE2OTE1ZDQzNGExNTMwZjc5MzNhMmU4ZjhkNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L228-L265",
+          "version": "repo-lines-v1:sha256:e0bf7329f24b9e44a56f859f6643aa12b4a70b8efc552886b439a95485510eaf:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkNGY0NjhkNWQ3NzlkMzhkYWNkNTA4MmU4MGRkNGY0MDhlM2MyOGQ3YzcxYjA1ZTU0Njc4NDJiODhiM2ZiZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2Zjk1ZTIzN2Q5ZDExNGQ5MDdmODkzYTQ3MjhmZjE4NDIxODA5ZGNiZjlmMmY1NWJkNmU3MGQ4NThkMWU0MGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2YTllYWIyM2IyOWJiNjg3NDZhMzE5MGJiYzU0MzViZDE1MzE0OGQ1NzllY2UxZjVmOGJhOGI0NDNkZDk0MjgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L26-L26",
+          "version": "repo-lines-v1:sha256:9074d9d93dbd477bb1c4c5b97390ed717c14128ff9d3cdae9099933773d48546:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA3NGQ5ZDkzZGJkNDc3YmIxYzRjNWI5NzM5MGVkNzE3YzE0MTI4ZmY5ZDNjZGFlOTA5OTkzMzc3M2Q0ODU0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA3NGQ5ZDkzZGJkNDc3YmIxYzRjNWI5NzM5MGVkNzE3YzE0MTI4ZmY5ZDNjZGFlOTA5OTkzMzc3M2Q0ODU0NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzU1Y2UxYjY1ZmMxNThjNTUwZjQ1NmE0ZGY0MGJkNTYzNmEyZmFiZWQxMmRiOWZhNTg5ODkzMGI3NTU5ODVlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTg2MjYyNzYwZmM2NmZlOTQyNzI3MDU4NTVhZTk5YWY4ZGQzY2UwN2ZiMDM5ODdlNjkzMjMyNmVhNzVhOGFiMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c60d8af1dc9649018844d0a736fb42ee",
+      "statement": "The web suites mock only the leaves of the tree and keep the rest real: `App.test.tsx` replaces `MapStage` with a `data-*` section stub exposing test buttons, stubs `useAuthSession` to a static anonymous session, and partially mocks `./api/client` via `importOriginal` so only `fetchArrivals`/`fetchSubwayArrivals` become spies; `MapStage.test.tsx` stubs `MapCanvas`; `MapCanvas.test.tsx` stubs `react-leaflet` with a hand-built fake map; `useAuthSession.test.tsx` uses `vi.stubGlobal(\"fetch\", …)` and `vi.unstubAllGlobals()` in `afterEach`. Assertions query by role and accessible name.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L96-L183",
+          "version": "repo-lines-v1:sha256:d65d79db4245cc8d26c05350f679dd68ab9102fe2f7772bc66604a56f9219634:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2NGM1YTA1ZDNkODhkNjM0MzczZDgwZjVmNWExOGJjNzFiZjI1NmI1NzMzYmY3MDE4Yjg2YTVmZjFlZWUwN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNzQxZDJjMDhlNmY1MTBiN2U5YTI2NGYzNzhmOWNlMDA0OWE1MDRlMGU3ZWY1ZDY3Y2QzZWE4MTNmODU0NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YTkxNzU5NzJmZTE1ZTJhOTY0MWFiMTMxZjU3MWU2YzdjYWJjYTA2ODM3NjJlYmE1ZjIzNTNlNDgzYzNkNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlOGRkOTNlNGVjNjAyMWI1MzQ0ZTI3ZjlkY2I2MTAzNDljNmRjMmYyMzBhYjhlMmEzNTZmMjhjZGUwMzYwMWMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.test.tsx#L36-L60",
+          "version": "repo-lines-v1:sha256:c8df01bdaa7d8a199a45379bbc9ba679428e615279332b1fd2dad7bd4097be48:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxZDYwZGFlYjdlMDFhMTM2MTRjYjAxZThlYTc0MDA5ZjE5Mzg0MWUwNTQ2ZGUzZGQ0ZjI3ZTE3YjQ4Zjg1N2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZDJhYWQyNjVmYzMwMDVjNGVjOTE5OTRjMzUzZjY1MTFhYjgwNzNhNjI3NDI4ZWVlYzcxZWYyNDdhNTUyYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiODk0ODQyYzVlOTIxYWQ3NTNmYmU0NDYxZWVjNTczM2IyMDFhNmRlNjQ5ZTVkZTBiYzNkMmY4MmQ4NTk1YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhOTFiMzA0MmQwMzdjODhjNDM3MGY0YTlhY2M4YTAzZDNiOTQ4YzZkNzAzOTczZTdjNjIzZDI5MjdjZmFlMjQifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.test.tsx#L13-L61",
+          "version": "repo-lines-v1:sha256:4247312f0a77c9ad716dcdcfa6da001318b101d50f5ed28f0a23dfcb685defaa:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNGI2NGU4ZDdiNzJlMzBlODAxNTI3MmVjZDEwNTdiYWIwZDJjMDZhNTBiYjcyYWZhNWM1YzlhODUzOGY1MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhZmViZmM3OWEwMmJhMmQ3ZmJhYWRhNTVjOWI3ZmIyM2I2ODdmYzc4OGRkZDhjNjA4MDczNjFjMjNlNWVkY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3MTkxZDg2YzliMGM1NDkwNGU2OTEwZTQ1NjYzYjJmODU4ZmZhMzA3YzEzNzFiNzE2ZmEzN2M4Y2U3NTlkYzAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useAuthSession.test.tsx#L7-L39",
+          "version": "repo-lines-v1:sha256:afa644380d13978efeb2ccc6ca050d3e62457d4b2ea85382bb6c3376b410953f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3OTk1ODIzZGVjZTI4YWI4YjVlOWQ5OTkyMTUwZDEwNTNlM2U0N2ZiNDI0Y2NjMjNlM2FmMTY0NDkxYTFiNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhMTI1MmFhZmU0NmQ3YjI3ZTRlNDJjMjg4NTNhMzMzMjZjYWFlYWUyMDFlMGU0ZTM2OWQ1MjUzODU2NDUwMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3NTJjZWNhMmMzNGQwYzIwNTUxZDJmODQ0ZWNlMjQ1ZmEzMWRlOWMwNTRkZjRkYjlmZTMwODkxNjJiYTljMTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_64c5369db8ba4b6d8fd6af9f9c019854",
+      "statement": "There is no browser e2e coverage: `apps/web/package.json` declares `\"test:e2e\": \"playwright test\"` and `@playwright/test` as a devDependency, and the root `package.json` forwards `pnpm test:e2e` to it, but the repository contains no Playwright config and no spec file, so the script as written cannot pass — end-to-end coverage comes from the API e2e layer plus the jsdom component suites.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/package.json#L11-L13",
+          "version": "repo-lines-v1:sha256:7ed46b16e04ff2ab93c8f3b93275d27754f126c9f9d3ca130624948157cdbed2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQxZmMyNDllZmE3MWIwZTdhOTdmN2Y0ZWI4Yjg5NDk0YTU5Y2IzZjg3ZDcxYmU2YWFkNjNhYTNiYTVlM2QzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDZkMDViMDY5MmY4OTZhNDZlMWE2Y2Q2MGFiNGZiOTg5MTNkODEwZTU0Mjk3YWVjOTRlNWViMGIzNTQxYThhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTkxZDQyZTEwN2Q4MjM2YjA5ZTEzNGVhNDE4NDlmMGJjNThlNzkyNmIzZDFkZDcxZDliOTRhZThkZWE0MmU4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2ZhZjM1OWQ0Mjk2NDgxZjk0MDU0ZDVhMzQ5YTZiNzAyZGE3NGJkMTZlNjAzZTNiZDJiYTg0OGU0MTcyYTkzYiJ9"
+        },
+        {
+          "resource": "repo://apps/web/package.json#L25-L25",
+          "version": "repo-lines-v1:sha256:f5f7be0a4b083e31643064821884db101cd70196d5f4ba49ea6ade5aaeab4ef4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjVmN2JlMGE0YjA4M2UzMTY0MzA2NDgyMTg4NGRiMTAxY2Q3MDE5NmQ1ZjRiYTQ5ZWE2YWRlNWFhZWFiNGVmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjVmN2JlMGE0YjA4M2UzMTY0MzA2NDgyMTg4NGRiMTAxY2Q3MDE5NmQ1ZjRiYTQ5ZWE2YWRlNWFhZWFiNGVmNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJmZjRlM2U2N2NkMGNmN2RiZTI3YmNlYWQ2NDAxNTkzZTFlZTVlZGRjMDUwMDEwNGE4ZTZkMGRlMDEzNmQyOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTY1YTU3OWRhYjUzZjM1N2EyZTQ2Y2VhNDAxNmZmYzQyNGFjYjQyNjNiOGVlYzcxZDIzNDE1ZWExZTU2NDVkYSJ9"
+        },
+        {
+          "resource": "repo://package.json#L17-L17",
+          "version": "repo-lines-v1:sha256:c057f06e65d7ec0bf743990982af8aaeb3f220edee785412af2a84151cdf8b3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzA1N2YwNmU2NWQ3ZWMwYmY3NDM5OTA5ODJhZjhhYWViM2YyMjBlZGVlNzg1NDEyYWYyYTg0MTUxY2RmOGIzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzA1N2YwNmU2NWQ3ZWMwYmY3NDM5OTA5ODJhZjhhYWViM2YyMjBlZGVlNzg1NDEyYWYyYTg0MTUxY2RmOGIzYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmMwM2I0Y2E0ZTI4NDdhM2QxMDFjNzNmNmM2NTg2Mzc4MjIwZWQ4ZmExOTM4YWU4NDg4NzAwNjY5YzgzYmVlOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWVhMTQ2NjFlNjY4MjJhYjNlNGY0ZjdjNDdkZmMyZGY3MTI1ZmY3NWMxNjkzNDZkYzc0MjIxMzU4Y2E0MzM5ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a0bdb306a5494b1b90ef2029ca2fe05c",
+      "statement": "There is no CI pipeline running the tests: the only GitHub workflow is the scheduled OpenWiki documentation update, so the README's verification list (`pnpm typecheck`, `pnpm check`, `pnpm test`, `pnpm test:integration`, `pnpm build`) is a set of local commands executed only by whoever runs them.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml",
+          "version": "repo-file-v1:sha256:c05213492a5b522f95c862dc301442f72edb3ca72df2340773037624f1f0c6ae"
+        },
+        {
+          "resource": "repo://README.md#L27-L35",
+          "version": "repo-lines-v1:sha256:36b05ff088bc337bf916e102d985dab24a5da9ff79e503c4cd5bc98514f5585e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTY3YTA4NDcyNTJlM2QxY2JhOTFjNTgzMjA0ZDFjOTkxZDBkNjJjMzc4YjEwNjI4ZDM1NGRhYTMyZjk5ZjEzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMDZjNTYxZDVjMzI3MzQzNjg1MjY4YTQ2YjMzOTFmMzk5OGVlZTg5MGQyYmU1MWYwZDIxY2M0YTUzYWU2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzg4OWNkZDU3ZTQ0ZTI1YTUyYjIwMzA2MzljZGU3ZGEzNjgwNTlkYzlmZDE2MDg2NWFiNDZkNjc3ZTJkNGU3ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDVjMzgzODk3ZDUzOWYzNGMxODI3NTUxMzY0OTRiMjQ2YjM2Zjc1YjkwMTQxOWIzZDkzOTU1YTcxOTYxZjBlZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0c571d89248741529a20b4aef2c4a7b9",
+      "statement": "The e2e suites are typechecked and linted alongside production code: `apps/api/tsconfig.json` includes `test`, and its `check` script lints `src test vitest.config.mts`, while `packages/*/tsconfig.build.json` exclude `*.test.ts` so no test is emitted into `dist`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L10-L10",
+          "version": "repo-lines-v1:sha256:ab738f83bf1171414d2a0cbc902833047e49439257853905addcdd9a45f4ce71:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWI3MzhmODNiZjExNzE0MTRkMmEwY2JjOTAyODMzMDQ3ZTQ5NDM5MjU3ODUzOTA1YWRkY2RkOWE0NWY0Y2U3MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWI3MzhmODNiZjExNzE0MTRkMmEwY2JjOTAyODMzMDQ3ZTQ5NDM5MjU3ODUzOTA1YWRkY2RkOWE0NWY0Y2U3MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGZkZDc5YzQ2YTgwMTY4NWE0NDM3NjEzZGU1MTczYTI0ZDI3YWU4NTFmZWVmNGY0MDA0ZjhiMTc3OTFjMDQ1YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzEyNDlkMWJjOTYyYTgwZGMzMjA3ZWRkNjkxZjcwNDEwZWEzMTI5MDcyYTA2YTJlNjI1NjhiODViNmViNDlmZiJ9"
+        },
+        {
+          "resource": "repo://apps/api/tsconfig.json#L14-L14",
+          "version": "repo-lines-v1:sha256:3d781e7f14858c3e6eda5fd31e2eb7f5d9dce829a7dbbcdcb42963926426c99b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q3ODFlN2YxNDg1OGMzZTZlZGE1ZmQzMWUyZWI3ZjVkOWRjZTgyOWE3ZGJiY2RjYjQyOTYzOTI2NDI2Yzk5YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q3ODFlN2YxNDg1OGMzZTZlZGE1ZmQzMWUyZWI3ZjVkOWRjZTgyOWE3ZGJiY2RjYjQyOTYzOTI2NDI2Yzk5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDY1NjUzODgxNDQ1NTI5YWJlZWY1Mzc4OWUyN2FhNjVmYzEyZWQ2ZmY3ZmMwZWJmMDQ3MjhiMzFmODNkZmVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGY0MmYyZjllMDMxNzc2MTJiZWFkNzQ3NGE4ZDcwYTRkYTJlN2IxNGIwYzBlMzZlMzM3ZmRlZGYwMzQ4YTIyZiJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/tsconfig.build.json#L10-L10",
+          "version": "repo-lines-v1:sha256:547a197c7943e803156118b664341101cc6e97e1737b6e57265084b46a2a6498:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ3YTE5N2M3OTQzZTgwMzE1NjExOGI2NjQzNDExMDFjYzZlOTdlMTczN2I2ZTU3MjY1MDg0YjQ2YTJhNjQ5OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ3YTE5N2M3OTQzZTgwMzE1NjExOGI2NjQzNDExMDFjYzZlOTdlMTczN2I2ZTU3MjY1MDg0YjQ2YTJhNjQ5OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWQ2MGNlMWRmYjdhMDViZWE4Njc1ZTgyMGUzOGIzMzEyN2Q5MWQzNWE2NjkxNTMxMmM4NDI1NWE1YzdjYWMzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://packages/db/tsconfig.build.json#L11-L11",
+          "version": "repo-lines-v1:sha256:412ca345ccf75bf9c0806bce695be8de808b79984251a7a54d202cf6101dd451:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDMxYTc3OGQ2ODY5MjgwMTE5MzY1Njg5ZTM1N2M3NzQwNjU3MTM0YWQwOGY4YWY5NjBkYzIyY2U5NzA1MjdhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:04b18c1ab83ec43e7902a1ca58ed16b54e8bd837a5e73cc4f32661a3601c4b3f",
+  "claims": [
+    {
+      "id": "claim_6af3c65358bc43c0b59dac5e542a6f66",
+      "statement": "Mota's Supabase Auth integration touches exactly four endpoints and nothing more: GET /auth/v1/authorize (built as a browser redirect by OAuthController, never fetched server-side), POST /auth/v1/token?grant_type=pkce and POST /auth/v1/token?grant_type=refresh_token (SupabaseAuthClient.requestSession), POST /auth/v1/signout (SupabaseAuthClient.revokeSession), and GET /auth/v1/.well-known/jwks.json fetched by jose's remote resolver inside verifyAccessToken.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L76-L84",
+          "version": "repo-lines-v1:sha256:18645ceddffaa41ad5a5e7e086e8fa45a7926d92349569eae8d3bc30b7772bfc:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ2ZjYyNTUxMTNhZTQyYzBmZmVjMjBmM2QwNmZjYjEzZTZiMmU0ZWIxMDBlMWJkN2VkNzc2NGJhZjJhMTAzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTE2NGRmMWZmMTBiZWU0N2MzNmI2MDU4MzcxZmY1ODgyOTQxZDNjMzkxZjNhOTM3OWViOWYyNGIzZjRhYzUwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzhiMmQ2MGI1NzcwNTJlMjFiMWNiYzgwMWFhZmY4ZTU3ZjI1ZWY0MGQzMWQ4ZWY4YmU5NjZkZDAxNmIzMGZkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGM4ODkxOGVkMDc2OTA4ZDhkZjEzNzFhNmM2ODI1MDNlNGUxMzYwYjg1MTRmNjhmNzdjZTdjMzBlM2I4MjVkOCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L43-L47",
+          "version": "repo-lines-v1:sha256:59f579693fe7c325138c0b29cacc061a413943ba50d6daa87a04f0b816bd89db:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2I1YWFlY2RmY2RhMDM0YTQzMzBiMmQ1MDFiYWRiMWU5MTk4MmFhNDcwZWZlNTg5ZmMxMjAzNTY4YTkxYzcxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJiYTk3NWIyNTQ5ZDliZDRmMTU0NTU2NTQ5NDkxNWE0NWViYzdlMmMzYjY5M2JhNDNlYmVkN2FlNDBhMDFhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQwMjE0ZmVmMzliYzRlMzk2Yzc5OTdmMmQ5ODEyMDVhNjk1MWNjMjdkYWFlZjJlYzQ1MjQ5MmQxMjcxZmZkYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzgyZDc3MjYxZmYxZDkxYTc0ZmIyMDhiZGQyNTliYmY3NzY2NWFiMzMyNTRlNjAwZWMzOGY4NjllN2YyNjE3NyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L44-L116",
+          "version": "repo-lines-v1:sha256:dbe9b0533ff49007adf68f9fdcda54b19c8ff5b33fb1eaae224ff83417495e2a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4NzM0M2Q5ZmUwNWFlMWE5YjM2NjIwMjVjZWZiYjA0NmE1OTQ4NzJiMThjNjdjNTQxZTdiNmIyMmFjZThlOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyMjQ5ZmIwNjdhY2Q4OTUyMDZlM2FhZjYzMzQxNzVjNzAzZmY2MjgzNmIyOTZhYjUwMGZkYzIwOWJlMmZhNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L14-L29",
+          "version": "repo-lines-v1:sha256:ae77ac5a3c349c46e45f526415d66a0f893bfdb8ff6777d21922a8c821caef96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkODIxZmEwZmJmOGJmM2I0NjYwYjNhODc1NWRjMjY2MDk4MzUxODFlYzhjNGMyZjI5YjNmN2ExYTc1OTJhMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwZDg0MjUxZjYyM2I2M2FhNmI4M2FkZjRiZjhlOTM1ZTNiMTgxZTljYTJlNzBkNGU3MzI0MWIxNzBlZDdkNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4ZjdjYWIyNzQ1OWU0NDg1NDA3NWNiZTdmOGI4ZjEwZDI5MDY1Zjc2YjhjZWYzZmE3Y2EzMDA3YjY5MDc5OTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3c258d66f3cf4f13ad915c7434e845bf",
+      "statement": "The authorize URL is constructed by OAuthController.startLogin with provider=google, prompt=select_account (so Google always shows its account chooser), redirect_to set to ${PUBLIC_URL}/api/auth/callback with the random state appended as a query parameter, code_challenge from the S256 PKCE derivation, and code_challenge_method=S256; the route returns it as a 302 redirect rather than fetching it.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L57-L85",
+          "version": "repo-lines-v1:sha256:77e9d696940981b407f9fe28dc355cecffb3d9f057c9d22dbba8ecd481e314fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjQ1ZWMwYzliNTA1NDg0MjNlYzM4OWU5OTJiNDUyOWIwMGMzMDgxZTQxYTNkODdlZDZiMWUxZDE1MGQ3YWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2ZGMyYzdlYjAyOWY0MTVmOGY1ZTEzY2FlMTVkYWIwMmVkNjY4NDdmOGUwNDNmNjYzMWUzMTljMWVjMjUxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjYTBhMzUxYjA4ZDRhNjM4MWJhOWZlZDU4ZWQyZThkMmZjMTNiOGEyODJiZDg5ODQ5MDU3OTMzOTdmZmJkNGYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/pkce.ts",
+          "version": "repo-file-v1:sha256:e3ebdf459f0b54b2921838b07499a125a37108e47c3560dca720f51f05714dd1"
+        }
+      ]
+    },
+    {
+      "id": "claim_40af30ae55ae44a78fdeda1a80442410",
+      "statement": "The OAuth callback origin is derived from PUBLIC_URL, so the redirect_to target must be allow-listed in the Supabase project's URL configuration; deploying under a new origin without updating the Supabase allow-list breaks login at the provider step rather than inside mota's code.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L79-L81",
+          "version": "repo-lines-v1:sha256:afc29603a00146f8d8826de9ee04d00caaee341dd3f1f5332bc68fcfdaabca11:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmYWEyZWUwNWY3MDQxZjI3M2ZhOGNiZTY3MTk1NTNlNTY5MGZhMTgzNTNhMGMxYzUxZmVlNWE4YjE3MTJiYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxMWNlMzMwMjU5NWFiZjc5NjZiM2EwYzk1NjY0ZjcyZDM2ODZkNzczZmQyYjdiNzQ3NTdjMDhmZGEzNzdhZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2ZlY2M5ZjI3Nzg1MGIzYjk0NDdlZmNmODhmZmMxMzI3NTBjZjkyNTczOThmMjljN2VlNmNmNTI2YWQ5M2Q3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjBjMzVhZTk2ZjliODU3OGYzMWEyMWZmYzdlMmI4ZWRiZjE5YTcwMzZhNmQ5NzBjOGU3MmE1NTllZDk3ZjM3YSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L71-L75",
+          "version": "repo-lines-v1:sha256:63b8289ad50f59d39b65ed4d19496623af835019b66c2595e28a85b05a0db64a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGI2NTAwYTk1MjBiMjJlZWMzMWQ5OWVjMmQ5MGM2YjYzNzNmYjhiMDJhNGJkY2M3OWI1YjgyMDI4NTUyZjVhZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg0MjM1ZTA5MjU5OGMzMzgzODI5MzMxZWRmN2I4ODE0ZDRkMTI2YTIwNTk4NjA5ZTcwY2M2YzlmYTJhOWU4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGI0NDYyZDA3MjJmZGZjMDZiYTdiZmU1YzIxMDllOGEzZGVkNjQ3ZTcwY2NhNjgxNTU3MGE5ZTgzMTVkMGQzYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3fc8e553c90b492b9a67bdfcfa30bf98",
+      "statement": "Every token response is validated by a strict Zod session schema requiring non-empty access_token and refresh_token, a positive integer expires_in, and a non-empty token_type; a non-OK HTTP status or a body that fails this schema raises SupabaseAuthError, meaning the four fields are the only session data that crosses the integration boundary.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L108-L116",
+          "version": "repo-lines-v1:sha256:69a3195ec50fa4bc9a03c66853e1035a95d9439ca3a2899d5e39dedda6435076:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjBmNTZkZGIwZjFhNGNkMTEzOGRkZWE2MzYwYTdiMTQ4YjJlOTg1NTMyN2FmNzg0ZDMyYTJlZGI2YmYwODVlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmRlMmJkN2FmNTQyMDA5YjQ2ZjE4MzVhYzFkZWRiNGExOTI0ODZmZDNlMTUyZTEyNzMyYzdjMWU3M2ZhNWM0NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L3-L10",
+          "version": "repo-lines-v1:sha256:4a08fb3b1581b12a89b3758733e8e60690b4680e53144ac3f802a80016f82f0d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWEwNGY4OTA5NjdmMDE1ZjhhZGFmODEzZGVjNTQxODBiOTkzMDk4NDFlNjAzYTg5ZDY2ZWI2MDhlNmQxZjg3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDJiMjFiN2UwNDA2NDhiMDgyYmI0MjA3N2JjMmNmZjQxZGIyY2NhNTMzODY3OWFmZjhiMjQzYTMyYWNmMWE5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTI4YjBjYzA0NWQ3NTI2ZDFjZGIyMjU4ZGEwYTE2YTQ1YTBkNWFhOWI2NGU4ZDIyYWExZTRhNDlkNzg1ZWRmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjY0NDY0N2ViY2RmMzE3MmEyZTA5OWZkMjljZmZmODJjNWU1MGQ2MzhhOGM5OTY1OWM5YzQ5MTc0Yzk0NWI4NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_bfe01abccbf54b9a959bbba860906c7d",
+      "statement": "All three SupabaseAuthClient HTTP calls send the anon key as the apikey header; only signout additionally sends the access token as an Authorization Bearer header and the refresh token in the JSON body. Each call passes signal: AbortSignal.timeout(10_000) and there is no retry, backoff, or circuit breaker — a hung upstream surfaces as a fetch rejection that becomes SupabaseUnavailableError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L60-L116",
+          "version": "repo-lines-v1:sha256:c6df838cd25590333f49fdc06848f7aadd0473c4378cb19dd25f2767f860aff7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMjAxYjc3ZWJmOGIwMDMwNDQ2OTdjZWIzNjRmMTc0ODBkMDU4NjEzMzY5ZTAzNjkzNmI2NjY3MzY5ZWNiZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMTJiNjExODk0M2UzMGMwMDY4MzNlNzgxNjMwYTUzYjMyZjQxN2VmNWY5Nzk1YzNmMTJmMzMwODAyNGM1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aaab6232c38d4304a43e3f40a65ae8ae",
+      "statement": "verifyAccessToken enforces, via jose's jwtVerify plus a Zod claims schema: algorithm ES256 only, issuer exactly `${supabaseUrl}/auth/v1`, audience 'authenticated', a 5-second clock tolerance, and a role claim that must be the literal 'authenticated'; sub is required (min length 1) and email is optional but must be a valid email. It returns AuthUser ({ sub, email? }) or null, never exposing other Supabase claims to callers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L36-L63",
+          "version": "repo-lines-v1:sha256:307f473aa903fac56b329b6022a9cffc5eb3b0585506c18e5427b8559092ad16:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMzFjNDA5OWE2OWQ1ZjhkMmY3NTYwMTE0OWEwNGY2MGRmMWUzM2NhYWY5NDdmMTBkMWI0ZTgyMDI3ZDA5ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3YTNjMDhlMjBlYjM5OTczODk3OTBhMDQxNGMzODljNTNlMDNiODE0ODJkYTlmZWIzZTYxYmE2M2JiZmNmZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L6-L12",
+          "version": "repo-lines-v1:sha256:f2161687f269f2ee4b1c56e3bc09ba93649e4e8dac8abae59aae240c4f23f7a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE2NjVmNzAwMDIxZWQyZDc1MDMyYzQyZDk5OTczMTlkMjkyYzA3Y2QzYmM5NmUyOWI0ODgyNmZiNjkzYWZiOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmIzYzBjZjQ5ZDAxMzU2NjBkNjY0MWE1NzVhN2ZiNTllNGVlOTQyM2Y1NzA0MzM4MWNhYjY3NDI5MmIyYzU0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmI1NzUwNjZmODA2ZDg5Yjc3OTBlMzkyMmE2NzliMjZkMjEwNDA4NTdlM2RiYTFlZTU0MDIxMjBhZjVmNTY5ZiJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/auth.ts#L3-L8",
+          "version": "repo-lines-v1:sha256:6233b8f00a30b5facc81852cf0e2b80047798f684e7a5bb58ded1d29a518b3dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGYwOTBjNTgyMDlhNTJmZDE2NjY2YjBkYTU5OTdjMmMxMDVjNjk4NjA1Mzk5OWZhOTJhN2Q1MjgzNGE2Mjc1YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTIwYzYxMjI0MDU5MjJmNDJhN2Q5MzliYTA4NjAxMTJmN2NiZWQ3ODc3MzVlZjdkMWQzYjQ0OGNmYThiNTBhMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTI4YjBjYzA0NWQ3NTI2ZDFjZGIyMjU4ZGEwYTE2YTQ1YTBkNWFhOWI2NGU4ZDIyYWExZTRhNDlkNzg1ZWRmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDc3ZWMzZTUwYzBjMzM5NjQ2MmMyMGE4MGNlMjgxYTYyOTk2ZmRlNmFmZWZiOTBlODE0ZmIzMDk0YjI5YWYxYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_45c05a9a4c184693998ae9431ad2ba03",
+      "statement": "The JWKS resolver is created with jose's createRemoteJWKSet and cached in a module-level Map keyed by JWKS URL for the entire process lifetime — mota never evicts or recreates it and passes jose no caching options, so re-fetching is governed by jose defaults (5s fetch timeout, 30s cooldown, 10min cache age) with an immediate re-fetch for an unknown kid outside cooldown, which is what makes Supabase key rotation work without a mota restart.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L14-L29",
+          "version": "repo-lines-v1:sha256:ae77ac5a3c349c46e45f526415d66a0f893bfdb8ff6777d21922a8c821caef96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkODIxZmEwZmJmOGJmM2I0NjYwYjNhODc1NWRjMjY2MDk4MzUxODFlYzhjNGMyZjI5YjNmN2ExYTc1OTJhMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwZDg0MjUxZjYyM2I2M2FhNmI4M2FkZjRiZjhlOTM1ZTNiMTgxZTljYTJlNzBkNGU3MzI0MWIxNzBlZDdkNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4ZjdjYWIyNzQ1OWU0NDg1NDA3NWNiZTdmOGI4ZjEwZDI5MDY1Zjc2YjhjZWYzZmE3Y2EzMDA3YjY5MDc5OTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_28f53396815d4944b14f3dad354fe097",
+      "statement": "Inside verifyAccessToken, any thrown error whose string code starts with ERR_ (every jose JOSEError subclass — expired, bad signature, claim validation failed, no matching key, JWKS timeout, etc.) is classified as an invalid token and returns null, not an outage; only errors outside jose's taxonomy, such as a Node network error from the JWKS fetch, are re-thrown as SupabaseUnavailableError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L16-L19",
+          "version": "repo-lines-v1:sha256:281294427a3236276a76c3f30bb8cbd87df5ea29407625605ffd1bc75e6b3834:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjcxYjExMDU2ZDYxN2RhZDc5MWE4YTE4YTEzODcxMmIyNGRlMzg2Zjk1M2JjNmU2NzM0NzZhOGM5YjRmZmQ3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmI1NzUwNjZmODA2ZDg5Yjc3OTBlMzkyMmE2NzliMjZkMjEwNDA4NTdlM2RiYTFlZTU0MDIxMjBhZjVmNTY5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2RmMWM1NTYzZmM2YzhhYjIxNzNkNTlkOGRmNzYzZTExMGRjNTQ2ZjUxNGNiMjM0YjVmM2UyZDMxOTIwMjViMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L49-L54",
+          "version": "repo-lines-v1:sha256:69b19aeeff030750c5bb152af803c087875fb53d18d31c1803ab383e76633f75:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGVkYmY4Mzg3NTM2ODk2NmYzMTNhZTYzOTUzOWM0MDM3MDA0NWJhNTNlMmUyY2VlOTNiYjY3ZDVkYTE3Yjk4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDQ3NTViOGI3OGZhYmUwOGVhMWE3NzMxZmQ3OTU5NmU4ZDM2ZWM3ODNjODhmZmM3OTRlZDQ0YTU3MmRlNGRlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQ4MzJhMDA2ODczNDcyOTc4N2E5ODMwODU1M2Q0YmYyM2FlZTVhNDQ4YTIzZmVmNWZiZTFjYmExNDE0NTFmMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_66fec2a2c8a04d458ae5261a25cf9cb6",
+      "statement": "The two error classes map to distinct HTTP outcomes: SupabaseAuthError is a definitive rejection that yields a null user (anonymous 200 { authenticated: false } on /api/auth/session, 401 AUTH_REQUIRED on /api/settings, or 401 AUTH_CALLBACK_INVALID on the OAuth callback after clearing flow cookies), while SupabaseUnavailableError always becomes 503 AUTH_UPSTREAM_UNAVAILABLE with the Korean message 로그인 상태를 확인하지 못했습니다.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/auth.controller.ts#L24-L45",
+          "version": "repo-lines-v1:sha256:90bc9a2ab11da4f2ad4c7d5adedf0f62b5741efec7f27b8876e53ff0d7d813f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkNWI2NmM1OGMzOGY1MzJmN2M3NGM0MzZhYmI2MTc2ZmM2YjkyZGIwNjY1MTViYjIxZGY4ZTI5Mzc5YWUyOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZjkzZWExNmRhMjk1OGY4NmQ4Y2EwNjk3OGY3ZDcxYzI1NGVkYWM1ZTRhNTYxYWM4ZDg5ZDBiYTVkZGNkZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L114-L129",
+          "version": "repo-lines-v1:sha256:06193ac165abe8d2275783a3a13a3987f7e7c66370f8e3757fba8d57292e8f4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3ODUxNmJlMWUzM2Y2ZmY1MTMzZDU2MGRmMjQ1Y2M1MTIxNDE3YzUzNWM5NWJiYTZlZDhkZmYzYzJlZmE4ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwNjNiZjJlNzlmMDBjMDliZmUwNGExMzVkZmRjNmY4NTk1ZjUyODU2MmIzMWFlNDIzY2ZkN2MxNGI2MDlhNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2OGFhNzljNGY0N2JjMjZlZmQ0NWFiZjNkYmI3M2Y0YjE4ZTdlMjFhZjY3ZGQ5M2I5Nzg4MTNiZDFlM2ZiNTgifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L59-L66",
+          "version": "repo-lines-v1:sha256:e09fdefe9af6a998dc4846c0773431520306a74f8f9c07efbd4b39279ebe2846:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDY1OTVmNGVlNWZmNjNkNTA5NTA0MTlkYzM0NDE0NTEzODUxZGM5NzM2ZmQxN2E0ZjdiZmE5MzBiMjYxYjZmMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjE4MGZmYzk0YWE4YTQ1ZWRjY2Y4ZTJmOTQzMTQ1ZGE5MWYxZDlkODQzZjhhNTU1NDI4OGE3Yzg2MGM0MTg2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDI0Mzk4MmRmMjc4ZjYwNjYxZWQyMmY1MGNlMGY1M2NiMTc3MzJmOWFlZjAxMTEyYTc0ZDIzYmZmOWQ3NzExMCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L68",
+          "version": "repo-lines-v1:sha256:5e0985e38fa0c640ab717554ddb177a8cc475d1346fa0caa4579b052ec8ca3f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYWMwZDBjZTg4NzI5ZmFmNDNkMjAwMWU0ZmJlMzMwMzM0YWIxN2RlZDE0NmUwNjE2YWNhZTgzMjY5YzVkYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f2803d75226e43b28ed12be7256fa5e6",
+      "statement": "Token verification is local by design: an authenticated request whose access cookie is valid performs zero Supabase network round trips, and the only verification-related network activity is the cached JWKS fetch — there is no per-request gateway or userinfo call.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L38-L39",
+          "version": "repo-lines-v1:sha256:b6f8de1a56b35769e2ebe5381bc2074294d0395008333a7595cb55986fcfe565:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWM1OGVhY2Q4YTQ4OTE0MTg4ODExZjA2NTIxOTJlYmEzNGMxNDM1ZGZkYzAwZGQwZDAzNjQxOTg4YmYxNzYwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODAyZGRkMGZjNzJkOGYxYjQ5ZDhmNjdkMGM2MWU0Y2Q3ZTc0ZjhkNDI5MjI3NDM3YmQ3NTE3MjExOWQ4YjNhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWJiODBhNTZjMmUzOTY5ZmIzMjFiZDFkYzYzYTAzN2RkZTE1OGVjZTY4MTFkMTdlMmIzZmM4ZjE1NmUyZDc2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTEzMzU3NjQ0YTBkZTMxNjBkODk0ZTY1MzAyNGE2NmNjMTUwZTcxOWM3M2ZjMTI2NjJiZDhjYjY0NDkyOTQzNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L46-L51",
+          "version": "repo-lines-v1:sha256:ae0f7b1b110f2d2a52131f301dbf13df52d2212b37302f65d56fcb32f6371adc:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTZhZmJhYTRhZjhhNWZlNTU0M2ExMzA5MGVhNmMxNzEyZThjOGZjNGFiODdlOGY2ODBiMGNmMGFkNjQyOTczZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ5ZjgxZTcxZmM4YjY0NDU0MTU0NGY5Y2JiMDdiZjlkM2FlMjlhMjVjYzQyNDIxMjhjNGIwOWRjYmJjNDg4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQ1ZTgyOWNmZGRhMmFjNDJiNzdmZWRhNjM0ZGFmMzhkZTNlZDkyOTFiMDYwNmM5YWIzNjY4ZGQ2ZmUyYzAwYyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L31-L58",
+          "version": "repo-lines-v1:sha256:f76e32b345d3c1eb8dace2389b5d25cbd632e61df37f9bd1f762d362eb79a629:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OWZhYTBlYjgwMTdmNmM1YjZkOTE0ODkzZDQ2ZGM2NzA3NjU5NjkyMzA3YzIzMWIxODIyMWI0ZGZlNzk4ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlOTA5MDg2MGY3NzI2MmM0ZDdkZGU1NWExZjFlNGUxODhhZDk5YmE5MzZhZDc3OTMyMDg1MmI1ZmY3N2NjMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_250518a8c00643c082232ee0c8f72187",
+      "statement": "The Supabase sub claim is the only identity mota persists: there is no local users table, and the user_settings primary key auth_user_id receives user.sub verbatim from the settings controller — so a deleted Supabase user merely orphans a settings row, and an email change needs no synchronization because email is display-only.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L44-L46",
+          "version": "repo-lines-v1:sha256:3f12d019c937b20aa6c0b457110e76db4bd670f3517e3cbff8d5a049c37a3b12:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTZjNTJmN2YwZjk4NzQ0Yzk3Nzg1MDAxYWRlNzgzMjQ0MTA5NDQ0OWQ0MjM0ZDg4NmZiN2FkZDFlNGFhOTU4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTVhMjg2YmQ1YzRiZWJmYmIyN2MyNTIzYTMwY2IyNWIyMWFkNzkwNDVlZjlmYzc3MGNkODgxNTM5YTM0N2EyMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBhNDIzOWYxYzVjNWY2NGYwZTI0YTA4ZDgzYzIyOWVlZDZhYThiYTE3NWUyNWJlMjEzYzIyZTU2YzYxZTg0ZiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L70-L101",
+          "version": "repo-lines-v1:sha256:d3b85eaaf85a0040f45e8f7edd39e677d76958d883266e8e400b0c801ea90027:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYjk5YWJmYjQ3NjdiNDhmMjMwYjE1ZDU2YTI1ODJlMTgxNjczMGQyYmU0ODA4ZmFjNDBlNDk4N2I5N2YzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjY5MDA3YTdlNzVjY2RiMmMxOWVmYTlkOTVjNDNiZjc4N2YzM2EyYjljODI2NWM0YTVjZTY0MmZlNmRiZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlY2UyNTIwYTNiM2Y2YTc0YjdhMjQ0OTMwODE2NDliMTljODdiNTc0MThhMzA0MDUwZDI5ZThjMmFlMWVjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkYjQ0Y2ZiZWNiOTk3NTM4MzM5YTkxZTcxMGIwMmI1NDQ2Njc5Nzk3N2U4NGVkZDViZjQzYjM2OWFiMDI1NjcifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/schema.ts#L10-L20",
+          "version": "repo-lines-v1:sha256:9ddc12a0d3829656138e46a1d6838cc2635359a186998b01d5112a3e3d7d7646:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNDRmODFlMWFmNWE4OTFkZDNjZTdjOWVhN2IwN2JlZTBlNTVjNWZkY2I1M2UwOGNmMjIzYzg0Y2I4MzdlMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmNDkwMjliZDc1Zjk0MjM0MzgzMjllMDZjYTJjMTc4NWU4NzI4NDkwMDg1OWM5NDYwYmI5MDYzMmZjOWYwOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8323c38ddc1f45bc91f1c05a135733ea",
+      "statement": "verifySupabaseSession checks the access cookie locally first and returns its user on success; only when that is absent or invalid does it fall back to the refresh cookie, POSTing the refresh_token grant server-side, relaying the rotated cookies back to the caller through the onSetCookie callback, and verifying the fresh access token locally before returning its user.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L31-L76",
+          "version": "repo-lines-v1:sha256:a468472511d983049356aa3f11e1c6e62322b0fbe9772649eec647de630a4c7f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNzNhNzVhYTVhYTJkODk5MTkyZTcxNTg2OTdmZDUwNmE4NzJjZmJjNWZhN2QwNTVkY2U5ZTExMWMxZTcxODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4YWVhOTViNjhlYzQ5OTkwMTgyOWQ5Yjg2MzczYWRiYzYxZDY2ZjJjNmY1NmRjMWQyNDBlNDQxNzQ4ZTY3NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4595d17a63a34c138612d3d8e546c829",
+      "statement": "If an access token obtained seconds earlier from a successful refresh grant fails local verification, verifySupabaseSession throws SupabaseUnavailableError (surfacing as 503) rather than returning null, on the grounds that a just-minted token should verify and its failure signals infrastructure or key-set trouble.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L68-L74",
+          "version": "repo-lines-v1:sha256:8725b5c253457cc169b2ffafab9e981055d058a1c73cd41b3a4ae18349cd0357:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDRhMTQ1ZjUzY2Y5MTc5Mzc1NjA5MjM2ODAyY2RkYzA4MzI2YTY2NzU0NjRiMmY3N2QwMmI1Yzk4ZGYxZjgxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzY1ZTE5OGFiOGE3NjEwNjRlN2JhNDUwNDM2MmFkOWFjMjNjZmZkZWRlOGUwNGIzNjgxZjQ0Y2QxYTMxYmMzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWRlMmY1MzhkMTQ1ZWRmOTBhZGU0ZTRiMzVhNDZlOTQxZjMzNjViMTZiM2RiNTIwMjg2NjUxMGNlNmRiMmJhMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_01d649569d0247268f4c37d8e3385ece",
+      "statement": "Logout is best-effort by construction: OAuthController.logout clears mota's session cookies first, calls revokeSession only when both access and refresh cookies were present, and swallows every failure from that call — so a Supabase outage cannot fail logout, and anonymous logout performs no Supabase call at all.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L141-L165",
+          "version": "repo-lines-v1:sha256:56b4533d48fbf66a519ef3cb4be311e5f1c6e0cdeaabf1b59fa0ab13d15f4654:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZjgxMWE3NmNlMjBmMmY0Yjk5MGY3ZDU3NDEyODNmYzA3ZDUxMWFmYzU0ZWFkYWEyOWVjMmY1YTU0NzFjNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MzUyMTA0Y2Y3NTdhYWJmODA2OGNlOTUxZDM5MzgzZmEzYzM1M2I5MjUxMmQ0Njk0NGMwYjUxMTc2NTA2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0N2JiMTJkZTNmMDBhZGQxY2IyYzNmNzZlYTU1ODZmNjI5NWI1YzE3OTM0N2E4MTZlZjdjMTA0ZTE1NjUyYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1208e6186554481ea977dd742afb76ad",
+      "statement": "The session's expires_in becomes the access cookie's Max-Age while the refresh cookie gets a fixed 30-day Max-Age (2,592,000 s), so cookie lifetimes track JWT expiry with no server-side session table; the three OAuth flow cookies (verifier, state, return URL) each get a 10-minute Max-Age.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L3-L10",
+          "version": "repo-lines-v1:sha256:02f17bad2f2cc3960b9d59462be257592f512234df697788069a33ffff50f688:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjFkMjU1ZThmYjAxZjVjZjI5ZmEyNzIzZDFlYmQxYWEwYzg5NDhhYjRjY2I5OTExYzAzZDRjOTg0YTJiZDc0MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDczMDAyNDllMjdiYTZmNDhlMjAxZTViMTUwZDU0YzgyYjU1OWUxY2UzNmYzMjM5YTAxZjA1MzcwZjk5ZDYyNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjBhYzUwYTc3NmVhNTkwYmJkM2UyNWEyNmU3ZjE0OTljN2RlMjkzOGU3ZWFjN2FiOTJhNjUwNGY2ZWMzMzcxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGE2MzBkNmVhYzEwMjE1NWIwNTNmMmJkNGY1NGIxZTM5ZThlYTFiZGNiZDgxOGE5Mzk0MGRmODAxNDM3MWFjOCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L62-L108",
+          "version": "repo-lines-v1:sha256:4e2f06f2d9b55212927f99981e3248bfc58765723457560d23175b7e77bbe39f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkOWE1ZGY1MzRlYTQ5MzU3NTdlNGVjYWRiZTBkZDdjNjJkOTE4OGQxYmQ4ZmQ1OWI3ODFjMjEwMTI4YjMxNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NjBjNTJhYWMyZTAwNzI0MGFkZGU4MmVmNDI3ZmJkZWI5YTg4MGJlMDQzZmViMGE2Mzc4N2RmNGJjN2QxMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2YmM2NGRhOWQ5NTdjMjQ1MTNmOGU1M2VmZTMyNTE0ZGIyYmUwY2U0YTBjYjlkNzhkNTJjODBhNGNiMzc2YWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4891b30a3a944c26ade207ac7a6e5f01",
+      "statement": "PUBLIC_URL is the security switch for cookie naming: secureCookies(publicUrl) returns true only for https: origins, selecting the __Host- prefix for all five auth cookie names, while plain-HTTP local development uses unprefixed names. Both variants are host-only, HttpOnly, SameSite=Lax, Path=/, and never carry a Domain attribute — which is why mota exchanges the one-time login code for its own cookies instead of forwarding auth-gateway cookies.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L124-L131",
+          "version": "repo-lines-v1:sha256:2e68c58cd8631c4c1c0542cf13519cc06b5f839cea384824ed97ba502af7637f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYzNGM0NDdkOTE5OTNlYjM3NGU2YjUyOWI4ZjA1M2JhZTBiMjRhNmMzMGY3ZWNjODg0NGU1OWUyZDgyZGE2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk0ZmMwYzE3M2QxZWMzZmM1MDFkN2RmYTkyODU1MDFjNTI3Y2ZiNDcxMjU4M2RhM2NjMzYxODA1NjZiNGJlMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L30-L49",
+          "version": "repo-lines-v1:sha256:8b31a7aa0a89509ffd41fb5ec1576cf8d05982d694c743c761853dc64a5ed69e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZDJmOGFlYzZkZTAwNDUyOWMzMzYzMjlkNjIzMDZkNGIxZTZjZDUyZTllZTAwYjJjZDc5OGY1M2FjZTMyNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMTU5MjAzMzYzMDVkNGJiYWQzMjA5MDdmZjM0Y2U0ZmZiZWZmNDk1MmE5YTk0MjdlNzM3OTY2ZWJlZmU2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YmQ2ZWU3NjM5OWRiMmUxMDBjODY4NDRiNzY1NGYwNjljOGQzYzI4ZmUzMDNhMTIzMWYzMjNlMTk3OTY3ODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0affdd85e8984ae89463e1d63cef61fd",
+      "statement": "SUPABASE_URL (must be a valid URL) and SUPABASE_ANON_KEY (non-empty) are required by the Zod env schema, so startup fails before anything binds when they are absent; PUBLIC_URL defaults to http://localhost:5173, and loadEnv strips trailing slashes from both supabaseUrl and publicUrl so the issuer and redirect_to callback are canonical regardless of how the variables are written.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.test.ts#L61-L67",
+          "version": "repo-lines-v1:sha256:b4a449ba750ab34361799139499b7c5c16de4836dae46a70687a84805c03de67:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzlhMDdlMjViY2M1OWI1NzMzZjJhZjhlN2EzOGVkYjQwZTMzYzg4MTgxZjNmMjk4Y2ZjNTRlMTNkZjY3NmI2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTZkMzkyNDM2N2EzNTFiNTk4ZTk2YmJlNmQ4YTk0OWNjMTY0ZmQ2ZTc0MWI4Yjg0OTNlOTNjYTA5YmJkZTk4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L6-L30",
+          "version": "repo-lines-v1:sha256:df1f7d8fcc7bef152a5455a23291a9015f5d7d860c314d76035adf42641cd138:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMDIyYjFlMmM4MmYxN2NmYjdjNmI1OWExMmMzMDcwNjQxMjQxOWM2MmNmOGUwN2RiYmRiMjc1YjNmYmY1ZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2OWM1ZWE4NDYxNThmMmQ5YjQyMDk3ZDY4NzZmYzZlNDZlZjQ5ODYxYmU0MjdiY2IyNTQ0OWFmODE0M2RmYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhMzE5ODdiNGU0MzIyYjVkZDhkZGFjMTJhZjcyZmVmNjYzMDBlNzVlODQ3MjAwMTczYWU5N2M2ZjM1NGQwOWUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L71-L75",
+          "version": "repo-lines-v1:sha256:63b8289ad50f59d39b65ed4d19496623af835019b66c2595e28a85b05a0db64a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGI2NTAwYTk1MjBiMjJlZWMzMWQ5OWVjMmQ5MGM2YjYzNzNmYjhiMDJhNGJkY2M3OWI1YjgyMDI4NTUyZjVhZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDg0MjM1ZTA5MjU5OGMzMzgzODI5MzMxZWRmN2I4ODE0ZDRkMTI2YTIwNTk4NjA5ZTcwY2M2YzlmYTJhOWU4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGI0NDYyZDA3MjJmZGZjMDZiYTdiZmU1YzIxMDllOGEzZGVkNjQ3ZTcwY2NhNjgxNTU3MGE5ZTgzMTVkMGQzYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_44766caa58e24461861f0738e074e2d6",
+      "statement": "Production wires the integration through AppModule.register: main.ts injects oauthConfig { supabaseUrl, anonKey, publicUrl, fetcher: fetch } which becomes both the AUTH_CONFIG token consumed by OAuthController and the basis of the SESSION_VERIFIER token that closes over verifySupabaseSession.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L60-L70",
+          "version": "repo-lines-v1:sha256:f090eccd4f5f598eb1ab196dfb2b2a247fde09c4b041991d495fd28355bcc244:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMjRkMmNiZWJkODRlMDNhOTk5Zjg1Mzk2M2M0MmFkNWU1ZmQ4MmQ4ZmE4NDQyOTNhOGM5ZTFkYzdhNzVjMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmOGUwM2I5ODEwMWYxNGQ2ODAyNWE2OTZiZDVlOWZiNzYxZGVmNGI2NzZmZDI4MmJhMGNjNGI4ODZmMTE1NjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MTcwMGY0NTFiMTY2YTUyODMwMDA4ZmYyOWMwNzgyMzcyNjZjZDU1ZTk4YTJiZDVmN2ZhYzRlYmQ4NWYyMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyYzk3MmJlNzAwM2FjZWQyZTgwNTc3M2I4MTdlYjcwNzE1Mjc5NTM0ODRkOTM4NWZmMmE3ZmMyNDkxNTU3MGMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L99-L107",
+          "version": "repo-lines-v1:sha256:f99fac7135510c0a8ab970cb43013041ad72b20599fd2482459f5088693efc92:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2M5MDIzZTQzMzdkNzE1YWFmNjk1MTE3ZjBiZjkxNDFjM2U2Y2EwNmVkMDUwNzk2ZTUyZjZjZmQ1ZTY2NGI5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDAzNTJkNGNiMWZiZGI0YjE3MjEzNDljOWFlM2E3YTQzZjc4NjE3MjUwMzVkZjE4ZGY0YmUyOWMwN2VhNTY0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODEwMjU4ZTlkYmFlMjhkZDk3YWZlODI2YTE2ZTQ5YTkzMWQyYWExYmYzNTA5OGFlZmIwY2FmMjVlMTcxODg5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTdlNzEzYzYwYjkzNGRmZWQ2OGVkOGM4Zjk5ZDJhZWFiZDg5ZGUzODVkMDAwYzliNjQ0MjE0ZGMzNWMxYjNlMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L21-L34",
+          "version": "repo-lines-v1:sha256:0ccfda5fff937a7664d5921ea04541dc68b3de722e86a9dea6c03c7f6049f132:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4Njc3ODg3YWFhMjU3MGFmZGU1MWMxZDQ2MjI3MTVkZmEyNjBiYTRlMDllYWViM2Y0ZGYxMTc2NjgwOTY2ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4ZGJiNjNiZDA5YjdmZWZkYzIwN2UyNzhjNzMwZGIwNTc3NjczOWMwNGJlOTY3ODk5ZGNmYmZmZDg4MDk1YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NjhjMWMzY2YzMGNlYWM5MDVhZTdiNGE1NWQyMDU1ZDgxODUzYzlmZWVlZGYzZWI0YzA5ZGY5ZTg2NDlmNDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_86ea2da933e04ab1b183835c19535112",
+      "statement": "When no oauthConfig is supplied, AppModule falls back to a session verifier that throws 'Supabase auth is not configured.' and OAuthController.requireConfig turns every login attempt into 503 AUTH_NOT_CONFIGURED, so tests and deployments that skip auth never see a half-working login.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L113-L115",
+          "version": "repo-lines-v1:sha256:bf2f3b66addb3696e3731ab9481b2eaa95a9418513909bf8750f57262420b196:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhmZGNhN2NkNmU3NGI4ZTA5YzEwN2Y5ZjRhM2E1NzBjNGUwNjk4NWZmOTExNTJhZWJmOGNiY2RmMTIwZWNkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI1ODBlOTY0ZjgzYTQ3M2Y0M2Q0NDM4NDYyOTQ5ZDY4YjU2MDBmZGE3ODdmMTYzNzQ1ZDAwZGU4OWNiZjM2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L167-L175",
+          "version": "repo-lines-v1:sha256:d67287e2f3a79fdb5d0dfaf14f23c494d7fb3b505f8199d232a94e41773dfc1a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGJkMTIzMDViYWI4ZDhjZTQ1M2QzMDUyMmVkY2FiMzIwN2NmY2M1MTQwYzA0MTFmMzQ3YjdhMjU3Yjc4OGE3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQ0OWQ0YTQ0MDVhZmZlYTRiZmY3NzIzMTFkYjJjMTljZDA0MGNjMTYzNDFkMTBiOTYwNzI0N2Y2MWI5OWYwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTEzNWE4ODJjM2RmZWFmNTBmZjUyZDNkYmMxNDNmMmI1YmU3OTY0NTNkNGNmMDljNjQzMzFhNWI1ODMyNmEyZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_315ffc0acb704d21a47e748c1e60d4df",
+      "statement": "test/fake-supabase.ts is the reference for the integration's observable behavior: it generates a real ES256 keypair and serves exactly the three endpoints the code calls — the JWKS document (public JWK with kid test-key), POST /auth/v1/token for both grants (returning an access token signed with sub 'user-<grant>', expires_in 3600, token_type bearer), and POST /auth/v1/signout which records the received refresh_token in the exported signoutRequests array. It never implements /auth/v1/authorize because that endpoint is only a redirect.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/fake-supabase.ts#L21-L115",
+          "version": "repo-lines-v1:sha256:0d856c7429be5b9ee609d6b6563887d0a531b3ba74744f36abdf277d9a981c0c:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiMjRiZGFiZGJlNzZlMWY0MTJiZjQyZWNiYTM2Mjc5OGZjMTcyODg5Mzk0MWE4ODExNWMyOTMyNWZiZDQxYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5M2NiMWE3YzkzN2E3NzM2N2RjMjY5NDY2MDM1YWVmZTJlNTlkYjA2OTAxNTQyNDQzYjIyYzZlZjI1MTZiYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1NmMyNDBkZTA1YmNlMDQwNTgwN2E1YTFiZDVmZDkyNWY5YzgwNGQ4MTlkZmMxOWU4Y2YyOTQwNTg3Y2VjOWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_54520877943d484fa67d4a79ce8c9b69",
+      "statement": "fake-supabase's signAccessToken mints tokens with the correct issuer (`${url}/auth/v1`), audience 'authenticated', role 'authenticated', and a configurable sub, email, and expiresIn (negative values produce already-expired tokens), which is how the suites exercise real JWT semantics — garbage tokens resolve to null, expired tokens resolve to anonymous — instead of mocking the verifier.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.test.ts#L18-L31",
+          "version": "repo-lines-v1:sha256:49ce19279a564b3553d5d6db207769fbe1f37492c8aa11c05770eb9d78b634f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYjU1YWU4MDg2NmZiODMyMzBjMzIzZjIyYWVjYTE1MzYzNzMyNWIyMWJjZGI3YTgwNzBiM2U5NjJhMDFkZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0YWNiYzA3NWRlYmIyODc4N2I4ODVhMWRlNTVlYWExNGFhZTVlN2M5MzUxMTExZjVlMzVlYmVlMmY0MzcyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L79-L92",
+          "version": "repo-lines-v1:sha256:da556c6309d1113f09f2d0409bdf88ef3c94e80b4567f7290307f773b8f1579c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1YzlkOGFmZmU5Nzg0MTQxN2U5MWMxOWIzOTQxNDk3NGNlOGI1OTY2NjNmNGM3MDc3Y2Y3MjA5OGYxOTAyMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1ZDhmNDU3NmE3ZmJiZGY2YmU0NWUwOWJkZjBmOTA1NjIxYjQyYzI3NTBmNGMyY2M3MGMwMGQwYWQ5ZWI0YzcifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/fake-supabase.ts#L80-L108",
+          "version": "repo-lines-v1:sha256:de46acc77fa5ab73521af669541d8e4c16ee9a89bffff2a66ffe172cb9a88591:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMmNiMmM4M2RlNzg4NjYxOGQyNjQyYjA0NDE3OGRkYWZkNDIzMjFhNTU0OWJhZjkwZGI5MzFiZDVhMTU3MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTViMjJhZWZiY2JjZDQ4ZmQzNzk5NjM2ODBmYTEwODc4ZTVmMGJhMGY1YjczNGY5YzRmODI5YTJmMjU0NjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0MjEyNmViMDM1YjcyNjY5MjM4ZjQxMDE1ZGNlOWI0NDM5MzU3MDZkYTdiMmJlNTNhZDViMmIxZjc0NGNiNTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0526460757a44de28c0223b92d678a42",
+      "statement": "The e2e suite pins the product decision that an upstream outage must not be reported as an anonymous user: with an oauthConfig whose fetcher always throws, a request carrying a refresh cookie returns 503 AUTH_UPSTREAM_UNAVAILABLE rather than 200 authenticated:false, because silently degrading an authenticated user risks overwriting their server settings with local ones.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L57-L77",
+          "version": "repo-lines-v1:sha256:303454a9f004ffa21e6044a26b556e1d0ef39e0180fcfee10094e8e8eb645d1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyNTdjMTczNzFiNWE1MWMzOTAzM2U0YzE1YzI4NWMwZjMxODk1NDlmMWMzYzViNTIwMDczZjdhZGY0MzUyZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkNGMyMDQ3MWI5M2ZkM2M2YjM5YWRhNTE3MzY2Y2YwMmM1NWFlMjRkNWY1MWZhZDlkYTBlODc5YzY0ZjMzNDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_395c9ac84f6445c89def9878cc8d4b68",
+      "statement": "apps/api/test/auth.e2e.test.ts drives the full Supabase contract through the real Nest module against the fake: anonymous probes without cookies, local JWKS verification of the mota-access cookie, the authorize redirect carrying provider/prompt/code_challenge_method/redirect_to plus three 10-minute flow cookies, a 400 for cross-site return_to, the callback exchanging the code and setting session cookies, a 401 for a forged state, logout recording exactly one signout, and server-side rotation of an expired access token emitting fresh set-cookie headers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L94-L252",
+          "version": "repo-lines-v1:sha256:d3e2ac66658955502a566692950388e05b4fa140321a4d1859a167e60a008ab5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2OGYxODVkMTcwNGJkMWQ0NzRkNmM3MmNiY2MyOTdkZThlMjc1YmU5M2ZkOWIwNDBkODIwNjU3ZDZkOWQ3ZTMxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMDhjODZlZTc0MzQ0MDNlNDlmOWFmNGM1Y2UwMmI0YzI3ZjdkOGE5YmY5ZDJmZjJmZjEzOTc5MGFiZjVmZmJhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0OTc5YzIyMmE0OWM5NjBlOTRjNWM1NjcwYTk2YjA2MmQyMjA3YTRiNmM1NzQ2MTkwNTI1ZTUzODM0MzIwYTI2In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:f26046cf8478638f6a8688c4b89b3fb1d8d6dccc1dfd76d485d6f60f08c7a876",
+  "claims": [
+    {
+      "id": "claim_ae1a872bb0664ecdaea99c82fc0f042b",
+      "statement": "AppModule is a static-only class whose register(options) returns a Nest DynamicModule: every collaborator arrives via AppModuleOptions (upstreamFetch, verifySession, settingsRepository, oauthConfig, now, subwayArrivalUpstream, and transitCatalog knobs including refreshMs, retryMs, warmup, minimum items, and random for jitter), is resolved into a single ApiOptions value, and is exposed through the symbol tokens API_OPTIONS, SESSION_VERIFIER, SETTINGS_REPOSITORY, and AUTH_CONFIG. TransitCatalogService is the only class provider; the six controllers (Health, Auth, OAuth, Settings, Transit, Web) are registered alongside them.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L57-L110",
+          "version": "repo-lines-v1:sha256:8cb92eeadbf9aea0f2e2bb9ffc0355fc08bc6b0b284b497b67b6ce1f5c6168c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjNWQ5NmNmMzkyMDQ4NTViZjNjMGFlNjVmNmIyOGVjM2ZjOWFjNTBiYjZlYzA3YzZkYzBmMDAwN2MzMjY1ZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1ZjQ1Y2JhOTNmZDY0M2M3Nzg4ZjAxMWIxMTA5MTkyN2JmZThkYmY4NzRlNWJkYWNiNzY3ZGFmMmE0NGM5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlYTVjYTdiNmQzNDc1MWE5ZDgwNTg1NmE4YTk3ZjM0OTI3OTY4YjcwYjQ1YmUxYjYxZjg2NDFhZTJhOGIyYzkifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.tokens.ts#L23-L41",
+          "version": "repo-lines-v1:sha256:ab555387f78bb644b4bc1bef8ff3127da504bb7a830dc1c211d14e4e33f60e66:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyMzU4OTljODI4OTAxNzY1ZjU4YTAxMmVmMmEzNzUyZjBiNDc1MTU5YjBkYzE0MzFkZjk1M2U1YWE4OWEyMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZTFkMmFhZTI5OWQ1NWMzZGJkY2FiODhmOGYyNDc2ZTY1ZDY0MDFmYmZiNjY5NmFkZTJmYjAzZDY4MzZmNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NDA3YTY4N2JjNjczMDFhMzUyZTJlOWNhMGFiODIzOWM4ZjY0YWU5YzdjMWMxYjE5NGExZTc1Yzc3YjFhZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1b549e70030047b1a346b4732b327240",
+      "statement": "AppModule.register's defaults are chosen for tests: when no settingsRepository is injected, an UnavailableSettingsRepository is used whose find and save throw 'Settings repository is not configured.'; when oauthConfig is null and no verifySession is injected, the default verifier throws 'Supabase auth is not configured.'; warmTransitCatalogs defaults to false so onModuleInit neither warms catalogs nor schedules refresh timers; minimumBusCatalogItems and minimumSubwayCatalogItems default to 1; refreshMs defaults to 24 hours and retryMs to 15 minutes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L113-L115",
+          "version": "repo-lines-v1:sha256:bf2f3b66addb3696e3731ab9481b2eaa95a9418513909bf8750f57262420b196:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhmZGNhN2NkNmU3NGI4ZTA5YzEwN2Y5ZjRhM2E1NzBjNGUwNjk4NWZmOTExNTJhZWJmOGNiY2RmMTIwZWNkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI1ODBlOTY0ZjgzYTQ3M2Y0M2Q0NDM4NDYyOTQ5ZDY4YjU2MDBmZGE3ODdmMTYzNzQ1ZDAwZGU4OWNiZjM2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L26-L55",
+          "version": "repo-lines-v1:sha256:af70434413b38a304ad8a00e5245c7a1ce2d4131f6ae0c02a02c28da22af1e93:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiMWRhNTNiZTdmZDBmOTkwODhkMWE1NzQzMzc1NzZmODk4MDhiOTE1MmUzZTI5YTI2NjQ0NjU4ODczNmQxOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5NjYxZjM3M2VlNjNiYzdjOTQxOWVlMjRlZDNiN2ZlYzQ0MjdkMTg3NDY5MTlmMjA3YTNjNTk5ZDdkYzIzZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyNmE4MzFkZTY5YTI5YjhiNmRiMjAwY2I4NDQyZjBmZmE3OWU1MTkwZTczN2ViNWJmOGM3OGE2NDQxNTRiM2QifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L74-L87",
+          "version": "repo-lines-v1:sha256:d6bd5f7ff36bc63a22c2c74064cbef15179a5c484b2f45fad1e59a3d5a6c7efc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5OTIwMWZmYjhhY2UwMTljMjQ4Yzc5MWQ0ZGVjM2JlYThhZjQ2MThiMmI0YmI4NDhmNmNkNzQyMjhhNzY4OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyYzk3MmJlNzAwM2FjZWQyZTgwNTc3M2I4MTdlYjcwNzE1Mjc5NTM0ODRkOTM4NWZmMmE3ZmMyNDkxNTU3MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2Zjc4YmQ1NWY0M2IxMGM4NGNjMzg5MWFkNTJkODE3NjgxNmY4NjFlMDU1YTgzODQ1YzU3MDQ3YzBhYzgzNjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_034e3d3ddf2c42fa938d286b4503cb83",
+      "statement": "Production main.ts overrides the test defaults: it passes a DrizzleUserSettingsRepository, warmTransitCatalogs true, minimumBusCatalogItems 10_000, minimumSubwayCatalogItems 100, subwayArrivalUpstream and transitCatalogRefreshMs from env, and a real oauthConfig — so the catalog completeness gate is only meaningful in production, while tests get a permissive threshold of 1.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L62-L70",
+          "version": "repo-lines-v1:sha256:96b1417469f41a5a8f93c3361db031c25905b3483706bf17ffa026262659dd86:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjMzYWViZWU5YzNhNWM1NmQ2ZWI0Y2RiMDE0NmNlMWZkYjBlZWVlN2JmYzczN2YzNzVjMzkyYjY4NzkwNzg3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmY4ZTAzYjk4MTAxZjE0ZDY4MDI1YTY5NmJkNWU5ZmI3NjFkZWY0YjY3NmZkMjgyYmEwY2M0Yjg4NmYxMTU2MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmZjNzBkNjlhYTIzNjI5ODI1MDEwZDQyNTYyZjA4NDkyMTQwODU3ZTIzYjYzM2I3ODNmYzAyYWE1OTNlYjliOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzJjOTcyYmU3MDAzYWNlZDJlODA1NzczYjgxN2ViNzA3MTUyNzk1MzQ4NGQ5Mzg1ZmYyYTdmYzI0OTE1NTcwYyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L15-L51",
+          "version": "repo-lines-v1:sha256:419d9bed9b54d1114eaf11e494abdd206717fe42f7b6a2f19d0849bd9a0727cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNzk4ZjI2M2ViZWYxYmU3YzBhOTRmZTQ3NTBhNTVhOTZmM2JiNjRmNjRlOTZjMjM2NTMxNjNhYTdiZDcyNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNDlhMzljMjZiZWU4MzQyNWNjMzdmNGRlM2U5YzUxYTRmMzU2M2QzZDQ2N2IxMWQ3MWU2MGE2NWU3MzFmMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwYjIxOWE0OWQ4ZTgwN2YzYWNiMjJiYjJlZDk0MDczNWY1ZTc2ZTcyNzg0YjgwOWMwMjJhMGE3MzFmOWU1NzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2af1a74109424ff0bcbd4c4ad58e85c2",
+      "statement": "main.ts boots in a fixed order: loadEnv() validates the environment, createDatabase plus migrateDatabase run before the Nest app is created (the process never serves with an unmigrated schema), the app is created on a FastifyAdapter with logger enabled and requestTimeout 65_000, static assets are registered, shutdown hooks are enabled, SIGTERM/SIGINT end the Postgres client, and finally app.listen(env.port, env.host).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L47-L77",
+          "version": "repo-lines-v1:sha256:1136ca4589775e06029cbb28b98764b0a9a98665b06d267d47c7aeae816c7a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiYmE2ZTM2ODAyMGEyNDE4N2MyNTZiYWY5MGNlZWVjY2UyZjNlN2ViZjI3MjI0ODVjMTMyYmU2M2QyYzdjY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L15-L49",
+          "version": "repo-lines-v1:sha256:fdd0096b09d933d495dd5ee0d471a23d2d796fc4a1560e87ab81f838f30bba91:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNzk4ZjI2M2ViZWYxYmU3YzBhOTRmZTQ3NTBhNTVhOTZmM2JiNjRmNjRlOTZjMjM2NTMxNjNhYTdiZDcyNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ZjBhY2Y2YjExMTNlMDBlNmRkMjE4MTk1OGM0OTI2OWE1ODFkYTY0OTZiNWZkZDdkZWFlNTNlNzc2NTZlMDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNDlhMzljMjZiZWU4MzQyNWNjMzdmNGRlM2U5YzUxYTRmMzU2M2QzZDQ2N2IxMWQ3MWU2MGE2NWU3MzFmMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3YzI2NWZkZmFiMzBhNTBiNzdjMTlmOWE3YTQ5NjRlNDVhNmNlYzI2Y2M5YmE3MDA1ZTFhZDg0Y2Y0OTczZjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_666b8d769d754eb4b38d8b506e7223cd",
+      "statement": "Static SPA serving depends on useStaticAssets being configured with wildcard: false and decorateReply: true — wildcard false keeps @fastify/static from registering its own catch-all GET route so WebController keeps the wildcard, and decorateReply true is what makes reply.sendFile available to that controller.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L35-L45",
+          "version": "repo-lines-v1:sha256:fdabd57213a2e08c34ddac4067c5eb2c1543b5c14610e3530233a9ca4ff2cb77:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNDQ5NGI4YzViYTc2ZDJhY2FlYWM3YmIxNGNiNWM0MDlmOTc2OTM2ZWMyODY3ZmZjYzU5MjIwOWQ3ZmYwYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2YmNmNzgzNzhkMmVhMDhjZDI4OTkwZDRjZTk3Zjc0OTY1ZGNjMjkyYzFkOGM3NTJhNjIwNjU3ZTE5NjM2OGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5MDEwMjI0MjEwYTIyOWQwZmZhYWU4Yzk3N2JkNzU3NzQ3YTEyMGM4ODAzYjAzOWEyY2E5YjlkOWIzZmRlYTkifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/web/web.controller.ts#L10-L26",
+          "version": "repo-lines-v1:sha256:71650ccd2b163a01d420e1c5a6c734f29c281ece5033410192e1075dfab9d06c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkNjU5OWI0ZWZkODAwNWZmZDdmZGE2ZWQ4MTU1YjI5Y2Y5ZmVkNGUyODc0MzRiZjBiMjc3N2YwYzZjYjRjMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxZTRjNTJjNTNkZDVlZTA1OTg4OWYzNjg2MzU0ZWU1N2ZjMmE4NDlhMWMzNDA1OGJiNDYzZjY1YTcyZmQxZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e5d8b9cdf43b45beb8a9aafbec97697d",
+      "statement": "WebController's GET * SPA fallback throws NotFoundException when the URL starts with /api/ or when the Accept header does not include text/html, and otherwise replies with type text/html and reply.sendFile('index.html') from the configured static root.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/web/web.controller.ts#L14-L26",
+          "version": "repo-lines-v1:sha256:529c9e374e6a864945c9afbe952857f41e3137e92ca289bfbe9d52cb674a514a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5YzE2MjYxYmFmMzY3Y2E3MDU1ZGMzZWFhOWZlNTFhNzQ2YzlmNWIzZWZiNTI5YmFkMTE0Yjc5ZDMyN2FhMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwYmE2YTI2NjM5OTIyNWE4MzYwNTE5NDgyNTc0NWZkMWY1MjlmMTlhMDA3YTJlM2RjMjU3NGEwMGE5OWRmZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1b0c2fa73ba44ba4b1e74ac3d8c2c098",
+      "statement": "The controller surface is: GET /api/health (non-gating catalog readiness, always 200, used by the Compose healthcheck), GET /api/auth/session, GET /api/auth/google, GET /api/auth/callback, POST /api/auth/logout under 'api/auth', GET/PUT /api/settings, GET /api/stops/nearby, GET /api/subway/nearby, GET /api/subway/arrivals, GET /api/arrivals/:arsId, and the GET * SPA fallback.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/health/health.controller.ts#L4-L19",
+          "version": "repo-lines-v1:sha256:0586981061966203724718a2ee0698d01d7649bc049ef7e9daf393d300331485:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2YzI0Njk4MWM0MzRhY2RhN2NlMWQwOTUyMzhkMmU1N2M1ZThiNWM2YmZhOGQ3ZjViNDhjZTk3MDUyYzdmZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzMTQzMzEwZDk2YmM1MmIyMmI4OTVjYjgwZGVjOTllNDQ5MjNkZDNhM2NkZWFmOGFjMWUyN2IxNGI5ZDY2YzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L141-L149",
+          "version": "repo-lines-v1:sha256:2c6c0fcda84d3491985722421c41bd6d1954deae16e788086e3e499a0aab3701:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTM5MWM0MDZhOTgwYmFhYzYyODllMzUwZWVhNzdlNDViZjU1YjQ0ZTA0YjBkMmQxZWEwOTVkYjgwYThjNmYyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQ2NjI3MGEzMDg0ODU5ZGIxNjM4MTI2MGRmOGUzMDgxYjcyNmI3ODc0MWU4ZTVhMzY1MjRhNTNlZjQ5NmUzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTNjZDNkNWI3ZWQyOWRlMjYyMzIxZGI2ZWI4YjcwNzk1M2FlOWU4NDA0ZWFiY2MyYjA1NzUyNjBhZjNlMzU3NiJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L30-L39",
+          "version": "repo-lines-v1:sha256:c9b5eefe9c27bc84c7e805b1748c88748e51ed805365157e58d153d0cef2fd31:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3MWRiNGU4NzVlYjlhNmFmMTQ1NTYzMDU4NjE5NmY3NDIyMjMxMjhiMzYyNTgwMDk4NDlhNjhmODAyY2NmOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZjAzYzc1YmUzYWRjMTliOTBmZTM4NDhlYWRhMDNkODJmODdkODk5OWE4ZDU4NDIyYWEzNTFkZWU1MzYwMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxZmFlMTY3NDQyN2EzYTY4NTQ3MTdhNjI2ZTU0NzdmZWI1NmNmY2MwNDBmZTdkZWExNzEwZjk4Y2MwYzgwZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2NTVlZTk2ZDM2NmRmNWViNWY0MTFlNWNhMTU4OWFlYjkwZjY1MDg1Y2UwMGI0Y2Q4NWIxYmQ4NGI3N2M1YWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c63b535e8e304c32bab711f4623306db",
+      "statement": "TransitController validates query and path values with the shared Zod contracts (nearbySearchSchema, subwaySearchSchema, subwayArrivalLookupSchema, arrivalLookupSchema) before any upstream call, so rejected input (for example coordinates outside the 37.3-37.8 / 126.7-127.3 Seoul bounds) returns 400 without ever reaching the upstream fetch.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L32-L53",
+          "version": "repo-lines-v1:sha256:7fc766169f2f9ee975037fe574c5ee4a309f9daa3395b49b65c25b7d97c134a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZmRlNDAzYzY3ODAxZDg2NjU0YjYzNjQyN2MxMDVmZDAyM2Q1NjgyYzgzNzEyNzJmNmE3Y2UzYWQ2MTlkZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViNzgwOGMxNzhiMmJiNTk2YjMwZDViMDMxZGQ5ZDU4OTE2ODY1MzJiYWM4NWFlYzA4MTdhZjVjOGY0ZjdiNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3M2NlYjVjNDY0OTI2MWUxOTE4MGI0NzNjMjk2NTc0ZWJhYzMzMWM4ZTZjM2U4MmNjOWVkOTA4ZWQwYmE4YjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5ZWJkODMyOTY2YTBjMzljZjI4MjA0YTdkYjdiNjhjMjIxMWVkMWU1MjE2OGUxZDdmMmQyYTNlYTdjZjhiMjcifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L53-L72",
+          "version": "repo-lines-v1:sha256:111da34800649548ea308cc76968dbb946bf512e2847854f7d7d8d0e9753a27a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViNzgwOGMxNzhiMmJiNTk2YjMwZDViMDMxZGQ5ZDU4OTE2ODY1MzJiYWM4NWFlYzA4MTdhZjVjOGY0ZjdiNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZDYyZDk0ZmI0MjE1ZGVjZDJhODdkNGYyNTNiZTRiOWMwMDRmOThiNjQ3YmUzNGFmNGYzZjhlNGQyYzcwMzQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L97-L120",
+          "version": "repo-lines-v1:sha256:86a15af45350cfc59c56875928bba383e465689dae3d9a3430bba1f37213c287:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4YTc1M2ZlNGNiZTNiZTk1ZmYwNzJjZjIwMzJhZTg4ZmFhZmJlOTI0NjE0MDlhYzliZTcyMmI0OTlhYWVmOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L371-L379",
+          "version": "repo-lines-v1:sha256:a04eab53b6c4fa82fa4f2dc8535c6b332df840ba0e69719b60d4e866c41101bf:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzgzOTdhY2E4MWI0ODAwNTFhZWJjNjk0MzM4NzhkNjEwYjBkMTkwZWEzYWE4ZThkMzE1NTViY2ZlM2UzMDRlOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTZkMzkyNDM2N2EzNTFiNTk4ZTk2YmJlNmQ4YTk0OWNjMTY0ZmQ2ZTc0MWI4Yjg0OTNlOTNjYTA5YmJkZTk4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmQ1MDY3YTU0YmRiMTgwZGNlYWRmMjNlZjdhYTcxMDRhZGY1MTEwNTJhNjY3M2NlY2VjNTlmZjg3MmE3ODUxYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0dbd4442a1824424bc6a93b06d976998",
+      "statement": "TransitController's fixed error vocabulary is INVALID_LOCATION (400, both nearby routes), INVALID_STATION (400, subway arrivals), INVALID_ARS_ID (400, bus arrivals), and UPSTREAM_UNAVAILABLE (502) for any adapter failure — the 502 body additionally carries a detail string produced by errorDetail from the caught error.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L100-L105",
+          "version": "repo-lines-v1:sha256:6be36abcb82c1d09a8cf609b8803d8a77907b5d3b9f1733eb8ff4554b3e07ed0:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzZjA5NTMxNmRmNDRkMThhMGM0MzVkMmU5NDNiZDA5M2VjZDMzOTVkMDQyYzNiOTVmOGVjNjM4MWNhYzhiYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDQ3YjIzMTMyNzljNmQyNzZjZmY0MTllODRhMGY0M2FjOWU4NzMwM2I1ZjkyYmQ2MzE2OWI4NmMwMzY1MmVlYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDY3NmMyZTM1YWRkMjVjNDU3OTQ5NjM3ZGIxYmYxNWNkM2E3YjQzNzM4ZDhmM2RlM2RjODYxNjRlMGZmNTBjMSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L122-L128",
+          "version": "repo-lines-v1:sha256:eb38360eb73fc74f88a1edff26cdf954a5d0181d4625714a9386cceb5d4029eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ5NThmODFlZjkyNGJjN2IwMDNhMDBjMTk0Nzk5MThlZGUzMmJkMTg5YWI2OTEyMGJhODNkZjlhYmM5MDk5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTdkODYzMmU1NGU5Mjk4YWJiOTU4NzI3ZTJkNTE0MDhhYmFmMTM2NjAzNTM3OTEwMTQwYWJmNjViMzBhYjYxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L36-L40",
+          "version": "repo-lines-v1:sha256:fa57e15f3edf479117e29fb60ea0397cbce49fece0d48353140cb3d66244ee29:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmRkNmJiNjQ1YTVhZWM3Mjc2NWRmM2JiOTg1M2ZhMTVlODE5NDYwNjA5MmJhODVjZmVjNGU0NzM4OGQ5ZDZlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjYwNzk4ODYwNDM0NTVkNWUzZTNmZDM2NWFkOGJiNDQzNWY3NWY4OGEzOTQ0MmJlOWUyOTk0NTg1MWY1NDMwNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2QyMzM3NGIxZjg1ZjhlYzE1ZGNmOGRiZTRjMGFkOWQ2NWUyN2YyYzNiMGNkYTA2NTUzOTJjMzMwMzU4NTJhMSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L56-L60",
+          "version": "repo-lines-v1:sha256:fe66d985569351223fa11317c832fbc4c19d34b56451e47d267701ad864d8954:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzRiZWUzOWE4NmM3OGYyYWU5MGU0MjNmNmQ4ZDgzNzhiMDg4ZWRmOTViMGQ4Y2VmMDA5NzNhZTk0NzZmM2JkMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmU3ZWQyMzQwNTc3YTcyM2QwZTNhZDczMmVkNTY0YmJlZWJjOWM0ODIxN2FhNzMyMjExZDM1OTM4N2E2ZWZhMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmIyYTYzNDhmOTVhMmQxZmNlNzQ1ZTVlYzI1MDM3ZmIxZDRmNmQ0YjhlMTA2MDAzNjcwMDBiYmM3MGE4YWM2MiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L78-L82",
+          "version": "repo-lines-v1:sha256:6cd711e373c430c07841da34be66e9cd8683610d8100d51c11f0a800cd6b57b3:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmRkNmJiNjQ1YTVhZWM3Mjc2NWRmM2JiOTg1M2ZhMTVlODE5NDYwNjA5MmJhODVjZmVjNGU0NzM4OGQ5ZDZlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDdiMGJiMjU2NzJiZDBjMmEwZjhiYTMyZGI4YzU2MDEyYzgzODlmZDA4YTkxY2Q4MDBhOWI4OTRmNzQ0NTllNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDVmZWM1NDdmOGZiZDRjYjRiZmFkMzBmYzA1YTUzMzIwOTkyNjYwZTlhODJiNjExYWQ3ZWVkY2QzZTY5NDZhYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ee2170ca4e3247298c9b7f0a1879c612",
+      "statement": "Upstream adapters under apps/api/src/upstream never format user-facing copy: they throw UpstreamError (message plus machine-readable detail) or unexpected errors, and the routes translate them into the fixed 502 UPSTREAM_UNAVAILABLE JSON shape via errorDetail — including cases where contract normalization inside the adapter rejects a row, which surfaces as UPSTREAM_UNAVAILABLE to the client.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L29-L52",
+          "version": "repo-lines-v1:sha256:5249a20947d680d01713627a3e98044effcf7a5bb0ef88e24870a52959ee9983:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZDJlMzg0MTJiMDdhYTZjNWJkMTNkYTVlMzljYzExNTlkN2EzYjAwNzNmMmU2ODk5ZjJkZDZiN2FhYTA2MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MzI5NWQxY2YwNGIyMDIxOWJmZjE0NzRhNzgzODEzZjg1ODQ4MWVhOTczZWZhNzAyOTM4NzZkMWQwOGU2NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMTU5MzNiYWExMDg0OWZjODdiZmVjMTVhNjNlMDQ2OTcwYjQ2ZTk4OTkzYmQ0YjFiMzI5YWFlZmY0ZWI5MTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/upstreamError.ts#L1-L18",
+          "version": "repo-lines-v1:sha256:bdadb1d9a2cf082fba7723c50b560a69654b1588016d71d38aa51702fc8ade37:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2MjMwZGJiMTE0YzhmMmJjZjA4MTI1MTkyYTMzM2NiMjE1YTg3OTI1YTU2ZTBiNmEwY2E1ODJiMDQxOWNjOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L602-L636",
+          "version": "repo-lines-v1:sha256:ac720ff1cb8a660f1f908928c6fba937c0a87406f4fac4f87be96f02d79846c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4OTBjZGRlNWMwNmIwNzBjODQ2OTkzYzg1ZDY0MTE4MDRkMzRiNzc1YTdkNGY0Nzg1OTYzZTgzNzhjMWU2NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2NDRlMjVmYzM5ZDUwMzhiOTcwMGIxYWI3MWYyNGQyMzA4YjFmNzJhYTVlMmMyODgzN2ZjN2M1NzM5NzAzYmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0583f61728c44ee2bdd0db65af02afae",
+      "statement": "The identity- and settings-related error vocabulary is AUTH_REQUIRED (401, no verified session on /api/settings), AUTH_UPSTREAM_UNAVAILABLE (503, SupabaseUnavailableError from the session verifier, raised by both /api/auth/session and /api/settings so an upstream outage is never mistaken for an anonymous user), AUTH_NOT_CONFIGURED (503, OAuth routes when oauthConfig is null), AUTH_CALLBACK_INVALID (401, forged or missing state / failed code exchange, with flow cookies cleared), INVALID_SETTINGS (400, body fails transitSettingsUpdateSchema), and SETTINGS_VERSION_CONFLICT (409, repository raised SettingsVersionConflictError).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/auth.controller.ts#L29-L44",
+          "version": "repo-lines-v1:sha256:3ba887e4379d84dc0d5a3b3b413ce3ce7f5fb8a81feb679418f43e45eee86a1a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhYzRiZGFmMzkyZGFiZDZkMDdiOTgwNDU3N2UwZWZkYTBmMTBmOWRmMDY2NDE0MDg0MzBiOWQyOTU5ZTAzZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L103-L111",
+          "version": "repo-lines-v1:sha256:260b7726d7121925f4d0a1e921fcbfd71ed98c8605a016d4edf504192d70ee45:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDhkYjc0NjA4MTgyY2I3Y2E0ZDlmYmE0OWEzOTQ5OWE3ZjM5MDdiNGVhMDMzYjE0OTJhZDVjZjBiZWVlZWNlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjY0NzQ4OTY5MWUzZTI2YjhkMTkyY2ZlMmU4OWFhYzk4NGQzY2VhNDA3NDliYmI1ODM5MTM2NzU0MTVlMjU3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGY3MzlhMDZjMWNiYjEyNDRlMzM2M2QzOGJjZjlmYTUwY2U4NGZlZDM5OWMyMTkzYTNjN2YwOGQ1OTkxOGIyYSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L68",
+          "version": "repo-lines-v1:sha256:5e0985e38fa0c640ab717554ddb177a8cc475d1346fa0caa4579b052ec8ca3f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYWMwZDBjZTg4NzI5ZmFmNDNkMjAwMWU0ZmJlMzMwMzM0YWIxN2RlZDE0NmUwNjE2YWNhZTgzMjY5YzVkYTYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L88-L95",
+          "version": "repo-lines-v1:sha256:d3b0e644f1684417e3b8754d3f9adaac0721396a38b49b96e781ddfb14528168:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjUwODU1MzY0MjNiNjRjOTM3OTE1ODQzMjkwNDJkNzdjODVhMGZjMmU1Nzc2NGE2MzljZTMyOGFhMDkxYTBkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGZiZjZiNTYxMDMyMDlkZGE5ZmZhMWI1NzFhMWQ4YzJhYzFhYWIyMDY2NTEwNmYzM2ZhYTdhNmI0OGQ0MGNjOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDZmYTIyOTFmMmU5NDYxZDJmODFlYWNlNmQwZjhlMTcwZmU1NTdlMDAwNDhjMGJhMmFhYzAwZGRhNGQ2MDM1NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa0a7dff74304f3fa66353d511c91b66",
+      "statement": "The error contract is the machine-readable error code, not the Korean message: the web client wraps every non-OK response in ApiError(status, code) by reading payload.error from the JSON body, falls back to a code-less ApiError when no string error is present (so adding codes stays backward compatible), and branches on the code — isServiceAreaError checks INVALID_LOCATION so useInlineMapSearch can show the Seoul service-boundary message instead of a generic retry message.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.test.ts#L228-L244",
+          "version": "repo-lines-v1:sha256:3c6605ff9f351375b370724b2f80110bcf9d8c803ae6fb37e00ac8d1f23e1bbf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwNGMwNWFhMzg0MWQ0OWM1MGUyZmU0NDNjMWI1OTI5N2YyZDk2NTJhYmQ1Njc1MTcxYjkzODZmNGVhZTMwZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyNTIxMWQ5ZDk5NGI3NjZlNjBmNDkxMGMzNjVlNjVjYWVlZjRiNGE1YjM3YmRkZmI3MTkzMjc3ZjNlZTdiNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4NTI2NWM2YjZjNDVjNTRjYWZkODU3ZGU4OWE3ZDk0NWIxYjg3MDFjZjhlMzk0MTlmN2U0MDQxMWQyNjk3YTkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L54-L67",
+          "version": "repo-lines-v1:sha256:baefa268818c46a623425192938d0a2d2738aeb1113113ba6829322001ac77ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNjY2YjMxZDg5YzBmMDJjMWRlZDRiYjUzOTRiZGUyODQxMGQ3ZWYxMmRhMzE2NmRkMjQ1OGY4ODM0OTFmMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmOGMyODViMjM4ZjI1ZDM0YmVlOWYwZmUyNGFhNjMwOTFmYmI2ZWVkYjk0NDA3ZjhkMjhhOWM0YjYzMDMxYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxNTk3ZDM0NzllZjEwY2Y1ZDYxZDBkYzkwN2M5OTBhMjRiOGZkODE3NTNhN2ZjMThjYmE2NmI4ZmM0Y2I3MjgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L74-L87",
+          "version": "repo-lines-v1:sha256:0c5111b727cf04529467fc2091c5456b46b90dd19d30d07b8382ea15d6280951:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjOWUxNjdkYjIzZmU0YmQ4NGNiMDBhNWY4ODJmMzE4NDZhZDNjNTczMDkxYTExYTA1ZmY5ZTdhNzk1M2EzZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmOGMyODViMjM4ZjI1ZDM0YmVlOWYwZmUyNGFhNjMwOTFmYmI2ZWVkYjk0NDA3ZjhkMjhhOWM0YjYzMDMxYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzMzY1NDk2YWVmNGU1MTI5N2FhYTIyZmI3YWEwZTY4NzE0MWI2NDhiODBiMzIyNjZjZGI0N2Q0NjgxNDM2NjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L23-L30",
+          "version": "repo-lines-v1:sha256:4b880e13345d98284bc412e176ce05a5851c1e9f10ff034698abdb4109bf8412:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2UyNWQ4Y2RkNjg1MWY0MTM1NDI4MWU2YWUzMDgzOWI2YWUxYzI4NjE4OGYzNjg3ZGRmODk1NTdmYWQ2YTU0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGY4YmEwNTdjMDVkMmNjMjBmMzJjZDRjYjY4NDA2YTJkNDUzMGFjNWYyMTI0MTMxOTk5YTMxMzc1MjFhYTZlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGE4OGU3M2Y0N2FlYjJiOTAwZDg3ZDlhOGFhYmM5YmQ3NmZkNGZmYjY0ZDQwZjJmZDUzMTIyMTU1ZjFmNWE1MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_94018b3493954991b651b522f8688352",
+      "statement": "When oauthConfig is provided but no verifySession is injected, register builds the default verifier as a closure over verifySupabaseSession, which verifies the access-token cookie locally against the Supabase JWKS (ES256, issuer, audience, role=authenticated) and otherwise rotates the session server-side from the refresh cookie, relaying fresh cookie strings back through the onSetCookie callback; jose network/verification failures are distinguished from invalid tokens by returning null for the latter and throwing SupabaseUnavailableError for the former.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L60-L75",
+          "version": "repo-lines-v1:sha256:c3e050fad39ea3f5381abc295e5e2b631a591daa11f0f3846085b30d20882cb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMjRkMmNiZWJkODRlMDNhOTk5Zjg1Mzk2M2M0MmFkNWU1ZmQ4MmQ4ZmE4NDQyOTNhOGM5ZTFkYzdhNzVjMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNTBhNmM4N2Y3ZDA2ZGIwOGVjYTA3YjU0ZjgwM2UzMGI4OWRmMGJkMjk2ZTUwZTI3YjZiMGY5Yzg5OWQ0NTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MTcwMGY0NTFiMTY2YTUyODMwMDA4ZmYyOWMwNzgyMzcyNjZjZDU1ZTk4YTJiZDVmN2ZhYzRlYmQ4NWYyMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmMWI3MzE1MTFlNDA1YWZiNDY2N2VkNzI1NTFiNWE1Y2EyZWU3OTUxZWRmOTYwOGZmNmE2ZTU1MTg1Mzc4NzIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L31-L76",
+          "version": "repo-lines-v1:sha256:a468472511d983049356aa3f11e1c6e62322b0fbe9772649eec647de630a4c7f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNzNhNzVhYTVhYTJkODk5MTkyZTcxNTg2OTdmZDUwNmE4NzJjZmJjNWZhN2QwNTVkY2U5ZTExMWMxZTcxODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4YWVhOTViNjhlYzQ5OTkwMTgyOWQ5Yjg2MzczYWRiYzYxZDY2ZjJjNmY1NmRjMWQyNDBlNDQxNzQ4ZTY3NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L36-L54",
+          "version": "repo-lines-v1:sha256:57aa2cec6d073b42c1a7595df9ee4e6cf7a0c45200a2daed22f6b9024a90cd3d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMzFjNDA5OWE2OWQ1ZjhkMmY3NTYwMTE0OWEwNGY2MGRmMWUzM2NhYWY5NDdmMTBkMWI0ZTgyMDI3ZDA5ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3YTNjMDhlMjBlYjM5OTczODk3OTBhMDQxNGMzODljNTNlMDNiODE0ODJkYTlmZWIzZTYxYmE2M2JiZmNmZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0ODMyYTAwNjg3MzQ3Mjk3ODdhOTgzMDg1NTNkNGJmMjNhZWU1YTQ0OGEyM2ZlZjVmYmUxY2JhMTQxNDUxZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_87e390eeea764b8cab23be28d430b4b6",
+      "statement": "GET /api/auth/session returns { authenticated: false } or { authenticated: true, user } and relays any cookies the verifier rotates via the reply's set-cookie header, and both this route and SettingsController's requireUser use the same shape: catch SupabaseUnavailableError and rethrow as 503 AUTH_UPSTREAM_UNAVAILABLE, return 401 AUTH_REQUIRED when the verifier yields no user, and otherwise proceed with the AuthUser.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/auth.controller.ts#L24-L45",
+          "version": "repo-lines-v1:sha256:90bc9a2ab11da4f2ad4c7d5adedf0f62b5741efec7f27b8876e53ff0d7d813f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkNWI2NmM1OGMzOGY1MzJmN2M3NGM0MzZhYmI2MTc2ZmM2YjkyZGIwNjY1MTViYjIxZGY4ZTI5Mzc5YWUyOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZjkzZWExNmRhMjk1OGY4NmQ4Y2EwNjk3OGY3ZDcxYzI1NGVkYWM1ZTRhNTYxYWM4ZDg5ZDBiYTVkZGNkZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L80",
+          "version": "repo-lines-v1:sha256:6b69f6e07f3ee5cbe53ac4502e82431e97798aa691f0d81bc26778554a7700ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MjAwNzVhMDkyMGVmMjkxMjI3NDUwNWIxYTYyMGZkMmMyNjQwZDcxOWI5YWM2NWY2ZjU2NmNmZmI1YWZhMjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ebf6f88c4eb4390b3b5f42600dbd807",
+      "statement": "OAuthController implements mota's own Google login as an authorization-code + PKCE flow against the shared Supabase project: GET /api/auth/google generates a random verifier and state, stores them (plus a validated same-site return path) in host-only HttpOnly SameSite=Lax flow cookies with a 600 s max-age, and redirects 302 to the Supabase authorize URL with provider=google, prompt=select_account, code_challenge_method=S256 and a redirect_to pointing at /api/auth/callback; the callback compares state with timingSafeEqual, exchanges the code for a session, clears flow cookies, sets host-only session cookies (refresh cookie max-age 30 days), and redirects to the remembered same-site path; logout clears session cookies first and then revokes the Supabase session best-effort so a server-side revoke failure cannot fail the logout, and anonymous logout returns 200 without calling Supabase.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L141-L165",
+          "version": "repo-lines-v1:sha256:56b4533d48fbf66a519ef3cb4be311e5f1c6e0cdeaabf1b59fa0ab13d15f4654:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZjgxMWE3NmNlMjBmMmY0Yjk5MGY3ZDU3NDEyODNmYzA3ZDUxMWFmYzU0ZWFkYWEyOWVjMmY1YTU0NzFjNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MzUyMTA0Y2Y3NTdhYWJmODA2OGNlOTUxZDM5MzgzZmEzYzM1M2I5MjUxMmQ0Njk0NGMwYjUxMTc2NTA2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0N2JiMTJkZTNmMDBhZGQxY2IyYzNmNzZlYTU1ODZmNjI5NWI1YzE3OTM0N2E4MTZlZjdjMTA0ZTE1NjUyYTYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L57-L85",
+          "version": "repo-lines-v1:sha256:77e9d696940981b407f9fe28dc355cecffb3d9f057c9d22dbba8ecd481e314fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjQ1ZWMwYzliNTA1NDg0MjNlYzM4OWU5OTJiNDUyOWIwMGMzMDgxZTQxYTNkODdlZDZiMWUxZDE1MGQ3YWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2ZGMyYzdlYjAyOWY0MTVmOGY1ZTEzY2FlMTVkYWIwMmVkNjY4NDdmOGUwNDNmNjYzMWUzMTljMWVjMjUxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjYTBhMzUxYjA4ZDRhNjM4MWJhOWZlZDU4ZWQyZThkMmZjMTNiOGEyODJiZDg5ODQ5MDU3OTMzOTdmZmJkNGYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L87-L139",
+          "version": "repo-lines-v1:sha256:fd27e180f1b954531d52edcfb10db4e1b0ddfa96693efb568ffc53f4922470ad:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZTFhYTM4OGJhNjFkNmUxYmNhN2RiMzc2YzU1MjdiMGZjZjYyMjZlODcyNTRjMzc4MzQ4YjA0MTFlMDIyNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzNzQ2NmY4OWVmZWJmMjEwNWYzYjVlZWZiNjY5ZDgyNjQ1OTVkNzc3NDM0OTcxZDEzYzI2YTlmMTRiNmJjNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4NzA3NWIyYzk3NDAwYTUyNTZkMmQ4MzM1OGY4NjA4YmI1NTg4MzI0YzZiMzVjNDZiZGZjYzI5Y2I2ZWE4NDkifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L30-L49",
+          "version": "repo-lines-v1:sha256:8b31a7aa0a89509ffd41fb5ec1576cf8d05982d694c743c761853dc64a5ed69e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZDJmOGFlYzZkZTAwNDUyOWMzMzYzMjlkNjIzMDZkNGIxZTZjZDUyZTllZTAwYjJjZDc5OGY1M2FjZTMyNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMTU5MjAzMzYzMDVkNGJiYWQzMjA5MDdmZjM0Y2U0ZmZiZWZmNDk1MmE5YTk0MjdlNzM3OTY2ZWJlZmU2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YmQ2ZWU3NjM5OWRiMmUxMDBjODY4NDRiNzY1NGYwNjljOGQzYzI4ZmUzMDNhMTIzMWYzMjNlMTk3OTY3ODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2ba3e688a4eb4eb488a11eed863c4931",
+      "statement": "GET /api/settings returns the stored { version, selections } keyed by the verified user's Supabase sub, or { version: 0, selections: null } when the repository has no row, and PUT /api/settings re-validates the body against transitSettingsUpdateSchema before calling repository.save(user.sub, version, selections); a SettingsVersionConflictError from the compare-and-swap repository (insert-on-conflict or update guarded on the expected version) is mapped to 409 SETTINGS_VERSION_CONFLICT while the successful response echoes the incremented version.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L68",
+          "version": "repo-lines-v1:sha256:5e0985e38fa0c640ab717554ddb177a8cc475d1346fa0caa4579b052ec8ca3f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYWMwZDBjZTg4NzI5ZmFmNDNkMjAwMWU0ZmJlMzMwMzM0YWIxN2RlZDE0NmUwNjE2YWNhZTgzMjY5YzVkYTYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L70-L112",
+          "version": "repo-lines-v1:sha256:692b371c1af139180fc507bf1b14c1da982db762399659f1edbded3248f05485:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYjk5YWJmYjQ3NjdiNDhmMjMwYjE1ZDU2YTI1ODJlMTgxNjczMGQyYmU0ODA4ZmFjNDBlNDk4N2I5N2YzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlY2UyNTIwYTNiM2Y2YTc0YjdhMjQ0OTMwODE2NDliMTljODdiNTc0MThhMzA0MDUwZDI5ZThjMmFlMWVjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L58-L109",
+          "version": "repo-lines-v1:sha256:982483bd03974ed96453b107749eb7e89fccad5f91cec1642b54cd3a785bfdc8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjNjQ4MWZmM2I4MTgyY2E1MjBmMTQ1NGZiOTQ4ODRmNmVkMmYzYTEwODE5MTkyOWY1MzgzOTNjNjZjNmNlYzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_09e8551c0c9a4b9c839c7ceab34385f4",
+      "statement": "TransitCatalogService turns the ApiOptions.transitCatalog sub-object into two ManagedCatalog instances (bus and subway) sharing now (falling back to Date.now), random for jitter, refreshMs, retryMs, warmup scheduling, and their own minimum-item thresholds; nearbyStops serves haversine-filtered and distance-sorted stops from the bus catalog but falls back to the live location-scoped upstream lookup when the catalog read throws UpstreamError, nearbySubway dedupes stations by name keeping the nearest entry, and status() exposes the non-gating readiness snapshot surfaced by /api/health.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L38-L100",
+          "version": "repo-lines-v1:sha256:e1c1b63f0efda7ee88acccedb12b0c0d531464d045998760e64c5b0faee0b224:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjNjAwNmNkZmFkYjk4ZDViZGNhZjYzOWYyMTlhNDY4ZjlhZDk2ODFkYTZiMjRjMzU4Y2RiNzhlNzdjNDljNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjYWIzZWM1MjhiNGFiNDA0YzYzNjRiNmE0MjA5NjAzNTM2Yzc4ZTAyNjIzNDNhYjY2ZmQxYjE2ZTNkZjA3ZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlM2RhOTljNmZlYWI3NzdjYmQ4MzMwYmE4ZjE2MGVjMmUyNjhhMjQ5ZjM3NjYzNzYwMDExNGMyY2NiNzZiOTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L134-L149",
+          "version": "repo-lines-v1:sha256:dcee1470b7b338ab96100807ba3393f35758c669eec1bb81eb89d132aa01c605:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZWZkNjRjMzk1MmNiYTk3NzY4ZDAxYzIyNWRlYzVlZjczYzliM2IxMTc1MmYyNzNiMTg5YjExYTBhNWM2OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjNlN2NkMGMzYTYyMzA0NzY2ODE2MWQxMDRlOTlkODYyMDljYTNlNzc1NGEyNWIxMTlhNDkwNzg3ODA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzY2QzZDViN2VkMjlkZTI2MjMyMWRiNmViOGI3MDc5NTNhZTllODQwNGVhYmNjMmIwNTc1MjYwYWYzZTM1NzYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L39-L72",
+          "version": "repo-lines-v1:sha256:d06916d8d87348e421058d240ae0430843933aa9322e1a4271d393d634ef8f46:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNWRmODI2OGE5ZjcwMDM4OTQ1MTc5NTQ0N2RlYjUyZTRkMjBiNzUxMjMyNjJhYTcyNTA2MGRkZWZiMTk2ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MTg1YTQ3MTgyZWQ2MzQwMGJiMjUwZmZkNTE2YzZkZDM0MDA4YzkyNzAwYzY3Mzk2OTg3OGEwYTk2ODRhZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiZDJjN2UxMmQ5NjliMDI4ZWJlNWNmYWZlMmU2YmE1NmYzZWEyZDQ0MzE5ODM5ODA0ODFiMTkyN2ViMTJiMGQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L113",
+          "version": "repo-lines-v1:sha256:b7fa8e04df2f61ca7c55271b8de50b96a00bcd1e9605aa77d952e81b207235b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyZjI3YjIxZjBjYTNlMWZlMTAxYWI2ZWZjNWYyOGM2YmJmNDY2ODM0YjhlMTQ3ZDlhNTYzMWQ0YjgzNzkxNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NWQzZjcyNzkwYTlmNGE4NGU0ZWM3OTk4YmFhZWYwZTk5NDU3MTVmYjgzYzMwMjcxZDM3MDM2OGFkYmY1YTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2c4e05e1f2504b568202702e37a3a3ea",
+      "statement": "Arrival lookups are deliberately realtime and never catalog-cached: /api/arrivals/:arsId calls the Hermes BIS adapter on every request (the e2e suite asserts two identical requests trigger two upstream calls), and /api/subway/arrivals proxies to options.subwayArrivalUpstream; both return an updatedAt that is the adapter receipt time rather than the upstream recptnDt data time, because the web client's 90-second freshness rule and countdown elapsed key on receipt time.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L74-L95",
+          "version": "repo-lines-v1:sha256:0b9be7ee85080f77c7b0be1ad2dcb66eec692f80e003d195c2921d12e1e13cff:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NjY0NmE3ODQ0YmUwOWExYTBiZTM5MDc1ZmEzZmU5M2JmYTVkMGNlZmYxMjJkYmY2YTI2Y2VkZWIxNDRiN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyZDY4ODkwN2U1YTAyYmRjY2ZhNTQyNWQ3OWNlMzFkMmE5ZTZjZGIxMjI5YjZiOGFmNmRkZmJmMzFlMzMyZGIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L97-L120",
+          "version": "repo-lines-v1:sha256:86a15af45350cfc59c56875928bba383e465689dae3d9a3430bba1f37213c287:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4YTc1M2ZlNGNiZTNiZTk1ZmYwNzJjZjIwMzJhZTg4ZmFhZmJlOTI0NjE0MDlhYzliZTcyMmI0OTlhYWVmOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L18-L45",
+          "version": "repo-lines-v1:sha256:c6da6d142c4ab7a5228fa56844098778142c3ea3c42bee3e7ee5d69c3cfc654a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4OTk1Njc1MzgxYjkyYzA3N2U3MmZlM2ZiZjY4MjMxZTZjMDBlMzhiM2U1ZjEzMzdhMTFlMGQ5ZTc5NmYwNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MzI5NWQxY2YwNGIyMDIxOWJmZjE0NzRhNzgzODEzZjg1ODQ4MWVhOTczZWZhNzAyOTM4NzZkMWQwOGU2NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L263-L277",
+          "version": "repo-lines-v1:sha256:0f217e3cc0fb315aa314b6b7fe79bb0e1febffbf19dc7ab53b35cb6aeeceb779:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOGFlOWVhMjhkN2Y4ZmRjMmEzODU0NTA2MDIzZjc4MzQxYmZiOWRjZTNjNGMyYWJhZDNlOGU3N2Q4YWU0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMDc0ZTgxMTIzZWI3Y2IzOTQ1M2UyNzNmYmQzOGQ1ZDE1NGIyMTYyYjdmNGE2NDA1N2VmZTIxZGVmMzhhOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_842548217d284099bce7088d26f487ef",
+      "statement": "loadEnv parses process.env with a Zod schema before anything else: SUPABASE_URL and SUPABASE_ANON_KEY are required and trailing slashes are stripped from SUPABASE_URL and PUBLIC_URL, PUBLIC_URL defaults to http://localhost:5173 (its https scheme selects __Host- cookie prefixes), SUBWAY_ARRIVAL_UPSTREAM defaults to the shared k-skill proxy origin, WEB_DIST_PATH defaults to /app/web and MIGRATIONS_PATH to /app/drizzle, TRANSIT_CATALOG_REFRESH_MS is clamped between one minute and seven days defaulting to 24 hours, and either DATABASE_URL or the DATABASE_HOST/PORT/NAME/USER/PASSWORD parts must be present or startup throws 'DATABASE_URL or DATABASE_PASSWORD is required.'.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.test.ts#L10-L67",
+          "version": "repo-lines-v1:sha256:55f295fa8fa53976b96d6c3af5a0e0b48ea72408b288d01df18bce018ae27bcf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjNTFmODVmMTZlZTI4YzhjMGNlYmE2MWQ1NGRiMmM3OWQyMjFkZTFmMzYwN2I1OTc4OGJmM2QyY2I5ZWQ0ZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjZDQyMTZmNzUyZjE0OTZkYzdmMjU5YzM3YTQwNTViMjg2ZGU4MDI1MDQzYTNlNGMwYWYyOWQwYTNmOTRmOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L47-L77",
+          "version": "repo-lines-v1:sha256:1136ca4589775e06029cbb28b98764b0a9a98665b06d267d47c7aeae816c7a9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiYmE2ZTM2ODAyMGEyNDE4N2MyNTZiYWY5MGNlZWVjY2UyZjNlN2ViZjI3MjI0ODVjMTMyYmU2M2QyYzdjY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L6-L30",
+          "version": "repo-lines-v1:sha256:df1f7d8fcc7bef152a5455a23291a9015f5d7d860c314d76035adf42641cd138:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMDIyYjFlMmM4MmYxN2NmYjdjNmI1OWExMmMzMDcwNjQxMjQxOWM2MmNmOGUwN2RiYmRiMjc1YjNmYmY1ZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2OWM1ZWE4NDYxNThmMmQ5YjQyMDk3ZDY4NzZmYzZlNDZlZjQ5ODYxYmU0MjdiY2IyNTQ0OWFmODE0M2RmYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhMzE5ODdiNGU0MzIyYjVkZDhkZGFjMTJhZjcyZmVmNjYzMDBlNzVlODQ3MjAwMTczYWU5N2M2ZjM1NGQwOWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a74b50a08129416bafc62aa9cb6f3cf1",
+      "statement": "TransitCatalogService implements OnModuleInit and OnModuleDestroy: init starts both catalogs (a no-op warmup when schedule/warmup is false, leaving first load to a cold request) and destroy stops the refresh timers; the catalog timer itself is unref'd so it never holds the event loop open.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.test.ts#L76-L96",
+          "version": "repo-lines-v1:sha256:5c39c60333c2d09489b48498852a3b10a3bdc670ee8babf43fe3304ee56be89a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYmYxNWIyYzU2YzRjYWM3ZTRkM2MwMWMyNzE2NWMwMmM1NmE1NzFiNTI1MWM4YjA0ZjgzM2NjZmNlOWFhN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4N2QwZTU5MmU5ZTE2ZGVjMjg1MzMwYTk3YWQ3MmVhNzVkOTE3MDIzMDU5ZWRhZmMwMjJjMmJmNTA1NjU3OWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L168-L180",
+          "version": "repo-lines-v1:sha256:af0a7175e35fc3379e48272b951bb3f1ec2bf4d1c6adbb87eec153ce9ee64e1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwY2Y2YmI5MzExY2NlOTUzNDYzNWZkNWVhOGUwNzcxMDQxYTYwODk3Y2I5NGMwODZhMzQxMWIzMDE1Nzc2MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjNlN2NkMGMzYTYyMzA0NzY2ODE2MWQxMDRlOTlkODYyMDljYTNlNzc1NGEyNWIxMTlhNDkwNzg3ODA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4NGY0MTRlM2YxZDk1MTNkNDRmOTQzNzEwOWQxYzk2NjIzOGQzMmMzZmNhZWMzZjJmN2JmYjIyZjI3NWZmNTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L34-L82",
+          "version": "repo-lines-v1:sha256:79271c0ec406efad0f014e1bfa38959790d1f789854ed5eec9a0cd43968078b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYjU0YTlmZGQ1NzczMTgzYWFmNzBiMjE0NWZlOGFlNGIxNmIyNDBiYmM2NzZjODgwZTQyMTczMTEwNmJlMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4YTc4MTk5YzFmOTUwYmFlYmM3N2Y5Mjk0N2QzZjllNGY0MDA1YTE3NmEzODYwMDkxYjE3NGFkMjMzZjZiN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0ZTkyOWQ1OTRlYTgxNGYzNzA4MTQ2NmM3NzA1MTM1YTFjYzhlMTkyMWFjOGEyZTA3ZjJjODlhZDE5N2Q5ZTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_740c7af22f92448c9daf86d84b9b1187",
+      "statement": "The composition root is also the test seam: create-test-app builds the real module via Test.createTestingModule with AppModule.register and issues requests through Fastify inject returning a standard Response, letting the e2e suites stub the entire Seoul upstream surface with a vi.fn, run auth tests against a real local HTTP fake of Supabase (ES256 JWKS, PKCE and refresh grants, signout recorder) injected through oauthConfig.fetcher, substitute an in-memory UserSettingsRepository plus a cookie-regex verifySession for settings tests, raise minimumBusCatalogItems to force catalog rejection and observe the live fallback, and gate the Postgres integration suite on DATABASE_URL via describe.runIf.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L49-L82",
+          "version": "repo-lines-v1:sha256:9e38e58c1b486b6d65648821eac18e181ec318ba366b43b5a20a10ff295b5318:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MjY4ZTE3MTgzODE4Y2I4MmNiMDU2ODFmMTZkNGM5MTNkMjMyNDE3ZTQ0YzlmMWYwMGQxM2FmYjg4OWM3ODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyZjZmZDVmM2M3YzM0YTNiM2Q3ZjhmYjQyYjk5YWExZDQzNGVmMzRhZjJmMzIzZTlkNGQzMmFkMWIxNWM1NTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkZDRjNGY4YTUwNWE2YTU5OTIyMjhmMDJmM2Y5YmNkZDg5ZWY0OGZiZTQ3NmE1ZDE2YzdkNjQ4MTRmOGNjNTgifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L20-L29",
+          "version": "repo-lines-v1:sha256:ba715186387aa6132c26387c866bc8d4e376bc349a9720d089e1f449dc8a620f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYzI4MTIxYmYyZjAzYTdiNWUwNzQwMGU4NGU5NjBiZmY0ZjE3ZDMzODdhOTBhZmJmNmIyMGZkYTk2OTdjOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzNjVhM2Q1YTI4ZDdhNmNiNmE3YTE4OTA3OTI1ZTgyYzQ0YWUwMjUzNDBlYWU3ZDk5NjM5NTNlZTgyYmY1ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhZjEwZWNjMjU2ZTcxMTRiNDBhZTNjM2IxYjhjMmNhMGM0NWM4N2VjNjdkZDQxZjNkNmRkN2MxMGNlNDA0Y2MifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/create-test-app.ts#L7-L26",
+          "version": "repo-lines-v1:sha256:36ba891e2a9f0923b4ff23a5274422b54996128de4860d82c6e1aaa219d4017a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0NjFhYzc5YjE5ODIyY2RjNmM1ZmZkN2MzOWY3YTU4M2JhODAwYjA5MzAyMzMyMmMwMGM2NWNjNGY5NjFkMzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmZTVkMGQwZmMxMjdiMTE4YjY3OTAzYjMyYWFlMjRlNmY5OGIyZGE1OTAyMDM0ZTRmNGJiM2NjZTIzYjI5MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5YTQwMDU3ODhlOTI3ZDJiOTA3MmVlODZmMjljZmQ4ZWQwMzEzYzA5NjZiMjI2ZDA4NWQxNjRmODQ1MTJiYzMifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L65-L76",
+          "version": "repo-lines-v1:sha256:d8064dd6f8fed213756142cf6e92ec2be2793969a39032145f326f0423cef85b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZjdhNjY3ZjBlYmUxM2ViYjRhMzkwM2M4MTE3ZTcyNDE0YzBmYjg2YTEwNTg5ODVmN2E3NGZhMWRjZDA3YmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwYzkyZmFhYmYxM2Q1ZGYzOTYwNDA2NzRjZDM2Y2U4Y2VjZjc4N2EwMmE3YzMyODVmYzBlOTA1N2M4ZWJlZWQifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L11-L37",
+          "version": "repo-lines-v1:sha256:a207d7363ffd8cbc4cb4698f0b92b7f8f30f9b4b801e77bb13b8a00946c91739:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5OGYzMmQ3N2IxNzgxZmQ1MGEyY2I1Mzc4NzNkZWUwN2EwNTYyZDc5NmIwMzJiODEwNjVkNGM0MDEzODIxNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4YjczZDY2YjdmODliMzQyZTdjZjkyNTg3NzhkMmQwMjU3YjQxZmVkZGQ3OTU3YTdhODk5OGI2NGIxZWM3ODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3MTFlZWM0N2FmNWE4YjdkYzVlNmRhNWFlYjM3MTBmOTA4NTRhNTA1YTM3YWI3Yjg5NGExYzU4ZjBkODMxZGYifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/transit-catalog-fallback.e2e.test.ts#L21-L51",
+          "version": "repo-lines-v1:sha256:2f51eb87b62f78b8e1ce8be8429497bff5610f31e27467e21129179424187d72:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiYjliZmVhYjFkYTM5NTMxZTgwMjIwYTI3ZWIyNTNjOWQ3NjFhMjQzYmViNGZmODU4YTA3MzI2OWFiNDdhNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_76256ce1e492465ca99ae6487065f072",
+      "statement": "The Fastify requestTimeout of 65 seconds is deliberately above both the web client's 35-second allowance for slow catalog-backed subway station searches and the adapters' own fetch timeouts (up to 30 seconds for the bus catalog), so the client's own abort wins over the server's timeout on slow catalog loads.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L35-L39",
+          "version": "repo-lines-v1:sha256:f12d4764ee51ee0207deb4593c7eb6d99987393e6e213fdc69632ab209f62c22:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGI0NDk0YjhjNWJhNzZkMmFjYWVhYzdiYjE0Y2I1YzQwOWY5NzY5MzZlYzI4NjdmZmNjNTkyMjA5ZDdmZjBhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTVlZjAxYmMwOGRiYzNiNjNlNGU3NWVhM2QyNmE1Yjk0MTg5MTg3N2UyN2FkODkxMzI5Yzg0MTFkN2Q4ZGM0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjZiY2Y3ODM3OGQyZWEwOGNkMjg5OTBkNGNlOTdmNzQ5NjVkY2MyOTJjMWQ4Yzc1MmE2MjA2NTdlMTk2MzY4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgyZmJlMzNlMWM4YzdhMDIxZmVlNzE3YjQ3MGU3OTg5YmJkYjE0ODA2YjFhMGE5MGVjODhjNTA1NjAwZDk2OSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L54-L83",
+          "version": "repo-lines-v1:sha256:a767566bb0f7a96b84196765e55ef61bb98f28fcc556cdc90528ab1d7d2c4980:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YTUwODFjZTcyZjg0NWEyMGI3OGMyOGMwMzY0M2U3ODg2NWE3ZDE0ZTE0YjVkMDJkMWRjMzVmY2IxY2M1MzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1NTY5YjRjOTQzNzE0MzA3ZjhjYzVhNmY2ODI3MzY2MjI4NDllMDBmMWI4MmE2ZDZkMzkwOTBkOTAwZWIxMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkODhjOGM1N2UwMmE3ZjkzYmJhYmE5OTM2NTA0OWIxMTYwM2VkZjg5MDM1YzA4NjhjYWRmNDVmZGY4MjE1ZjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L132-L143",
+          "version": "repo-lines-v1:sha256:a5bf4129ef412b850f52c64e86348399020e146e346bdb2688742e6dccdaa7b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YTg4MWVlMGE5MzY4YTU5YWQzODVlYjM2MjIyNzFkZGFjYmJlNTA1MTY3NTVlNjE4OGI4ZDA0OTViM2JkY2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhZjg0ZjQ0YjIzNjI4NTkzMjY0ZjAyMzgzNjBkYjZiM2RlNTMwN2NhMDRmOWRjMWYzMDc4YzI3NWY4ZDZiZDMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

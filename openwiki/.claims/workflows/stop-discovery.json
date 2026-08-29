@@ -1,0 +1,542 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1a1a835ee339007e686a571331103f381773345220c0b4e259cc9221fe8d7366",
+  "claims": [
+    {
+      "id": "claim_5a968f55f6dc4cbb97c17e02b72cb22a",
+      "statement": "Entering find mode triggers exactly one nearby search at the current map center, and panning or zooming the map never issues a request; the only re-search entry point is the explicit `이 위치 다시 찾기` button, which calls `search()` against the latest center held in `centerRef`.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L174-L188",
+          "version": "repo-lines-v1:sha256:6d137803165d246643bfc0c16eb1486e717ed370a6cd6afa973f47611fbe714b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1MWRhZDFkYWFmOTIxZTAwNWQ1ZTgwNDAyYjk1Y2E5MTdjMGEzOTU4N2VmZGVmZmU0ODA4ZWJiN2E0NTUzMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmYzE4MDUxZjA3YjM4YjU2ZjE4MTQxNjFkZjU2MzZhNTlmMzA3NTE0ZDM5ZmM0YmExNDMxNjc5MTYyYmJjZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0Yjk3MzVmNDJmNDE3YmQyYzNhOWQ4MDZkZjRmNjYzNzY2YTdmYzJkODBiZjE3MDBjMTQ1ZDg1OGZiMmQzOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkMWU3OWZmNGM4MGY1YzU4YTkzNmEzM2UwN2E0YjIwODliM2MzYWUxNTI4MmFkYTNhMzY4ZGE4MzM2OGUwODIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/InlineMapSearchControls.tsx#L95-L102",
+          "version": "repo-lines-v1:sha256:8d8fb3ffb5c172c452fb36f188fce6d2552677bfc0ff6571135e2f1b6334266f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZmNDZhZTNkOTRjYzAwZGIwMjc0MjQ0ZTk1MzQxZWQ4ZTg4MTRhNzc4YTE4ZTU2Y2I0MGI1YWRkZmYwMzkxNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDM3M2FkYjFmMTYwNTM0YzY0NDg1ZTEwMWQ2ZTQ1M2E2MTU4YzZlNzFiYTIxYTJmMzZlYjljNTA4NDc1Y2JiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGNhMzE5YWFiZjU3NWQ3NDQ0M2UyOWZhMTQ0N2FhMWEwY2E1M2FhYzg1YmQ0NTM5ZjMzYjBjOTJhNGJlNmY0YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDg3OTEyNDc2NmU3OGRiM2NhYzczZjdlZTBiNDY0NTA0NDk2M2I1N2MwZWI4Y2FjMDM3ODkyZTkzOWRjNjEzYiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L113-L124",
+          "version": "repo-lines-v1:sha256:937195a05c53354bfc47d4f583db6638abbfb352cb4aea0b9ca3c7dec7438fce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1N2E5NjVmZjUyMjM4MTdkMjZlMTU5NzVhOTFlZmE4ODg1ZjBmMmYxMmRkNzc4ZDBkYTYwYjU2ZGY2MmEzZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MzAxZTA1OTQzNDBlNjIwZjA3ODEyOGQwMTg1NTE4NDVhNzc5NTUxNzI3OWQ3MTUwZTA1M2RmNDYxY2NlYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb0067229df14fe6ae005434b5fb96d1",
+      "statement": "The hook's effect keyed only on `mode` bumps `requestRef` (invalidating any response still in flight), clears both candidate arrays, both pending selection arrays, `loading`, and `error`, and issues a request only when `mode !== null` — so exiting the search runs the same reset with no request and a late response from a cancelled search is dropped rather than resurrecting candidates.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L113-L124",
+          "version": "repo-lines-v1:sha256:937195a05c53354bfc47d4f583db6638abbfb352cb4aea0b9ca3c7dec7438fce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1N2E5NjVmZjUyMjM4MTdkMjZlMTU5NzVhOTFlZmE4ODg1ZjBmMmYxMmRkNzc4ZDBkYTYwYjU2ZGY2MmEzZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MzAxZTA1OTQzNDBlNjIwZjA3ODEyOGQwMTg1NTE4NDVhNzc5NTUxNzI3OWQ3MTUwZTA1M2RmNDYxY2NlYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_75df9220164848ceb227b34310e4f8da",
+      "statement": "`useInlineMapSearch` mirrors `mode`, `center`, `savedStops`, and `savedStations` into refs updated during render so that `search` is a stable `useCallback` with an empty dependency array yet still reads fresh values at call time — this is what makes a center change a ref write with no fetch triggered by re-render.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L46-L56",
+          "version": "repo-lines-v1:sha256:4127ca3e68af3970a0c03bb7335688e82e544cc62e8f245c8a140545064c9f22:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjOTcyMzA2MWYzYTVjODY4ODgxNTI4Y2NhMTFmNDFlNWFiNmQ0ZWNhYzk0NTRhYjg3NTJhY2Q2MjAzNzhlM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMDZjZmE3YzExMWYzOTBlMDZiZWZkOGEzYzYzZGNmOTk0ZjU1MjRhZTM5ZTM3YjY4MTJkMmE2NWNkZmFlODciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwZmQ5NTRiYTM1NGFiNjI4ZGRjODk2OGRlODI1NzNkNmM1OGI4YTRiMWZkNTNkYWY1YWE5ODljMmZkMDcxNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0NDBkNDg1N2M3Mzc3Njc1ZWJjMDgzZjg2ZTVkZmMxMzFkNDMwOTY5OGMwZmEzYzRjMzkwZjk4NTk4NGVhZjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7fdb5dff0f7440c88d26911208f8144b",
+      "statement": "Every state write inside `search()` is guarded by `requestRef.current === request`, including the `finally` block that clears `loading`, so a superseded response commits nothing and cannot unset the loading flag of the request that replaced it.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L56-L111",
+          "version": "repo-lines-v1:sha256:e2ffb71be4b6025e84987c3f39af9c1bdbf046d2dd508565fb87e62b18b86ff6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMDZjZmE3YzExMWYzOTBlMDZiZWZkOGEzYzYzZGNmOTk0ZjU1MjRhZTM5ZTM3YjY4MTJkMmE2NWNkZmFlODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1YmYwMWViNzAxYmIzM2Q5YWU4MmUyZWI0MDhiZjAxMDlhY2Q0OTAyNDIxZWRjN2E0NjI4ODRhM2QzMTM4ZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1ZmFmODg4NTBjNTdjNDMzNWIxMGVkNWVkZDI0MjM0OTY2MThlMjY1MWQ0YTQ2MzhhYjllNTBkYTIwYjdlYjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_96aa840d404a4751b070699a8ee01a5a",
+      "statement": "A saved stop or station never appears as its own candidate: the hook filters fetched results against the saved ids read from `savedStopsRef`/`savedStationsRef` at call time, and `MapCanvas` independently filters the pending arrays again against ids derived from its saved marker props, so the invariant survives removal of either filter.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L483-L509",
+          "version": "repo-lines-v1:sha256:9255bcc90b828423bdf7a5b43f4ae1a99f6e08b2d0f3238f46e560ab5f9e4a1b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NTY1ZTk2NGIwMzgwYTYyMzYzMTc0ZTIwYjE1ZjZmZTAzOTQ4ODVkNzhjYjdlMTk3YzBiNzM3ZWQzOGJkZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYjZjOGFmYjg0MmIwNzg2N2I3MTljZmI4NTM3NTZjOTJlYzYxODA4OGUxZjdiNzIwODQ2OTg4MTBiOTE2YWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0MzdhMDBlZjg5ZjRiZTZhOTdhMmY2ODAxOGUzNjgwMTc3Nzc0NDkwMDkzYjNlMWUwYTRhMzk0YjJhZmQ3YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2YmEwNmZkM2Y2YTRhNGU5NTFhNDc3ZGNjYzdkZjRiZjZiNWQ2Yzc4Njc0MTQ5ZDBhZTU2MGRmYzg0YzBjNGUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L66-L101",
+          "version": "repo-lines-v1:sha256:ed78a283f07c48e5cb3e5ac4a4f90bba607b0189323046239e2b540d12395366:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMGZmNzFhMWI3MmQ3OTYyODBlZmEzZjdkY2M4N2ZkNjFjYWExYzcxYjI3ZGIzOGQyMjBlYjE0MjAwMjJmNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmYTUwMzE1NWYyZjEyYmFkNGY4NjlkMDQyMjc0YjM0OTBmMTU3ODhlNTY0ODcwNWE2Zjc1MWNkM2E5NDZmMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwZmE1ZGZmNDY5ZTI1YWM5OWEzODk0MzVlMzczMmJkNWM3ODgxZmYxZmEwZTA5YzEwZDc4MWQ1ODRmZDkyMzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_76619cc930064ab2bc4352f9227a4aed",
+      "statement": "A bus search sets `busStops` and clears `stations` to `[]`, and a subway search does the converse, so the two modes can never both hold live candidates at once.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L66-L101",
+          "version": "repo-lines-v1:sha256:ed78a283f07c48e5cb3e5ac4a4f90bba607b0189323046239e2b540d12395366:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMGZmNzFhMWI3MmQ3OTYyODBlZmEzZjdkY2M4N2ZkNjFjYWExYzcxYjI3ZGIzOGQyMjBlYjE0MjAwMjJmNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmYTUwMzE1NWYyZjEyYmFkNGY4NjlkMDQyMjc0YjM0OTBmMTU3ODhlNTY0ODcwNWE2Zjc1MWNkM2E5NDZmMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwZmE1ZGZmNDY5ZTI1YWM5OWEzODk0MzVlMzczMmJkNWM3ODgxZmYxZmEwZTA5YzEwZDc4MWQ1ODRmZDkyMzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_64405577e93a4f8fa1c28a0b91608584",
+      "statement": "An empty candidate list after filtering is surfaced through the same `error` slot a transport failure uses (`이 주변에서 새 정류장을 찾지 못했습니다.` / `이 주변에서 새 지하철역을 찾지 못했습니다.`), so an empty result and a failed request are indistinguishable to the status paragraph — deliberately, because the remedy of panning and re-searching is the same.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L74-L101",
+          "version": "repo-lines-v1:sha256:fabddfe434a3a4aaa6446b07e373624b08ae5bace4e42db4c9cbefdb47119cb7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4YTU5NDA1ODgwYTM2Zjc2YjI3YWEwYTE1ZDExOGFlNmRkYzljMzlmMjZhMDEyY2JlMmRmZDhhMjE4MGZjYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyZWEyNGJlYjU1OWRjZTVkZDhiOWUyYTVmOTNmMDRkYjhjNTU5ZjBhM2Q1ZGY1YTVmMjc3NWM5ZWRlNGE5NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwZmE1ZGZmNDY5ZTI1YWM5OWEzODk0MzVlMzczMmJkNWM3ODgxZmYxZmEwZTA5YzEwZDc4MWQ1ODRmZDkyMzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_63f3ec050afe4f51828fd51c2b9edb18",
+      "statement": "Search failures map to mode-specific Korean retry sentences, except an `ApiError` with `code === \"INVALID_LOCATION\"` (detected by `isServiceAreaError`), which maps to `서울 서비스 범위 밖이에요. 지도를 서울 근처로 옮겨 주세요.` — the one failure that tells the user to move the map rather than retry.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L54-L67",
+          "version": "repo-lines-v1:sha256:baefa268818c46a623425192938d0a2d2738aeb1113113ba6829322001ac77ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNjY2YjMxZDg5YzBmMDJjMWRlZDRiYjUzOTRiZGUyODQxMGQ3ZWYxMmRhMzE2NmRkMjQ1OGY4ODM0OTFmMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmOGMyODViMjM4ZjI1ZDM0YmVlOWYwZmUyNGFhNjMwOTFmYmI2ZWVkYjk0NDA3ZjhkMjhhOWM0YjYzMDMxYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxNTk3ZDM0NzllZjEwY2Y1ZDYxZDBkYzkwN2M5OTBhMjRiOGZkODE3NTNhN2ZjMThjYmE2NmI4ZmM0Y2I3MjgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L23-L30",
+          "version": "repo-lines-v1:sha256:4b880e13345d98284bc412e176ce05a5851c1e9f10ff034698abdb4109bf8412:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2UyNWQ4Y2RkNjg1MWY0MTM1NDI4MWU2YWUzMDgzOWI2YWUxYzI4NjE4OGYzNjg3ZGRmODk1NTdmYWQ2YTU0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGY4YmEwNTdjMDVkMmNjMjBmMzJjZDRjYjY4NDA2YTJkNDUzMGFjNWYyMTI0MTMxOTk5YTMxMzc1MjFhYTZlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGE4OGU3M2Y0N2FlYjJiOTAwZDg3ZDlhOGFhYmM5YmQ3NmZkNGZmYjY0ZDQwZjJmZDUzMTIyMTU1ZjFmNWE1MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9239bfd9a42e4d8b96de06b411974927",
+      "statement": "The finder renders as an overlay on the same `MapContainer` at the same center with saved markers still drawn — there is no dialog, scrim, or second map instance; this is pinned by `MapStage.test.tsx` and `App.test.tsx` asserting `queryByRole(\"dialog\")` is absent.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L174-L188",
+          "version": "repo-lines-v1:sha256:6d137803165d246643bfc0c16eb1486e717ed370a6cd6afa973f47611fbe714b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1MWRhZDFkYWFmOTIxZTAwNWQ1ZTgwNDAyYjk1Y2E5MTdjMGEzOTU4N2VmZGVmZmU0ODA4ZWJiN2E0NTUzMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmYzE4MDUxZjA3YjM4YjU2ZjE4MTQxNjFkZjU2MzZhNTlmMzA3NTE0ZDM5ZmM0YmExNDMxNjc5MTYyYmJjZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0Yjk3MzVmNDJmNDE3YmQyYzNhOWQ4MDZkZjRmNjYzNzY2YTdmYzJkODBiZjE3MDBjMTQ1ZDg1OGZiMmQzOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkMWU3OWZmNGM4MGY1YzU4YTkzNmEzM2UwN2E0YjIwODliM2MzYWUxNTI4MmFkYTNhMzY4ZGE4MzM2OGUwODIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L267-L282",
+          "version": "repo-lines-v1:sha256:07b76e89767477071cb82c56f2689dcd7ab992b5187188d18190e9a9518337a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NGU1NzBkMTA3ZjFhM2Q1NGU4N2I3MTU5NGRiMjllMTBlMWJkZmFlNmM4MmU0NThlMTE2MjA4NmNhYTYyYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1MGQ2ZjgwYWVhMmNkZjMxNTFkMDA1ZGU1MTUzNzVmNTM0NDRjMDYyMGRiMTgyYTYxZmNjZjM5M2YyOTMwNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMjk5NTlkNDVjYjAwMjI3NTczY2YxYTk4YmRmMWVkOTVhZWZiNjEzMDU0NWFhYjU5MjU5ZTZiZTM0Y2MwNTAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.test.tsx#L144-L174",
+          "version": "repo-lines-v1:sha256:1bac58c1228ca8a88421f15d4f2e80c82857984bdf6ded1f728d4782fbae2cc6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1N2IyNjUxNmU4MDZiZWE4YjYwMTlkODBhZGM5NmVhNzJmMmFmOGQzYzEzZjVkZjI0MGZjYzg3NmNkZTZlYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NTIxNjE1ODk1MzU1Njk3YTVhMDZmYzRlYjc5OWNmYWNiODI4MmVjMDdmMjQzNGE3ZjMzMTk2YWY4NzI3YjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1OTlmZDljOTA2NjMzMjU2NjRjMDc3MzAxZmEzMmY1YmViMTQ4N2EzZDBjNWU5YjgyNWRiZWQwYWZmYWYzODEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L63-L123",
+          "version": "repo-lines-v1:sha256:3472a9c6fb22002ffb4b2f4c94177c8ff85bd14f943df9c6a6ed0d07976be6bf:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZTBjZjNiNzg0ZTY5ZDMwOTc3N2NmZmQzODY3MDc2ZTg5MDBmMzAxMzA1ODYzNTNiNDczMGRjOWZjMjk2MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMTM4NjI3ODNmNTczZDllYzdkZGUyODAwN2I2NTBlZmNkNDg5OTY1MzU1MWQwMmUwOTBhZTIzZDQ3YjYwODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_138a90b03f7049389b782ec3e0dd1872",
+      "statement": "Finder state is split across three owners with disjoint lifetimes: `App` holds `searchMode` (whether and which mode is being searched), `MapStage` holds the working `mapCenter` fed by `MapCanvas`'s `onCenterChange`, and `useInlineMapSearch` holds candidates and pending selection — created and torn down with the search and never persisted.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L28-L32",
+          "version": "repo-lines-v1:sha256:487ebb2a269bcaae41c8745bd0fc0589f59feba7f33be65e30dbdf5dbed2c216:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE3ZjU4YmU1ZDVlMjBjZDNiNjRlZTRhNmVlYmEyMzc5YmVhZDk4ZmVmZmMwODljZTgyZWQ0NjVmM2ExZDdiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWEwNTFlMmNmY2ZkY2E2Y2FjNjk5ZTZlOTVjMmE1ZjZmNDdkOTU4MzI1YTllNmVhMTBjYjZkM2ZlZDM4NWQ0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTdiYWY5ZmRiOTc4YTU2YTUzOWY2ZmFkMzY2MmNjOGVlNmM4MDVmODk4NTJjYmI1ZTIxM2IxYmQ5MTAxMzQ1YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmY4OTA5NDVlNWFjZjc5ZDI3NDU0ZWYxMWIwOTBkNjYzNmI2MWRhYzFkZTIzN2UxMzAwZmY0ZTdjNGU3MTUyNyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L48-L57",
+          "version": "repo-lines-v1:sha256:c421b6e2dbf4bd44a4dac8cfb7506ca19a9a903dafd6c54b928dddffa3e804a6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NGU2ZTFkMDBmMTg2MGE1NmE4NDFiOWQyMGMyODY0Yjk3OWIzYmNjNWRjNzQxMzE5Mzc3ZTczMjhkMGMyZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMGM4YzRkNzU0NmM4MWJjZGQwYzhlOTQyMGE1MWVhMTQwMjA5OWZlOTI3MTg1MjE1YmYzZTU3MzhmZGJkNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwMTRlZDZkNGY0YjA3ZWMzM2NhNzdiYzcwMDc0ODJlNmE0MjM2ZDYxNTlmZmM2MDFjNDRhNzU2OTA3MTg1NTgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L38-L50",
+          "version": "repo-lines-v1:sha256:1ec05a84ebcf60d35c782261048742de744bfd448c36db93f4ff6737c252ec9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiMjRlZDQxZDczOWFkY2E3MTM0ODU3MDc0ZmVjOGEwZmU1Yjg5M2FmYmM4MmNkMzhmODhhMTdiOTFkZmRlMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2ZmQ5ODdiZjk3NzllN2M2YzMxMWNlNTliMzk5ZWZmMWFmZGQ2ZDJiMzIwNmJmZDVlMDVkNTg5OGI3NDY0OTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1YWE5ZjAxYmRiZTI3ZWNiNjk5ZWM3NDYzZWZmZDI2OTM3MTYwNTRkYzA5MDZmNmE2YzcxZTU3ZWM0MzcxMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZmJkOGYxZDQ3NDIyZmRmYTMxYmE5Y2U1ZTM4MzVmNDBjNGY4NjViZmFhNDIzZDE4MWRkNzQ2NGFmNWVmOTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_119a5a278ad946f493a11ed7cd2edc55",
+      "statement": "The `정류장 찾기`/`역 찾기` trigger carries `id=\"point-search-trigger\"`, `aria-pressed`, and a label that flips to `찾기 취소` while active; its handler is a toggle (`current === mode ? null : mode`), and `App.closeSearch()` clears `searchMode` then refocuses `#point-search-trigger` inside a `queueMicrotask` so keyboard users land back on the opening button.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L186-L190",
+          "version": "repo-lines-v1:sha256:08d9b081a2e32fc479681280af9683184562953946aef51f5885a759389da66b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzRlZDhjYmRlZGNhODA4MGQxMDZjNmViYTkzMmVhMWI0MTIyODg0Y2QxNzIyY2M3Mzk3ZmZhNTA2NGU2NWMyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUyMmM0MmNkMTljNmQwM2Q4MDhjNDUyNzIwNTUyODI1YjdlYTFjNWI0OTFiMjE4NTExY2FjNzQxNWNmOWQ5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGFiZmI2YWFlMWJlNzA4NjFmZjcwOGViYmQyMmNkYTNmYmRiMDlkYTc5NjRlMmQ4MTJkMWMzYTc4MzM5ZDNmMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjk0NmE4MDk5YTkxY2VhMTQ2N2UwMTk3N2Y3YzVkYTNiYmM2ZDQxYWUyOTEyZDMzZjk3YmZmMTMyOTFlMjkyNyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L81-L86",
+          "version": "repo-lines-v1:sha256:76bc6c3c7ce1a194d5fcfc8aa2dbfb0eea2174705be18dd7a6a37440764fff57:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTFmODNmMDc1YTlkMzA3NTExNjQwOTQ3NWY3NWYzZTFmOTUwZTlkNmM2MDU5N2QwYWVlNjIzOTIyZDkxOTdkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDg0YjVjZjU2YmIzYWI2ZDAzNzk1YTAyYWVkNTQ3YzcyZjMyMTY5MjMwYzA3Y2IwOTNlMGU1MGM4OTVlMzAxMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzFiYWE2YzA5ZjZiYWRmZTkwMGNmMmFkMzg4MTdlMjE0YTExMTM0NTIzZjUzODhkMzgyOTY4ZTkwNjA5ZjcxNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/TransitPointSelector.tsx#L103-L113",
+          "version": "repo-lines-v1:sha256:6cffa4e2070b7c5d3f57570ee6df259d5ac0c0577d96877028214194e3d0fc6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyOGMyZmFiMzNhZWRjZDNiNDcyYzhlOTUwZDg4ZGNhZjZkNzAwODRjZmI2YTgyODIxMWRjYjczYWUwZGMxNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyZjNjZmQxMWRhNjE1MDE5N2FjZWVkMDg0MDZhYzY0YjA1MDM0MGRlN2JjMDQxMjRhNGNiN2VmYTY3MTM0MGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5OThiOTVmOGU1OWUzMDczZjcxMjdkYjRjMDdiOTZkYTg0ZGNlZTFlMzllNmNlNjE0YmY3Y2E5NmZlMzk3ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkZTY1MDMyZDc0MzY1MTRlMDFjZjE4NjI2OWIyYzFiNzBmZGMxZWM5M2M0MDE1NGI2ODU1NDM2NWM5ZmM2NjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b5c639be5544bbd8f5fee88c54e9daa",
+      "statement": "Four distinct user actions cancel an in-flight search — the trigger a second time, the overlay's `취소`, switching the `출근`/`퇴근` commute context, and switching the `버스`/`지하철` mode tab — and all four are pure `setSearchMode(null)` with no additional cleanup, because the hook's own entry effect performs the reset.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L151-L202",
+          "version": "repo-lines-v1:sha256:92a27f410ef21939fc047c4c202038d035935aab10020908f3eeb7b7d90142be:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MTMzMzEwZWRlOGE5OTQ1NWZmNGNkZDU4YWEwMjEwNDY1OTRhOTZkNGQ1MzEzYzA5MTMyZDZlNzI4Yjc2MDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiNTkyZTA3YjRjZjUzYTgzODZjNTY4MGNmYjdmM2U0ZTc1NDI5NjljODcyNmFjNWVkMzI3NTNmOGNhOTU5NzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMGIwM2E4NjhmZjk1MDBkMzk4ZWRkM2JmZGFmZThkMzI5YmVkZjQzNmIwZmEzNGRlMmMzMjNhMDI4NzZlNGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1MjI3NzYwZThlYmI1NDIxNzYzOGM4MDg0MWYyOTJjZTFmOGQ2YTVjMTI5ZTUwMzZiN2QxNzE1NDA1YzBkMTkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L81-L86",
+          "version": "repo-lines-v1:sha256:76bc6c3c7ce1a194d5fcfc8aa2dbfb0eea2174705be18dd7a6a37440764fff57:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTFmODNmMDc1YTlkMzA3NTExNjQwOTQ3NWY3NWYzZTFmOTUwZTlkNmM2MDU5N2QwYWVlNjIzOTIyZDkxOTdkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDg0YjVjZjU2YmIzYWI2ZDAzNzk1YTAyYWVkNTQ3YzcyZjMyMTY5MjMwYzA3Y2IwOTNlMGU1MGM4OTVlMzAxMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzFiYWE2YzA5ZjZiYWRmZTkwMGNmMmFkMzg4MTdlMjE0YTExMTM0NTIzZjUzODhkMzgyOTY4ZTkwNjA5ZjcxNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b3edf0eb18d4943ae01b28c7a80bf4c",
+      "statement": "On a phone with the map closed, entering a search mounts the map, because `App` renders `MapStage` whenever `isDesktop || mobileMapOpen || searchMode !== null`; the stage is `flex: 0 0 55dvh; height: 55dvh` below 960px, and `MapStage` hides its `지도 닫기` button while searching so the only exits from the finder are cancel, save, or the trigger.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L260-L281",
+          "version": "repo-lines-v1:sha256:8321fd5729319c1bf754d33a86dbfe9370044d84d54b69d06ef0113f6a813299:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYWM4YTU5MmRkMDhlZDQwM2I1ODM3ZDM1ZmNhOTNkNzMyNjhjNzVmZGNhNDBiMTU5MzMyMTAyZGFkYzMxYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwNzcyYWRlMDU2ZWJjMjI5MmI0NTg4ODIyOGJjNjFlNmRjZGM3Njg5ZGViNmViMDA3NzVlODRlZjVjZWU5OTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3YWNkNjdlNThhMTE2M2QyZTdkZDUzOTY2MWFiNDVmMTcxMzg1ZDE5NDA2NTNjYjBkZGNiY2JjZTIyMmVkNDUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L125-L134",
+          "version": "repo-lines-v1:sha256:da27b216974154a4684a8c5ff22315706f5cedc8d52127d8fe060d421c824a25:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5OWE4M2U1ZjdhY2EyNGZiYWIxNTk4MzE4Y2MwYTRhZTU2ZmU5MTlkM2UxY2U4OWU1NDZhZjc0ZWRlNTU3YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMDA5OTVlYjZmNmJjOGNmOTdjYTFmMThiOWEzMWQwY2MzNTk1NDNjNGE5NTMyY2MwMTM1NDAzZTE2OTgxYTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyMjY3NGQwOWYxODEzZTQxMTkwZTk3M2M1NmUxODk2MzRmYWQwMjg4YTQ1NmI3M2FkMTNmMjdmZjc4MTZjNDAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1977-L1988",
+          "version": "repo-lines-v1:sha256:c43cda836f7c12862599f192f7d5b40944bac6340921db3ab2b052228aedb253:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2OWM3NDM1NmU3MmUwMjExMTY4MWY0ZjM1MDZiZmNlYWY5OGQyMmQ4YTQ2ZjZiMzg5Y2JhMWNkZDM4YzdiZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExNWYyMTJmN2UyMjg4Y2ZjZWI2OGI5ZTc5Yjk0Mzk2ZjMzYzA5NjkwZTY1ZDg2YmQ2YTQ0NjJjZWI5ZjUzODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0MmRmZTRkYmMzNjBkODQ5NmI3MmUyYTIxODhhODBkZTM3MGMzYmQ1NmI2MGMwYzdmZTI4MGMxODY3ZGExMDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88542d3fab17412a9fc92679c04fe67f",
+      "statement": "The candidate marker and the candidate list row expose the identical `aria-pressed` for the same candidate, because both derive it from the same pending-selection array: `MapStage` merges pending selected ids into `selectedStopIds`/`selectedSubwayStationIds` for `MapCanvas` and passes the same arrays as `selectedBusStopIds`/`selectedStationIds` to the reel — toggling from either surface flips both, and neither surface is privileged.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L174-L188",
+          "version": "repo-lines-v1:sha256:6d137803165d246643bfc0c16eb1486e717ed370a6cd6afa973f47611fbe714b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1MWRhZDFkYWFmOTIxZTAwNWQ1ZTgwNDAyYjk1Y2E5MTdjMGEzOTU4N2VmZGVmZmU0ODA4ZWJiN2E0NTUzMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmYzE4MDUxZjA3YjM4YjU2ZjE4MTQxNjFkZjU2MzZhNTlmMzA3NTE0ZDM5ZmM0YmExNDMxNjc5MTYyYmJjZTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0Yjk3MzVmNDJmNDE3YmQyYzNhOWQ4MDZkZjRmNjYzNzY2YTdmYzJkODBiZjE3MDBjMTQ1ZDg1OGZiMmQzOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkMWU3OWZmNGM4MGY1YzU4YTkzNmEzM2UwN2E0YjIwODliM2MzYWUxNTI4MmFkYTNhMzY4ZGE4MzM2OGUwODIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/InlineMapSearchControls.tsx#L105-L134",
+          "version": "repo-lines-v1:sha256:0a331150e99e783e6e88d0ae155671b29e4231a65e3f7c46681ef8d1af07cc7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3N2NmOTViZTU3M2MzZWU2NDNkZjY1YTI5ZTc2ODUyNTMxOGRlOGRlYmRhMmFlYmVhODI3ODg1ZjliNWYyNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjOGYzOTJmNzJiYjVhNjgxNWZjOTI5ODhhNGNkZTU5MmU3NTNhNWRjODU2MDgyYzYwZWY0MGQ1MzlkNGUxM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMDA4NTlhZmNmODA2ODdkODkwZDg1YTY0Mzg4OGIzYTljZjcwMGFjZmY2MWJmNzE2ZjMyN2ZmMWM5NmYyODkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L459-L487",
+          "version": "repo-lines-v1:sha256:f7f3f925faeec360649d92354aa0484c955635c62edb169938241343dbfb58b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwOWQzZjczZGQ1ZWQxNmUwOGFiOWQ1ODc1YTBkYzIyNGQyOTMzYTY5Yjg5Y2I1NGNjNTQ3ZDgyMGRjMjBjNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4MjY3MDNiYjIxYjJiMGZiMjczYjRiM2M3YWU3ZjFhZmQ0NTNiZDJhZjJlZTBhMzQ3M2JmY2MyNjQwMDIwOGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0NWQ1NDIyMGQ1ZDM3Zjk5NGNkYWU4MTJhMTgyYjJhYWUxYTEzNjE2Njc1MWFjYmY3ZTUxMGMzZWJkMmQyYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxZTQ1NWM3OGI3MjZhNTJmNmIzNzNjYjJlMjI1YzEzZDUzNGYwMDRhMjY0MzUyOTcyNmNiOWFjYmUwNTM5NDEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L71-L111",
+          "version": "repo-lines-v1:sha256:4c9e6943ecc96e480e326bfb3da9a51f818e68f459c694622b32c92eff7f5203:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MDE4MmM3YTZlMzQ5YTIzMmNmYTljZDZlZTZlMmIxMjE4ODE3N2FiZGMxOTk1MzY1OTVlYTBmYWFkOThlNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiM2E0ZWZhYTM3YzA0YjM3NDM5MzFiNzk2NDc1ZDA0YTI5ODM5ODlkYzhiYWYxNTFlYTQzMzYwMzU5Y2YyNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEwZDQyZGM1NDg0NTc5OGJkYzU1MTA4M2ZkNzc4ZDk1ZWRkNTQ4MWIzY2YyODRjZTIwOTdjOGU0MmMyOGI2NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhYTEyOWVhZmJmMWM1YzRmMDgyYjYxYzdmYTdhNTdiZTM2YTZiN2MxZjk0ZWViYmQyYTAzMWYzOWIxYzlhYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_538d3d1a21fc4b17af6a3f288042dd05",
+      "statement": "Saved markers keep rendering through a search while candidates render as dashed markers — `map-marker-pending` uses `stroke-dasharray: 5 3` on `--route-blue` and `map-marker-pending-subway` on `--subway`, and the `is-active` variant drops the dash, switches stroke to `--ink`, and fills with the lime `--signal`, so selection is carried by stroke geometry plus `aria-pressed`, never by color alone.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L483-L532",
+          "version": "repo-lines-v1:sha256:eaa0e95bad6438254dd88ac957d6be542703fcdaa624f56547acd7a2bb3d2f73:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NTY1ZTk2NGIwMzgwYTYyMzYzMTc0ZTIwYjE1ZjZmZTAzOTQ4ODVkNzhjYjdlMTk3YzBiNzM3ZWQzOGJkZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3OTdkYTM3MTI3OGI4NTE2ZjRhYWU3YmRmOTE2YzIxYWIxZWRiYWIwMzlmYzk3NmU0YzliMWM1M2I3NzdhNDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0MzdhMDBlZjg5ZjRiZTZhOTdhMmY2ODAxOGUzNjgwMTc3Nzc0NDkwMDkzYjNlMWUwYTRhMzk0YjJhZmQ3YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YzA3Y2QwZDEwN2E5YzEwMzdiMDZlNjk2YzVkYTNmOGY3NTMzZjM2Yjc2ZWRkYmE0MDdhMWFhNWE1NGI1OTAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L839-L892",
+          "version": "repo-lines-v1:sha256:7e7daa2b28a86baece173634793d41e1baf6728cc1c8444c2bd1a2305e96a0f5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhOGVhNzVlN2YwNDlmYjUzNGM5NTlhYjM5NjFkOTBiNTg2NTc4ZmZjNWRkMjUzN2E0NTI0NzBkNjRkMTE1YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3OTgxNDA2NTUzNTZkYmZiZDRhZTE4MmY1NDNlMzM0MTgwMDBhMDJkNjRhNDg5MjY0OGM0Mjg3NDBmZDVjYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MzEwNWUxMWYwMzc4YjA4ZDc2N2U2ZDc4MTZkOTQzMmViNDg4ZGNlZGMyOWMzZTdmOGM1YmE1NGFjODNmOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9216222cb9c84e88a924a045023e01bc",
+      "statement": "CircleMarker elements are upgraded to buttons by an effect keyed on `[label, active]` that sets `role=\"button\"`, `tabindex=\"0\"`, `aria-label`, a live `aria-pressed`, and the `map-marker-hit-target` class — this shape is required because react-leaflet exposes the Leaflet instance through a ref and Leaflet's `add` event fires once, so attaching attributes in a one-shot event callback would freeze `aria-pressed` at its first-render value and selection changes would never reach the DOM.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L45-L106",
+          "version": "repo-lines-v1:sha256:6ee58f738e93f059c9481aac93df0bcb43316c35d73fd504db9cb6f62cc8917b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZjBiNjRkMzM4NmM4ZmZlNWM0MDA1MmIxYjRkMTIxODI2MjZlN2VjMTczY2UyN2M1OWZkMWVhMGQwODNmZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMTJlMzM2ZmJmNWU3YTYyOTY4OGRjZTI3ZmUzNDhmNDA2ZmZjMjM1OGVjNWRlN2YxYTRkOTMzMDc3MWZmMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4ZjJkZWY5ODkzODdiZjRkNDI4Y2ZlOWFlNmZmNWQxM2FmM2MzN2E4M2RlYzdjMTU5N2VjNGFkNWE5MWE0YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3ZWNhMmFlZmI5MTUxNjZmNGYxMTBkZjEzNGY5YzVlZDM4ZGJlMWNjZDU0MTllOTViYTA3YjVjZDE3M2E3ZDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_afadde93b01b4b37ba787469b85c411b",
+      "statement": "On `Enter` or `Space` the marker's keydown handler calls `preventDefault()`, then `marker.closePopup()` before invoking the select callback and `marker.openPopup()` — the pre-close is required so the newly opened popup replaces any popup that was already open, matching Leaflet's click behavior instead of stacking or suppressing it; `Escape` closes the popup without selecting.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L87-L101",
+          "version": "repo-lines-v1:sha256:1d8616a02b2e91fd2c857e61c2e3c7f1b04649e96b8463fd344deb9097a76d26:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1YjVhNDU3MzI2NjM3NTMyZDM4ZjdjYmI3NWFmODU5ZTgzMTEzOTgzMjU2ZmMzNzllYjk2NDZkMDIyYjk0ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5ZWZjYTlmOTVjYTU0MjI5MGMwZmRkNGJhZWU2M2IwZjc5Yzk1MTM3ZDE2MGM1MjEwMDA4ZjNkOWUzOTkxZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxMDI3ZjUxMmI5MjQ4YWE5ZGQyZjdkZTQ4ZmE1Y2FhOWU1Yjc0NzA1YWRmYjVjMDlkM2NhM2QyYjExNGMyYWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e40997b57fd5492d8b15bb67b8e0e2a5",
+      "statement": "The `onSelect` callback is stored in a ref updated during render (`onSelectRef.current = onSelect`) so the keydown listener, which is detached and re-attached on every `[label, active]` run, always invokes the current toggle rather than a closure captured at listener-attachment time.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L56-L60",
+          "version": "repo-lines-v1:sha256:6467fab14124076eecc8ab5c1a6e8009e510a9e8c7d988589cb07a3e09c623c7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjBkNGQyZDMzODY2OGFkYmZlMGEwNmYyZDIwYWQyMWMwNmEwNWI3YWVmZjczYWY2NDNjMjg5YjEyZWY3OWY0MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgwOTM2Mjg5NGYzYmI3OGU1MTljNTMzN2M2ZjU1NDU4OWM0YmRmYWM3MjdkNTdhYmE3ZWE0MzdlZTk0ZDMzZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWU3OGQ5NjlmZmY1NGFlODM0OWVmYzdhYjkwZTU2OGM0ZTllOGVkMDhhM2UxMDIzMTBiNWEyYWEzNjQyOGE1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzdhNDVhNjU2YzgwYmUzZjIxZTE5N2M4ODM4ZmNlYjI2MzVmY2JhYjEwNzQyMTA0ZTE0YmNlYzhkNDZmZWU0ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6afb3f342c264695ae7eebf867219154",
+      "statement": "Each map point is two `CircleMarker`s: a visible `radius={9}` circle marked `interactive: false` and a dedicated invisible `radius={22}` (44px-diameter) hit circle carrying click, keyboard, and all ARIA state — the hit area is real SVG geometry rather than a CSS box, and because the visible circle is non-interactive Leaflet never adds `.leaflet-interactive` to it, which is why the token CSS rules style the marker class names directly instead of gating on Leaflet's class.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L118-L192",
+          "version": "repo-lines-v1:sha256:643c5ad1949a8eda0bf8b4b1b40c1cfe0baa71e7f61b1f4a64a44c9f7bbe1cf8:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjOGQwZWExYzZiZWJjOGZhYWJiMjhlYTYyN2I4NjlhYTZiNjliM2I2M2VkNTE0MWYxYjMyZGUyMTZjMzYwZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGZjMGMxNzNkMWVjM2ZjNTAxZDdkZmE5Mjg1NTAxYzUyN2NmYjQ3MTI1ODNkYTNjYzM2MTgwNTY2YjRiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4N2UzMjBmYWUwZDFjMWVmNmU1M2I0OTNhNTFjODM5Y2U0ZDQ3NGM0NDBjNTZhM2VhZDBmOWVlM2Y1MmMzZjgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L839-L892",
+          "version": "repo-lines-v1:sha256:7e7daa2b28a86baece173634793d41e1baf6728cc1c8444c2bd1a2305e96a0f5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhOGVhNzVlN2YwNDlmYjUzNGM5NTlhYjM5NjFkOTBiNTg2NTc4ZmZjNWRkMjUzN2E0NTI0NzBkNjRkMTE1YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3OTgxNDA2NTUzNTZkYmZiZDRhZTE4MmY1NDNlMzM0MTgwMDBhMDJkNjRhNDg5MjY0OGM0Mjg3NDBmZDVjYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MzEwNWUxMWYwMzc4YjA4ZDc2N2U2ZDc4MTZkOTQzMmViNDg4ZGNlZGMyOWMzZTdmOGM1YmE1NGFjODNmOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_29cff564df674cd39bbf9734e2cd82c0",
+      "statement": "`is-active` is toggled on the visible marker's element through an effect (`classList.add(baseClass)` plus `classList.toggle(\"is-active\", …)`) because Leaflet applies `pathOptions.className` only at creation and `setStyle` never re-applies it — toggling the class through props alone would be a no-op after first render.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L139-L154",
+          "version": "repo-lines-v1:sha256:835a0c619197d407f3cce56f38607f31dd67471379c434de8c4f21a80c9d42db:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkYTIyMzRiZGJhYzgxNjQ2NWFjZjUzZDI1YmYyNGM4Y2ZhZGUyMTZkMGNiOWE4MDhkZDNiZTdhYTAzZjUwMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNDY3NGJkMTVjMWQ0NmY2YmMwOTVkODRiMjRmZjBjMDBjN2VhY2I2MWI2OWUyMTQyOTNlY2EzMWJmODlhMTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1MDI0MmFjYTE4ZWMyYjhhOWQ1NWZiNDg5MThlMjljZDc3NjE1NjJlZjdmOTlmNTE5YjI3MzQwOTJjNDI1OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhZThjOTQwZDIyZGUzZjZkMmFhZmRlZWE4YWY0NjlhZDM4NTBjZWNhYThiMTdkZmI5ZTExNzZkZTlmNDMzMzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_580a8b7c593e42f0963b7e938965b550",
+      "statement": "Leaflet's `popupopen`/`popupclose` are re-dispatched as bubbling DOM custom events carrying the popup instance and its `_source` marker link, so a frame-level `Escape` handler can close whichever popup is open and restore focus to the owning marker element — but only when `document.activeElement` was inside the popup content, leaving marker-focused and container-focused Escape to keep their natural target.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.test.tsx#L189-L284",
+          "version": "repo-lines-v1:sha256:61acfd9f57553b420d78053482f941519d068f5613862fc59279509a90a7ba83:eyJzZWxlY3RlZExpbmVDb3VudCI6OTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3YTVmYWFiMGU4Nzg5ZTAxYzIxZjI5MmExZDg5NWIwNzg5YmExOGFkY2UzMzczYTRhODU1MDNmMjg2ZjBkNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5YWNjYWQzNGQ2NGM5Y2IxZDc2ZTIwNTM0MDJmNWUyMGM4NTI5ZGE1ZGY3OTZmNjJkOGU1ZmE1N2I2M2FkMWMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L237-L251",
+          "version": "repo-lines-v1:sha256:82604029dbc3f41503cd1dd28d3a14345991f9037aa326ad17c0b5aa7011405a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMzQ4NWU2ODg2YzY2NDMyZDdmOWUwNzkxNzk0YWVlNzg2YzdmMjI3MDQwYWY3NDc2Mzk1Mzk2OWM5ZmE4M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiMDkyNGUzNTg0NWY0ZWM4OTM4MjllZGY1ZGE1ZTM2MTAyODU0YzYxYjBhZGQ0NDQ3YzE0NWM1NzViNTFjZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YTg3ODk5MGNjMmQ3ZTc5YjYzYzYwZmMxMjA0OGFmM2QzZWRjODQzZmJmOTA5ZmMyY2JlODRkMDAwYWFhNDkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L377-L426",
+          "version": "repo-lines-v1:sha256:a0a9442bd9abd96ada29e6475814e94ad8c110843d8f8ea41b316ecf287f1445:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0YzFjNjc3MmRiNWY0ODViNDVmYzVjYTE1ZTkyOTk4N2E4MDFmZTJjOTNiNzExNmNkODRhZTI5MWJhMjZmNDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNWMyMzhlZGQ3YjUxZmFiNTAwMDhjMGVkNjE2NmFmMWU1MjBjMzEyZGM0MGIyNThhMmZiYjdiYTExNmVmNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c15c1a302fb4a1e9f939f958d51d5a5",
+      "statement": "`InlineMapSearchControls` is a focusable `<section tabIndex={-1}>` labeled `버스 정류장 지도 찾기`/`지하철역 지도 찾기` that takes focus on mount; its `저장` button is labeled `{selectedCount}곳 저장` and `disabled` until at least one candidate is picked, and its status paragraph is a polite single-sentence `aria-live` region (`지도 중심 주변을 찾는 중…`, the error string, or `가까운 {정류장|역} {resultCount}곳`) that never re-reads the list.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/InlineMapSearchControls.tsx#L36-L103",
+          "version": "repo-lines-v1:sha256:5af8613249842f673a889dc6c9ce2fb2810c7d7bd526e3101aa0554f273e4f84:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiYWJmZDM2YTRiZTY0N2I2OWU2ZDA5ZWZiMzdiNDMzMjk2ODk0NTc0ZmNkYTQ3ZDhmY2RmMjgxZjVmNGI3ODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMjE1ZmQwM2NmYzJiZWViZjgwNGExN2FjNWU5NDc5NTFmN2NkMmRjMDU2MDUyMjQ5OWM2MDZmZGJjZDcxODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxYWJlNDViOGQ1YWIzZWQyNDBmZmEzYmVlYzI3N2JhNjhlZTViZmIxMGUwZWNkYzA1MGIxZDQxODRjMTU0MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiNTVkODI4ZDVlYTNmNzA5MjJkN2NiZjEwOTg1ZGY1MWI1MGRiOThiYzQ3NjU3NTMzYTUyYmRmOThlNjQxODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5ed5bc1859b94d23ae45221c71f621eb",
+      "statement": "Candidates render into a `<fieldset className=\"inline-map-result-reel\">` with an sr-only legend, laid out as one horizontal scroll lane (`overflow-x: auto`, `scroll-snap-type: inline proximity`, `min-inline-size: 0`) pinned to the bottom of the map — satisfying the mobile contract of a single-line scroll area with no second vertical scroll surface; below the 960px breakpoint the toolbar and status stack vertically and the two action buttons become a two-column grid.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/InlineMapSearchControls.tsx#L105-L134",
+          "version": "repo-lines-v1:sha256:0a331150e99e783e6e88d0ae155671b29e4231a65e3f7c46681ef8d1af07cc7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3N2NmOTViZTU3M2MzZWU2NDNkZjY1YTI5ZTc2ODUyNTMxOGRlOGRlYmRhMmFlYmVhODI3ODg1ZjliNWYyNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjOGYzOTJmNzJiYjVhNjgxNWZjOTI5ODhhNGNkZTU5MmU3NTNhNWRjODU2MDgyYzYwZWY0MGQ1MzlkNGUxM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMDA4NTlhZmNmODA2ODdkODkwZDg1YTY0Mzg4OGIzYTljZjcwMGFjZmY2MWJmNzE2ZjMyN2ZmMWM5NmYyODkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.test.tsx#L135-L142",
+          "version": "repo-lines-v1:sha256:e3ee7440619a89bc30876b0cb0ffbf632df6a38e6b92c77189d9bf7ee605024c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWI0NDcxZTJhNTdhNmRiYjJiNjQ3ZmY0NTEyNzMwN2UxMDIyZmE4MzAwZmZlZmY0Y2NhNDRlOTQ4MTQ2NzQ4MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTUwZDZmODBhZWEyY2RmMzE1MWQwMDVkZTUxNTM3NWY1MzQ0NGMwNjIwZGIxODJhNjFmY2NmMzkzZjI5MzA2ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjk0OTcwYTk0ZDJmZmYwNjAxZGJkMDcwMGE0OGFjNmQzNmFhMzZiNjIwYzlmYWYwYmM5MTU0NThjZTJmMWNmNyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1867-L1877",
+          "version": "repo-lines-v1:sha256:2b718d9f63af786bb2aa98e16ccf6b87ece3a740c53ec49eab7da50a8619bd51:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2MjZjODJjZjZmYzkyYWJjNDU3ZTg1MDNiODkwMDU0MWQ1NmIyZDZhZTJjNjMwMWU0YmQ5MzMwMDIxNzUzZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5ZjRiYjkxYzg5ODhiYTJjOGQ3NjFhOTM5NmYxNDkxOWFjZDg3N2MwMWI4NzhhNDA0YjljNTI0ZTllZDEyNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwYWFmNzk2OTA5MTVhZDA4NDQwYjgxMzY4YTdiMDY3MWE4Mjc0NzYyZTM3NjZlZmViODQ0MTAwZjcyNmM5M2EifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1986-L2017",
+          "version": "repo-lines-v1:sha256:9c31e42617af8979f3091b708c49205a29900952b8aa00ae57aba3151f204e4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0YWIwYzQ2MDQzOTBjMDcyOTFkODk5NTYxZGZjNDFkMzM1NjVkNTRiZDQ3ZTFkNTY2YTc2ZGUxYmUzMjQzMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2MjdlN2ViODNiY2ZiM2NhYTAzNGY4NGNhMjExZWU2ODk0OTcwYmVjZTIyYzBiMmI4MDMxYjc3YzE1MDRmODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlZDZjZGI0MzMxNmNlYTUxNDhhOGQzMDViMTFlYzQ4NzRiOTk0Njk3Y2ZiYzU5MTk0NDgzNjg2NWVmM2MwYjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dda2f9837ef14d7f8d91c1adefd2774d",
+      "statement": "`저장` branches on `searchMode` in `MapStage` and hands the pending array to `App`, which commits through `addBusStops(commute, stops)`/`addSubwayStations(commute, stations)` (the single `useTransitSelections` mutator that writes localStorage or enqueues `PUT /api/settings`), sets a polite announcement, forces `mode` to match what was saved, and calls `closeSearch()` — nothing reaches the selections document before this point.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L88-L110",
+          "version": "repo-lines-v1:sha256:855a27e8e629c43d94eb1982c7b95e3b58f6dc6708e68d650e234c7c2a0bf1e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlODU1M2I5MmE4ZjIxYTJjN2ZlZTU1N2EwYTBjNDNlYzMzZjBhMjMyNzRmMzI4MzVhMjg4MGQ2Mjg0OTcwMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYzE3MTA0N2E2YWI4YTAyNTY5NjZkMzEwNGE2MWVhNmI5NDk4YzY1MDMyZDhmOWY0N2RmMmUyNzNiMzhiMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0ZmYyMTE3NjhlOTQ3ZGJlOTU3NGI4YzdkNzNlYWNmYzFjNTU3Zjg2OTNmMDcyY2JmNGJiNzM4ZGMyMjYxNTQifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L98-L123",
+          "version": "repo-lines-v1:sha256:997316d0652d5eee755767d470f8977834b92153c48f1df52361e81ba9e34532:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YmVlYzA0MzNkNWY2YmI3NmI2NWEwZDMzZmYxZmUyZDFjM2E1NjQzM2QwNTU2ZDk2MDA0Y2VlMTIxNDgzNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjZDVhN2E5YmVlM2Y0YmMyNmQyZDJlY2EwYzYzNmIxNTNjNTNjNzRmNzg2YmExZTRmNDE0NDIzMWMwYzM2YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMTM4NjI3ODNmNTczZDllYzdkZGUyODAwN2I2NTBlZmNkNDg5OTY1MzU1MWQwMmUwOTBhZTIzZDQ3YjYwODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dba642a00fbc460db796d380e597fa3a",
+      "statement": "`취소` discards only the candidates: it runs `closeSearch()` and nothing else, so the saved document is untouched (no mutator call, no storage write, no `PUT /api/settings`), the working map center stays exactly where the user panned it (`MapStage`'s `mapCenter` is only reset by the effect on the `center` prop, which a cancel does not change), and `mode`/`commute` are preserved — unlike save, which forces `mode`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L81-L86",
+          "version": "repo-lines-v1:sha256:76bc6c3c7ce1a194d5fcfc8aa2dbfb0eea2174705be18dd7a6a37440764fff57:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTFmODNmMDc1YTlkMzA3NTExNjQwOTQ3NWY3NWYzZTFmOTUwZTlkNmM2MDU5N2QwYWVlNjIzOTIyZDkxOTdkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDg0YjVjZjU2YmIzYWI2ZDAzNzk1YTAyYWVkNTQ3YzcyZjMyMTY5MjMwYzA3Y2IwOTNlMGU1MGM4OTVlMzAxMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzFiYWE2YzA5ZjZiYWRmZTkwMGNmMmFkMzg4MTdlMjE0YTExMTM0NTIzZjUzODhkMzgyOTY4ZTkwNjA5ZjcxNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L48-L61",
+          "version": "repo-lines-v1:sha256:7cfb972e0de0949fa0ff3c50ca37ebd27cf5bbd6cb00c228dac10c9702b97c2d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NGU2ZTFkMDBmMTg2MGE1NmE4NDFiOWQyMGMyODY0Yjk3OWIzYmNjNWRjNzQxMzE5Mzc3ZTczMjhkMGMyZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxZWJmZmVkNjY0NTU4YzU0ZjhlOWIyMmY1YjBjMThmZWNhNTdlMzVkODE3MWJkNjFiZTBlYjkzMGU1NDIwYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMGM4YzRkNzU0NmM4MWJjZGQwYzhlOTQyMGE1MWVhMTQwMjA5OWZlOTI3MTg1MjE1YmYzZTU3MzhmZGJkNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMzgzOWQyOGMxYjdhZmRkYjUwMzBlZjM5YTdhZjIyMjBkZDFjOTdjNTgyMTBjZWQxM2MyYWVkYjBmMjIxNzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d68a74d977184c11856085868adbae3a",
+      "statement": "Product caps are applied at commit time, not at pick time: `addBusStopsToCommute` appends every candidate to the unbounded saved list but unions ids into `selectedBusStopIds` sliced to `MAX_SELECTED_BUS_STOPS` (= 4), while `addSubwayStationsToCommute` sets `selectedSubwayStationId` to `stations[0]` because subway is single-watch — so the pending selection itself is unbounded inside the search.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionMutations.ts#L25-L78",
+          "version": "repo-lines-v1:sha256:f5618096e88da083f0310ffa5038ca89b329d5bef8bf0549390783f437e7510d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhOWQ5MDdlNTc4YmNkOTFjNTI4OTM4YzE0MjBkNzFlYTlhMzBlYTk4MDkxYTY0OWY2NTIyOGQ3MWM5NzAzODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjNGIyY2M5ZmQ1NjZiM2YzOWRlMGJlMzg2Yjg3NjQ0NDkyNjNlMTg1NzMxZGJmN2E1NTQ0MWYzMjE3MTUzNmMifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L5-L8",
+          "version": "repo-lines-v1:sha256:67bd353a1f94d9d263ee460d929527242831daad490f6514071c61f2f2f1f02b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYThlMzkzN2ZiMWMxZDRiZWE4MWUwODMzZTdkMTY1MTE3NWJjYTc2ZjRjMGU0NDI5M2IyNzgwZmQ0ZjQyYjYyNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjliMDcxZDg2MzhlNTJkMTg1M2RlMjNiZWRiN2M1YjI4M2Q2ODkwMDMxNzNlZDlkY2JkYjVhMjczM2Y5MTFlYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjZkNTFmOWFkNGM5MGJiZGY0NDhlOWE5OGU3YTU2ZWU3MDc0YWUyMjhiNWVmNWJlM2MxOTMxM2NiYzAyY2IzNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTQ0ZDc4OTAxOTUxZGJjOWJiOTdkYWNmOGE3OGVjMGEyNjgzNDdkNjdhOTVlZTdjNWRmZmViOGY3NDBiYWU2OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e0d475f16ad8406098c405cef7312b33",
+      "statement": "Saving deliberately moves the map while cancelling does not: a save changes the selections and therefore `App`'s derived `mapAnchor`, which flows down as the `center` prop and makes `CenterObserver` call `map.setView(center, zoom, {animate: false})` when the centers differ by more than 0.0001 degrees — an unanimated snap to the first saved point that serves as a confirmation cue.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L72-L79",
+          "version": "repo-lines-v1:sha256:6fd232a4291b5c0d5f96e92d7c4d867bef85975ce6da3a05bcdd10f37e050b38:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjVkNTMxMjk1MzFkY2YwMjM5YzYwMDFlMWE3NDdjZTVlNDdhMjRjNTEwMzg3M2E3NDI4MzM1NzEzZGY4OTVlOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGUxNzdhYjYyY2UyMzUxYjlmZDcwOWYwMGEyOTMwOTU0MzQzOTZkNDUwNmFiNzhmNWZlMjY3YjkzMzA5NDQ3NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjE3OWQ3NzU1ZTVlODk1ZTQ5ZTMzNzk5NGI2ZTY0NjUxMmUyOTY4ZTU4NGExZmUwNzA5NmNjMDMwZDlkNzhiZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmI3YWUyMDFkODJmNGYzMTAwMDMyOTk0MzY4NGRmOGJmYTYyOTM5ZTgxYWI5N2E4ZTk4MjdmOTNiYmVmMGExNCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L274-L283",
+          "version": "repo-lines-v1:sha256:86e68754519bef0f1cf863947390452e665ca01caca4d2845ca8e70d5c55a89a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZmRjMWIzYTgyNGYyM2U3NTMxMjEzNWQzOWUxODU3MmI2YTViMzQ3M2E3MmFlMTllMTcxOGEzY2MxMDE3NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNTk5NTNlNDYzZjRmNWFjY2NmYzNlMmNkM2M2NDVkM2UzNTYzOWZlYTkwZWRhYmQ1OTMwYWU3MjNmMmM4OWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViOTIwYzIxOTQ1Y2IyZmQzNGJiZTk4MzBkNjEwNTM1MDFlNjVmNWQyZGFhOWM5MDk2OGUzZmQzZTA3MGY3YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkOTFlNWQwODkzNTAxZjVmZGY2NmNjOTc3NGZiNDZjNmFiMjQ0Njg2ZWExNTE5ZWM4ZDYwZGE2OTE3NmE0YjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bdea45769fd347429dd24a9964ffa68e",
+      "statement": "`MapCanvas`'s `CenterObserver` reports Leaflet `moveend` centers to `MapStage` only after coalescing them through `requestAnimationFrame` (skipping changes below 1e-7 degrees), and also writes the resolved center and Leaflet animation options into the container's `dataset` as machine-consumable QA truth — so a fast drag produces one center update per frame rather than one per event.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.test.tsx#L430-L464",
+          "version": "repo-lines-v1:sha256:418b479f39f030b5e75287154f3f0a4b91a23f308b3a501fe7b1fc1a2c0f2969:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5YWJiNDcxOTZjMzg3YjMzNjUwZTM0NDc2YjViNGUyMTcwYmY2OGIyZDc3MWQ3ZjY4OGY3MWM4OWU5YjNjZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyOGMzYjYwMGJmZDdiMzAwNmRmNDVhNzNiYjhkOTU3NjhjYjEyZTc3NzhhOGVlNTAzNzA2M2FmYWRlZTdlODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L194-L236",
+          "version": "repo-lines-v1:sha256:a25e3cbceec5247839e3df97629bac9e371f9f4cd5192bb269de674f64de6b05:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllODc5MmU3ZGQ4NjE4NDIwNmVjMTk1MzZmOGE2NTdiYzlhNGU5NDI5MjQ0MTAwZDI4NTRkM2M1MDFkNmU5YjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGZjMGMxNzNkMWVjM2ZjNTAxZDdkZmE5Mjg1NTAxYzUyN2NmYjQ3MTI1ODNkYTNjYzM2MTgwNTY2YjRiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2ODc2ZjMxMDY2ZDQxOGI4MWJhYWQ2YWFhZmNhYzk3MjMwYWMwZTA2YWJmMmEwZDlkYTRjOGEzN2Q2YjJiOGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_434af745000d45d4a78e774fd484b0d0",
+      "statement": "The two nearby fetchers differ in both default radius and timeout: `fetchNearbyStops(center, radius = 800)` uses the client's default 8-second abort, while `fetchNearbySubwayStations(center, radius = 3_000)` requests a 35-second abort because a cold subway catalog must first load the quarterly official T-Data CSV server-side — both Zod-parse the response body and throw a structured `ApiError(status, code)` on any non-2xx.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.test.ts#L54-L86",
+          "version": "repo-lines-v1:sha256:8edeef3a7fb70c482b57fe55fa4ba0c1b3d6d28fbf8e69ba2cf513567274d3f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyNGY0NzU2NzMwODAyZjAxMTZkYWY3Y2IwMzRmNWU1NzRlMTEzZTFjOGMzMjc5Njg0Y2RjYzVlMWY2ZjY3MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzZTgwN2QwZWM0ZGJlMzgyNmMxMjE4ZGQ5ZDMzNzRmMDFlYmYwZjExYzk0MzllZjY1ZDUxODA3ODZkOGNkYjYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L109-L143",
+          "version": "repo-lines-v1:sha256:f34ed692b4770914a9ebe18eab9ceb998ea0f7175c000a75908d322469c3891b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMzg1ZjY1NGU5NmJiMzI4NTdiZDA1ODBhYzM4MjQ2MGRiMGRlN2I4MDYzN2E5Y2JjYjU2NjAyY2MwYmVlZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjODRhYWJhNTcyN2ZkNjU1YmJlZGQwMDI5ZjE1YTQxNTMxMzRmOTllMWEzOTNkYTI2NTJlNWNhOTMwZTJmNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhZjg0ZjQ0YjIzNjI4NTkzMjY0ZjAyMzgzNjBkYjZiM2RlNTMwN2NhMDRmOWRjMWYzMDc4YzI3NWY4ZDZiZDMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L74-L87",
+          "version": "repo-lines-v1:sha256:0c5111b727cf04529467fc2091c5456b46b90dd19d30d07b8382ea15d6280951:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjOWUxNjdkYjIzZmU0YmQ4NGNiMDBhNWY4ODJmMzE4NDZhZDNjNTczMDkxYTExYTA1ZmY5ZTdhNzk1M2EzZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmOGMyODViMjM4ZjI1ZDM0YmVlOWYwZmUyNGFhNjMwOTFmYmI2ZWVkYjk0NDA3ZjhkMjhhOWM0YjYzMDMxYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzMzY1NDk2YWVmNGU1MTI5N2FhYTIyZmI3YWEwZTY4NzE0MWI2NDhiODBiMzIyNjZjZGI0N2Q0NjgxNDM2NjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_afc08244208a46f0bf67ab83cff10906",
+      "statement": "`GET /api/stops/nearby` and `GET /api/subway/nearby` safeParse the raw query with `nearbySearchSchema`/`subwaySearchSchema` and throw `400 INVALID_LOCATION` on failure, and wrap catalog failures in `502 UPSTREAM_UNAVAILABLE` with an upstream detail — the `INVALID_LOCATION` code is what the client's `isServiceAreaError` translates into the move-the-map sentence.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L122-L128",
+          "version": "repo-lines-v1:sha256:eb38360eb73fc74f88a1edff26cdf954a5d0181d4625714a9386cceb5d4029eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ5NThmODFlZjkyNGJjN2IwMDNhMDBjMTk0Nzk5MThlZGUzMmJkMTg5YWI2OTEyMGJhODNkZjlhYmM5MDk5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTdkODYzMmU1NGU5Mjk4YWJiOTU4NzI3ZTJkNTE0MDhhYmFmMTM2NjAzNTM3OTEwMTQwYWJmNjViMzBhYjYxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L32-L72",
+          "version": "repo-lines-v1:sha256:8afabec092f0b950c8af78e5baa15a02bf7969c5d820054aec2594394ed00c34:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZmRlNDAzYzY3ODAxZDg2NjU0YjYzNjQyN2MxMDVmZDAyM2Q1NjgyYzgzNzEyNzJmNmE3Y2UzYWQ2MTlkZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3M2NlYjVjNDY0OTI2MWUxOTE4MGI0NzNjMjk2NTc0ZWJhYzMzMWM4ZTZjM2U4MmNjOWVkOTA4ZWQwYmE4YjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZDYyZDk0ZmI0MjE1ZGVjZDJhODdkNGYyNTNiZTRiOWMwMDRmOThiNjQ3YmUzNGFmNGYzZjhlNGQyYzcwMzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7bd6baed880b498a91d8f24f1021385e",
+      "statement": "The Leaflet drag clamp is deliberately padded beyond the API's validation window: `MapCanvas`'s `maxBounds` is `[[37.2, 126.6], [37.95, 127.45]]` with `maxBoundsViscosity: 1.0`, while both schemas accept only lat 37.3–37.8 and lng 126.7–127.3 — so a user can drag to a corner the API refuses, and that refusal is exactly the case the service-area sentence exists to explain.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L312-L318",
+          "version": "repo-lines-v1:sha256:7504fd4194c13d43e37f0f24dd67f0f3cf519f74cda889050be044d62e785d39:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmYxNTA1Y2JjNTljZTk3NTE0OTUxZGI2MjNmMzA2YWMzNTAxZDYzMjRlYzQ4OTBlYzkzODIxMDU3ZTU3ZGY0MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAyZDJjMGQ2ZGM1ZTc0ZDkyZmExNGI5MWRiZWEyNjQwOTBiZWIzNWZkYjkxODhkOWIzNDExODFkY2U5ZjRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTlmMWJmY2JkZTIzN2ExMjE0MTIwNTI0NGE5Y2E0MDMzYjg4ZWRjMDA1OWY2ZDVjMDMzZTQxNzEyZGFhMTIxYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjNjMDU5YjdhNzRlNTZiNDZhODVlMjQ3N2ZjNzQxNzdlN2IzYzgxYTRlOTliOGM2OWJlMjRmYWM1Y2E2MDQyNyJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L201-L205",
+          "version": "repo-lines-v1:sha256:cd375c1159d6d595cfd7fa7727d5082201052ca1871d01b720088fb688d4362d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzA4OTI5YzY3NThlODE0MzVkZjMzY2M3ODUzNTMzMTU3MGYyODhlOTdkOWNjZjhhNzI4OGI4NDE0ZTA5MGRmMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGZhYjcxMGRkZjc4NTllNTc1NzY0YTkxM2EwMDJjNzQ1ODVmZmE3MDAxNTEwY2I4ODExZGE4M2QyY2Y3NGIzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQ4MmRmMDk1ZTZmZmI4MDYzNDAxNzNkNWE2OWRiYTAyOGRiNDg5YzM2MTZlZWQ2YzgwYzU2MDFmNTM0ZjE3MiJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L33-L37",
+          "version": "repo-lines-v1:sha256:4b50fe9898b613363497d565ef230a3eb4e85e1b4d2d2432d9d59ca6b5aa3f8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ3ZmE3ZTRjZGIwN2YyZjAzZjRkNWIyZjVlYjQyODA3OTAzNzIwOGU5MTA1NDVkMDQ4M2FkYmNhYjNjZTYwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGM3NmVkYTdhNzQ2MTdiOThkMjVjYWQzNmZlNWEzOTFlZTBiNGMwMDM2YWE5ODhkNTBhN2ZiMWU1ZWViZWUwMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzUyYmY1MmMyMzExMGZlYzM1NGZhYzYzZGVhZDI2MGM2NWI3ZTQyY2EwZGQyNmE0ZWE4NWM3NzljZDhmYmNhMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_db0bb3f5622d4da4b1e0954ceea94b72",
+      "statement": "The nearby endpoints do not ask Seoul what is nearby: `TransitCatalogService.nearbyStops` maps every in-memory catalog point through haversine distance, filters to within the requested radius, sorts by distance then id, and rounds the distance; `nearbySubway` additionally dedupes by station name keeping the closest point per name, so a multi-line transfer station collapses to one candidate.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L132",
+          "version": "repo-lines-v1:sha256:e1f8ce2e56e8ec7b8b43e161ef80d8b7adc253de785bff46981e50433e173834:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3MmU4OWNjMWNiMTgwMzQxYjU2MzAzODgxNzYxMTlkMjZiNzgzZmE1YzFkMGE1ZGZjMDUyOTJkNGU2YzVkMmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98a6b85fe93f47b99276785eb4d9c545",
+      "statement": "The bus nearby path has a live-upstream fallback the subway path lacks: if the bus catalog read throws an `UpstreamError` (catalog rejected or never loaded), the service falls back to `fetchLiveNearbyStops`, a location-scoped query against Seoul's `selectNearStops.do` — the only place the nearby path hits Seoul per request, and the sequence of a rejected 45 km catalog load followed by a `kiloMeter=0.8` live query is pinned by an e2e test.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L109",
+          "version": "repo-lines-v1:sha256:eafc41674e3a871be4ac6f67f2ec36166ae5ce4b9c59c5b0d9ad109daccdee7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhMjRkZjA5MzcxYTJlZWRlNDhiYWRiMDhkNGVkNWViZGY5MzZkYzc5NjEwNzIwMjk1N2IyNzE3OTE5OTE2NzIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L29-L52",
+          "version": "repo-lines-v1:sha256:5249a20947d680d01713627a3e98044effcf7a5bb0ef88e24870a52959ee9983:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZDJlMzg0MTJiMDdhYTZjNWJkMTNkYTVlMzljYzExNTlkN2EzYjAwNzNmMmU2ODk5ZjJkZDZiN2FhYTA2MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MzI5NWQxY2YwNGIyMDIxOWJmZjE0NzRhNzgzODEzZjg1ODQ4MWVhOTczZWZhNzAyOTM4NzZkMWQwOGU2NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMTU5MzNiYWExMDg0OWZjODdiZmVjMTVhNjNlMDQ2OTcwYjQ2ZTk4OTkzYmQ0YjFiMzI5YWFlZmY0ZWI5MTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/transit-catalog-fallback.e2e.test.ts#L21-L51",
+          "version": "repo-lines-v1:sha256:2f51eb87b62f78b8e1ce8be8429497bff5610f31e27467e21129179424187d72:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiYjliZmVhYjFkYTM5NTMxZTgwMjIwYTI3ZWIyNTNjOWQ3NjFhMjQzYmViNGZmODU4YTA3MzI2OWFiNDdhNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ba29e9d249443608237641b7b963380",
+      "statement": "`locate.ts`'s header comment records a deliberate negative result: the platform's accuracy radius is not a reliable rejection signal, because a fix can be centered exactly right while reporting a conservative multi-kilometer radius (IP-based fallback does this constantly) and rejecting on radius broke locate entirely — so coarse fixes are accepted and flagged, the map still pans, and the caller shows a soft notice.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/locate.ts#L1-L19",
+          "version": "repo-lines-v1:sha256:f327fd4d72f3adbe579c2844e059bd7b5053922af5322dbffefcb4caa054f938:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzYzVjODJjNWE1NTMyMjVjZWJjM2UwYjUzZDk5OTFjYTM0NTY5YzY5MjFlNDI0YzIwZjVmOTMyZTlmN2QzNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxNTA3NWE5NzA5N2U2Zjg5NDM3OGQ1ZjJlNWMxMGY4MWQ3NGFmYmE5ZWQ0MzY5YWZlMWY1YjBiMTlkNTlmOGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_70ec56337be24a3ca47b766d7f5d8c74",
+      "statement": "`requestCurrentPosition()` returns a discriminated `LocateResult` (`located` with lat, lng, accuracy, and coarse; `unsupported` when `navigator.geolocation` is absent; `unavailable` on the error callback) and flags a fix coarse when its accuracy is non-finite or above `COARSE_LOCATE_ACCURACY_METERS = 200`, while never rejecting it.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/locate.ts#L23-L64",
+          "version": "repo-lines-v1:sha256:3befba6f2b1b92524202b03117f4519597a496c66c9ed7977115758b4fe3e249:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmZGEzMDRlNjQ1M2ZhOWYzMzAwOWZjMjc1YzkzYzc1ZTdkYTM5ZjcwN2Q4MTg4NWYyYjlhNzc0MjA0NjUzNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNTA3NWE5NzA5N2U2Zjg5NDM3OGQ1ZjJlNWMxMGY4MWQ3NGFmYmE5ZWQ0MzY5YWZlMWY1YjBiMTlkNTlmOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5NGExOTQ1ZmJkYzFkZjNkMTIwOWM3NWNjODk1YjZiMTA4MGI4YjQ3YTI3YmM1NWJjYTQzOGFiMjgyMDYwOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dffe76a432f34a6daaee4a672cc71114",
+      "statement": "Fixes at or above `IP_FALLBACK_ACCURACY_METERS = 3_000` are treated as almost certainly IP-based fallback where the center is the ISP's registered area rather than the user, so `locateCoarseNotice` returns a notice pointing at device settings and location permissions — explicitly not at a retry, because no app-side retry can improve it; coarse-but-closer fixes instead get a notice stating the error distance and asking the user to drag the map if it is not their location, since the map already moved.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/locate.ts#L14-L19",
+          "version": "repo-lines-v1:sha256:5dbf87c7bcb8e48f31e316bafdc53472c218b07171f6c27f4a567139f39ba66c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjNjNWM4MmM1YTU1MzIyNWNlYmMzZTBiNTNkOTk5MWNhMzQ1NjljNjkyMWU0MjRjMjBmNWY5MzJlOWY3ZDM2YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjg0MDQ2OWY4NjMzYTYxZWNmNjhhZWI2MjM4ZDdlMjE5YmYwYzE5YjM0NGU2YTY3MWRkNGM3OWI4OTJkYzdjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE1MDc1YTk3MDk3ZTZmODk0Mzc4ZDVmMmU1YzEwZjgxZDc0YWZiYTllZDQzNjlhZmUxZjViMGIxOWQ1OWY4YSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/locate.ts#L66-L81",
+          "version": "repo-lines-v1:sha256:fd970f6a1ef7af6754be25f9f9ccd48fa4bc44314fc9e50bbf0c3e9dbf394891:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyMjUzYzBkNTdlMDI3ZDI1MjQ1N2ZlMzJjNzY2NjdhOGM0ZTJkYTczOTRhMDFmN2JmMTMxYzNlOWM5NDE2ZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0ODJjMTA5YjExNDBhZGY4NjM2MDJlM2Q5ODNhMjA0ZWYwMmI4OGNhOGI3OGIwNDBhMmY5YTUzZDQzNjlmODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1d15786c0f784821aa0ec1f6c719a185",
+      "statement": "The geolocation call passes `enableHighAccuracy: true`, `timeout: 8_000`, and `maximumAge: 0`, the last forbidding cached fixes outright — a cached fix can be where the user was a minute ago, not where they are now.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/locate.ts#L54-L62",
+          "version": "repo-lines-v1:sha256:57912df10eca1c7fbc7ebcaa2361f2de7f282eed527695eacb0b726fcc3059db:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZkNzY5ZGNlOTk5ZDg5M2JhODk0OGU3NGFhY2VmMmNmMzdlNjM3MzA4NjUzNGViMzAwNjNjNzk3MjI3NzZjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNDIwOGNkNmZmYjhjNGEzNTQ3YjJmNTRhZGExOTk3OGMzZjM2NWU3OGY5NTAyZWY1MTQ1Y2RkMmFhODU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmZhYmI5Y2MxNjMwYjIwMjc1MWNhNjc4ZmUxYmRiZDM5ZjViYjgwZWI1ZTczMTYwMTczMmM0NDY5YjEyOTJlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmQwZjJkM2EzYWFkYTI3NTg2NDU3OGQwYTQzOTE1NjM4ZDU0M2ZlY2EyYzk0ODU4ZGI5NDEyMTFlODZjZWYyYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9321e28ee25d4235b1383fd3293372b9",
+      "statement": "`locate.ts` currently has no callers in the web tree and the `.locate-button` CSS is equally dormant (a leftover of the dialog-based picker the inline finder replaced), so the geolocation boundary is implemented and documented but not wired into the UI.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/locate.ts",
+          "version": "repo-file-v1:sha256:539d4f5fc4e5d6e8fab43077d4c2172c291a9d2a63d137291738813cbdedc437"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L924-L945",
+          "version": "repo-lines-v1:sha256:cb268847ea38c856843dc2447bac102d39f6c9d0a8349970780c1bf52db53a65:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YWI3NGJkZWUwYjg1YTM5MWY5YWVjZmQ0MGE1NGM1N2RmMmE2YWIxMjYyMzMxNDYyMDRjMGEzNjBhMzRkNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzMjZkOTk5YWE1MDVkOTVjNDI5MTJiM2JiZjQ5YTcxZmI1ZGQwMzEyY2QxNmZjNTAzZmQ3Zjk1YTMyNDQzOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczY2IwNmNlNTlkODMxOWQzYTIxMjBkZDFmYWIzYWE0MWU1ZmUxYTUzZDNmMWQ1ODc2MWI2NDMzZjU5Y2FmYjMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

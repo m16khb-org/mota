@@ -1,0 +1,420 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:0d1b94dde4f9a5ff07df3b5a9c78bcc02041f12e1c32e832bf9a37319f1e7f6b",
+  "claims": [
+    {
+      "id": "claim_48bea488d0db49289ef85de78ab0b6d4",
+      "statement": "useTransitSelections(session) in apps/web/src/hooks/useTransitSelections.ts is the single owner of the saved-selections document in the web app and the only module that calls fetchTransitSettings/saveTransitSettings against /api/settings; App.tsx consumes its selections and syncStatus and nothing else in apps/web touches the settings API.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L33-L42",
+          "version": "repo-lines-v1:sha256:eb2e284896544910787dfe76da455ca6780094020a64bb6424033c8a9f98c55b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwNDlmY2NmZDBiNDc4MjAyNDhlMWFlMDIxZmY4NTcyMjZmOTdlNGRjMDcwNDQwYThmNzZhMTJhMDk1Y2JhNzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MTUxOTAxOTc4OWJjMmUyNTZkOTMxNGM0N2M5YzJkMjhkYzQwN2EyZjA4NzY5NTdhOWQ1ZDczODM2MDM1N2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyODllNzMyN2QxNDE3YTNjZDIzNTI1OWIzNDg5MjEzMjFmMDk3ZjI1ZTI1NDQ3YjE1ZjBjZmIzY2NjMjE0ZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhZTg5ZTQxYzIxYTNiZjhiMmU3OWU2ZTczNDBkNzJmYzA4NjhmYTVlNWI1MWYyYjA5YjA0MDZjMTk2MjczMzIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L33-L49",
+          "version": "repo-lines-v1:sha256:7751b1cfcad5c793ecd58916780495a4bc941314c9635006395dc0e35a0d98e2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxYmYxMmViNTEyNTNlMmFkOWFlN2M4YzZhMjBhZGFiNzBkNGIxOWJlNTc3NDE2YjBhZjVjMjk2YTAzNThlMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZDU1ZWIxZjQyZTcyYjNiYjJjZjVhMDEwMWI2ZGQxMDJmMDQ5ZDA4MmVkNTU3OTU1ZjUzZWQ3ZGI4NjJmYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwODAyMzYzMzllOTgwZjk2OGM5MjU5MDAzMGZmZGFlYjc3NDA4NGVmMWJmNDZkMWM1MTRkNDRkODg5NjNjYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4ZjliMWJiN2JmOTVhNDE5NDQwNmJjNWI2OGNhYTJlODAyNDJmMzUwYjY4YmFjMjcyZGY1NTBmMjUzMGJmODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_17ce7a44b7834b5b85366edbb3ba9a50",
+      "statement": "There are exactly two persistence lanes: anonymous selections live under the localStorage key mota:transit-selections:v1 with syncStatus 'local', while authenticated selections are hydrated from and saved to /api/settings backed by the user_settings table.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L40-L43",
+          "version": "repo-lines-v1:sha256:2c7d1a35bbf110a46758271a0317136e7f5df3da6fbad290ec652e16429d098a:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFkOWUwOWZiYmFhOTJjYWFhNzYzMGJkMDJlZjVkMTkxYjZmOTI5Y2Q2YjM3YmY5OWJmY2I0YTY1YmNhODFhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTljZjA2MWE4YWQyMjA5ZDhmYmVmYmY4NTgzNWQyMjY2NWRjODBmODM0Y2Y2ZjRmM2FiNWYwNmFkZjRlNmI4NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDA3NWExNDNlNDU4NTI0YmU2NTU1NTczY2MxZWRhYmZlNDIxOGNkMmZkODAzMmQ3MGFhODhjMDg5MmQyYWRlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNjOTE4YzQyNWY5ODFhZDAzMzFlYjhkMmRlNzg5MDdlN2I1ZWU1OGRiNWNjZDRkYjQ5Mjk1YThlNDhhYjI3NyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L8-L10",
+          "version": "repo-lines-v1:sha256:43aa451e7b29f09cfe8e551ab211ede88adbb412d6ebf1f74fb62e59d2b5391d:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQxNmNlOWU3MTdiYTZkNDEzYTYzZTU3MDM3NTk1MjFkZGFhMTBhMTFiM2JjZjIwNzBlYmZiODVjOGE5NmM4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2UyMjM4NDQ2Mjc0ZGQ0MTliYWZiYWFiMjcxMWM1MGNlOWNmYWFiOTdhYzgxZjhhNTQ3OTc0ZTYxYTg5ZmI0NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmQ2NTk5NzhiZThkZGEzMGYzZWJjZjAwOTk1OTkyMWM4NDg2ZTUxMzc4ODk5NTM3NDllZjI4MDk4YjEzYjBjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGM5NzdlYWZkMzJhYzUyODcwMmY0YjRmNTlhNzNkNzU5OTQzOTZhOTUzOTI5NmIxM2M2NTA3MmNhYjg0ZDA5ZCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L26-L37",
+          "version": "repo-lines-v1:sha256:0b8e81490d7ee64638427eeb2d29c3713e4673119f1fe34e640112aa7abab909:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NTZhOTYyZTJmNDhkYTgzNTM2NjdjZjFhMmE0MjMwODU2YzM3NjU0ZjM3YzEyOWIzZmFiY2I5ZWUyNDAxZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MGY4NmMzM2E2NThhMjhjYmQwZTNjYWE3NDU0ZmQyMTRjNTljM2JiY2EwNjJkMWQ2NGU2Zjk2NWU3MmFiM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjZTdkYWQzYjYzZWJmODAxMWVkMDY1NGIzNzllZDUwY2IyY2Q2MGRhMzkyNDc2ZGUxOGE3ZTFkNzhlNTI2ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4NThiZThkZDNhMGVmZmZlNDE1ZjNhNDc3YmU1NmFhMmI2NjA1Yjg5ZmQ3Zjg5ODRmOWFkMGUyMjgyYmJlYzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5f9ede5f411648248bd59823f453c6df",
+      "statement": "The anonymous lane is synchronous write-through inside mutate(): a pure transition is applied to selectionsRef.current, mutationRef is incremented, and saveTransitSelections writes localStorage only when sessionRef.current.authenticated is false.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L98-L104",
+          "version": "repo-lines-v1:sha256:6248ee6a88726d85989eacba4cbb5e3bd5893ad0ddbd08563aa50ee00be7ed26:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNGNhMTk1NDhlNjQzNWEyMmVmMzBiZWU1MDIzZTg1NGIzODkyMzA4ZmM1ODdiZDJlMWIyMTg0Njc1NWRlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTY1ZWVlOWJjNDdiNDcxNzAxNDBkNTE2ZWY3YTE3ZmZhZmM5MjRlZWI1YzEwYjM5Y2Q0MmNiZjg5OTJkMWM3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L175-L186",
+          "version": "repo-lines-v1:sha256:01f57ad4ef1cdaeca0714e17fb6e7ef5db6e8d963a9b0745b9a25eda36e730a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZmM0N2YzZTA4YzVmZTdjZGRhMDk0ZjFiYTUwOGUyOGU0Njc0Nzg1ZjIyMWIxMjVkOTE5NWUzMDYwNmU2NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5YTY5MjMxYjIzZWZiMjQ5NzJiMWJkNzlhZmM1YTUxMjljZWYwYmVjYzMzNzMzMjVlMWY4MTVlMGNkNjk4MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxYzE2NWY5NDk4N2RkZThmNTQwYzk3N2Y3ODhhZWUwMWI1MmZjZDY1ZDMzMTAyNjZjMzgyNjIxNWQ0OTQ4YjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9adc072de8db4fd38f1c36f25430eb17",
+      "statement": "mutate() composes consecutive edits against selectionsRef.current rather than React state, so a burst of clicks applies correctly without waiting for a re-render, and sessionRef is refreshed on every render so mutate sees the latest session without it being a callback dependency.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L175-L186",
+          "version": "repo-lines-v1:sha256:01f57ad4ef1cdaeca0714e17fb6e7ef5db6e8d963a9b0745b9a25eda36e730a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZmM0N2YzZTA4YzVmZTdjZGRhMDk0ZjFiYTUwOGUyOGU0Njc0Nzg1ZjIyMWIxMjVkOTE5NWUzMDYwNmU2NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5YTY5MjMxYjIzZWZiMjQ5NzJiMWJkNzlhZmM1YTUxMjljZWYwYmVjYzMzNzMzMjVlMWY4MTVlMGNkNjk4MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxYzE2NWY5NDk4N2RkZThmNTQwYzk3N2Y3ODhhZWUwMWI1MmZjZDY1ZDMzMTAyNjZjMzgyNjIxNWQ0OTQ4YjIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L38-L47",
+          "version": "repo-lines-v1:sha256:def609936943f2113e4be1bfd4f80a860882a088e73bafd408e9a6719d0a690e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4NTQyNTU0N2E5MjY1OGJjYzhmNjlkMjBiOGQ5NTlkN2Y2YzcxODg4MmY2MmU4MzA3ZjkwNjBmZjk3MmVmYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNzZiYTBjNjhhOGE1NWJlNjgxMjc0YjIxODViNzgyMjQwMDVhOTE1Y2I4NmI2ZWUwNzc3OGExNThlMDlmMjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxYTFlZWM2YmUwZDM3NDM3NjU0MDYyNWYwOTZmZjhjOGVjNzg3NzIwYTk3NDY5ZDZiNmExNjllYWYzMjEyMDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwMjJjYmE5YzNmZDZkZDA2OTE5OTljOTM0ZjljZDM3Y2ZiNTkwN2FiNDBkMmY3MDYxZjBiMjEwMzRhMGE3NTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e230cc68344d422da47468253f4b230f",
+      "statement": "loadTransitSelections is the Zod edge for localStorage: it is null-safe without window, swallows JSON SyntaxError, runs transitSelectionsSchema.safeParse, then normalizes (dedupe by id, drop unresolvable selectedBusStopIds, clamp to MAX_SELECTED_BUS_STOPS, default to the first saved stop/station); any failure returns the canonical empty document rather than throwing.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L26-L96",
+          "version": "repo-lines-v1:sha256:a49e275f5fcd565e9175e3c13aa7e83778a02d16d36b8c54332f0ce2cb45ae54:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2MWNiZjA1OWNmZDBlODhhYzA0YWM2ODViMGM3NmUzM2QxOWM1ZThjZDI4OTQ2NTIwNGI3MjUyYzU0ZmFhZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxM2QzZjU4NjZkOTIwMDdmYzUwNTExMmFmNTA1YjYyNWVhZTBiOTYzYjdhYWJmNTBjNmRkZjgxN2U5NTFhNjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8ecd708860bf42a9826289325296d4d1",
+      "statement": "Hydrating the authenticated server document never writes localStorage — the anonymous document under mota:transit-selections:v1 is left intact so it is still available on logout; this is pinned by the hook test asserting localStorage still equals the local selections after hydration.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.test.tsx#L91-L108",
+          "version": "repo-lines-v1:sha256:314b660e37bc1e249a39894d0eb1f6c4c85e17c81ca3cfa16945815deab53cae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhZDAxZDI3NWI3MWYwODE3YjIxYjJmM2I4ZTY4M2ViMjg4ZGU5MGRjMTMwN2IyZGExNTMyMGM5YTFkMzkyMzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3NDVkZWUyZmFiZTk2NGQyZTRiNGIzYzMzNjg4MWQxNWEwZGU4NGVjNDUxZjlkMGUzY2Q4NjEzNDc3NDI3NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwMzBiODdlNWM1N2NlOTFjZmVkNDliN2UyNjM0ZWY3ZDFiMGIxMGQ0Y2EzOGNkY2RhZWJjMzhiNzBkY2Y4ZDUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L85-L94",
+          "version": "repo-lines-v1:sha256:9c577d5de612b2e32fce9b0f779e032d14c5e7a860b7d47cd95b91ed1f0103c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiZWI3ZmU0NTNmODQzZGMwYzFhZGIzZWZjMWY4YTc5MjA5NWQxYzFkMzkzZWE1YWEwNTFhZDY5NGU2MjY1ZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiN2QwMGNkODQ2ZGIyMWY2MmE0ZGU2OTlkNjBjZDliN2M3OWI4MTg0MTIwMTE0OTU2YTdlOTE2NmVjZTAxMjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1NGUyMWZkMzM3NDgwZTVkOGEwOTA3OTI0MjFjODdkMDc0NTBkY2ZlN2MzY2ViNGM2ZDcxYmRkZjhhOWZkMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxOTNmMjdmMzUzYWJlZWNjYTcyMDBiYzBkNWFkZjc1ZWI2ZThlMDY5ZmFkZWQxNmQ1YTRkM2NlMmJjMTc4YmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_18717215a2984db2932aa3cfae103369",
+      "statement": "The session effect decides hydration from the GET snapshot using two conditions: when snapshot.selections is non-null AND mutationRef.current still equals the value captured at effect start, the server document wins (versionRef takes snapshot.version, hydratedRef becomes true, selections are replaced, syncStatus 'synced'); otherwise the local selectionsRef document is uploaded via PUT carrying snapshot.version.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L72-L110",
+          "version": "repo-lines-v1:sha256:376cbd99e0f4d1f9e5a045ac669df856bba741e95b9c7979acc13928c6646c06:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNjdjZDk5ODhjYWUwN2I1OTc5ZGVmNzA3NTRmOGY0MzVlMmUyNjMxZDBkMWZlM2Q5MDIxMjk2NzQwMDYwNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MzU1MmFiNTcxNDk0YjM5OWIxODE5OTYyMmRiZTNiMzgyNmViNjFmY2QxZjc0Y2ZiMTJhYmNmODhlNGY3MjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhNDFkNzNjNDUyMmJlYTM5ZmY4MTVlMjRiY2YxMzExODUzMWQ2NzFlYjNjZjUzMTIxODg1ZTExYTFjNDcyNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMjIwODk4MDQ4NWE3MzU4Y2FjYTQzMjdjZWM5Y2NmOGMwNjQ2MWNlNDk0ZTMzYzI3ZWNhN2EzNmFkOGY0ZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_757a4cb3cc794b7892b576635de70953",
+      "statement": "A never-seen account reads as {version: 0, selections: null}, which is the bootstrap signal: the client uploads its anonymous local document with version 0, creating the first server row so an anonymous device becomes a synced account without re-picking stops.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L70-L80",
+          "version": "repo-lines-v1:sha256:18edf0da40dd6f97dad82a4f2a48668036c26932658ab6e67ab8c82739932e62:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYjk5YWJmYjQ3NjdiNDhmMjMwYjE1ZDU2YTI1ODJlMTgxNjczMGQyYmU0ODA4ZmFjNDBlNDk4N2I5N2YzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlY2UyNTIwYTNiM2Y2YTc0YjdhMjQ0OTMwODE2NDliMTljODdiNTc0MThhMzA0MDUwZDI5ZThjMmFlMWVjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MjAwNzVhMDkyMGVmMjkxMjI3NDUwNWIxYTYyMGZkMmMyNjQwZDcxOWI5YWM2NWY2ZjU2NmNmZmI1YWZhMjkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.test.tsx#L110-L131",
+          "version": "repo-lines-v1:sha256:dcceda04674ea143ffeb8ab18caf74e35686b9e2e4ab6ddc2b007b47e49e40e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5ODdmNmNmYjY3YTI1YjI5NzQwZTZiMWRjZDZlZmNlNTVkYzFlZDhjZjlmYTdjOWIyYzk5YTdhNmZiNjQwZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MmZmZjkzOTA1ODAwMWMzYzFjMGQ4M2E5OTg4MGRjYjQ2MmJlNTdlNWNhNzhiODgyZjQ2ODE4MDZiNTI5NzYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L96-L110",
+          "version": "repo-lines-v1:sha256:9255baead273916d18b595587f227bee3473486c2e3efcdcc18fdc2ed3342f07:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MzU1MmFiNTcxNDk0YjM5OWIxODE5OTYyMmRiZTNiMzgyNmViNjFmY2QxZjc0Y2ZiMTJhYmNmODhlNGY3MjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5MjMxODcwN2RhOGMzMjFiN2FhMmNkNDU2NTA3Y2QwNmJmNjIxOWE1NzNjMGM5OGU4ZDcwNjliM2UxOWRlYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMjIwODk4MDQ4NWE3MzU4Y2FjYTQzMjdjZWM5Y2NmOGMwNjQ2MWNlNDk0ZTMzYzI3ZWNhN2EzNmFkOGY0ZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae55dde4f0c44c729a8579ac4d70ff92",
+      "statement": "mutationRef prevents the server copy from erasing a user edit made while the GET was in flight: a mutation during hydration makes the local (mutated) document win and be uploaded against snapshot.version instead of the server document replacing it.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L175-L184",
+          "version": "repo-lines-v1:sha256:cd9c3931d765cb8475b64167073f032ef0ea23c37d41911b591a759bacbbf7b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZmM0N2YzZTA4YzVmZTdjZGRhMDk0ZjFiYTUwOGUyOGU0Njc0Nzg1ZjIyMWIxMjVkOTE5NWUzMDYwNmU2NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5YTY5MjMxYjIzZWZiMjQ5NzJiMWJkNzlhZmM1YTUxMjljZWYwYmVjYzMzNzMzMjVlMWY4MTVlMGNkNjk4MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4ODUzZDIzOGJmMjQ0NjZhN2YyOWRhNjdmMzkyYmRiMjRiODE3MGJlYjZhYTFjMDFhZGU3MzNlNTAxNThhMmUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L74-L100",
+          "version": "repo-lines-v1:sha256:1dbb869b59601b4d5a0df76f32b27303fb4a22eac7fc190dc6e329cfed3011d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxNGYwMzg3ZTliM2VjMjk0NDJhYzgxMzMwNGYyNDY3NTg4MzE4Nzk3ZTQ3MTIxMTIwMjgyNzRlMGRjZDYxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5ZWJmZWVjMThjN2FiMmU4Nzk1MTRlZmQxN2IwYTljYWJkNjNlNTRmMGFlMWFhZWEwODEzM2NhYzAzNDZiYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMDI2MWFkNzY1YjFlOGQ1OThmNzc1OTkzZDI0OTc5YWJjMTExNmZkOTdiZjhhMzc1NzM1NTJhMzMxMTBhOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a776ab8479b64c93a8c8737fdc5247d2",
+      "statement": "generationRef invalidates in-flight work when the session effect re-runs: every run bumps a generation counter and resets hydratedRef, versionRef and saveChainRef, and every async continuation after each await re-checks generationRef.current !== generation || activeUserRef.current !== authUserId and bails out silently, so a late response can neither replace selections nor advance versionRef nor flip syncStatus for an ended session.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L141-L172",
+          "version": "repo-lines-v1:sha256:e3753fc194a76eb53d513b1b6b68d02fd69050bfeb93553d7824a6420ec5b716:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2YWMyZmRmN2Y4MWRiMWY4YmM4ZGFlOGE4ZThkNDA3Y2EyMDZkMDM4MGIxMzA1OTA5ODVkZDdkMjRjOTc1NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhNDFkNzNjNDUyMmJlYTM5ZmY4MTVlMjRiY2YxMzExODUzMWQ2NzFlYjNjZjUzMTIxODg1ZTExYTFjNDcyNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4YThlOGM0OThkMzhhNDkyOTMwMTM5MWVjNTFjNGJjNzA1ZjVlNWVmMTEzODY1ODMyYzFkMjE3ZTI3OTU1NGYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L54-L59",
+          "version": "repo-lines-v1:sha256:14892bf63c2388cef836a48588b73545c5f5089ba21f8199d64702ea43149931:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk2NmZiZmE4ODk5OGRhNzQ2NTZjNTAxOTQ5NTZjMjVmMDg0OTQ1NzY2MGMwMDlmZTYzZDFlOWZhOWRjOTMxYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI5YjQ1ZTEyN2FlZjAxZTc3N2ZhZGZjODU1YzY0YjhiOWM3ZGExNzQ2ZGQxNDQ3OGY3OGY5MDFhNGNiZTJlOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzM1NTExOTRlYmUwYmY5ZDZiZTU1ZDcyZmNhYTZkN2UxODZjMzIyOTYwMWZiMDdjMjBlYTZhYzU2MTQ3NjAyOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk0NmM4OWRiZTMxNWM1YmIyMzMxM2NjOTZkNGRmZjBhYTk3NTA1ZGU0YTlkNjhlZjQyMDE0Yzk1NjdiZmU5MSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L77-L118",
+          "version": "repo-lines-v1:sha256:ff86ea597daaa2b2f491e8327e12d45aa5cd0d1ae7f6f1c254398740fa86431c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZDk3ZmRkZWQwMmRkMTMwY2VmZWYyMzE4NGQ5MjYzNGIzNzNhODVmOWJmNjZmN2U4ODZiYjc2NDA1MmY5YTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlMWEyZTAwM2UxZGIwZDJlNDhhOTBlM2IyNmJmZTM1ZWQ2OWI3MmQ1ZTMwYjU1YzVhYjc4MWFmMmQ1MTIxMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyOGFiYWQ1ZTA3ODIxNWNmNGFlOGUyNGRlZjFjMWY3YzFmM2M0YmRiNzc4ZDhjOTQzMDdlNTcwZDMyMDAxODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_11b67a55daf045fb89089e723dd02e45",
+      "statement": "On logout or a failed session check (checked but not authenticated, or no user) the session effect clears activeUserRef, restores selections from localStorage via loadTransitSelections and sets syncStatus 'local', discarding the previous user's server document from memory; while session.checked is false it only sets syncStatus 'local' and fetches nothing.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.test.tsx#L222-L241",
+          "version": "repo-lines-v1:sha256:ab20dddbbe11b17d6fb02c80a0cbea86e82cd18fadb1e430cc4e9aac68d077d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZTYxNWIxYzI4ZDdhODgzODgxNTg3MzY1NjI0N2Q5NzYzNmMyMzFlMWJmNTJjNzljNTdiMmY0ZDMwYmVhOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L61-L70",
+          "version": "repo-lines-v1:sha256:df85a441a5866063122dbb3a6e9427a64b5f8ebfc39863f0ad53ad83926d7d6a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxYmUwOGMwNzUyZGUxMDZiNjIwOWEzNjQ5ZTZhMDM1ZWQ1YmFmYTY0M2RjNTA1YjA4ZjE4YWRiM2QwNTkyODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0NWQ4ZDYyMjQ4ZjIwNmQ3ZDQ0ZmU0OTUxMTk1MzAzMzgxMjgwZTBiYTdjNzdhZTA5Yjg0YTAyNjQ3NjkyM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE5ZWJmZWVjMThjN2FiMmU4Nzk1MTRlZmQxN2IwYTljYWJkNjNlNTRmMGFlMWFhZWEwODEzM2NhYzAzNDZiYjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2329c0c383a248e48d1cfbca852c987f",
+      "statement": "saveChainRef serializes authenticated PUTs: every mutation chains its save onto saveChainRef.current via .then, so no second fetch starts until the previous await settles, which is why versions never interleave or repeat; the chain is reset to Promise.resolve() at each session-effect run.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L144-L164",
+          "version": "repo-lines-v1:sha256:0394c969958916475de1749bc9b0b05a10aacc15e1c6b763bbced3ba810a335e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZTkwZmMzZTIwZjE0NzQ2MWQzZmNjODQ1NzY2MmE0MDAwZDRmZTM1Yjg4NWIxNGFlMjM5MzFjYjU3ZDM0NGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MzU1MmFiNTcxNDk0YjM5OWIxODE5OTYyMmRiZTNiMzgyNmViNjFmY2QxZjc0Y2ZiMTJhYmNmODhlNGY3MjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4NTgzYzJhYTkxZThlYmJiNDg3Y2U1YzAxZjRkODNkM2M3OTVhMWE4ZjA1MjdjZDcyZjM3OWVmMjNkYTc4NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMjIwODk4MDQ4NWE3MzU4Y2FjYTQzMjdjZWM5Y2NmOGMwNjQ2MWNlNDk0ZTMzYzI3ZWNhN2EzNmFkOGY0ZDgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L54-L59",
+          "version": "repo-lines-v1:sha256:14892bf63c2388cef836a48588b73545c5f5089ba21f8199d64702ea43149931:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk2NmZiZmE4ODk5OGRhNzQ2NTZjNTAxOTQ5NTZjMjVmMDg0OTQ1NzY2MGMwMDlmZTYzZDFlOWZhOWRjOTMxYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI5YjQ1ZTEyN2FlZjAxZTc3N2ZhZGZjODU1YzY0YjhiOWM3ZGExNzQ2ZGQxNDQ3OGY3OGY5MDFhNGNiZTJlOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzM1NTExOTRlYmUwYmY5ZDZiZTU1ZDcyZmNhYTZkN2UxODZjMzIyOTYwMWZiMDdjMjBlYTZhYzU2MTQ3NjAyOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk0NmM4OWRiZTMxNWM1YmIyMzMxM2NjOTZkNGRmZjBhYTk3NTA1ZGU0YTlkNjhlZjQyMDE0Yzk1NjdiZmU5MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4aa1dbe438914a2aa50e2de0cd664c33",
+      "statement": "In each chained save step the selections payload is captured when the effect runs, but version is read from versionRef.current inside the step and versionRef is only advanced from the PUT response on success — so each queued PUT inherits the version the previous PUT earned, and a failed save leaves the version stale.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L141-L164",
+          "version": "repo-lines-v1:sha256:f22291de67d9f080a2a5d72cd68b94d301b85b420a854e73a1fe71b0914881ba:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2YWMyZmRmN2Y4MWRiMWY4YmM4ZGFlOGE4ZThkNDA3Y2EyMDZkMDM4MGIxMzA1OTA5ODVkZDdkMjRjOTc1NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MzU1MmFiNTcxNDk0YjM5OWIxODE5OTYyMmRiZTNiMzgyNmViNjFmY2QxZjc0Y2ZiMTJhYmNmODhlNGY3MjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhNDFkNzNjNDUyMmJlYTM5ZmY4MTVlMjRiY2YxMzExODUzMWQ2NzFlYjNjZjUzMTIxODg1ZTExYTFjNDcyNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMjIwODk4MDQ4NWE3MzU4Y2FjYTQzMjdjZWM5Y2NmOGMwNjQ2MWNlNDk0ZTMzYzI3ZWNhN2EzNmFkOGY0ZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1655219a5f2b4aacb1616178350c8839",
+      "statement": "The mutation effect stays inert until hydration completes: it returns early unless session is authenticated with a user, hydratedRef.current is true, and activeUserRef matches session.user.sub; it also skips (and clears) an exact-reference match with hydratedSnapshotRef so adopting the server document does not echo a redundant PUT back.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L126-L144",
+          "version": "repo-lines-v1:sha256:846611e03e316c70d4ca5c37a5f9404aed974b110043e2c6d4468cbbe33c8734:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZTkwZmMzZTIwZjE0NzQ2MWQzZmNjODQ1NzY2MmE0MDAwZDRmZTM1Yjg4NWIxNGFlMjM5MzFjYjU3ZDM0NGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmZDdmZTdlNmFkZGFlMzhlZjM4NThhNDYyZGY0NWUzYjM2Y2YzN2U0MTUzYzQ3Y2Q0MGU1MzVmMjdiMTVkZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhN2ZjYTE0YmFmNWFkMzViYTE4M2ZjY2FjOTk5NmUxYzcxNWQ4OGNhMGNjYmFhNjJhY2FjODE4NTlhNmRkMjYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L85-L94",
+          "version": "repo-lines-v1:sha256:9c577d5de612b2e32fce9b0f779e032d14c5e7a860b7d47cd95b91ed1f0103c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiZWI3ZmU0NTNmODQzZGMwYzFhZGIzZWZjMWY4YTc5MjA5NWQxYzFkMzkzZWE1YWEwNTFhZDY5NGU2MjY1ZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiN2QwMGNkODQ2ZGIyMWY2MmE0ZGU2OTlkNjBjZDliN2M3OWI4MTg0MTIwMTE0OTU2YTdlOTE2NmVjZTAxMjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1NGUyMWZkMzM3NDgwZTVkOGEwOTA3OTI0MjFjODdkMDc0NTBkY2ZlN2MzY2ViNGM2ZDcxYmRkZjhhOWZkMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxOTNmMjdmMzUzYWJlZWNjYTcyMDBiYzBkNWFkZjc1ZWI2ZThlMDY5ZmFkZWQxNmQ1YTRkM2NlMmJjMTc4YmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_71cbbee726924ea3b1302496bbe4ec1c",
+      "statement": "Every failure path — network error, the 8-second AbortSignal timeout, a Zod parse failure, or a non-2xx response — lands in the same .catch, which sets syncStatus 'error' only under the generation and activeUser guards so a failed save for an ended session cannot paint an error for the new one.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L74-L108",
+          "version": "repo-lines-v1:sha256:742ecb6bd15fef81efdab9f9b80d926a8d0628b152c8aef070f26beb627a832c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjOWUxNjdkYjIzZmU0YmQ4NGNiMDBhNWY4ODJmMzE4NDZhZDNjNTczMDkxYTExYTA1ZmY5ZTdhNzk1M2EzZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmOGMyODViMjM4ZjI1ZDM0YmVlOWYwZmUyNGFhNjMwOTFmYmI2ZWVkYjk0NDA3ZjhkMjhhOWM0YjYzMDMxYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5NjlmOTkwZTNhNTc4MzhkOTc2MjEwODU3OGJhYzU3NTg2NTI5NzdhOWI4MzQ2NDkwY2E1ZTllM2Q2ZjBjMDUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L111-L118",
+          "version": "repo-lines-v1:sha256:b7fe266be3a2ece56743ba3d40747ecdee39665f81aa79c727d2574462a92417:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk3ZGI0MWM2YzgzMDYxNDdiNmMzMTNjN2QxN2JjMTI0NDY3YzdlZWY1YmU4MWZlZmEwYjEwZDAzODhkZTFmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2EzYjQ3ZDYwODhkYzg5MTA3M2QxYmE1MmM2MGQ2NWQzZTFlN2I2NzIxMDI3M2Q4ZmNkM2VkMDA3NTRhZjRlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjI4YWJhZDVlMDc4MjE1Y2Y0YWU4ZTI0ZGVmMWMxZjdjMWYzYzRiZGI3NzhkOGM5NDMwN2U1NzBkMzIwMDE4OSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L165-L172",
+          "version": "repo-lines-v1:sha256:b7fe266be3a2ece56743ba3d40747ecdee39665f81aa79c727d2574462a92417:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk3ZGI0MWM2YzgzMDYxNDdiNmMzMTNjN2QxN2JjMTI0NDY3YzdlZWY1YmU4MWZlZmEwYjEwZDAzODhkZTFmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2ZiOWVjY2Q0YmY1ODEzYmRjZTZkZDRkNGY1ZDY2ZDAwNGQwYmUzN2JjZWU1MTdkMjIxZjMxNDBkZjM1NzgwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjhhOGU4YzQ5OGQzOGE0OTI5MzAxMzkxZWM1MWM0YmM3MDVmNWU1ZWYxMTM4NjU4MzJjMWQyMTdlMjc5NTU0ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ea921cbaef043708eb90f32679ae2d7",
+      "statement": "Per the AGENTS.md untrusted-data boundary rule, the client re-parses every /api/settings payload with transitSettingsSnapshotSchema before trusting it, using .parse (not safeParse) so an unexpected payload rejects the caller's promise; because transitSelectionsSchema is a transforming union this parse also promotes legacy document shapes.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L24-L28",
+          "version": "repo-lines-v1:sha256:c08eaee70dc0270dc827e33a4d8d9e3906e254dd4f07c4ce80581ac809bc3021:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjVlOTUyZWZmMzU2ZTVjYjQzMGRiZmQxYjBjNmMxMTdiZWRiZTE2MWEyZTc3MzE5MTRiMzgwZTc4MTk2ZWUwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzNmZjk2NWNhNjljMWJmMjE5MjhkNDQ4Y2M3MGExMWY0NzY2ZjRkNTA3NTU1ZGJkNzFlMWM1OTZhMWVkZmU4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWM2NWQ1YzQ4MWZkOWY0YWI4MjEzMzQxZmQwZjQ3YjdkNDY5MTZkYjQ4ZWE0YjEyNWY1ODdhYjk1ZjBhMDcxYiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L156-L166",
+          "version": "repo-lines-v1:sha256:81088a664621fc7d43e5a8f615fc47601a6e67e5c4d228bd6ce4e7bb15e47d63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiOWIzYWQ0OWFiOTdjNTJiNjcxNTIyMzRjZjZlY2Q2YmQzMGQ4ZmZjNzQ2ZmUzNDVkNmIyODVlMTg3N2JiNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L54-L78",
+          "version": "repo-lines-v1:sha256:8c1077822a2496d07b112041748a55adb96d0e66c23e016432560405ebed3b65:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlOWVmOTU4Njg0NDMyYjk0OTBlM2EzOTc5ZGQzNjZiYjA1YmNlMzg0NzJiMzhjMmY1YjFmOTcxZGM3ZTNjZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjOTAwNjkwODUxNWNhYjM0ZDE0ZmE5ODAxYWQ1NWJjN2EwZjVmMzdmNDcwYTgzOTQ5M2Q2ZmI1MDIyZGZjMWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMTkxOWIxNWE5YzdhZWRjNzZhNGQzNTYzYjE5NGQzYTljMWY4NjRjYjYxOTgzYjk5MzU0ODNmZjY2OGY0NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyYjAwZDY5Yzk5ODc1YTdhNGVlYWI0M2E2NTkzZmJlOTNmNTVjMmU5NWUwNjc0Zjk3YzlhZTVkZmM4MzJiOTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8e781360d80847cb885619be5bb84044",
+      "statement": "putJson sends /api/settings with credentials 'include', Content-Type application/json and an 8-second AbortSignal.timeout, and both helpers convert any non-OK response into ApiError(status, code) where code is the JSON body's error string or null.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L74-L108",
+          "version": "repo-lines-v1:sha256:742ecb6bd15fef81efdab9f9b80d926a8d0628b152c8aef070f26beb627a832c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjOWUxNjdkYjIzZmU0YmQ4NGNiMDBhNWY4ODJmMzE4NDZhZDNjNTczMDkxYTExYTA1ZmY5ZTdhNzk1M2EzZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmOGMyODViMjM4ZjI1ZDM0YmVlOWYwZmUyNGFhNjMwOTFmYmI2ZWVkYjk0NDA3ZjhkMjhhOWM0YjYzMDMxYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5NjlmOTkwZTNhNTc4MzhkOTc2MjEwODU3OGJhYzU3NTg2NTI5NzdhOWI4MzQ2NDkwY2E1ZTllM2Q2ZjBjMDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ffdd2c3af27640328d8723d2208ce43e",
+      "statement": "The service worker never caches this traffic: apps/web/public/sw.js returns early for any pathname starting with /api/, so settings GETs always hit the network and an offline PUT fails into syncStatus 'error' instead of serving stale data.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L48-L57",
+          "version": "repo-lines-v1:sha256:71072482cd61d911421b7d3c003f348da25bc3ef3b895b0353109ee8fd73b643:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlODgyODNkMTE1NzJmZjkwNmY3MTAxY2ZiZjAyNGFmYWY4NzhhOTNmMGJjYTVmNTdlNmQxZDQ4ZjNkY2ZiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGQyZGQ0ZjI4OWQyNmRjNzU3YzJiNjVhMDZjMzkyMjdhNjcxN2M0YjQ4YjVhMzk3OTJjOWYxMWU0MWFlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YTU0NTk3M2IwNWQ1MjkyMzI0OTFmNWZjNDI3YmUyMzE4MTYxNzM2NGRkZTJkNDhmMDg5NzYzNDAwYjA4NWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ef3f7bef20f43edbb361f105670919a",
+      "statement": "SettingsController at @Controller('api/settings') exposes exactly GET and PUT, both gated by a shared requireUser that verifies the cookie header through the injected SESSION_VERIFIER and relays rotated set-cookie headers back through the reply.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L28-L80",
+          "version": "repo-lines-v1:sha256:d3901223ba0b212930f305c6fd9ba7e3ca3ec44e4d8cc2cd5ee3b8fbc7a14625:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiMDI4ZDhjM2Y4ZDMzMzVjNDZhMTY4ZDZkY2E1MmQyMWM0ZjgwNWEzOWVkOGE2MGM0NGVkNDVhMTU4NDM5NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1YTZmMjViZDE3MThiOWZhNTFjNjMwMDIzYTgwNTFmNzQ1MTY2ZDEzZTczZTgzNTVjYzliOWNhNjBmNzU2OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MjAwNzVhMDkyMGVmMjkxMjI3NDUwNWIxYTYyMGZkMmMyNjQwZDcxOWI5YWM2NWY2ZjU2NmNmZmI1YWZhMjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9607ddcf416b45dcb15d57ac2a54e65f",
+      "statement": "SettingsController error mapping: SupabaseUnavailableError becomes 503 AUTH_UPSTREAM_UNAVAILABLE (an auth upstream outage is never mistaken for anonymous), a null user becomes 401 AUTH_REQUIRED, a body failing transitSettingsUpdateSchema becomes 400 INVALID_SETTINGS, and SettingsVersionConflictError becomes 409 SETTINGS_VERSION_CONFLICT with message '다른 화면에서 설정이 변경되었습니다.'.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L112",
+          "version": "repo-lines-v1:sha256:fe2910db6c547a7df62e58d7b1d521a434d1c4256ac06be6bcdc099b03b55adb:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L79-L109",
+          "version": "repo-lines-v1:sha256:7201bb3a167091c70f863c97ea1d5fb7865806ccd9395804283bd1b6c7cbf6c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhZWJiMTA1YTY1MzI3NWQ4MjljNDc2OWE1ZTM1MGUwZmRmYmM3YTY2NDAxZTQwM2FlZmU2MmE1MDM1YmMwYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYmZkYjk5NTQ1MzllN2EwMjFiMTI0MDFlOTU2YWUwOGQ2YjFjMTBiNjQ4Zjc1ZTVlNGIzOTY3M2JlZWM0MDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwODgwMmRhNzVmODQyYTg0ZTdiYWVkZGQ1NTI3YjY1ZDBiN2U1N2Y0MDkzOWM2N2UzOWZjY2UwZmUyZTBhM2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a95317febb44d398b193bc4bd3a87fc",
+      "statement": "The repository is injected via the SETTINGS_REPOSITORY symbol token from AppModule.register; apps/api/src/main.ts is the only composition root supplying a real DrizzleUserSettingsRepository (after building the database and running migrations), and the default UnavailableSettingsRepository throws on both methods so an unconfigured boot fails loudly instead of silently pretending to save.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L29-L40",
+          "version": "repo-lines-v1:sha256:911be1c43d81c714b6e4869ee64dfa5600b47fa3dcdfb17580682f6d196f0014:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MzUyMTI4NGI0MzBhYjliM2Y3MzNkYmY3MjRjOTYxY2M3ZDYzZDVjNDQyMTU4M2VmZTI4M2Y2YzRhZjc5YWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNDEwOGY3MmNiMzc4YTg5ZjAxNTBkMTlkNWEwZmViMDkyZGRhZDliODk2M2E5MTRmYzZkYmQ1ZDZhNmRiNzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxYmY5Njc4NjhkNWYwMzc3ZjFhNTIyYzUyZDg4NWM1MzMxOTc4ZTU0MmRjN2EwMmUxM2EwNDUwNzQ2OTk4MzYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L71-L106",
+          "version": "repo-lines-v1:sha256:2525c9bc6dd210798229a3de8921f51a70e97887adae1324bf8b924a107cce71:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZmQyNGY0N2ZmMDQ5ODJkNTQzYWI1ZDBhMDY1ZDY0ZGIxNGY1NzcyYzI4YzdkOGQ4ZDRhNjExYjQzNWY1ZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkMDA1YTEwNjM2YjA4ZDdhZmEwMjhhMjdiYjAwY2NiOTQ4Y2ZlNDJjMTk2NzI1NTY0NjE1ODFhZWY5MGZkZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1N2Q1MzdjOGE4MDI2Mjc4NjljODRiZDcwMzBmYTZhNDFiNGZjY2JkZjBhMDczYzE4MGZmYjlhNDE0N2NmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzODA5MzQzNTE0YTFhNTllZTc1M2Y5MDA2MThiMGEwMzY2ZTk5Y2FjNGVlMGU2MDg0YjI4MTkxYjQ5ZDRlZjEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L15-L34",
+          "version": "repo-lines-v1:sha256:d01aebc6e90e3389466025659fd69971142fc35b18a84f85ebe0850b61a00ada:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNzk4ZjI2M2ViZWYxYmU3YzBhOTRmZTQ3NTBhNTVhOTZmM2JiNjRmNjRlOTZjMjM2NTMxNjNhYTdiZDcyNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNDlhMzljMjZiZWU4MzQyNWNjMzdmNGRlM2U5YzUxYTRmMzU2M2QzZDQ2N2IxMWQ3MWU2MGE2NWU3MzFmMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NjhjMWMzY2YzMGNlYWM5MDVhZTdiNGE1NWQyMDU1ZDgxODUzYzlmZWVlZGYzZWI0YzA5ZGY5ZTg2NDlmNDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_42c12770f69f44e7a56969b7f3cfc3bd",
+      "statement": "PUT /api/settings implements compare-and-swap: the client sends its last known version, and DrizzleUserSettingsRepository.save increments it under a WHERE guard — expectedVersion 0 issues INSERT ... version 1 ON CONFLICT DO NOTHING RETURNING (an empty result means the row already existed), and expectedVersion >= 1 issues UPDATE SET version = expectedVersion + 1 WHERE auth_user_id matches AND version = expectedVersion RETURNING (zero matched rows means another writer won); both empty outcomes throw SettingsVersionConflictError.",
+      "evidence": [
+        {
+          "resource": "repo://packages/db/src/repository.ts#L72-L109",
+          "version": "repo-lines-v1:sha256:0175fe1d78959e9441fd098e91b96c573f24765a8e7b03a0b6688af5e44bf60d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YzRjNzkxOTkyMTk2NTlkYmYyMzQxOTgzN2MxZTA5M2IyYWFiNzA1YWRiYTBmYTZiMGZlZjExOTMwYjk1YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMDYxZTI2MTUxMGUwMDE3YTUwOGFlM2ZhZGM0ZGNlMGU2ZWRiOTgxYzU0MzRiNGExNDdmNDBjMzdlNzQwNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1a8337675e74aa58a139618e4242861",
+      "statement": "409 SETTINGS_VERSION_CONFLICT tells the client another screen changed the settings, and the client's response is restrained: it only sets syncStatus 'error', surfaces in the UI as the label '저장 확인 필요', keeps the local document, does not fetch the server copy over it, and never overwrites; versionRef stays stale so further saves conflict again until the session effect re-runs.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L103-L112",
+          "version": "repo-lines-v1:sha256:4064fad2cd128f1158517b7238948028440f4094f2d4180fd7254a096da5d093:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZGI3NDYwODE4MmNiN2NhNGQ5ZmJhNDlhMzk0OTlhN2YzOTA3YjRlYTAzM2IxNDkyYWQ1Y2YwYmVlZWVjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2NDc0ODk2OTFlM2UyNmI4ZDE5MmNmZTJlODlhYWM5ODRkM2NlYTQwNzQ5YmJiNTgzOTEzNjc1NDE1ZTI1NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/GoogleLogin.tsx#L11-L17",
+          "version": "repo-lines-v1:sha256:f08100f885a44f53d60a5f3bfd386a1ed0953c05947022e0bd358fc6444ea4c9:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDgyYmE2YzU1NzA1NjMyZmMzNDhkZmI3M2IyMDY2YTliNDY2YjE0ZDdkYmRmZWQ4ODdhMmIxZDdjNWMxZDcxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDk1ZmE1ODcxNGU1MTE0YTFhOTZjYjA4MDVhMjQ3NzE1ZTdjNTg3YjVkZTRlOTNlOGYwYzg1NDQ5MDEzODFhMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTEwMzU0M2E2ZDI3NWViYWNhNDI2YzExOGZkYTUyNTYyOTAwNzQxZDg5N2ZhNGY1MDMxNmJiMGQxMzJiYjE4ZSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L165-L172",
+          "version": "repo-lines-v1:sha256:b7fe266be3a2ece56743ba3d40747ecdee39665f81aa79c727d2574462a92417:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk3ZGI0MWM2YzgzMDYxNDdiNmMzMTNjN2QxN2JjMTI0NDY3YzdlZWY1YmU4MWZlZmEwYjEwZDAzODhkZTFmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2ZiOWVjY2Q0YmY1ODEzYmRjZTZkZDRkNGY1ZDY2ZDAwNGQwYmUzN2JjZWU1MTdkMjIxZjMxNDBkZjM1NzgwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjhhOGU4YzQ5OGQzOGE0OTI5MzAxMzkxZWM1MWM0YmM3MDVmNWU1ZWYxMTM4NjU4MzJjMWQyMTdlMjc5NTU0ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b1374a7e7efb4a13988df42be49bfbd0",
+      "statement": "syncStatus is terminal-sticky within a session: nothing clears 'error' and the hook never re-hydrates on its own; recovery requires an event that re-runs the session effect (reload, logout/login, or a change to session.checked/authenticated/user), after which the fresh GET wins hydration because a new mount starts with mutationRef at its initial value.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L111-L118",
+          "version": "repo-lines-v1:sha256:b7fe266be3a2ece56743ba3d40747ecdee39665f81aa79c727d2574462a92417:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk3ZGI0MWM2YzgzMDYxNDdiNmMzMTNjN2QxN2JjMTI0NDY3YzdlZWY1YmU4MWZlZmEwYjEwZDAzODhkZTFmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2EzYjQ3ZDYwODhkYzg5MTA3M2QxYmE1MmM2MGQ2NWQzZTFlN2I2NzIxMDI3M2Q4ZmNkM2VkMDA3NTRhZjRlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjI4YWJhZDVlMDc4MjE1Y2Y0YWU4ZTI0ZGVmMWMxZjdjMWYzYzRiZGI3NzhkOGM5NDMwN2U1NzBkMzIwMDE4OSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L54-L124",
+          "version": "repo-lines-v1:sha256:5c0ea6e92bdf8bc5000aaba1d92e606289fc10f1c5f01a7f0efbfb369ee1ca05:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmOWRiYzdmMmYyNGI1Mjg0MzU3Zjk4NjMwNmZlZjA0MTdjYzZmODFhODNhMDJiZjgxNTBmNzExMmY4ODNiMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTUxMTk0ZWJlMGJmOWQ2YmU1NWQ3MmZjYWE2ZDdlMTg2YzMyMjk2MDFmYjA3YzIwZWE2YWM1NjE0NzYwMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjZmJlMTQ4ZDhkMzE0MjlkOTBmM2NmNTcyMTg0MDY3ZWU4YTIyYzdjMGZjZmVkZjFhYTc0NDc5MTFhMDNiNTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d30e7c9a538a4bcdba693a64ac8c6e19",
+      "statement": "syncStatus has exactly five values (local, loading, saving, synced, error) rendered in one place — App passes it to BrandHeader to GoogleLogin, which shows the corresponding Korean label next to the signed-in email.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L145-L150",
+          "version": "repo-lines-v1:sha256:9a86d55c6fe19636798cd5e0371c95f04de367167ee8892d676dc9a2981ce6d4:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDgyNmM2ZWY1M2ZiODJkODQ5OTQzMjc2NjM2YTAxYzcxYjUzNWE0ODBmNjU0NDEwYTE2ZTgyZjAzYWYyY2I0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmRhNTkzZWI4M2M3OWZlOWM2ZDI2OGQxYzFiODc4N2EwOTI4MTA4NjJiMjFmZThhMWQxNjJmNGYxZDFmMzExYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWRmYmMxNGYzMDNlOTk0NjViMGU5YTU2NWZiOTNiYjIwOGI1OTAyM2Q4NjZhNThhODg5NGYxZDMwMTFlODMxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmZlMzQwZDAzOTQ0Y2Y4MTM3NDk0NTliNDk3NGI1OWY3NDlkNDE3NGNmMDQwNDU3MTc1YzE4YmYwNGU1ZGVhYyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/GoogleLogin.tsx#L11-L17",
+          "version": "repo-lines-v1:sha256:f08100f885a44f53d60a5f3bfd386a1ed0953c05947022e0bd358fc6444ea4c9:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDgyYmE2YzU1NzA1NjMyZmMzNDhkZmI3M2IyMDY2YTliNDY2YjE0ZDdkYmRmZWQ4ODdhMmIxZDdjNWMxZDcxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDk1ZmE1ODcxNGU1MTE0YTFhOTZjYjA4MDVhMjQ3NzE1ZTdjNTg3YjVkZTRlOTNlOGYwYzg1NDQ5MDEzODFhMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTEwMzU0M2E2ZDI3NWViYWNhNDI2YzExOGZkYTUyNTYyOTAwNzQxZDg5N2ZhNGY1MDMxNmJiMGQxMzJiYjE4ZSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L26-L31",
+          "version": "repo-lines-v1:sha256:0652fba27328b637678dafed55fea42e3c0dd851131c45c3d201915b98ba0665:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTc1NmE5NjJlMmY0OGRhODM1MzY2N2NmMWEyYTQyMzA4NTZjMzc2NTRmMzdjMTI5YjNmYWJjYjllZTI0MDFlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2NlNjI3N2RmY2Q5NzBkYmFhM2E0MmUxMWQ3MTQ1MzM5YjliM2Y0YjNhYTAzNjk1ODQzNzZiZDIyYTA0NGU0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWNlN2RhZDNiNjNlYmY4MDExZWQwNjU0YjM3OWVkNTBjYjJjZDYwZGEzOTI0NzZkZTE4YTdlMWQ3OGU1MjY4OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzMxN2Y1NDljZTg0YjJmZTNjZWZhZDY5YmI5OGFhODY1ZTZhNWZiMzBiM2NkN2UzOGM0ZDhmMjI3MDI4OTY4MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_19ccb8a6f52247a785165a5c406dc16a",
+      "statement": "Database reads re-validate untrusted jsonb through toStored, which runs transitSelectionsSchema.safeParse on the row's selections and throws InvalidStoredSettingsError on failure; the controller does not catch it, so a corrupt row surfaces as a 500 rather than a conflict or garbage reaching the browser, and the re-parse doubles as the migration path for legacy stored documents.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L96-L111",
+          "version": "repo-lines-v1:sha256:1a95fcd4a08c5d81f6f790b70cfa281af914ab5245e02dc0fcf961d66100b56b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhOGU4ZGM0NjlmYWJhYzRiNTM5YWIxMWEzMTExZGRiN2MzYTk5NjYzOGJjNjkzNmI1YjlmMzYxYjM0MGYwMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L43-L56",
+          "version": "repo-lines-v1:sha256:5b7c36733e7761f79200c16a88aa189385cda3311b039b1162d3c49a26f361c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MTQ2ZmI2MGZiMjU4NzgzODlkOGE3ZmM1YjJiMTcyNThkODBlYjUxOTdiY2IxNzA0M2FkZjVhZWM0N2MyODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5YjY1MWY0YjcxOGZjYWFiNDRkYTI4MjE4NzZlNDhlOTY1MmNiMmY5NWE1ZDdmOTE2ZTNkNzUxMjhlZGIwNGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eed885759dbd42de94a3afedfe963e52",
+      "statement": "Settings rows are keyed by the Supabase sub verbatim (auth_user_id text primary key on the user_settings table) with no local user record anywhere, so different authenticated users are fully isolated — a second user reads {version: 0, selections: null} while the first user's row is untouched.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L132-L166",
+          "version": "repo-lines-v1:sha256:453ba37732d38b080b14e0395ac588ccfb1c93d753d21c7dfb82e1997d5fe477:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjYTM2ZjkyYmYyMjY1NWYzNjE4Y2ViMTgxOGYxYWY5ZTAzMDhiMjVlNmNkMjhkYzQzZjU1N2Y1YTA2ZDAyYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzOTc1Zjc4ODEwOTQwMmUyNWNlNDFiYzZlNTBlNjNiOTdmZTYyMDYwMDM5NDRiZmZlMjJkNTdjZWViMzY3MGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiZGE0OTYyMmQ2MTc2NDQxNjJlMjBjYWIyNTZiMTM5MDJjOTU3MjE2M2M2ZTZkZTlmZTAyOGYxYzMyYjFmYjYifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L49-L75",
+          "version": "repo-lines-v1:sha256:707ebb9d4553d3ecff935cf661d59dfb3f3f432abd846d49baeefdbf5d5bfbe7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMmEwOWIwYTY1OGVhNTY0ZjM5NTJmZDZjN2VhMjNmNzNhNGQ2MjNlZWIzMDU4MjBhNWVhMDMxYzI3MGJmZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDFlMDcwOWU1NDAwNjBjZGNiNzE4NmRlNjU2MzRiOWJjNjA0MjBjYjdiYTUyM2FkYjQ1NmZjMzk5Yjg5YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/schema.ts#L10-L20",
+          "version": "repo-lines-v1:sha256:9ddc12a0d3829656138e46a1d6838cc2635359a186998b01d5112a3e3d7d7646:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNDRmODFlMWFmNWE4OTFkZDNjZTdjOWVhN2IwN2JlZTBlNTVjNWZkY2I1M2UwOGNmMjIzYzg0Y2I4MzdlMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmNDkwMjliZDc1Zjk0MjM0MzgzMjllMDZjYTJjMTc4NWU4NzI4NDkwMDg1OWM5NDYwYmI5MDYzMmZjOWYwOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7749ec905dd7468ba018fa5c8d6663ae",
+      "statement": "useTransitSelections.test.tsx pins the hook contract at the client seam: hydration replaces state without touching localStorage, {version: 0, selections: null} triggers a PUT of the anonymous document, a post-hydration mutation PUTs with the server version, the four-stop watch cap holds under authenticated sync, and rerendering with an anonymous session restores the local document.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.test.tsx#L80-L241",
+          "version": "repo-lines-v1:sha256:87765a3314bba264ceb09dd486d0806508afa83d0174aa977b28adcd8c29dee1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmOTI2YjQzZTZiYjFjMmViNjFkYTNlZDFjZGQ3OTVlOGFkOWE3YjFiNjBjZTIzNTU0NDA2ODYxNTRmMDkwZDU2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjNWNkMDMxNmJmZTU0OWFlZTFhMjUxZmNkNjFjYjI5YmVjNWM2ZGY0ZWNlMWM2NmI1YWRkMmUyNzI0ZjJmZDU0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_39f82d00329047a1ad8bf307975ee224",
+      "statement": "The Postgres-backed contract is pinned by two integration suites behind describe.runIf(process.env.DATABASE_URL), keyed with crypto.randomUUID() and cleaned up in afterAll: a first save at version 0 yields version 1, find isolates users and returns null for unknown ids, and re-saving an already-consumed version rejects with SettingsVersionConflictError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L11-L75",
+          "version": "repo-lines-v1:sha256:fda65e42ad617c75539990d4a17b70c4d02e2239af2c9e06fd58b1131160ea8f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5OGYzMmQ3N2IxNzgxZmQ1MGEyY2I1Mzc4NzNkZWUwN2EwNTYyZDc5NmIwMzJiODEwNjVkNGM0MDEzODIxNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4YjczZDY2YjdmODliMzQyZTdjZjkyNTg3NzhkMmQwMjU3YjQxZmVkZGQ3OTU3YTdhODk5OGI2NGIxZWM3ODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.integration.test.ts#L11-L56",
+          "version": "repo-lines-v1:sha256:b36d69e896755d18a42ba207c0478cd9431dadea53318b1e6bcab131088530b4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5OGYzMmQ3N2IxNzgxZmQ1MGEyY2I1Mzc4NzNkZWUwN2EwNTYyZDc5NmIwMzJiODEwNjVkNGM0MDEzODIxNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4ZTFlNDg2NGQwNjNhODMzNDZiM2JiYjU0MjM3ZTJjZjg0MTNmYmZiODk1NWYzOWFhN2U2MDM2NzY1OThkMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1ab5719504ec07689c459c342a4c783ef99da3a965d29c5d182be9cbda6e5186",
+  "claims": [
+    {
+      "id": "claim_caabf5e3a517453fa5ab695718416a32",
+      "statement": "All Seoul upstream calls are made by five exported fetch functions in apps/api/src/upstream (fetchStopCatalog, fetchNearbyStops, fetchArrivals, fetchSubwayArrivals, fetchSubwayStationCatalog), each of which takes the fetch function as its first argument, returns normalized types from @mota/contracts, and is called by TransitController or TransitCatalogService with options.upstreamFetch injected through API_OPTIONS (defaulting to global fetch in AppModule.register).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L71-L88",
+          "version": "repo-lines-v1:sha256:ae35cda6ce681b45414ec5b86fb383a36ac0623fd8bb4520522b729a048945a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZmQyNGY0N2ZmMDQ5ODJkNTQzYWI1ZDBhMDY1ZDY0ZGIxNGY1NzcyYzI4YzdkOGQ4ZDRhNjExYjQzNWY1ZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1N2Q1MzdjOGE4MDI2Mjc4NjljODRiZDcwMzBmYTZhNDFiNGZjY2JkZjBhMDczYzE4MGZmYjlhNDE0N2NmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2MTYwZTMyYmM2MDczYTgzNzBhODczM2VjNTVhMGI0MTVjODYyNmU4ZGU2NTNkNzNhYTU5YmZmYTg0MDJmOTcifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L83-L112",
+          "version": "repo-lines-v1:sha256:71f20a0e90e4b2bece47909d80b9d4c1c58039491570103fcc0c7f52e7a73420:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0NWM5OGI1ODU0ZmQzNTgyYmVkNGMwYmMxMzkyMzAyOTQyNDlhN2ZlYjMzYTM5YjQ4ODUyNjYzMzZhZDNmODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkZWYyNWRmODE4M2IwZTMwYWQzN2RiNzgyYjVmYTNlOTg4MWI1NGJiOWJmZDBiNjJkNzgzZGIxZDdhZTk2NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiZjAyMmMyMGM4YWU2ZTQwN2FhOWIzMDgxM2FhNTNlZjM3MTJjOTdlMTZkMjkxNjZiYmRiMzk4NTI3ZGY1MTQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L56-L71",
+          "version": "repo-lines-v1:sha256:116e0c2a86a2e9795975a0ccea42edefbbe368c9cc3512d4a4d12810e9669012:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZTlmNTkyZTYwYzZhZmUyNzFhMTgyODc2Zjk2Njk5ZDYzYWFiOWRiNmI1NWQwODg0OTM3ZTdkMDg2MDcyNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiMmRjNzNkZTRkNWFhYzU1YWZhMmRiZWJjNTI5MTMxOGM1YjAwZTE3NmY1MTUwYWMxMDZlNmE2ZGU0YmFmMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4YzAxNTQ5NGIxNDM2NjY2NTUyNzY2YjAyZmI0ZWJhNTU2N2NiYmM3ODViZDgyNjA2ZWMyNWRkNTNhM2UyN2MifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L12-L24",
+          "version": "repo-lines-v1:sha256:3e0be47bb5decd71b8da70b7943dbb8933805030324b43cdf4ebf8bbab34de83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiODhlZWU1ZmVlNzM5YjU3NjIxODE4ZGZmMTM2YzRhMzBkYjZiNDc3NTgyZjI3ZTA5YmEzODZjNjFhNDhmMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5MzYxOGUzNjBjODE5ZTM2MjAzYzgzYTZhZWFiNGNjMmVmMWY3YTIwZDU2ZGQwNDMzN2U3NzM0NzQ1M2ZiNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkZWZmOTZiOTIzYzU0NTk4NWYzZjFkNzM4MDI3ZTFlNTM3OGY3YzQyYjMyMjM1MzYzYTkwZjRlYmM0YTE5ODAifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L24-L52",
+          "version": "repo-lines-v1:sha256:62235766f1743758098c26927ce01e036db7ed5c8a0a4e679dd8b448ca97b9e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiODhlZWU1ZmVlNzM5YjU3NjIxODE4ZGZmMTM2YzRhMzBkYjZiNDc3NTgyZjI3ZTA5YmEzODZjNjFhNDhmMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4NGY4MWVhYjZlNTdjMWZkOGViNmM4NzJmMDhhOWUwNWZkZDBjMjY4MWZmNGU0Njk0ZGZkNDM2NzYwN2UyNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMTU5MzNiYWExMDg0OWZjODdiZmVjMTVhNjNlMDQ2OTcwYjQ2ZTk4OTkzYmQ0YjFiMzI5YWFlZmY0ZWI5MTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L19-L31",
+          "version": "repo-lines-v1:sha256:420c716f097edd5483fd51a50a77bc247237c8b021ab48c6461ccbb3feaf78b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiN2NlZTk5ODhlODZlMDExZjM3YjdkNjZkZWNhNDViNjhjNTg4N2Q4ZDEwNzgyMTNkMzM2M2NlOTAzYTRkYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzNDhmMjRmMjk2YmFmZTkwM2RiOWJiZTdlZGEzMTM1NGJmZmQ0M2UyNGVlODJjN2VjNGJiYWMwMzAzNjIxNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMzk2OTVmMWYxMmFlMjE4MDY3MTM0ZmU3Njc2NjJlMDgyN2NlNTM1NDAzOTQ2NDViOTRiZTMwYzYxNTMzZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3N2NmMTU0ODUwZjhlZTg5ZTJiYmY0NDc1MmEwYzMxNDczN2Q4NWRlNGZmYzFjMzBkYzNlMmIyZDZlNzAwYjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6b68f555d0e34eb592bc42299d013890",
+      "statement": "Each upstream endpoint has a fixed purpose, method, timeout, and response cap: fetchStopCatalog GETs selectNearStops.do with kiloMeter=45 and lati=37.55/longi=127 under a 30 s timeout and 10 MiB cap; fetchNearbyStops GETs the same URL with kiloMeter=radius/1000 under 8 s with no cap; fetchArrivals POSTs form-encoded arsId to getStationByUid.bms under 8 s with no cap; fetchSubwayArrivals GETs /v1/seoul-subway/arrival under 8 s with no cap; fetchSubwayStationCatalog GETs the T-Data download.do?id=10229 CSV under 15 s with a 1 MiB cap.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L8-L40",
+          "version": "repo-lines-v1:sha256:35a3d566c679da3b2b88323de11ef5689013e604f8b35764b4c46b74e2d8f2c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0MTI3MTVlNThjMjMzNjc4ZmI1MTY1ZGEyZTlhZGEzNGNlZmI4NmU1NjNiOWVlN2YzZjdhNmIwNWY0OTE2YzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTA2N2E4MjI0MDU3OGEwNzcwYmFjM2NhNWZmNWM0MDA0MTE2Mjg5ODBmMTNkM2JjMzkyYjMyM2NjZjA0MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1OTI0OWMwYmU2YzE1OWMzZWI1NDkyZGExZThkMmZlMTMxZjVhZTRmODg4ZjJhZjMzNTQ5ZDZiOGEwYjhmOGIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L10-L12",
+          "version": "repo-lines-v1:sha256:f61c30601d652fb5195dd218b0f5500ab3741664294c5eedec58cc11d80a00b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE3NzE0NjRjYjUzMzM0YzIxYTUyZTk1NDg3NDZjYzgyNmUyOTc1ZDc5NGE3M2Q3ZDFjZGVmYzZkOTY4MGM5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWFiNGZmOTc3MDQ3Njc0OWUyYWNlZDE5ZWNmZGM0NWVmNWU1NjE2NmY4NzMwNWU2MjNjMDAzMTE5YmMwOTg0ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQ0MGQxZTYxYmNmM2IzMDY4YmExYmQ3MjMzMGViYzZhMmY4OGU0NGJkMjg1MmIzMTYzZTFhZDdmMDBlMWNjYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWZhMzcwNzE3YjA4MGQwZDc0NjA5ZjA2OWNjMWM4ZDA2YmViYzE1ZGZkMjIxYWM3NDY0NDFkYzNhOTliMjE0NiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L34-L52",
+          "version": "repo-lines-v1:sha256:9d843fc4bd729eff5906a7cd505bf4f1533b0cf5fdb631b0c86b8e6705637cbc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1YWYwZWU2ZjNlODI2MzZmODg4N2Y5MDlhYjVkNjA0MjgyNDc3MDNkYWZlNjgyOWViNzM0ZjcyMTdlYzY3Y2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiZWM1YmNiNjkzZmFkMzk5MTFlMjg4NTRhODcwZDE3MTI2YTdlMzBlZTlmZWJkOWE2YzdjYTNiZmIxMWIwYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMTU5MzNiYWExMDg0OWZjODdiZmVjMTVhNjNlMDQ2OTcwYjQ2ZTk4OTkzYmQ0YjFiMzI5YWFlZmY0ZWI5MTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L55-L83",
+          "version": "repo-lines-v1:sha256:9453233a8ade5b50053e28974609fb4f909b1ebdcd5ee6e0f5752a2d517b006f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxYzFmN2Q3YmVjOWE0NTVjMzYxMTFhM2MyNjc5Y2JiYjZlNDExYzFkOGNkODQxMzg0NTk3NzFlNGJhZTNhOTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkOWI2MjM5ZmEzMjczNmNhN2M5MTQ2OWE4MjkyMDI3MGM1NzllY2MxMmQ5YzAzOGQ3YTM2MDZiODU1MDEzZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkODhjOGM1N2UwMmE3ZjkzYmJhYmE5OTM2NTA0OWIxMTYwM2VkZjg5MDM1YzA4NjhjYWRmNDVmZGY4MjE1ZjcifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L85-L104",
+          "version": "repo-lines-v1:sha256:f409be30e6f5530b8d274d1c7c26af1551317024702b8e1519ea84226240bc60:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2MTFjNTVjNjYxMGI4MWM0NjdiNTk2OTNhMWRjMDM0MGVhZGZhY2I5OWIyYzczMDdlYTM3NWFjMGFkMmRjMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0N2NhMzE5Yzg0M2ZkMWRkMWUyMTNlYjBjMmUxNTNmZDg3NDc2OWVlOGE4YzYyNzhjMGY3YzgxMmY4NWI0ZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzNGI0NWI1ZDNiNGMzM2I3ODZmZmQyODhlNmJjNjRkMTJmY2E0NThlMDZjMjRhMDNjMGVhZjM2MjE3YjdjOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzOGRlNzRiZTk3YmYzYWJhNzg3MmE2MWJhMGU0MjA4NDAwOGM4MWU4YTIwMmE2MTIxMzRjNzU1YWFmN2ZhMDYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L24-L39",
+          "version": "repo-lines-v1:sha256:26c21eef885bbfb11ed4a4675d383589d59d8f1b63466018bff17224d12eed71:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NDBjNjJiZGJmYTE4NmZhNjIyZTU1MmIyMTNmYWJjYzc4OTRmYTIyZGY0NTAwODU5ZWI2NjAzZmNkYzBlNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0ZGU4ZGE1ZGY4ZGMzM2VlYzQxODY2ZDgwYTdjZTQ4NGE4ODhmNzBhYjQ5NzhjNDNlMWIzOWE4NTc5ZjBhZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3OGZmMmNhZjZkNTAyNzE0MjM4MDQzYTRjMjAyZWJhOTRhMjFlMDM5MjNiMGY2MTRjNjFjODVlOWJmNTRjMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJhYzE0ODdiZDRjZTc2YzBiMTQ1YzcxZDYxMzk3ZjA1OWJiMTIxMGUzMjE3ZDU5YTFiZDMxZjRlMzhhY2VmY2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_99b7d7211e2041e6a14078565bd3d921",
+      "statement": "Every adapter call sends the shared UPSTREAM_HEADERS constant { Accept: \"application/json\", \"User-Agent\": \"mota/0.1 (+https://mota.m16khb.xyz)\" } (with fetchArrivals additionally adding a form-urlencoded Content-Type by spreading it), and passes signal: AbortSignal.timeout(...) as the only latency bound — there is no retry, circuit breaker, or other timeout mechanism in this layer.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L21-L24",
+          "version": "repo-lines-v1:sha256:3627de4a7a6ea4caea9b0d2034df08337dacca0d317b831c535d4cd24a22bc98:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGY4YWZjZGYyOGU1YzUxYTU0MzEyMGY1ZjlmMjFkZDA3NTgyMzY0OWUxYjUwMzEzOWUyZmEwNjVkYzc4N2U3MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDJjZWQ1NTRiY2NmNDA3OTRiMDg1MTdiZTNkNTE4MTU0M2YxOTc1MjgxNmFjOWJiMDJiNjViY2NmM2I0OTU2ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2RlZmY5NmI5MjNjNTQ1OTg1ZjNmMWQ3MzgwMjdlMWU1Mzc4ZjdjNDJiMzIyMzUzNjNhOTBmNGViYzRhMTk4MCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L19-L22",
+          "version": "repo-lines-v1:sha256:8ceba94c4cb09bf94af390ab36a97a09b828408d8104efb4d2a1a5077c9e48b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjk3ZWM2MDdjOTI4YWJmZjI1MWExNDYzY2Y2NzJhZWVlODJlYjAyM2E2ODFiNThlYjVmNWY1MzI2OThjZGNlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0ZWU4YThkMWFhODQ1MzkxYmM2NzllYjcwY2U3ZjQ2YTNjZDZmYjJkMTZmY2NhNjdmYTE3OGY0ZjhjMWUwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjg2MmY2ZTI2NGZmMzhiZTI1MWY3YzU0ZjZhNDEwNDA1NWQyOTEwMTBjMWY1OTdiYjUxYTc4MmZhNTc0NTdkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYxN2VkMTljYWZlNjI5OWZhY2VjNmU5ZmJjZGI1OTRlZmIwYTc4OWI5MDc1MTNlYjRmNjg5MmI2NGNmMTUzZSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L41-L44",
+          "version": "repo-lines-v1:sha256:5bb70a63123ebf7519fef16212abe6f6cacbd933c17d5515341fd94301256f53:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZkZDdlMTVlZWRjZDgyYjdiYjRiNjY1MzU1MDg2NGEyYzQyZTYwYWZmNzQ0MmNhNTRhYWJlZWQ0ZmY4MmY4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzZhMzUxYWMyY2JjMmE4ODAxOGIxM2JlODUzMTRmNGVjODMzMDBjNDU1Yzk4ODk4Nzc4MGRlMjMwZTMyOGM3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDBlOTg5YmQ2OTQ3MGJjOTgzZGRiMWY4MmEzOGEzOGE5MGM4YTNiYjc5Mjc4MzVjMGVlZDMwOGRkYmQ1YTQ5YSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L89-L97",
+          "version": "repo-lines-v1:sha256:c850fda5af2b56d07234ab3c91be965a271a0cc48adf8de3a91e2c2af8770294:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVhYzMzZTllYzczZjkzM2NlMjlkMjc2NTA3NzI1ZDQxMGNiNmZlNDNlNTczZTVkM2VjNDllMmI4ZDM2M2M2NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTkwNjUwZjZmZGYxNmY0MTI2N2FhNGM0NTYxZmZjOWE2NjE1YzU2MWNmYTI5YTExOGFjMWYzNzAwZTk1OTAxNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMThlMWI4NTc1NTJmZTk5MDgxZDkwZWM4NGY3MmY2YTE1YzRkMTA0OGYyM2U4YzFjNDIzMTdmMzVlZTM2NjZjOCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L29-L32",
+          "version": "repo-lines-v1:sha256:5bb70a63123ebf7519fef16212abe6f6cacbd933c17d5515341fd94301256f53:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZkZDdlMTVlZWRjZDgyYjdiYjRiNjY1MzU1MDg2NGEyYzQyZTYwYWZmNzQ0MmNhNTRhYWJlZWQ0ZmY4MmY4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjA2ZGZlYzQ5NmRhMmM0YjU0YmZlZmQ3ZjAyMTZkZjBiYTRiNmVhZjBiY2E2Nzg1ODdhM2EzYzQ3OGZjNWI4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2Q5YjFkMTZhOGE2OGVmN2FiOTFmZGM3MWE4YTI0ZTlmMTI1YzcxYTAxNzcyYWFkOGM2ZGFkNDhmNDFjYzIwNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b9da7e481a44ab1b39e5797ca03d2bc",
+      "statement": "Adapters classify failures by throwing UpstreamError(message, detail) for non-2xx statuses and over-cap bodies, and TransitController converts every adapter failure (UpstreamError, Zod throw, timeout, network error) into HTTP 502 with body { error: \"UPSTREAM_UNAVAILABLE\", message: <Korean string>, detail: errorDetail(error) } via BadGatewayException.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L122-L128",
+          "version": "repo-lines-v1:sha256:eb38360eb73fc74f88a1edff26cdf954a5d0181d4625714a9386cceb5d4029eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ5NThmODFlZjkyNGJjN2IwMDNhMDBjMTk0Nzk5MThlZGUzMmJkMTg5YWI2OTEyMGJhODNkZjlhYmM5MDk5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTdkODYzMmU1NGU5Mjk4YWJiOTU4NzI3ZTJkNTE0MDhhYmFmMTM2NjAzNTM3OTEwMTQwYWJmNjViMzBhYjYxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L25-L40",
+          "version": "repo-lines-v1:sha256:32f6c54380e20e3e2d85d78ecfe7bfbeb1932903ec0427a87dea154344913567:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiNTU0YWI1NmQxZTA5MTZiNjNiZGYxY2IyNjExMDIzY2E2OWY2MjM0Yjc2ZGEyYjE4MWQxZjY1ZTI0YjQwNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxNWVjNDI2Y2YyMWVmMDRjZGVlMzZjNjZiZjY5MzQwMmM5ZTY1OTEzMjZmOWU0NzJhYjg3MzA0MWM1NGMwZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1OTI0OWMwYmU2YzE1OWMzZWI1NDkyZGExZThkMmZlMTMxZjVhZTRmODg4ZjJhZjMzNTQ5ZDZiOGEwYjhmOGIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L45-L50",
+          "version": "repo-lines-v1:sha256:befa5e83a90bf925b4400f18b130a6afdfa97c656b02b0dfd6f0d7678cbfc315:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWI1NTRhYjU2ZDFlMDkxNmI2M2JkZjFjYjI2MTEwMjNjYTY5ZjYyMzRiNzZkYTJiMTgxZDFmNjVlMjRiNDA1YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTkzZGUxN2Q3ZDUzMjIyZTk1YWY5ZTM1OTkxMmQ2MGE0YzEzMjUzNWNkMTQ5MTgzYjljYzkxZDY1MTY5NmU4ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjU1NjliNGM5NDM3MTQzMDdmOGNjNWE2ZjY4MjczNjYyMjg0OWUwMGYxYjgyYTZkNmQzOTA5MGQ5MDBlYjExOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L69-L81",
+          "version": "repo-lines-v1:sha256:098161707f5834da70711b13e150f7628a267aba8596016ade2004a0d0633d60:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiNTU0YWI1NmQxZTA5MTZiNjNiZGYxY2IyNjExMDIzY2E2OWY2MjM0Yjc2ZGEyYjE4MWQxZjY1ZTI0YjQwNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0NWZjNTFmOTQ5NDU3NjI0NTM2NGMyMjY4YTBhZDVkYmQ4YTlhYmU3MzllMTIwOGQ2YzNkOTFhOWNjMTI0YzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzNGI0NWI1ZDNiNGMzM2I3ODZmZmQyODhlNmJjNjRkMTJmY2E0NThlMDZjMjRhMDNjMGVhZjM2MjE3YjdjOGMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/upstreamError.ts",
+          "version": "repo-file-v1:sha256:bdadb1d9a2cf082fba7723c50b560a69654b1588016d71d38aa51702fc8ade37"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5e8ad0f4cba46eaacf0f3052b2d0d1b",
+      "statement": "The same selectNearStops.do endpoint serves both bus modes, differing only in query parameters, timeout, cap, and normalization: fetchStopCatalog uses BUS_CATALOG_LOCATION (lat 37.55, lng 127, radius 45_000) to request the full 45 km catalog, while fetchNearbyStops scopes the identical URL to the user's location with kiloMeter = radius/1000 (e.g. radius=800 becomes kiloMeter=0.8).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L10-L17",
+          "version": "repo-lines-v1:sha256:39588a9ead099c07155e07e5378ae6bf2c7b5bec613cf06741f11fa3054c4e9a:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE3NzE0NjRjYjUzMzM0YzIxYTUyZTk1NDg3NDZjYzgyNmUyOTc1ZDc5NGE3M2Q3ZDFjZGVmYzZkOTY4MGM5ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc0ZWU4YThkMWFhODQ1MzkxYmM2NzllYjcwY2U3ZjQ2YTNjZDZmYjJkMTZmY2NhNjdmYTE3OGY0ZjhjMWUwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGQ0MGQxZTYxYmNmM2IzMDY4YmExYmQ3MjMzMGViYzZhMmY4OGU0NGJkMjg1MmIzMTYzZTFhZDdmMDBlMWNjYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmVmODlkYjAyYmU3ZWY5ZTk0MTdiMmE0NjRmZmE5ZDQxYzU0MWY0NWRhMWY1Y2M0MjQ1Nzk2ZWM5MDkwY2JmZCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L34-L39",
+          "version": "repo-lines-v1:sha256:d63852f858b3dbb056e9bb4f0fca0ede096ae24a0172755de34d9bf16dc9ccdd:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVhZjBlZTZmM2U4MjYzNmY4ODg3ZjkwOWFiNWQ2MDQyODI0NzcwM2RhZmU2ODI5ZWI3MzRmNzIxN2VjNjdjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTI5ZmIxYmMxMTk4Nzk1NzViYjA3ZjA0ZDUyZWVlMWNmYTllNmU3YjU0NTkzNDVmZjEzNjUxYzNkZjJkNTg2OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmJlYzViY2I2OTNmYWQzOTkxMWUyODg1NGE4NzBkMTcxMjZhN2UzMGVlOWZlYmQ5YTZjN2NhM2JmYjExYjBjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2NkNDFhM2VmYTA1NTAwNGFmNjdlMjRlZjlhZTI2Yzc3NjhlZmI0OTg4MzEzY2VlNTkyY2Y2NDdhNmJmYzE1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L58-L63",
+          "version": "repo-lines-v1:sha256:54f36e1a179614006fabbcc45e2b54e4aa1b8c040d1dc680bcdcaaadb1cb9f87:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDVhZjBlZTZmM2U4MjYzNmY4ODg3ZjkwOWFiNWQ2MDQyODI0NzcwM2RhZmU2ODI5ZWI3MzRmNzIxN2VjNjdjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTI5ZmIxYmMxMTk4Nzk1NzViYjA3ZjA0ZDUyZWVlMWNmYTllNmU3YjU0NTkzNDVmZjEzNjUxYzNkZjJkNTg2OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDVmYWQ2YTk5ZDI2YTc0N2VkZmU0NWM3NzkzZTViYmNjNGU0NWQwMDliOTVmNmYzZjliODc1NjZkMzQxZGFiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2NkNDFhM2VmYTA1NTAwNGFmNjdlMjRlZjlhZTI2Yzc3NjhlZmI0OTg4MzEzY2VlNTkyY2Y2NDdhNmJmYzE1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_56175d74e9234c6da6412d862073a799",
+      "statement": "TransitCatalogService.nearbyStops falls back to the location-scoped live lookup fetchNearbyStops only when the bus ManagedCatalog read throws an UpstreamError (cold load failure, count-gate rejection, or byte-cap trip); non-UpstreamError failures are rethrown and surface as 502. transit-catalog-fallback.e2e.test.ts pins this by asserting the same mocked fetch was called first with kiloMeter=45 (the rejected catalog attempt) then kiloMeter=0.8 (the live fallback for radius=800), and that the response was 200.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L93",
+          "version": "repo-lines-v1:sha256:2780d1dbd90dfa477cbac87cefb0a6c0b2c6add908e05f46aeb2fe697acf53fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMjk1YTEwYzUxMDM0MWJiYjljYTVlNzYwNmY4YjNlYjhiNzFiYjAyNWUzNzBkOGE0Mjg3ODgzYTg1YzU1NDEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/transit-catalog-fallback.e2e.test.ts#L22-L51",
+          "version": "repo-lines-v1:sha256:7900ae19f543d35f0783401d2fc408978d6fba9fd922164c7af01ac567b6b279:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2YTlkYmQ3NDQ2ZDYzMDY0NTc1ZWQ2Zjg0NGJhMmUyZGY2MGE2ODAxMmE0YmQ3Mjk4ODI2MDMzN2UzZjhmNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MzdiYjc1ZWYyNmQyYWZhZWJjMzY5NDc1MGUzZDYxOWFlZmFlODkyNGQ2ODMzNTU1MzhjMzM1NWRjMjlhZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3705c3cc2ff649e3b37d29e18e42604f",
+      "statement": "The subway catalog path has no live fallback: GET /api/subway/nearby propagates subway.read() errors to TransitController, which converts them to 502 UPSTREAM_UNAVAILABLE, because the T-Data CSV is the only station source.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L53-L72",
+          "version": "repo-lines-v1:sha256:111da34800649548ea308cc76968dbb946bf512e2847854f7d7d8d0e9753a27a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViNzgwOGMxNzhiMmJiNTk2YjMwZDViMDMxZGQ5ZDU4OTE2ODY1MzJiYWM4NWFlYzA4MTdhZjVjOGY0ZjdiNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZDYyZDk0ZmI0MjE1ZGVjZDJhODdkNGYyNTNiZTRiOWMwMDRmOThiNjQ3YmUzNGFmNGYzZjhlNGQyYzcwMzQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L111-L117",
+          "version": "repo-lines-v1:sha256:da11e7dd8534e58e1a3310beafc263901823269b63d95ec3262e8dbbc35cfe75:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTViNjFmZTdjNmFkOGFhYTljZGIxZGU4M2E3ZGJiM2JhZWZlNjYxZWM3YWNlYTVlZDg5MzM3YzViN2ZjMDAxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI2MmY2MGQ4NTkwYTU3OWNmNDZmOGQ2NzM3OGM0YzU3MmI5NjJjZWNjZGI5MGM3YTVmN2I0MmI5NjA3ODJhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODI3NDZlN2IyODgzYTRiMjlhYjZjYTY4ZmZmNTM3MzU1ZGNlYzMzZDk5MmU3YjZjMjdlOWUyYjE0NTg4NDllNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTg0NmI3YWQwYTllNGNlMDI2YTM1NTY0YzFjMGI2ZDJkZDVmZmEzZWI2YTQ0MzI5OGFiZmM3MzRhNGZjMzFmOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a1be2da5ad042a7941d17177433c520",
+      "statement": "The two bus normalizers parse differently by design: normalizeNearbyStops strictly parses the whole ResponseVO.data.resultList envelope so one bad row fails the live response, whereas normalizeStopCatalog parses a looser z.array(z.unknown()) envelope and then per-row safeParses with nearbyStopSchema, keeping only complete rows so one bad row cannot discard the citywide catalog.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L137-L173",
+          "version": "repo-lines-v1:sha256:05871708714453d788fb42239fd0e9cfa231dc949477afebfbd59f4256146b80:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyNjJiNzVjMDFlNDcxODUwNGMzMmRjOGZjYWZkMjI4NWMzM2QzZTU2YWYzODE3Y2ExOGE0MWIzZDA4MTJiN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1NzAwNDFlNWQ4M2I1Y2M1NWVmZWRjNWEwNGQ4N2FiZGNmZGZhZWJjOWFhYzMzZWFkYzUyOGM1ZDUwNWIyMDUifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L52-L75",
+          "version": "repo-lines-v1:sha256:4c99894772bf12b0c111e28854ced569474c31128b78ae25a0b74b1ce02d8d4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4MGJkYzlhNzhjZGUwYTlmMTMyZDFjOTBhMTFiMjc5NzZhMTU4ZTdmZmU4OTYyMmRlY2IxMzZhYjVmNmViOWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjNzZlZGE3YTc0NjE3Yjk4ZDI1Y2FkMzZmZTVhMzkxZWUwYjRjMDAzNmFhOTg4ZDUwYTdmYjFlNWVlYmVlMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyOWM5YThiOGQ3YTk1OWJiNmUzZTg2ZmFjMDk5YTRlNDQwMjI5OGZiOWQxZTcyZjViMGZkZGY3MDE3MmI2MjMifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L98-L112",
+          "version": "repo-lines-v1:sha256:d14314ad31c320c4b9dcdc7457a4f24127b08667c5da84b98814e41c87f499e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4N2I1NWU3MDhjNDYwNzVjYWFmM2QyOWYwZmY2ODZlM2JhZDY1M2NhNjAwM2Q2MDMyNGRkMGM5MmMyNWViMmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4NjdhZWJlZWJhZDU4ZjcxNDE2OTdmYzczZjNiMzJjMDU4OWM3MjdhZjI0N2EzNDlkMDdjNGUzMWIzZTYwOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzYmYxZTFkMTE2NWUyZjgzOTQyMGZkMGMxNDhmZmQ2ZDQ3OTMyMmM0ZWYwZGFiOGM3MDdiNjBhOThjM2QzNmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8454b891f492402b998dd5d2940ff3bb",
+      "statement": "normalizeOfficialSubwayStationCatalog strips a leading UTF-8 BOM, then strictly validates the first CSV row as a five-column Zod tuple of the literals 외구간_역_수, 역한글명칭, 호선명칭, 환승역X좌표, 환승역Y좌표; any renamed, reordered, or truncated column set throws and fails the whole catalog load.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L263-L275",
+          "version": "repo-lines-v1:sha256:8b40552b7c0f542658a6856d43eb1d5225d87ad030ed798d83107fecf7a616e8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhNWYxNzkwN2M2MWNhNzhkNjNmYzY0ZDdjYTVkMjJkN2U1YzIzZDMyNjBjMWNlYzY5OTAxNDFkN2I4ZWU3OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwZWU3YTRjZDU3MjMxNGJhM2UzODJkYWM5Mzg3MmQxMzBjN2YzMzRkMTJhNGQ5MWYwYTY3Y2EwZGU1MWZkODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmZWY2MDhlNjUzOTIxNjQ2OTA2NGEyZjllZTRjOTQzNjMyNjg3YmU0ZjE2ODE3ZTMxZWI5YzVmZDUwMDZlZTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_69186f485f004abeab6859f560e1862c",
+      "statement": "After the header check, each station CSV row is safeParsed as a tuple of [code, name, line, lng, lat] and malformed rows are silently dropped while valid rows are kept; the resulting id is prefixed seoul-<code> and the X/Y coordinate columns map to lng/lat respectively.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L409-L428",
+          "version": "repo-lines-v1:sha256:61e7e98aba3656f28b119dce389f6d4536a7c1fdc33cf5874f53512658e49029:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4ZWYyNWNlNDRjZWIyODAyYjEyMjY4NmUzNmVmMzFhZWRiODg0OTNjODdkMzk1MWE3MzI5ODYzNGVhYmI5ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3MWZjNDVmNDdhMDNiYmQ4N2JkOWQ4ZTdmYTZhMmMwNDZjNDI4OTk3YTI1NjcyZDRiMTEzMjUxMzA5MmNmNTkifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L16-L22",
+          "version": "repo-lines-v1:sha256:06b9f5a50549969a435d23863b33cae49ff41fb7f7e7f451f13484353b63a6ee:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWE2NWU2N2IwYTE2MThlMWFjOWJiNDY2MDBhY2FhNDcwYzRmYTUyNTgxZDNiMzI3ODA1ZDBlNTk3NmI4YjI1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVlMjZjZDkyMzY2ZjYwZDhlZDkyZDAyMzlmMDdmZWY3NGNhYzE0YWE2OWFkZGY5YzJjYzBkMTFlYjAwYTQ2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ3ZDcwYmU0NWQ0YTVhZGQ4YWU1NTVlOGE3MDZiZTgwNjFkODQ0OGU5NTg0MGM1MWE2YWU1OWU0MTQ5NDkxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjRiNDVlZDI5N2U0OTVkNzVmMTk0N2E5OWNjOTczODU1ZDc1NDg4MDNiMzk5OTgxNjE5MDhkMTA4MGMyZWYzZSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L276-L290",
+          "version": "repo-lines-v1:sha256:50b616a13a8fcabf76b6776d73a33990ceac67cb53cf2479aca8d35b1241f6d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwOGQ5MTUzM2M2MjcwYjIxNTBkNzJlNWU3MGEzNzQ0ZDIwZTEwZTEyZTUxN2YzNDY2NjY3ZmNmZGE1YmE1ZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkMjQ5YjRkNGNmNDViN2M0ZTQ5ODU0YTcyOWRjOGFlNTE1MzZiNTJmZmFlNDNmZGZkY2NmZGM4M2Y0ZWVkYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzODRlYzQ3NmIyOWIxYjkzNWM0MmJkMmY1NjE2OGE3ZjZiNDJmMWNmODY4ZjI1NDAxZTlkYThmMTExN2Y1NWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b845fac07514f4bb1a8b0ed0d7486b6",
+      "statement": "officialLineName strips a trailing parenthetical from the CSV line name and then applies two renames on ingest: 분당선 becomes 수인분당선 and 수도권 광역급행철도 becomes GTX-A, keeping the catalog's line names consistent with the SUBWAY_LINE_NAMES arrival mapping (1075 → 수인분당선) and with display logic.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L292-L302",
+          "version": "repo-lines-v1:sha256:5d969fbd38195d039903285fc4a7b025d27dc8ad9e06bc0fcf031254bdb05b5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlYWMwYzc0YTQxYWQ1NmE0MmM0YTA1YmVlMzRiOTA5ZTY3YTFkMTljNzU2YTI1YjA2NDQ4MTBkNmRhZjQ5YzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0OTdmZGQ1MTFkOTI0ODQ2ZjcyMWRkNDQwZjA3ODJkNDE4OTZhMjg2NmE5ODJjMzdmMGFjZDM3OGFiMThkMmUifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L83-L98",
+          "version": "repo-lines-v1:sha256:e9dd01f503d428dfe590ed4cdcfe5f3a7f76c2a5098caf724aed07648cfed755:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZDE4YTkwYTU0YWI1MjdlNTY1ZTU4NGNhZGQ0OGYxMGRkM2UyMWY2NDRiZDJkMmM0ZGJkYjNlYzI2ZmYwMWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxZTgyNTdkOTE1OWFhYWQzODE3M2EwOWJlMTI1YjQ1MmZjOWJkYzY3Nzg5ZDhiOTQ5Y2MzMzEyYzFlNWMxYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5NDVmOTA1ZGQyZjlkZTRkYzc2Y2JhNDA5ODgwYmE4MmI5Mjg2Y2YzMjY3YjI4NTQ4ZTJlOWRiZDJjYzY3NGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_615ae6c4c50f42478857c076667194fa",
+      "statement": "The station CSV adapter feeds the subway ManagedCatalog, whose minimumItems gate rejects a wholesale truncation before it can become the cached catalog; production main.ts sets minimumSubwayCatalogItems to 100 (bus to 10_000), while the AppModule.register test default is 1, and the nominal refresh interval is 24 h via TRANSIT_CATALOG_REFRESH_MS.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L79-L87",
+          "version": "repo-lines-v1:sha256:ac1886bc27f4eaef5f374049275f39e4d060dab1e26890e62198cd1d3572979f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDIwMDhhOGU2OTFjMTlkMWM2ZGVhNWFjYjRkOTBkYjg1YjM4N2FlZjUwYjEyNzg1ZmFjMDk3MjgzMDg0YzhlZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk3OGUyNTAzYjhjZjM3YTA2ZjdkNmYwYTNhNmI2ZmUzNTY5MWZiY2FiNTBiODc3NWNhYjZmYWJjNzFjNTkyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2YxYjczMTUxMWU0MDVhZmI0NjY3ZWQ3MjU1MWI1YTVjYTJlZTc5NTFlZGY5NjA4ZmY2YTZlNTUxODUzNzg3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjZmNzhiZDU1ZjQzYjEwYzg0Y2MzODkxYWQ1MmQ4MTc2ODE2Zjg2MWUwNTVhODM4NDVjNTcwNDdjMGFjODM2NCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L24-L29",
+          "version": "repo-lines-v1:sha256:55414aa3095d3a0726324d048f02ccb911d2f1784c5ed3c4a07e1ef6b55c4ced:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzg1NWU0ZTcxNGZlZmQxOWE0YjMxYjdlYjJhMTdjZjAyYjBkYWQxMDNkNDY2ZDJhZGQ4ZTk5NDE1ZGYwMjllMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGZlYzk1N2YxNDUwOWM2NWY5NDRhOWI3MzUyODI1ZDhhNWI5NGI5MmYzMWYyYmE2M2YxYjg1ZGYzNDM2MDAxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjE4YzViZWE3NjZhZTliZjgwZWZhMDI3NDljNzM1ZThhMDRlZmFjNTMzZjAxODJjYTJlNGM5NzkzYmJjZmM0YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk5NGM2MzEzODQ3NGZkNmY2YjlkOGQ5ZTE0ZTg4YTM0MDY1NDJjZjUwYWRjMzU0YmZkNmQ3MGMwMjBmNzA4NiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L24-L27",
+          "version": "repo-lines-v1:sha256:b4fc7d473a605d5a123e13c107dd07b4afe12ba246af286407c3defb534c69e9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzk0MTBjNGY3NGYxZmRlMThhMTViYzYzNGU0YWEzYjIwNDkyMTBlY2I4YjdmMWMwZmE1OTQ0Yzk2Yjk0ZTVjOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2VlMmU4ZDYzMWRjNTM2ODZlODkyMWRhMmU2YzNlODJjMjM2ZThlMjdhMWQwNWRhOWQ3YjA5YWQxZWNiZTcwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGUxYTMwZDQ2NzQ5ZTYwZDJmMzc4NmFiZTQ1ODAxZjA4MjlmMmZjODQxOGJiMTFlNjFlNzIzYWRhNzg1MDRhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGZhMjkwNWJhYjY5ZWM3YjNhMTYyZDJiN2UyYThjZTBmMjliZTFiOGIyZjBjOGNjYzEyYTFmNDBjNjQzNmVlZCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L119-L128",
+          "version": "repo-lines-v1:sha256:f8292f4322ed55ea7b5f9a58d4223891a4d7db9c5c587dfe05e53b969f55c298:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjZTIyOWU4MTNkNGZhM2JkM2YyYzY0NjJmOTlhZjJjM2EzZTk1YjMzZDE4YWJmZWZhYzE3ZWY3YmUxY2NkMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwM2VmMjAyMDMwYmYzYTJmZmUyZmQwOTU5NTQ5NjQ2MGU1NmQ2OGViMGM3NTk3MDgyZjVhZGQ5Y2MyNzYzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmYjYyNzYwMTgyZmQ0MjJhMjhkZjIzYjNjZjI3MTdkYjYzNzNkNGRjNTk2YTY4MWZmYWM5NWE2MmRlOGNhZjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b6cc784a0748494b8ec34e6a75e404fa",
+      "statement": "The subway arrivals upstream is an external proxy (default https://k-skill-proxy.nomadamas.org) whose origin is overridable only via SUBWAY_ARRIVAL_UPSTREAM: the adapter always appends the fixed path /v1/seoul-subway/arrival via new URL, so any path in the override value is discarded. The override flows loadEnv (z.string().url()) → main.ts → AppModule.register → ApiOptions.subwayArrivalUpstream → TransitController, which passes it as the adapter's third argument; compose.yaml does not set it, so production uses the default origin.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L12-L15",
+          "version": "repo-lines-v1:sha256:411e0469ec8f1df8f820720628db73e6ac30af254b7c40903b1fe45e0df00135:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQwNDJiYmE5MDRmOWUzN2I3N2UzZjFlMmRmYjY2ZGI2Y2VkODk5MWNkYzE1MzU3NTZhZTAyNGIxMmE0MDY2MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDM3YjM0Yzg5NzQzNDZlOWNlMmMyZDQ4Y2Q3MWYwZmM3NWNmMzI3ZDRhNDIyNGQwZDVkMTAxOWUwYjEzMTE1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ0MDgyYTQzOGY1YTc2ZWNmZmZiOGQxZGE5Zjg3NDdjMTllYjkwZGU3NTM5ZGI2MjA4MzM4NDIzMGE3NDFjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTRkMjA5MzBkN2Y3MzBmYzNjMWM4YzcwY2I5ZTcyNGZjMTc4ZWU5ZDViYzkyZDY4NzVkMmRkNGNhMWIyYTIwOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L21-L27",
+          "version": "repo-lines-v1:sha256:6e239fb71432d152f384d14c67f6ff70cb96d66f4ca35888a8e677d4e0825f14:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjg2Nzc4ODdhYWEyNTcwYWZkZTUxYzFkNDYyMjcxNWRmYTI2MGJhNGUwOWVhZWIzZjRkZjExNzY2ODA5NjZmNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2VlMmU4ZDYzMWRjNTM2ODZlODkyMWRhMmU2YzNlODJjMjM2ZThlMjdhMWQwNWRhOWQ3YjA5YWQxZWNiZTcwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYThkYmI2M2JkMDliN2ZlZmRjMjA3ZTI3OGM3MzBkYjA1Nzc2NzM5YzA0YmU5Njc4OTlkY2ZiZmZkODgwOTVhZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGZhMjkwNWJhYjY5ZWM3YjNhMTYyZDJiN2UyYThjZTBmMjliZTFiOGIyZjBjOGNjYzEyYTFmNDBjNjQzNmVlZCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L83-L89",
+          "version": "repo-lines-v1:sha256:91db530fe3e9b5837a0663cb3d1b4b8571cea9443270be6a7bdaba22c49cbcb8:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFkZjg3YTQ3MzE2YzcwOGM1NTAyMDk4ZTlhZjZjNDQ1MzRlYjgwYmVhZGNmNjA2MzAyOGVmY2E4NTkzN2FiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDhkYjc0NjA4MTgyY2I3Y2E0ZDlmYmE0OWEzOTQ5OWE3ZjM5MDdiNGVhMDMzYjE0OTJhZDVjZjBiZWVlZWNlZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWRlZjI1ZGY4MTgzYjBlMzBhZDM3ZGI3ODJiNWZhM2U5ODgxYjU0YmI5YmZkMGI2MmQ3ODNkYjFkN2FlOTY0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGFiNWI3NjMzM2VlZDJjODZkY2NjOTNkYTM4Mzg3NjIxYjYyNjljMDliNjQ2NWVmZGQ4ZmJlNDgyMjA3ODE3NCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L9-L24",
+          "version": "repo-lines-v1:sha256:b3b0e3dd8692a1c65c91142de9a31920877b6043935a1b1a7ba7591fb52bb052:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3NmMwMzNkMDE2Zjc0YzIyZmZmZDM5MjEzY2IyOTU1ZDBmMWE2NzBiZjliYjc5OTY5MzM3ZWZjMWYxN2ViNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NDBjNjJiZGJmYTE4NmZhNjIyZTU1MmIyMTNmYWJjYzc4OTRmYTIyZGY0NTAwODU5ZWI2NjAzZmNkYzBlNDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTA2N2E4MjI0MDU3OGEwNzcwYmFjM2NhNWZmNWM0MDA0MTE2Mjg5ODBmMTNkM2JjMzkyYjMyM2NjZjA0MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxMGY4YjAwZGQzZmMxODNjMDEyNjY4NzFhMjEwZGVmMTVkYzk4YmFhMmFjY2E5ZTY4ZTg2YjY0YzM5ODE2YjgifQ"
+        },
+        {
+          "resource": "repo://compose.yaml#L9-L22",
+          "version": "repo-lines-v1:sha256:2ed6b08084354b7c713638dcaf31eae8b90a4b82d64d4e56fea797dbfd34fda3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyNzQ2MzM0ZmRiZDY1MTMyMzlmMTMyNmRiOGI2MTI3NTdiNWIzMmMwODA4YjUwODFhOTkzN2Y2NTMzYjhkYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0YTUzOTMzNDlmNTJkZWNlYTBmMTJhZGU3M2FhYzhjMTVkYzliZjFhM2ZjMGViZjNlZGQzZDg2N2I4OWQ3MjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTQ4YWFlZjkzYjYwMjQxYzQyMDE2NDRhODk5ZTM3YTM0YWYzMWE4YTI2NDBkMjAyMWE0MDk1NDg1MGEzNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlOGNmZjY5ZWFjZmFiODc2NTYxOTVkNzkzNWVkNTE5MzAyY2NhMTlhMTE2N2U0NDdmYWY1NGFlYWUzN2QyMDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a47290765d05447fa402fdec726e284b",
+      "statement": "apiStationName() rewrites exactly three saved station names to their parenthesized official API names before the upstream URL is built — 천호 → 천호(풍납토성), 군자 → 군자(능동), 총신대입구 → 총신대입구(이수) — passing every other name through unchanged; the e2e test asserts the resulting percent-encoded URL byte-for-byte.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L24-L27",
+          "version": "repo-lines-v1:sha256:aa9c70b98b4a65557b3189575565a46ac8ff9bfacfc8857f99390ea83b7bf120:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY0MGM2MmJkYmZhMTg2ZmE2MjJlNTUyYjIxM2ZhYmNjNzg5NGZhMjJkZjQ1MDA4NTllYjY2MDNmY2RjMGU0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTI5ZmIxYmMxMTk4Nzk1NzViYjA3ZjA0ZDUyZWVlMWNmYTllNmU3YjU0NTkzNDVmZjEzNjUxYzNkZjJkNTg2OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTc4ZmYyY2FmNmQ1MDI3MTQyMzgwNDNhNGMyMDJlYmE5NGEyMWUwMzkyM2IwZjYxNGM2MWM4NWU5YmY1NGMwYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2NkNDFhM2VmYTA1NTAwNGFmNjdlMjRlZjlhZTI2Yzc3NjhlZmI0OTg4MzEzY2VlNTkyY2Y2NDdhNmJmYzE1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L574-L577",
+          "version": "repo-lines-v1:sha256:87d3d29f03395b41ddd646ff3b2386de241899c9f6469260fe89e75c49a2c214:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU3NjkxMmI1ODg2ZmI3NWIyZjY1OGRjNTI2MTM5ZjE1ZTRiMmI1YjUxNWRjODM4ZWMzZTY0ZDhkNjVmNTE1MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNDIwOGNkNmZmYjhjNGEzNTQ3YjJmNTRhZGExOTk3OGMzZjM2NWU3OGY5NTAyZWY1MTQ1Y2RkMmFhODU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWE5OTk5MTA1YzIwMmZiYWJjMjliODI5MzBhZmUzYjg0YmI1NmU3NTJjZGUwMDUzZTBiNDVjYTg5MjhiNmFlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTdjZDUzZTc4MDJhNDZhMjI0MzQ5NjMxODdmY2RkNjc3N2M4Y2JhYTk0OTAyYzFmYTFhMzIxMTVjNzViM2VlNyJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L43-L53",
+          "version": "repo-lines-v1:sha256:564b103974923ff6edcb265fb103b558a60831bbad05295e85220ff81093603b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGQ3NjRhZjc3MWJjYTIwYzY2YTIyN2JlMjExMmIzOGMxYTYyYWZlYzg5NjU0YzBjMWRhZDg5YTdiMjhmMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljMmQ5NDM2NzJkOTlhMTU2ZTY3N2ZhYzViMDUwYmMyZjFlMDU2ZDE0MjJjNWFmZGIwZjkyYzEyNjA0ODM2YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZWMwYTIyYWYzZDNiZjJkNGU4YmRmMjc5MWY5NWNkMjdmZWFiMDFlNDIyYWNlZDQ1NDhjMzlkNTQ3ZWUyMGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cf4620603ac0465b96d68628f2e2ebe2",
+      "statement": "fetchSubwayArrivals discards the updatedAt computed by normalizeSubwayArrivals (derived from the max upstream recptnDt) and returns new Date().toISOString() instead, because upstream data timestamps can lag receipt by minutes and both the client's 90-second freshness rule and the elapsed countdown key on updatedAt — a lagging data timestamp would mark fresh data stale and drop imminent trains. TransitController.busArrivals performs the equivalent receipt-time stamping for the bus route.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L106-L113",
+          "version": "repo-lines-v1:sha256:745fa74ff67ea5b05e9fdce7e829654b5ab8dba2894076983bb29f4b2e7a52a3:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFkZjg3YTQ3MzE2YzcwOGM1NTAyMDk4ZTlhZjZjNDQ1MzRlYjgwYmVhZGNmNjA2MzAyOGVmY2E4NTkzN2FiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUzM2RjNzMxZTdkMDdiMWYwYzA1Y2ZlYmQ3ZTE5MjIwMjNlNjA3N2JjMGFlN2JhMzAxNDhmNTA4MzNhMjVhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTZiNjk2ZGY1MGU5MzZhYWYzZGEzMzMyNWExMGQ5Y2QyZDE2YmEzMGUwM2RjOGM2MjU0YjhiNTkwZDQ0Yzg2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWJjMzgxMWU4NzM4ZDNhZjFmYmY5NzlmYTNiYzYyODc3MTgxOTdkODMyZGZhMzFlMmZlYjA4NDk1MmMwZWI5OCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L39-L45",
+          "version": "repo-lines-v1:sha256:db2208d01e69b9c0ae9747334f8bf51678ab64172ba76eed455ec9998a4808e2:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRkZThkYTVkZjhkYzMzZWVjNDE4NjZkODBhN2NlNDg0YTg4OGY3MGFiNDk3OGM0M2UxYjM5YTg1NzlmMGFkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY1MzlhNTI4MzQyNzUzN2U4NGE2M2U5NjQxMWJhNzk2OGE1ODA3YmVlMTkxN2U5ODdmZjA2N2FlZTBiNzhlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L570-L573",
+          "version": "repo-lines-v1:sha256:c9cc870ab73ee3daad1a89266c00d6ddb5b9dab628df1f3ffc4f9a86b2f32b09:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTgwMDQyYzUzYTk3OWM3ODQ1ZmY0YTdmNGUxYzJlOTM0ZjMyM2JhNjBkNDQ3OWVlZjgxOTZlYTk0N2U3YmYwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjYyNjk1MTgyM2Q3OGJmNThiMDBiOTdlMzhjNDNmMTFkYzdiMjA5NTI5ZjY2OThjYzhhZjQ5NWJkMTIyYThiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWViZWZhNzQ1NTUzOTM1YTBiMmExZjU2NzkwM2IwYjMyNWE5NGZlMWM1M2UyZmEyZTVkZTMyOTAzZDhiNjYwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2YxNDY3YjI1N2Q4Zjc3YzVhZDk2NGQ4YzE4NmE1Y2VhNTAxZDVhYzRmNGIxN2E5MGUyODMzMTkzZWI0OWVjNyJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L254-L258",
+          "version": "repo-lines-v1:sha256:e11fb6d04482f9e4800df3f288743332f03003930a105f6a44b082a41bc54771:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFkZWY2YzFkM2M4MTJmYzM3NDhmODZkYzdmNWE5Y2Q0N2YxZmI0ZWJhMjFlZWM4N2JkZDRlNmI3YWMzMDUxYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODcxNmYxYWNjZTFiOTk2NDg2ZjNkMjQyNWYzZTkyNzZkODMzZmM3ZjJlMjllMTUzM2IzM2Q1YmM3M2ZiODFhMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDFlMDI1YzZmYTRiMTA3YmY2YWU0OWNhYTE5OWQ1Y2RhYmRiZjFkNjUxMTc2MTBiMWQxODg5MWQ5NGRmY2Q4OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmMxMTY2ODQwODNmN2UyZjQ1ZjViOThjMjEwNTkyYmYxMDRhOThlOTI1YmM4NjUzYmU0NmY5OWEzZjMzNWQwYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e494efc91a24d3e84ceaa7fd87643de",
+      "statement": "GET /api/arrivals/:arsId and GET /api/subway/arrivals hit their live upstream on every request and are never catalog-cached, whereas GET /api/stops/nearby and GET /api/subway/nearby are answered from the in-memory catalogs and only touch an upstream during warmup, stale, or scheduled refresh.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L32-L120",
+          "version": "repo-lines-v1:sha256:52eb6a43b5ce5e09ef8e18a0250623a22417ea90257329d433322c988c7ea477:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZmRlNDAzYzY3ODAxZDg2NjU0YjYzNjQyN2MxMDVmZDAyM2Q1NjgyYzgzNzEyNzJmNmE3Y2UzYWQ2MTlkZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3M2NlYjVjNDY0OTI2MWUxOTE4MGI0NzNjMjk2NTc0ZWJhYzMzMWM4ZTZjM2U4MmNjOWVkOTA4ZWQwYmE4YjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L132",
+          "version": "repo-lines-v1:sha256:e1f8ce2e56e8ec7b8b43e161ef80d8b7adc253de785bff46981e50433e173834:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3MmU4OWNjMWNiMTgwMzQxYjU2MzAzODgxNzYxMTlkMjZiNzgzZmE1YzFkMGE1ZGZjMDUyOTJkNGU2YzVkMmMifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L263-L277",
+          "version": "repo-lines-v1:sha256:0f217e3cc0fb315aa314b6b7fe79bb0e1febffbf19dc7ab53b35cb6aeeceb779:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOGFlOWVhMjhkN2Y4ZmRjMmEzODU0NTA2MDIzZjc4MzQxYmZiOWRjZTNjNGMyYWJhZDNlOGU3N2Q4YWU0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMDc0ZTgxMTIzZWI3Y2IzOTQ1M2UyNzNmYmQzOGQ1ZDE1NGIyMTYyYjdmNGE2NDA1N2VmZTIxZGVmMzhhOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d75a8ed1fad74705a12ff69e72074279",
+      "statement": "The two catalog byte caps are enforced after the body has been fully read into a string, by re-encoding with TextEncoder and comparing the byte length to BUS_CATALOG_MAX_RESPONSE_BYTES (10 MiB) or SUBWAY_CATALOG_MAX_RESPONSE_BYTES (1 MiB); they reject a misrouted or oversized payload from becoming the cached catalog but do not stream-limit the download.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L31-L40",
+          "version": "repo-lines-v1:sha256:0bb0dcc7821a20b66039342c04ff434c2adf20f56147a4ccdb46ccbf310c0f67:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmODFmNmM2MzE1MjkxY2I1OGQxNzU0M2Y0ZGFjYzJhOGY1ZmNjZWQ4OWI3YmI2NGE4Y2FlOTEwM2UzMzEzY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0MGM5NDEyNzA4NzRlYWZhNjBkYzNiYmZlMmU4ZmVmODlhMWNmNzMwMDRlMDA4OWU2YzgyNzFlZDZkMTJlYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1OTI0OWMwYmU2YzE1OWMzZWI1NDkyZGExZThkMmZlMTMxZjVhZTRmODg4ZjJhZjMzNTQ5ZDZiOGEwYjhmOGIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L75-L82",
+          "version": "repo-lines-v1:sha256:6bfe368248a4e1a7f422d05bcc764d7fe24a67ba07ac9517c45857037b490a1e:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGY4MWY2YzYzMTUyOTFjYjU4ZDE3NTQzZjRkYWNjMmE4ZjVmY2NlZDg5YjdiYjY0YThjYWU5MTAzZTMzMTNjYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI2MmJkMjRiNThmOWI5NTg2MGExYjI4NDkzNjM5MmQ2OTM2NjcwMGI0YTc4ZTZmNThjYWI0OGYyYjk4YmU0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjBlNDc0N2ViZjIyNGMzMmIyNTdmNWQwN2Q5OGFiOTMxNzM4NzhhMTVkZTBmNzNlMDk1ZGVmZTM5ZGZmODgwNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2FlNmYyMjBiY2QyNDgzYjU3OTE2ZWY3MGFhZTM5YzhiNzI1MjU2Y2NiZjFlYWJlZTg3OWRkMzhiOGJhNTlkNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba3bb258ce6a407eb98be178151b32fc",
+      "statement": "The adapters contain no Zod of their own: every upstream schema and normalizer lives in packages/contracts (src/bus.ts and src/subway.ts), which import only Zod and their own modules, per the AGENTS.md boundary rule.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L18-L27",
+          "version": "repo-lines-v1:sha256:9d05d56a825255407079081e1365548c2b2e8fd574de1748cf4d6616db13866d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxZWNkZjA5YjE3MjcyZmRkZDFkMTFhODFmMzVjMTU4MWYwMjFmZDk2MDc1Y2I0YjQ5YzZhYTkzZGZjNTZiY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmZjRkNjkzMGQyMDllYzhlZmM3NmM5MmEwMmY2OGVkMGE5MmM2NTk3YzE5NzliNTE3Mzg1MzYzZGEyODc1NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjZmEwOTVkYzcyZTA1ZTM1ODQ1MWU4OTg2ZjZmNjA2ODUwNmVmM2I5M2MyNmUzMTYxNjIxZDZhMWNjZmYxZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0MWUyZWViZWJmNzkxMTgwMmJhZmFlMzFlMGQ2Y2I4NmI1NGIxNzY5ZGEzYjRjMTYwZTEyNWMzMDkxNGE0MTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L1-L8",
+          "version": "repo-lines-v1:sha256:91d1516da702ef470c26cef27e6241a362397a9a707495fb2c26da449f00a5b4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgyMDA5NjRhOTc4NjM1NTIyYjJhYjA5MGM2NTA2NWQ4ZWY4ZTg1YzQ3MzBiYjJlYjA0NjBkMzRjNjc3ZGRiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWUwMTg0MjAyMmFjNTZkMTdhOWIzYmRlMjM4MWMxNjEyZmY3ZjU4NzhhMjlhNDg3NDA0YzZjZDJjYWQ5OWZkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTc5YzczNGM2MDcyMjBjOTVmZjc4N2ViZmFkNGMzYzAwYzExZTlkNzdjYjI3NWI2NzczODM5ZTcwOTU0ZjIxNSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L1-L2",
+          "version": "repo-lines-v1:sha256:128b0cc045d7526d1cdb2258da0a16a45a0d5aa9b64e8d22aa1e4a49d785edf9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODE0NTI4NjRiMGQ5NmVmZTg2OTE2ZmY3NDVhMGY3N2FjNzBiMzI2NTg1YzBlYWY1YzM0ZjllNGE0ZjZmYmY2MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDEzY2ViMmVkZThhNjNkY2RlNzQ1ZjBiY2I2MjNmMGI2ZTNiMjg1M2JlNzNlOTU2MWMzZDc3NTJhNzlhYTYxYiJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L1-L2",
+          "version": "repo-lines-v1:sha256:128b0cc045d7526d1cdb2258da0a16a45a0d5aa9b64e8d22aa1e4a49d785edf9:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODE0NTI4NjRiMGQ5NmVmZTg2OTE2ZmY3NDVhMGY3N2FjNzBiMzI2NTg1YzBlYWY1YzM0ZjllNGE0ZjZmYmY2MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTRiOTllNzQxZjhhNmNlMmM1N2Q1NGM3NmUzMzk4ZDEzYTVmZWJjNWY0YzY0ZWRlODNmNWQxMDc1ZWQyNmVjNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8938ad3f656340d095edb8c0e755646d",
+      "statement": "The subway arrivals row schema is strict about the stable identity keys subwayId, updnLine, trainLineNm, and recptnDt (each must be present and non-empty) while defaulting or nullable-ing volatile fields (btrainSttus, barvlDt, arvlMsg2, arvlMsg3, lstcarAt); a row missing an identity key therefore throws, which the controller maps to 502 UPSTREAM_UNAVAILABLE rather than returning partially-keyed rows.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L602-L624",
+          "version": "repo-lines-v1:sha256:9f5651234c3f44f1866a5ec51a1d2040a4999cd7c2f07966645a71c75a9bb479:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4OTBjZGRlNWMwNmIwNzBjODQ2OTkzYzg1ZDY0MTE4MDRkMzRiNzc1YTdkNGY0Nzg1OTYzZTgzNzhjMWU2NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4YzM5NWIzNWVmYThiYmQyOTdlZjkwMDU3MDFlOTk4NmZkYjcxMTg1ZDI5MmFhZjNkYjkxNjE5ZTMwZTViMmUifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L178-L201",
+          "version": "repo-lines-v1:sha256:24349fd5028b725ee386fb0fc52b86053caceff5bb3cd6548bbce7520b194e5b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMzgwMDU0Yjc2YTIxZjI1YTk2MzFmMjU4MGMwMmViNTE4OGQ5NjQ3NjY2MDM3NjVlOTdjMDgxNTFlM2IwZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxYmRlMzVjMDhhM2ZmYjE0NWQ4ODgyYjgxMTcyMjZkZWQ0ZDY0YzUwN2IzZWRlZWZhZTMzY2IxZTI1ZDkzOTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmZjI0YWYxYTE0NzY4YTA4ZTZjNjVkYjM2MWM1YjUzMTBiZDg1NTQxMWVhYWM4MzUxMWQxYTgwMTEwNzQ5MTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e776015970614ac6a3ffaa254cd7f62d",
+      "statement": "Bus arrival rows are parsed tolerantly: rawArrivalSchema is .passthrough() with defaults for sparse fields (adirection → 방향 정보 없음, arrmsg1 → 운행 정보 없음, arrmsg2 → \"\", busType1/congetion1 → \"0\", plus arrmsgSec1/2, sectOrd1/2, routeType), so a sparse Hermes BIS row normalizes instead of failing the response.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L77-L96",
+          "version": "repo-lines-v1:sha256:e9f990afffb25bbc6389d5cb2ee8e42d6c138d2ea24b0d430128b3c81bcf879c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YTM0ZWZkYjgxZjY4NTg0ZDVlYzFmMmUyMDVmMzEwNGZlODRjZDBlZTg2MWMxMWMzOWIxODQwNDdiOWUxZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMTkxOWIxNWE5YzdhZWRjNzZhNGQzNTYzYjE5NGQzYTljMWY4NjRjYjYxOTgzYjk5MzU0ODNmZjY2OGY0NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyNjhmNzVhYjQ5OGNjYTI2ZTM2ZTFhNDYxZjA2NTk5ZDc0MWM3MjgwYmMxNjJjYWM4OTQ3YjcwNDVhNTM1ZTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8890c40c8cad46b18633301b06be6300",
+      "statement": "Only one upstream leg is plain HTTP — the Hermes BIS arrivals endpoint http://m.bus.go.kr/mBus/bus/getStationByUid.bms — while the other four endpoints use HTTPS; and no adapter sends credentials or an API key, so there is no secret management for this integration.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L8-L9",
+          "version": "repo-lines-v1:sha256:2ded1cd5c83543e50cdfcd585f89e8e59eba9aaed0da1fc7891d4af0e16d7ef7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQxMjcxNWU1OGMyMzM2NzhmYjUxNjVkYTJlOWFkYTM0Y2VmYjg2ZTU2M2I5ZWU3ZjNmN2E2YjA1ZjQ5MTZjMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQ5Y2YzMGFiZDhmYzExZmE2ODY5ZGU4MDg4MmNiZWM3NzM0YjUzNTRlOTUxOGMwMmNkNDMyNWY4OTFlM2ExMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzM1MDY3YTgyMjQwNTc4YTA3NzBiYWMzY2E1ZmY1YzQwMDQxMTYyODk4MGYxM2QzYmMzOTJiMzIzY2NmMDQxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2QzNTQwNTNiNGJhNjFmMzZmN2VkZjRiZDNmNTAxNGU4NzU3ODlhNTg1Mzg3ODFlYzg0ZDhkMzgxYzlkMjEyNCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L10-L22",
+          "version": "repo-lines-v1:sha256:4f60f200c7e099d7fcb66e59a94efb9c32b29c66f31e6d8dc10c957fd56178ce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNzcxNDY0Y2I1MzMzNGMyMWE1MmU5NTQ4NzQ2Y2M4MjZlMjk3NWQ3OTRhNzNkN2QxY2RlZmM2ZDk2ODBjOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGVlOGE4ZDFhYTg0NTM5MWJjNjc5ZWI3MGNlN2Y0NmEzY2Q2ZmIyZDE2ZmNjYTY3ZmExNzhmNGY4YzFlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNDBkMWU2MWJjZjNiMzA2OGJhMWJkNzIzMzBlYmM2YTJmODhlNDRiZDI4NTJiMzE2M2UxYWQ3ZjAwZTFjY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2MTdlZDE5Y2FmZTYyOTlmYWNlYzZlOWZiY2RiNTk0ZWZiMGE3ODliOTA3NTEzZWI0ZjY4OTJiNjRjZjE1M2UifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L9-L11",
+          "version": "repo-lines-v1:sha256:5f7bb8ad6f7218cc43dc25890a51739a3840a143b9dd36030b84111d432e2570:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc2YzAzM2QwMTZmNzRjMjJmZmZkMzkyMTNjYjI5NTVkMGYxYTY3MGJmOWJiNzk5NjkzMzdlZmMxZjE3ZWI1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUyM2VmZjgyNGYwMzY3OTJhMTdkMjUwYjljYzcyYWVjMWY0NDZhOTk2MjI4NzM3MGI3NGY0Y2NjODM0MTE5MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzM1MDY3YTgyMjQwNTc4YTA3NzBiYWMzY2E1ZmY1YzQwMDQxMTYyODk4MGYxM2QzYmMzOTJiMzIzY2NmMDQxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYxN2VkMTljYWZlNjI5OWZhY2VjNmU5ZmJjZGI1OTRlZmIwYTc4OWI5MDc1MTNlYjRmNjg5MmI2NGNmMTUzZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4801bff8e24a47a4bf658686e9c51923",
+      "statement": "The adapter AbortSignal deadlines are the operative latency bound because the Fastify requestTimeout of 65 s configured in main.ts sits above all of them (8 s live, 30 s bus catalog, 15 s subway catalog), so an adapter deadline fires before the server-level timeout.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L35-L38",
+          "version": "repo-lines-v1:sha256:c30c6df5a23f93738eb08457d3d1e937db107129fb600c571e67647d4e88ec8c:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGI0NDk0YjhjNWJhNzZkMmFjYWVhYzdiYjE0Y2I1YzQwOWY5NzY5MzZlYzI4NjdmZmNjNTkyMjA5ZDdmZjBhMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5MGViNmNjZGIwZmVmY2MzYzlhODgzYzg3OWM5ODY2YmUzMzkzMWNhYWFiZjM2NjJkN2FjNGM0MTNlYzhiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjZiY2Y3ODM3OGQyZWEwOGNkMjg5OTBkNGNlOTdmNzQ5NjVkY2MyOTJjMWQ4Yzc1MmE2MjA2NTdlMTk2MzY4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzQ0NDU4MmE4ZmU3NzE1YjRlYjI1YTQ4ZGI1NmJiNDU5YWIxNmE1NjIxYTYyYTMzNDE0Y2RlMWYyOTM4ZTQ1MyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L23-L23",
+          "version": "repo-lines-v1:sha256:73b5c5e26a732737221512545edb6c7f4b63a22188b7631c8731f25eaf6f5168:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNiNWM1ZTI2YTczMjczNzIyMTUxMjU0NWVkYjZjN2Y0YjYzYTIyMTg4Yjc2MzFjODczMWYyNWVhZjZmNTE2OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNiNWM1ZTI2YTczMjczNzIyMTUxMjU0NWVkYjZjN2Y0YjYzYTIyMTg4Yjc2MzFjODczMWYyNWVhZjZmNTE2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGM5ODc0NTk0MzE1Y2NlN2JmYmZiZjQzNzBjMjU4MTE2YWI4MzFkMTMyZGYwZDRjMGFlNWQxZDJhYzJhNTQ0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODc3Y2YxNTQ4NTBmOGVlODllMmJiZjQ0NzUyYTBjMzE0NzM3ZDg1ZGU0ZmZjMWMzMGRjM2UyYjJkNmU3MDBiMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L43-L67",
+          "version": "repo-lines-v1:sha256:e5b82682a4a27e5cee13655c7bef4b4d80cef7463c2889c2d600cb2dc48a77a6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzNDhmMjRmMjk2YmFmZTkwM2RiOWJiZTdlZGEzMTM1NGJmZmQ0M2UyNGVlODJjN2VjNGJiYWMwMzAzNjIxNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZTg5MTYwNzEzZGE2MDNiZGU3ZTNiMGQ0ODc4OTFhYmRiY2JmNTE1OGE5YjAwZjUzMjkwZDcxZTc3OWI4YjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjZDQxYTNlZmEwNTUwMDRhZjY3ZTI0ZWY5YWUyNmM3NzY4ZWZiNDk4ODMxM2NlZTU5MmNmNjQ3YTZiZmMxNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3N2NmMTU0ODUwZjhlZTg5ZTJiYmY0NDc1MmEwYzMxNDczN2Q4NWRlNGZmYzFjMzBkYzNlMmIyZDZlNzAwYjIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

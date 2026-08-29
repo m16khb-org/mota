@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:9ece1fad3c2402226a1eb22d54ad3154b0c6dc283491925657d82393c0b2bf6d",
+  "claims": [
+    {
+      "id": "claim_b6a59511275c4f5d9f7ffbda6a4159ff",
+      "statement": "@mota/db is the only workspace that touches PostgreSQL and exports exactly four capabilities through its barrel: createDatabase, migrateDatabase, DrizzleUserSettingsRepository, and the userSettings table definition; per AGENTS.md the package imports @mota/contracts and Drizzle only and never imports Nest or React, so the API depends on it only through the UserSettingsRepository interface.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L20-L22",
+          "version": "repo-lines-v1:sha256:f4a73c8ad42ab0d125085cf6253957e4dc3e6273029149b61fcb3992540e224b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFhMDZmOGYyMGFiNDFjMWM4Y2ViMGUxMDA4ODE5MThiODMyYmU5N2I3NmRjZDRmYzhiNjU5ZDM3N2NkYTVhMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmExNTViYzQxNmYwOWUxZGZjNThmMjNlMDUyYWEwMjc3YTcyYjAyOWYwMTdiNDNlZmNkMjMyZDJkN2JlZjdmMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmM0NThjNjAyNDg1MjQyZmIyYzgyNGZiOGM0ZjAyNDBjNWYzMmVkZDNjYTgyZmU3MzI0NmFlYjM4ZGYzZTljNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzBlNTlmNjBiODFlNTYzOGMwNjJjYTMzNzYwOGVkYzlmMjFlYzNmZWVkMDg3MTJiOWE2NjJkZTIxMDFkNTk3OSJ9"
+        },
+        {
+          "resource": "repo://packages/db/src/index.ts",
+          "version": "repo-file-v1:sha256:034978d827a8267056fcc25bc7ac938b35875fef258401933bd2d61c5e73bd45"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L20-L27",
+          "version": "repo-lines-v1:sha256:28b4a9fb52b4370bdd1e4110dfc348dcaea06236fbac7b166e56b265c523c124:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDNmN2FkMDE0NWQ0ZjdkNzRmNWIyNTY0N2QwZDE3NDY4MjY4MmNkNGZjM2M4NTVhMDYxOTA0N2Y0MTI1OWFhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzgzZTJkMzJhODBlMWY1OWYyMjRjMjk1NjIzMjVjNWM3NmMzOGQ0ODQ1MjY5ZWIxNDc4MGE1YWQ0YzQ4OWVkNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmY1ODI0Mzk5ZWYyNDAwZGVkYjgxYzk3MGE2M2VlODYxM2FlZDYxN2Y4NDk2MTcwMWE2MDMwODRlMWI2NjU4OCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8a0e0000f0474a33b5081f43886eddbb",
+      "statement": "The sole table user_settings has four columns — auth_user_id (text, PRIMARY KEY NOT NULL), version (integer NOT NULL DEFAULT 1), selections (jsonb NOT NULL), and updated_at (timestamptz NOT NULL DEFAULT now()) — matching exactly between the Drizzle definition in schema.ts and migration 0000_user_settings.sql.",
+      "evidence": [
+        {
+          "resource": "repo://packages/db/drizzle/0000_user_settings.sql",
+          "version": "repo-file-v1:sha256:c8c19455f5c66bd4768a375d1b7e84a5bb843a710a0e8de5b6fd9c6dad6de927"
+        },
+        {
+          "resource": "repo://packages/db/src/schema.ts",
+          "version": "repo-file-v1:sha256:ea31de8b72598c05caa029db7e9687f6bb7513e71e458b3efaae3360493ef0db"
+        }
+      ]
+    },
+    {
+      "id": "claim_b644454b710749ffadbe1d487824c9af",
+      "statement": "There is no local user table and no users-to-settings join: rows are keyed directly by the Supabase `sub` claim verified from mota's own login, so mota never stores a duplicate user record and one human with concurrent sessions still has exactly one row.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L25-L25",
+          "version": "repo-lines-v1:sha256:86e2e1225fafe06ea4e107a5338f9b6eaf47e91f8e57425939c90d2bd6855bd2:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODZlMmUxMjI1ZmFmZTA2ZWE0ZTEwN2E1MzM4ZjliNmVhZjQ3ZTkxZjhlNTc0MjU5MzljOTBkMmJkNjg1NWJkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODZlMmUxMjI1ZmFmZTA2ZWE0ZTEwN2E1MzM4ZjliNmVhZjQ3ZTkxZjhlNTc0MjU5MzljOTBkMmJkNjg1NWJkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOThlZDI1YWE4MWU1Yzg2NmQ1MWYwY2ZmN2YxNDcyZTkwMGFlYzllNzk0MTEwY2E0YWJmN2RhM2Q0NDkwNmYxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzA4NzQxMzg1ZTYxYjI4NDdlOWEzZTgzMDk0ZjlhNDA3ZTc3ZjQxMTQ3MTYyN2M0MDljZDczYWI0MjczNzJmOSJ9"
+        },
+        {
+          "resource": "repo://README.md#L45-L46",
+          "version": "repo-lines-v1:sha256:0869d6a452b0f030e4403c3d602f90555c4ffa5d473470c4a34ab2ad17ef28ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdlNTFjMDc2ODc0ZWI4YjNkMDlkYzdkMWM4YzI3MTQ4M2UxODU3YWZkZTU0MWFjZTI4MmQ1M2RiNjhkYTAzYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTZjNTJmN2YwZjk4NzQ0Yzk3Nzg1MDAxYWRlNzgzMjQ0MTA5NDQ0OWQ0MjM0ZDg4NmZiN2FkZDFlNGFhOTU4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjg5OTZlOTEyZThhODU4MWM0MmZjMjc3NzZhM2VmNzFlMTQxODM1ZjZiMGM5NWVlMDYyN2Y1NTY5NTA0YmNkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBhNDIzOWYxYzVjNWY2NGYwZTI0YTA4ZDgzYzIyOWVlZDZhYThiYTE3NWUyNWJlMjEzYzIyZTU2YzYxZTg0ZiJ9"
+        },
+        {
+          "resource": "repo://packages/db/src/schema.ts#L10-L13",
+          "version": "repo-lines-v1:sha256:cdd7474db350dc5e4a9efdd42b7a3a3c8d7e430b88b6ca1097becdf29284d126:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2E0NGY4MWUxYWY1YTg5MWRkM2NlN2M5ZWE3YjA3YmVlMGU1NWM1ZmRjYjUzZTA4Y2YyMjNjODRjYjgzN2UxYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQwZGJhNWRlM2ZmMzNjM2MzYzc1ZmUyYjJjOTQ3YzVlZGU3NTI2M2I1YTY1ZDdkM2MyNmJhZDQ3MTcyN2NlNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWY0OTAyOWJkNzVmOTQyMzQzODMyOWUwNmNhMmMxNzg1ZTg3Mjg0OTAwODU5Yzk0NjBiYjkwNjMyZmM5ZjA5NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGIzOTNkYjE5N2FmMzE2ZmQxMTE2ZDZiYjIyZTZmNmZlZWI4ZmVlMTYwZjAwMjkwZTMyYWNjODFlNTAwZDMxNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e8c03067fe844f98e5ea3cb78cb1c8c",
+      "statement": "Every repository read re-parses the stored selections column with transitSelectionsSchema via toStored and throws InvalidStoredSettingsError on failure, because jsonb contents (and the $type<TransitSelections>() annotation, which is compile-time only) are untrusted; this re-parse also transparently migrates legacy documents (singular selectedBusStopId to a selectedBusStopIds list, bare point selections lifted into commutes).",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L26-L26",
+          "version": "repo-lines-v1:sha256:20d33837dddc024079c9cf88e7c42fa9a24d5eff382438bacb2ca012f8120f5e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBkMzM4MzdkZGRjMDI0MDc5YzljZjg4ZTdjNDJmYTlhMjRkNWVmZjM4MjQzOGJhY2IyY2EwMTJmODEyMGY1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBkMzM4MzdkZGRjMDI0MDc5YzljZjg4ZTdjNDJmYTlhMjRkNWVmZjM4MjQzOGJhY2IyY2EwMTJmODEyMGY1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzBlNTlmNjBiODFlNTYzOGMwNjJjYTMzNzYwOGVkYzlmMjFlYzNmZWVkMDg3MTJiOWE2NjJkZTIxMDFkNTk3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZkYmRhYTI4YzRkZmI4ZjQ4Y2M2Nzc0NGI3OWY4MGQwOWNlNTQ4MDliMTQzY2I1NjM5NTlhMzdiNTFiMDQyZiJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L12-L65",
+          "version": "repo-lines-v1:sha256:9520bd755e20a4ce6784181c291a3910b516a0da566698c167a66a68d7985540:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjMjVkZDk3MGU2ZTZiMWYwMDYzODYwNmNjNzFlNTk2NDEzYTA3MTM4NTZmM2Q3NGI0NzAzMDc5NGRkYmUxOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0NGQ3ODkwMTk1MWRiYzliYjk3ZGFjZjhhNzhlYzBhMjY4MzQ3ZDY3YTk1ZWU3YzVkZmZlYjhmNzQwYmFlNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4N2JlMTg3ZjU0M2UzZjE3NGY5ODhhOTQ5ZTE5ZTA0NzY1YTEyYmFmNDUwYjg4ZDcwOWIyZDI3ZTE5MjM4YzgifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L43-L56",
+          "version": "repo-lines-v1:sha256:5b7c36733e7761f79200c16a88aa189385cda3311b039b1162d3c49a26f361c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MTQ2ZmI2MGZiMjU4NzgzODlkOGE3ZmM1YjJiMTcyNThkODBlYjUxOTdiY2IxNzA0M2FkZjVhZWM0N2MyODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5YjY1MWY0YjcxOGZjYWFiNDRkYTI4MjE4NzZlNDhlOTY1MmNiMmY5NWE1ZDdmOTE2ZTNkNzUxMjhlZGIwNGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c47d97c4a864d819aabace743e405e8",
+      "statement": "In DrizzleUserSettingsRepository.save, an expectedVersion of 0 issues INSERT ... ON CONFLICT DO NOTHING RETURNING with version 1; an empty returned row means the row already existed and is surfaced as SettingsVersionConflictError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L44-L53",
+          "version": "repo-lines-v1:sha256:373df631e36cd60b7bc66d2ff4c3f500c1b77c7a6e342de60ca72339fc499f64:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyM2U4Y2U0ZTY5YWViM2Q4MjdkZWZmODU3YTRjOTM0NDc5NzBkMWI3OWFkZTE0YWIxNTFhM2FjZWUxNTcxMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4MTU5MzNhNTJhMTI5Nzk5NWY2OWIzNTQ1YTc1MjhhYTU3YjU4OTNmN2UwODFlOWU3Y2JkN2Y4OGVjNzkyNTQifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L72-L108",
+          "version": "repo-lines-v1:sha256:0a08451f3c6047b325699a50d9db0f0b18f5c03d6ad7814c33addbee45788ef5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YzRjNzkxOTkyMTk2NTlkYmYyMzQxOTgzN2MxZTA5M2IyYWFiNzA1YWRiYTBmYTZiMGZlZjExOTMwYjk1YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlODI0NjBlZjg0ODg1ZTg2MjU4M2VkM2JiMDExMmRiNzc2NWUyMjRlYTUwNjJkZGQwYTExNDAwZDA1MWI0MTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMDYxZTI2MTUxMGUwMDE3YTUwOGFlM2ZhZGM0ZGNlMGU2ZWRiOTgxYzU0MzRiNGExNDdmNDBjMzdlNzQwNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d924a73db1ce4b96b2ad28729a417e66",
+      "statement": "For expectedVersion >= 1, save issues UPDATE ... SET version = expectedVersion + 1 WHERE auth_user_id matches AND version = expectedVersion, returning the row; the version predicate inside WHERE makes the compare-and-set atomic in a single statement, and zero matched rows likewise raises SettingsVersionConflictError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L49-L66",
+          "version": "repo-lines-v1:sha256:e909c78320501bc8da970bb10a61dd9b93eb6bc96ea165fedf3f7a834b7f9514:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMmEwOWIwYTY1OGVhNTY0ZjM5NTJmZDZjN2VhMjNmNzNhNGQ2MjNlZWIzMDU4MjBhNWVhMDMxYzI3MGJmZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDFlMDcwOWU1NDAwNjBjZGNiNzE4NmRlNjU2MzRiOWJjNjA0MjBjYjdiYTUyM2FkYjQ1NmZjMzk5Yjg5YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0YTllYTBkZGUxYWNhMDNlMWZhODZlOTdiZGE4MDZiYmQzMWI3ZjZkNjVmOTNiMWFmYzlhNGEwMWE2MDQzNWEifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L90-L108",
+          "version": "repo-lines-v1:sha256:7bd4af43e23ad3b87bd1d33ab5a4d3cbcd00083c5aab7f4a3944ab2454ddac40:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4NGE1NGJlMWYxZmFiY2Q2MjAwMDI2ZTFkNTFhMjc4ODBhNTVmZWI2NTA3Y2I0YjE0YTg4MzAzNzc4ZmZkN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlODI0NjBlZjg0ODg1ZTg2MjU4M2VkM2JiMDExMmRiNzc2NWUyMjRlYTUwNjJkZGQwYTExNDAwZDA1MWI0MTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4ZTNmOGVjODc3ZTYwZDQ5ZmExMGI4NTZiOTRiZjg3N2Y3YzM5YzAyOWNlOGE3YTM1MjZiMGVjOTNkNDY3YWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_88f01ebfbac040df8f82b27360d2ef45",
+      "statement": "SettingsController maps a caught SettingsVersionConflictError to HTTP 409 with error code SETTINGS_VERSION_CONFLICT (\"다른 화면에서 설정이 변경되었습니다.\"), which is the optimistic-concurrency guard AGENTS.md describes as preventing silent multi-tab overwrites; success echoes { version, selections }.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L43-L43",
+          "version": "repo-lines-v1:sha256:19cf061a8ad2209d8fbefbf85835d22665dc80f834cf6f4f3ab5f06adf4e6b87:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTljZjA2MWE4YWQyMjA5ZDhmYmVmYmY4NTgzNWQyMjY2NWRjODBmODM0Y2Y2ZjRmM2FiNWYwNmFkZjRlNmI4NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTljZjA2MWE4YWQyMjA5ZDhmYmVmYmY4NTgzNWQyMjY2NWRjODBmODM0Y2Y2ZjRmM2FiNWYwNmFkZjRlNmI4NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTEzMzU3NjQ0YTBkZTMxNjBkODk0ZTY1MzAyNGE2NmNjMTUwZTcxOWM3M2ZjMTI2NjJiZDhjYjY0NDkyOTQzNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNjOTE4YzQyNWY5ODFhZDAzMzFlYjhkMmRlNzg5MDdlN2I1ZWU1OGRiNWNjZDRkYjQ5Mjk1YThlNDhhYjI3NyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L96-L111",
+          "version": "repo-lines-v1:sha256:1a95fcd4a08c5d81f6f790b70cfa281af914ab5245e02dc0fcf961d66100b56b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhOGU4ZGM0NjlmYWJhYzRiNTM5YWIxMWEzMTExZGRiN2MzYTk5NjYzOGJjNjkzNmI1YjlmMzYxYjM0MGYwMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6ff12ec952f04ed4ae0dce14575571b6",
+      "statement": "GET /api/settings returns { version, selections } from repository.find for a known Supabase sub, and returns { version: 0, selections: null } when find yields null; an InvalidStoredSettingsError from a corrupt row escapes as an HTTP 500, not a 409.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L70-L80",
+          "version": "repo-lines-v1:sha256:18edf0da40dd6f97dad82a4f2a48668036c26932658ab6e67ab8c82739932e62:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYjk5YWJmYjQ3NjdiNDhmMjMwYjE1ZDU2YTI1ODJlMTgxNjczMGQyYmU0ODA4ZmFjNDBlNDk4N2I5N2YzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlY2UyNTIwYTNiM2Y2YTc0YjdhMjQ0OTMwODE2NDliMTljODdiNTc0MThhMzA0MDUwZDI5ZThjMmFlMWVjMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5MjAwNzVhMDkyMGVmMjkxMjI3NDUwNWIxYTYyMGZkMmMyNjQwZDcxOWI5YWM2NWY2ZjU2NmNmZmI1YWZhMjkifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.ts#L63-L70",
+          "version": "repo-lines-v1:sha256:85a525506c43bb3c1fdc21aac0c41b6aaf5a7afca33704d7889b4abc0e67f9c4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGY3MTJiMWYzODA1MjJlMzcxMDZjMjBiMWU0MzQwZGVjNDdlZGY1YzZlMGU2M2UxNDAzZThmNDRkNGJiYjI2YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2YwOTEzZGI2NzQ3ZWQ1N2IxOTY2OThiYTNlYzVlNmUyZDdjNDlmOWI0NmE2YjgxMzNmNzM4OGIxNjIyNWRiMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjBiNjczZjMwZjk1ODEyYzkwZmQ2MWI3NTMxNDg3Y2M5OGM0MzExNGJmZTY2M2Y0OTc4MGYyZWQ4Zjc2YWQ1YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_355f55eda9804a9db2fcf7d7beedd78b",
+      "statement": "migrateDatabase is a thin wrapper over drizzle-orm/postgres-js/migrator's migrate and is called exactly once at boot from apps/api/src/main.ts — after createDatabase and before NestFactory.create — so a failed migration fails the boot and the API never serves traffic against an un-migrated schema; there is no separate migration job or init container, and the migration folder must include drizzle/meta/_journal.json alongside the SQL.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L15-L20",
+          "version": "repo-lines-v1:sha256:186b056a126f37d75ea176142da533a74c51b63f8a5d2a07e50a46a2c0996a32:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmU3OThmMjYzZWJlZjFiZTdjMGE5NGZlNDc1MGE1NWE5NmYzYmI2NGY2NGU5NmMyMzY1MzE2M2FhN2JkNzI1OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ2M2NiNWFiYjZjMmQ0OTI3MmExNmNmOGQ4Y2YxNTJlODg1NjcyMTFiZjA1ZmQ4NzIyOGNkZGEwODJhZGJjYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTA0OWEzOWMyNmJlZTgzNDI1Y2MzN2Y0ZGUzZTljNTFhNGYzNTYzZDNkNDY3YjExZDcxZTYwYTY1ZTczMWYyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGUxYTMwZDQ2NzQ5ZTYwZDJmMzc4NmFiZTQ1ODAxZjA4MjlmMmZjODQxOGJiMTFlNjFlNzIzYWRhNzg1MDRhMCJ9"
+        },
+        {
+          "resource": "repo://packages/db/drizzle/meta/_journal.json",
+          "version": "repo-file-v1:sha256:a89b8a9ddf86631f3b287fbc9c6ea8a156916b70ec0cea5815bdc6d65283cb75"
+        },
+        {
+          "resource": "repo://packages/db/src/migration.ts",
+          "version": "repo-file-v1:sha256:cb0284526a1235ddbaf7392a42c317b2604d7d6d0c198c91793c1db4e4103cd5"
+        }
+      ]
+    },
+    {
+      "id": "claim_d22f1a2a9dfa4ea8b7cc0169b4ea3b8d",
+      "statement": "The migrations folder comes from MIGRATIONS_PATH (z.string().min(1) with default /app/drizzle): the Dockerfile sets ENV MIGRATIONS_PATH=/app/drizzle and copies packages/db/drizzle to /app/drizzle (compose.yaml re-states it), while a local boot must export MIGRATIONS_PATH to point at the repository-relative packages/db/drizzle since no dotenv loader rewrites the default.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L24-L24",
+          "version": "repo-lines-v1:sha256:d991a0b249931f2faa54e695838ca1de19e3e2e4f4487cd8d0e90a5971c0c9e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk5MWEwYjI0OTkzMWYyZmFhNTRlNjk1ODM4Y2ExZGUxOWUzZTJlNGY0NDg3Y2Q4ZDBlOTBhNTk3MWMwYzllNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk5MWEwYjI0OTkzMWYyZmFhNTRlNjk1ODM4Y2ExZGUxOWUzZTJlNGY0NDg3Y2Q4ZDBlOTBhNTk3MWMwYzllNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2U1NjRjODM3MjkxYWY4ZGQxNTE4ZWNjYmFhYjAyZTJkNjRmMDJiZDIxMjAzNGJlZTVlMzczZWVlNmQwNTdkZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmQ5MWM1NjI2ZjQ4NzBiMzU2N2U4OTBjZGU5ZmI0NjcyNmJlN2M2OWE2NmIwOTYzNDkxOWEzODk5YWQ0NjYyMyJ9"
+        },
+        {
+          "resource": "repo://Dockerfile#L34-L34",
+          "version": "repo-lines-v1:sha256:20053d52278a7aac6afa0e98f7c20282514a8694102e29841153e21c9f0db94a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAwNTNkNTIyNzhhN2FhYzZhZmEwZTk4ZjdjMjAyODI1MTRhODY5NDEwMmUyOTg0MTE1M2UyMWM5ZjBkYjk0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAwNTNkNTIyNzhhN2FhYzZhZmEwZTk4ZjdjMjAyODI1MTRhODY5NDEwMmUyOTg0MTE1M2UyMWM5ZjBkYjk0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU2MmVjNWYzZGFhNmIyNDI5YzQ4OTFmZDc3MjUxMzFiYTAxNzcyM2JhNjRhNTBmYjhkN2M1YWZkOGJhZjk1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGUzNWFiMjNlYWNiYmE1YjI4NjI3NWViZjNkNWEzZTVlNDIwYzhhYmJiNGVmZmJkNjhjNjQ3NGYxNDM3YjY1MiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L23-L23",
+          "version": "repo-lines-v1:sha256:8d9b64c5888c1927a8ce03f78ffe08f0fcaaa7ebbe10af10202ab7dd86ba484c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGQ5YjY0YzU4ODhjMTkyN2E4Y2UwM2Y3OGZmZTA4ZjBmY2FhYTdlYmJlMTBhZjEwMjAyYWI3ZGQ4NmJhNDg0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGQ5YjY0YzU4ODhjMTkyN2E4Y2UwM2Y3OGZmZTA4ZjBmY2FhYTdlYmJlMTBhZjEwMjAyYWI3ZGQ4NmJhNDg0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTM1MzA0ODg5ZDMxODRmZTViOTVjYTFhOTgzNWQ0Yjk2MThiODcyYzc2YjNmNWJhZjI0NzMyZjk4Y2JhYWYwYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjNiMmM0ZmQ1OThhN2M1MWZkZDUxOWU1MmFkNjNiOTk2ZDMzZTlmNDY2MjQyNGFjZDZlNTA5MzM3YzhlYjk1MSJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L22-L22",
+          "version": "repo-lines-v1:sha256:24a5393349f52decea0f12ade73aac8c15dc9bf1a3fc0ebf3edd3d867b89d729:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjRhNTM5MzM0OWY1MmRlY2VhMGYxMmFkZTczYWFjOGMxNWRjOWJmMWEzZmMwZWJmM2VkZDNkODY3Yjg5ZDcyOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjRhNTM5MzM0OWY1MmRlY2VhMGYxMmFkZTczYWFjOGMxNWRjOWJmMWEzZmMwZWJmM2VkZDNkODY3Yjg5ZDcyOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDFiYmIyMTg1MjA3MGNhNDBkNGE1ZGU3ZjZmZGVlYzkyZWI0NzY0OGVkYzY2YmZlMTRhYzVkYzM2YmVmZDY5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGU4Y2ZmNjllYWNmYWI4NzY1NjE5NWQ3OTM1ZWQ1MTkzMDJjY2ExOWExMTY3ZTQ0N2ZhZjU0YWVhZTM3ZDIwMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a5c35b44c494b35ac4bc39c1e8402b7",
+      "statement": "The Drizzle journal contains exactly one entry, tag 0000_user_settings (dialect postgresql, version 7), making the user_settings creation the sole migration in the repository to date.",
+      "evidence": [
+        {
+          "resource": "repo://packages/db/drizzle/meta/_journal.json",
+          "version": "repo-file-v1:sha256:a89b8a9ddf86631f3b287fbc9c6ea8a156916b70ec0cea5815bdc6d65283cb75"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6ba1bbb9c0a4351aa8fd74227012473",
+      "statement": "Schema changes go through pnpm db:generate (root script filtering to @mota/db, running drizzle-kit generate), driven by drizzle.config.ts (dialect postgresql, schema ./src/schema.ts, out ./drizzle, strict, verbose) which throws without DATABASE_URL; hand-written SQL is not the workflow.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L18-L18",
+          "version": "repo-lines-v1:sha256:4095a05af5a3d9e792fccf616aa0accba30771a6582222d52f0e9c9b8cc43969:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA5NWEwNWFmNWEzZDllNzkyZmNjZjYxNmFhMGFjY2JhMzA3NzFhNjU4MjIyMmQ1MmYwZTljOWI4Y2M0Mzk2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA5NWEwNWFmNWEzZDllNzkyZmNjZjYxNmFhMGFjY2JhMzA3NzFhNjU4MjIyMmQ1MmYwZTljOWI4Y2M0Mzk2OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGY1YjA5ZmE1OTEwOWYzNWQ2OWNiODgyOTY1YWI2YWNhN2M4YWRjODcxYTU5ODQyYjQ5ZjhjMzY1ZDNjNzIxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg0ZDEyMjkzYmU4YjM5MzEzM2ExY2FhNzU4ODM4NWEzMjc5YWQ5YjRmMWI2OWY1MWM4NDU2YWU0NGU3ZTdkNSJ9"
+        },
+        {
+          "resource": "repo://packages/db/drizzle.config.ts",
+          "version": "repo-file-v1:sha256:0a8c5f5451c265e9d090efc18f5454f236f8cbffb800797c900589aaf9e69ab7"
+        },
+        {
+          "resource": "repo://packages/db/package.json#L13-L13",
+          "version": "repo-lines-v1:sha256:9b06c00c780b32ef1ff39d7c9ada97acba195d34f0438121947f79f77435e74a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWIwNmMwMGM3ODBiMzJlZjFmZjM5ZDdjOWFkYTk3YWNiYTE5NWQzNGYwNDM4MTIxOTQ3Zjc5Zjc3NDM1ZTc0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWIwNmMwMGM3ODBiMzJlZjFmZjM5ZDdjOWFkYTk3YWNiYTE5NWQzNGYwNDM4MTIxOTQ3Zjc5Zjc3NDM1ZTc0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjgzOWRjMTVkYTliNzIxNjlhNTQ2Zjk2MTUxODBiZGY5YzAyYzU1OTg1MzIzOGU0NTNiNDJjMThlNTI4NmU5OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODY2NTQ5NTY1NTQ3YThjNDEzZjM5NzgyYzhjOWI0ZTc1M2U3OGU0YTI4MzJhYzQyNWFmN2FhZWI0MTI1ZTJkZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f6e69a17a794b45af6549c10caba6d5",
+      "statement": "pnpm db:migrate runs tsx packages/db/src/migrate.ts, a standalone runner that requires DATABASE_URL from the environment, migrates from the hardcoded ./drizzle relative to packages/db, and ends the postgres client in a finally block; pnpm db:studio opens Drizzle Studio against the same config.",
+      "evidence": [
+        {
+          "resource": "repo://packages/db/package.json#L14-L14",
+          "version": "repo-lines-v1:sha256:e9acfc8b81be8a3cd08b53c9ebed23ca12e6d6dcf2514dac17b8bedc1b1eb83f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTlhY2ZjOGI4MWJlOGEzY2QwOGI1M2M5ZWJlZDIzY2ExMmU2ZDZkY2YyNTE0ZGFjMTdiOGJlZGMxYjFlYjgzZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTlhY2ZjOGI4MWJlOGEzY2QwOGI1M2M5ZWJlZDIzY2ExMmU2ZDZkY2YyNTE0ZGFjMTdiOGJlZGMxYjFlYjgzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGMyNjA1OGUyMWI5YWQzMzY2NzVkM2RlMzE4ODg2NTVhMDM5ZTg5N2FlNGNjMTFkZTdlNWMyYmUwZmQ5ZjA2NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzNlNWE3N2RhOWQxYmRhODdhNTE0MjYxYzcwYTYxNTViZTJjYjY3M2VkNmNiNDcyOWYwMTdmZjU2NDQzMmYyZCJ9"
+        },
+        {
+          "resource": "repo://packages/db/src/migrate.ts",
+          "version": "repo-file-v1:sha256:1d27bc7e9a7df7fc709d9a45767fac42d0481b0e33fd696525f92737d0096c66"
+        }
+      ]
+    },
+    {
+      "id": "claim_13096852feb744a0ab182378beff129a",
+      "statement": "createDatabase builds one postgres-js pool with max 5 and prepare false, wrapping it once with drizzle(client, { schema }) and returning both { client, database }, so the pool is bounded for a single small container and prepared statements are disabled; the caller owns closing the client.",
+      "evidence": [
+        {
+          "resource": "repo://packages/db/src/client.ts",
+          "version": "repo-file-v1:sha256:3e49e3088693d5d6c6306baccd70ee4c154d6cc15b1d0780af1d1cd872d6ba95"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac2fb33788124b22b9fb21bc68439d67",
+      "statement": "main.ts registers process.once SIGTERM and SIGINT handlers that call client.end(), closing the postgres-js pool so Compose stop/restart drains cleanly; the database URL itself comes from loadEnv where DATABASE_URL wins, otherwise an encoded URL is assembled from DATABASE_HOST (default home-server-pg)/PORT/NAME/USER/PASSWORD, and boot fails with 'DATABASE_URL or DATABASE_PASSWORD is required.' when neither is present.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L51-L62",
+          "version": "repo-lines-v1:sha256:a1a37bd05df3e466f3cfe34be1b1d8740188dfea2945c6e3656dbf661a88912b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MWM3OTA2ZGY1MmVjYzYxOGQ3YzgzMzZkYWRkZjUyN2NkYzA4YTY4NmMwYzZlOWE1ODU3NTNhYjBlZTc2NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViNjlkOTUxOTc4ZmFiNmRkNzgyZjI1OWNlY2M2YWZlODBkMzQ2ZDU0MjBmODRhYTViNTU1OTBiZjdlYWU4MTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxNDQzZTk5ZTBjOWU4OTkyNmU2NmI0OWM0YzExMzYyNjI3MzRlY2FlYjc0YTY0NjBkMzY5ZGM4N2QxZDRjNWQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L46-L48",
+          "version": "repo-lines-v1:sha256:49010224210a229d0ffaae8c977bd757747a120c8803b039a2ca9b9d9b3fdea9:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGY0Yjk0MzU1MzM1NTcyZjQ0MWFmMTFhMDYwZDNkMzNmM2U3ZWViNjQ1MWQ1MzQ1OTQxZTU4MzgxZGMxOWViNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjU2ZWE2OWY3YTE0MTQ5NDNkZjU0Mjc5YzBiZmEwYzAzNGY4YjQ0MzhiMDA0YWM5YTg4NTkzOTQ0NWIzMzhhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzQ4MzlkYzUyNGRmM2I4OGIyZWVlM2U1Y2NiZjMxMTNmZTgxZGZmYzM0NTMyYzc5M2RiZjVkYzliZjYxZWFjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTJmZTQ1ODE4N2UyMjdmNWFjNjMwMjc1N2U1MjMyZjkwOWM2NDZjMDEzYjM2ZjEwYjY1ZTE1YTc1Yjc3NjJlMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_bf11efc594d34b0faadc33bdab6819fa",
+      "statement": "AppModule.register falls back to UnavailableSettingsRepository (both find and save throw 'Settings repository is not configured.') when no settingsRepository option is supplied, so all real database construction lives in main.ts and tests can inject a substitute behind the SETTINGS_REPOSITORY token.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L29-L40",
+          "version": "repo-lines-v1:sha256:911be1c43d81c714b6e4869ee64dfa5600b47fa3dcdfb17580682f6d196f0014:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MzUyMTI4NGI0MzBhYjliM2Y3MzNkYmY3MjRjOTYxY2M3ZDYzZDVjNDQyMTU4M2VmZTI4M2Y2YzRhZjc5YWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNDEwOGY3MmNiMzc4YTg5ZjAxNTBkMTlkNWEwZmViMDkyZGRhZDliODk2M2E5MTRmYzZkYmQ1ZDZhNmRiNzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxYmY5Njc4NjhkNWYwMzc3ZjFhNTIyYzUyZDg4NWM1MzMxOTc4ZTU0MmRjN2EwMmUxM2EwNDUwNzQ2OTk4MzYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L74-L75",
+          "version": "repo-lines-v1:sha256:c89ab3ed32145feb32e1c4ab40ce659b1a6370a76eda0aac3e1f396a0b361641:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODk5MjAxZmZiOGFjZTAxOWMyNDhjNzkxZDRkZWMzYmVhOGFmNDYxOGIyYjRiYjg0OGY2Y2Q3NDIyOGE3Njg4ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE1MGE2Yzg3ZjdkMDZkYjA4ZWNhMDdiNTRmODAzZTMwYjg5ZGYwYmQyOTZlNTBlMjdiNmIwZjljODk5ZDQ1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJjOTcyYmU3MDAzYWNlZDJlODA1NzczYjgxN2ViNzA3MTUyNzk1MzQ4NGQ5Mzg1ZmYyYTdmYzI0OTE1NTcwYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2YxYjczMTUxMWU0MDVhZmI0NjY3ZWQ3MjU1MWI1YTVjYTJlZTc5NTFlZGY5NjA4ZmY2YTZlNTUxODUzNzg3MiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L17-L22",
+          "version": "repo-lines-v1:sha256:5e349799ef2d40b5f26e8fb236813bec13a76416aff295f784e9998e35bd11e7:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI2MDZlNWYwOTIzZWY0MzQ2Y2RkODI0NjcxOWIzMjk3MzdlYWQwNDliODM1ODY2OWE5MjgwOTI2MGE1N2Y4MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTY5NDFjNDZjYTFmNGNmNDQ0ZDU1ZmZiZmQ5Y2I5MTFkNzhhYTk0MzRmNDljMjgxYTliNWE0MDUzOWYwZWUzOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDcxYWYwYjUxNjVkNDViMjI0YzYzOWYyZGIxZjhmNWM4YWViOTQ5OTVhZmRkZDcyYWIxZGIyOWM0Y2VhZTY4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQ3Yjk2NTYxMDhjODAxNDRjNWIwMDBmMWQxMTIxZWMyZTVjOWRhYWFjMGNlZjM4NWZiNDZlM2Q2MDQ3ODhiZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a37c6c66005f4782aebf5ead7e36cb70",
+      "statement": "Two integration suites are gated on describe.runIf(process.env.DATABASE_URL): packages/db's repository.integration.test.ts saves two randomly-id'd users at version 0, asserts each reaches version 1, verifies find isolation, null for an unknown user, and a SettingsVersionConflictError on a duplicate version-0 save (deleting rows and ending the client in afterAll), and apps/api's settings.postgres.integration.test.ts pushes the same real repository through the PUT/GET /api/settings HTTP boundary with a cookie-regex session verifier.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L49-L75",
+          "version": "repo-lines-v1:sha256:707ebb9d4553d3ecff935cf661d59dfb3f3f432abd846d49baeefdbf5d5bfbe7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMmEwOWIwYTY1OGVhNTY0ZjM5NTJmZDZjN2VhMjNmNzNhNGQ2MjNlZWIzMDU4MjBhNWVhMDMxYzI3MGJmZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDFlMDcwOWU1NDAwNjBjZGNiNzE4NmRlNjU2MzRiOWJjNjA0MjBjYjdiYTUyM2FkYjQ1NmZjMzk5Yjg5YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/repository.integration.test.ts#L42-L56",
+          "version": "repo-lines-v1:sha256:22aeebe7fb46299c99b9c9aa4eede14645ef361f5af38590411d5497eaa6e313:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZWY0OWQ5ODFlZjBkMzFkZDQ4MTM0ZGI0ZGRiODlkZjc0NmQ3NDMyYjg2NjBhYzMyNTgzMDkzMWU5NmQxYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDFlMDcwOWU1NDAwNjBjZGNiNzE4NmRlNjU2MzRiOWJjNjA0MjBjYjdiYTUyM2FkYjQ1NmZjMzk5Yjg5YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_392bcb8151964d628de700e63c6be992",
+      "statement": "packages/db/src/schema.test.ts pins the table name, exact column list and order, and the inline auth_user_id primary key without needing a database, and Turbo's test:integration task is cache: false with env [\"DATABASE_URL\"] so integration runs never replay a cached pass from a different database and no-op when the variable is absent.",
+      "evidence": [
+        {
+          "resource": "repo://packages/db/src/schema.test.ts",
+          "version": "repo-file-v1:sha256:f2269d20f73af5edf5dc982d0864e8e2c7e15d849cab6d3442caf56007965616"
+        },
+        {
+          "resource": "repo://turbo.json#L19-L24",
+          "version": "repo-lines-v1:sha256:d55520e122297f8f0e4475b70dca265b5a24bf3f6cc7df7057cc12c3dfa4ec94:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDE5MTQ3MDVjYTAwODY2NGI5ODc2MjI0OWY4ZjY3MmMxNmVlNjgyMDMwMzM0ZGM5OWJkZDliMzBiYWY1MTkxYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDA1MmFlZTZjOWY3NGNjYTA1MmEwZWJiZjkyNjhlM2IwMjAzMzIzZDU4OGFjNjUzNDZiNGIzZjNhYzg2MTMyMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWE5OGNmMTJiNjU0YmYyYWQxOGZjNjc1ZjViNjA5ZDhiNmM4ZjYxZmUxNTA2NjAwYzgxMjc0N2I3OGE1OWQ1NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d723e10c8c242bab8886ffad2ffe430",
+      "statement": "apps/api/test/settings.e2e.test.ts swaps in MemorySettingsRepository, a Map-backed UserSettingsRepository that throws SettingsVersionConflictError when (current?.version ?? 0) !== expectedVersion, letting the suite exercise 401/400/409/503 controller behavior with zero database dependency — the same CAS contract the Drizzle implementation enforces in SQL.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L38-L63",
+          "version": "repo-lines-v1:sha256:f6209a5e6b8a34352b3dfaafd3a0798ee06b6a91d5a724ba6f38458999c8ac6f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiOTdkNTE5MzM5ZWI0NDFjMzk1MDQ3NTdlYmFjMWZmNDcxNTI3ZDk0MzFmYWJiYWI2NzkzMjdlOGVjY2FjZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmNjMwZGVjNTAxZGYzYjBmMDllNDFkZGIxNjYwMmQwZGM0ODdkMGZhNTQ4ZDRkMzZiMjZkYTdkZWU2YTc1OTMifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.e2e.test.ts#L78-L91",
+          "version": "repo-lines-v1:sha256:b58e206b5b6dc28c7c3d434dc39025a6f953f4b078cef21a46320354b2d2c7cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyOWMwMjU0MWU2M2VhZmZiZTJiZGM5NzQ1YmZjNDEzMGUyMDJlYzc5ZGI4ZDA0YTM1ZmU4ZTRiZjIyOTcwMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZmVjMzBmYmJhYmM2MzFiODI2NzdkOWNlMTYxZDk4MzVkNzZkZDE3ZDFiMTAxYzgyN2M3MjE4NDc0YjEwNDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4ZTM0NzcxZjFkM2U1YzVkNmMxMTEzZWMxNTY0NmMzMjA5NmEwOGMxMjc2MTFhNTRhMTBmYTc0YjMxYjEwMzQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

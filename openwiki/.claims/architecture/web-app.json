@@ -1,0 +1,630 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7cbdf65760f3f5077c1a81c6b43bad3481c5bf332f4a8ce2adc9671b51468987",
+  "claims": [
+    {
+      "id": "claim_ecd34fbfa74b4d37b9e0cd13d2835b71",
+      "statement": "apps/web/src/main.tsx is the single entry point: it renders <StrictMode><AppErrorBoundary><App/></AppErrorBoundary></StrictMode> into #root after importing leaflet/dist/leaflet.css and ./styles.css globally. AppErrorBoundary is the only class component in the tree and is deliberately a framework boundary: it converts a render exception into a role=\"alert\" recovery section (eyebrow \"일시적 오류\", heading \"화면을 다시 불러오지 못했습니다\", the raw error.message in a <pre>, a \"다시 시도\" button that clears the boundary state, and a \"새로고침\" button that calls window.location.reload()) instead of leaving a blank unmounted tree.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/AppErrorBoundary.tsx",
+          "version": "repo-file-v1:sha256:74046bb5c7fbd46f629b5a610e6e577d370d8d2b351d5c6be2da87c70c120136"
+        },
+        {
+          "resource": "repo://apps/web/src/main.tsx",
+          "version": "repo-file-v1:sha256:06689b8e68b76cc41fd3a0dc1d8acfae74f26089492164788bbb878b443b548c"
+        }
+      ]
+    },
+    {
+      "id": "claim_8d504370d62f4c1f89d0beca91142e73",
+      "statement": "apps/web/src/domain/bus.ts and apps/web/src/domain/subway.ts are exactly `export * from \"@mota/contracts/bus\"` and `export * from \"@mota/contracts/subway\"` — thin re-export shims so components import BusStop/SubwayArrival/stationDisplayLine from ../domain/* rather than naming the package. They are not a place for new logic; missing shapes are added in packages/contracts/src and re-exported. The one non-shim file in domain/ is subwayEta.ts, a pure client-side ETA-freshness helper.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/domain/bus.ts",
+          "version": "repo-file-v1:sha256:c2d22cd7c4e5a018b4d2e265f83631f3191f342b674a819684512837718c6766"
+        },
+        {
+          "resource": "repo://apps/web/src/domain/subway.ts",
+          "version": "repo-file-v1:sha256:21b389f267e6fac7f841bdc915fbd4f61a835f8114e1105417b2b3ce3060cdb3"
+        },
+        {
+          "resource": "repo://apps/web/src/domain/subwayEta.ts",
+          "version": "repo-file-v1:sha256:7c1dc87da255abf55682f2381cce86176db2abec85444a6cce477cd5e0639fb4"
+        }
+      ]
+    },
+    {
+      "id": "claim_6efddf29ba274641b2e44e9248f4a36b",
+      "statement": "Nothing under apps/web/src imports from apps/api: the two apps meet only at HTTP (the Vite dev server proxies /api to 127.0.0.1:3000, and in production the Nest app serves both /api/* and the built bundle). @mota/web depends on @mota/contracts only (never @mota/db), and vite.config.ts resolves contracts at source level via two aliases (@mota/contracts/transit-settings → packages/contracts/src/transitSettings.ts, @mota/contracts → packages/contracts/src), mirrored by compilerOptions.paths in apps/web/tsconfig.json so tsc --noEmit checks the same files Vite bundles.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md",
+          "version": "repo-file-v1:sha256:636073090aeb102022268ef9c2fc8b585942d57725c6f5410253c7e2f367a14d"
+        },
+        {
+          "resource": "repo://apps/web/tsconfig.json",
+          "version": "repo-file-v1:sha256:eea13a041bdc99a8274018288f7b366797f6cd0fa1f63e33b77b7dc25dfc4404"
+        },
+        {
+          "resource": "repo://apps/web/vite.config.ts",
+          "version": "repo-file-v1:sha256:b2d1ec79e1beb10bcabde313aed792622845e65df9518c9d45201877c7340a56"
+        }
+      ]
+    },
+    {
+      "id": "claim_534e4cfecb9c45cd86cc80f8f7668b85",
+      "statement": "App (apps/web/src/App.tsx) is the sole owner of UI-selection state, holding exactly five useState values: commute (CommuteContext, default \"toWork\"), mode (TransitMode, default \"bus\"), searchMode (TransitMode | null, null when idle, otherwise the mode being searched on the map), mobileMapOpen (boolean, whether the mobile map sheet is mounted), and saveAnnouncement (a sentence rendered once at the top of <main> as a visually hidden <p className=\"sr-only\" aria-live=\"polite\">).",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L136-L143",
+          "version": "repo-lines-v1:sha256:16ecae7189c6891bd98115f0d127de9109885bbd57e64bc57f3a1afe3cf2c8e7:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWEzYTA3OWRmOGUxMDdhYTAxYTRkN2NiM2RlNTI3MjhlYmZlOGM4NGYwNjZhYjA0NzQyNTNmYzI1NmEyNDlmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDNiMjY1NWFkMzU3NjM0ODkxNzY5ZThkNmY1OGE3ZWUxMjcyZDhiNDA3M2QyYWFlNmM3MjNmYjNmNzBlMGVkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmY2ZGM2Njg5ZTQyYmUyY2IyZTYxYjhiZjJkNDEwN2Q1YWFhZWJiMjk0MTYyMjk5MDdhNmE0ODU0YWUxMzE2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2ZjMzYxZDE3NTc0NTBiZmI5NWI2ZWQ2MTE0MzU3ODZjMWIwNTVmZGY2MDkxNDhmZmU5ZTQ5ZTc1NTI4NjgwZSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L28-L43",
+          "version": "repo-lines-v1:sha256:b7ece6663e3a0bafa17930e6db54795637880acb16a199d9823ff6b24f100044:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxN2Y1OGJlNWQ1ZTIwY2QzYjY0ZWU0YTZlZWJhMjM3OWJlYWQ5OGZlZmZjMDg5Y2U4MmVkNDY1ZjNhMWQ3YmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwZGZhNTg1N2RiODc1MWVjMGM3ZTAwZDAyYTJjN2RlMjY2MjkwMjVkYzQ3ODlmNThmNTJlYTRkNmNmYTU4ZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3YmFmOWZkYjk3OGE1NmE1MzlmNmZhZDM2NjJjYzhlZTZjODA1Zjg5ODUyY2JiNWUyMTNiMWJkOTEwMTM0NWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNTQwZmYyMTU5YzlhNDUwOWUwYmQyNjdlY2QyZDdjNTM4NGNiNzZmYWRiYWU2N2RmZGQwNmY5OTRlYTA2OGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4570840d6aee4685bf970f4273596c5d",
+      "statement": "App derives selectedStops and selectedStation from selections.commutes[commute], then mode-gates them before passing them to useArrivalDetail: activeStops = mode === \"bus\" ? selectedStops : [] and activeStation = mode === \"subway\" ? selectedStation : null. A subway screen therefore never fetches bus arrivals for stops the user cannot see, and vice versa.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L53-L70",
+          "version": "repo-lines-v1:sha256:6f3ee34ad80e3cfed0f3f6fb754a02f9daf2734e8fc1fcbaf79abf515a0cc2b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiY2RkM2Y4OTQ1MmVhZWQyYjhlZWI0YWQxZjMzZWNlNzhjZTQ4ODc5ZTAxYmQzMzg5NzM3M2JkMTczODIwMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzNjY3ZTk3YTA1YmFiZjkzMjkwYzI3MGM1MmVlMzhhZjk5MjM4Zjc3YzljOWVlMWY2ODkzODcyODg5MDYyZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MmNjMDM5ZWQ4ZTE2OTNlMGVlYzZkMGNjNGQ4ZGM3ZTI1OTM3YTc0ZWU3OWY0Y2VkZTA0MTY3MTFhMDhiZWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7998552d72ab4f1ba0d70b0869d248a0",
+      "statement": "The map's initial center is derived, not stored: with firstSelectedStop = selectedStops[0] ?? null, mapAnchor prefers the active mode's selection and falls back to the other mode's (mode === \"bus\" ? firstSelectedStop ?? selectedStation : selectedStation ?? firstSelectedStop), and mapCenter is mapAnchor's lat/lng or DEFAULT_MAP_CENTER {lat: 37.5366, lng: 127.1253} when nothing is selected in either mode.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L23-L23",
+          "version": "repo-lines-v1:sha256:d08a5dbd672f6834357e52884c79b66267f976ad63da305eccd78fbfe14c26ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDA4YTVkYmQ2NzJmNjgzNDM1N2U1Mjg4NGM3OWI2NjI2N2Y5NzZhZDYzZGEzMDVlY2NkNzhmYmZlMTRjMjZjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDA4YTVkYmQ2NzJmNjgzNDM1N2U1Mjg4NGM3OWI2NjI2N2Y5NzZhZDYzZGEzMDVlY2NkNzhmYmZlMTRjMjZjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGY2NWRiYWJkYWFmZTY0OTk4NTkzYmYyY2Y5NjU4ZTk3N2NjMjIwNmE0YWI0MDk5MTU4MjNkZTg5YjkzYjU5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzEwOWMzMDY2NWVjMDBhN2JiYzZhMGIzNzE5MzMyYjQxMjJiZTZlZGIxNjRmZTVhYzlkMGIwODBmMzlkZGFhNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L72-L79",
+          "version": "repo-lines-v1:sha256:6fd232a4291b5c0d5f96e92d7c4d867bef85975ce6da3a05bcdd10f37e050b38:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjVkNTMxMjk1MzFkY2YwMjM5YzYwMDFlMWE3NDdjZTVlNDdhMjRjNTEwMzg3M2E3NDI4MzM1NzEzZGY4OTVlOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGUxNzdhYjYyY2UyMzUxYjlmZDcwOWYwMGEyOTMwOTU0MzQzOTZkNDUwNmFiNzhmNWZlMjY3YjkzMzA5NDQ3NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjE3OWQ3NzU1ZTVlODk1ZTQ5ZTMzNzk5NGI2ZTY0NjUxMmUyOTY4ZTU4NGExZmUwNzA5NmNjMDMwZDlkNzhiZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmI3YWUyMDFkODJmNGYzMTAwMDMyOTk0MzY4NGRmOGJmYTYyOTM5ZTgxYWI5N2E4ZTk4MjdmOTNiYmVmMGExNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ef10b0ba22464688ac47acdfa7b515f9",
+      "statement": "searchMode transitions are guarded in App: changing commute or mode sets searchMode to null; the 정류장 찾기/역 찾기 trigger toggles setSearchMode(current => current === mode ? null : mode) so pressing it again cancels; and closeSearch() clears searchMode then, in a queueMicrotask, refocuses document.getElementById(\"point-search-trigger\") so keyboard users land back on the button that opened the search.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L165-L190",
+          "version": "repo-lines-v1:sha256:4bd0eef6a4412b49de29c975856d9d39ebacd7ac245498d7237a8c72b2c5d9f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YWRlZDJlZjQyYzc0NzU2YTZhZDljMjFkZDIzYWJiNGZiNWNiYjhiYjkyYzVlOWNjZmVjNWMyZTE4ZWVhMmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNGZiZWNlMzJhYTRkNGU2ZjY2ZjRiZDY3ZGU0MzUwNWM5N2JjYmUwNDI4MzRlYzJjZTJkYzEzZTVlMWFmMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NDZhODA5OWE5MWNlYTE0NjdlMDE5NzdmN2M1ZGEzYmJjNmQ0MWFlMjkxMmQzM2Y5N2JmZjEzMjkxZTI5MjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L81-L86",
+          "version": "repo-lines-v1:sha256:76bc6c3c7ce1a194d5fcfc8aa2dbfb0eea2174705be18dd7a6a37440764fff57:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTFmODNmMDc1YTlkMzA3NTExNjQwOTQ3NWY3NWYzZTFmOTUwZTlkNmM2MDU5N2QwYWVlNjIzOTIyZDkxOTdkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDg0YjVjZjU2YmIzYWI2ZDAzNzk1YTAyYWVkNTQ3YzcyZjMyMTY5MjMwYzA3Y2IwOTNlMGU1MGM4OTVlMzAxMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzFiYWE2YzA5ZjZiYWRmZTkwMGNmMmFkMzg4MTdlMjE0YTExMTM0NTIzZjUzODhkMzgyOTY4ZTkwNjA5ZjcxNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_920cc2ce257c4275a0081a3fd14e71b3",
+      "statement": "Saving candidates calls addBusStops/addSubwayStations with the current commute, announces \"${commuteLabel}에 ${name} 정류장을 선택했습니다.\" or \"${commuteLabel}에 ${name}역을 선택했습니다.\", forces mode to match what was saved, and closes the search. Toggling a saved stop refuses to exceed MAX_SELECTED_BUS_STOPS (= 4, from @mota/contracts/transit-settings) by announcing \"정류장은 최대 4곳까지 함께 볼 수 있어요.\" and returning without mutating; otherwise it toggles, announces \"${commuteLabel}에서 ${stopName} 정류장을 함께 보게 했어요.\" or \"${commuteLabel}의 ${stopName} 정류장 선택을 해제했어요.\", and sets mode to \"bus\".",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L88-L133",
+          "version": "repo-lines-v1:sha256:382b5367ef9882b926fda4f36c49e632322ec48df49aa2b058126c938fbde396:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlODU1M2I5MmE4ZjIxYTJjN2ZlZTU1N2EwYTBjNDNlYzMzZjBhMjMyNzRmMzI4MzVhMjg4MGQ2Mjg0OTcwMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYzE3MTA0N2E2YWI4YTAyNTY5NjZkMzEwNGE2MWVhNmI5NDk4YzY1MDMyZDhmOWY0N2RmMmUyNzNiMzhiMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiNmE5YTNhYTA4NWU2MTBjYzVmYmExNzBhYzkzMWJkMWY0YjFkMzBmMGUxYWI1NWE5ZjcwYjg2MzQyNzI2YzEifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L5-L10",
+          "version": "repo-lines-v1:sha256:8ee85d65aa2c8e2f49e35d690156a7185bc9b3e49afc8e052fbaf085f05e9f4f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYThlMzkzN2ZiMWMxZDRiZWE4MWUwODMzZTdkMTY1MTE3NWJjYTc2ZjRjMGU0NDI5M2IyNzgwZmQ0ZjQyYjYyNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGI4ZTY0MDcyMjY5YzQzNjA1NGYxMmMxNTEwMGRlYzkwOGMxMGFmMzQwYmM2OWU5NmM4OTAxZTc0ZTJjYThjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjZkNTFmOWFkNGM5MGJiZGY0NDhlOWE5OGU3YTU2ZWU3MDc0YWUyMjhiNWVmNWJlM2MxOTMxM2NiYzAyY2IzNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY5MmQxNDllODM1NTdmYjhiNGRhN2E3MTQ3NjRhNzFjM2UwYTE1MzVmNjg4ZGM5YmQ2OGVlZTAzYjJhNmI5NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_99bf8ff7879543ee8d406855a87f20fd",
+      "statement": "Desktop layout (≥960px, the single breakpoint) is a two-column grid: .app-shell uses grid-template-columns: 420px minmax(0, 1fr) at height 100dvh with overflow hidden, so the document never scrolls. aside.control-rail is a flex column whose only scrolling child is .rail-scroll (min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain); the brand header sits above it outside the scroll, and the sticky map stage is always rendered and unaffected by rail scrolling.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/styles.css#L294-L299",
+          "version": "repo-lines-v1:sha256:36eb3fcb8ee69643ccd2de30b990ad5e46584b9133cd370626e5c9a4dea25b6c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmNhMDE0ODQwZDFiODkxNmZlYjJmYjNiNWI1NTUwMGE0NTc5OWI1Njk4NjUyNDk0MDhjYWUxMWZjMmQ5YmM4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQ1YTU4NzczOTg4NDQzMmU5NmQxMWNlMTBhYWZhNTNkNzA1M2NkMzdmNDkzNjk5NWRkYWUyYjdkYzU2MDcxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGY1MGJiZWEyYTI5MjdlZWE4ZjMwODZmYzFhMzdiYTQ3NDEzZmIyNzhmMjEyOTRiYmMwOGRjNGMyYWVkZGVkOSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L718-L725",
+          "version": "repo-lines-v1:sha256:1fe87dc08083cd7827a3868a94289a606a8a9ef9facb0a04b8b679eabe7d05b1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDIwYTczNWFlY2YwYmQwYjU4NTBiNDg1NzBiN2RmMmQ4MmQ5ZGY4MDhhZjI4OWFlMmNhOWI0YTU3MTIyYjBmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTc2NWVhMWVlMjdkZTQ3NmJmYzQwZWU1Nzk1ZjhjNmYxMTRhYjQxYTQzZTQxNDExNGU3NDIyYjA0NjVjZjk3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDRlNmIzNjQ0NTUzMzkzYjRlM2QyODAxNTBmYWMxNjdhZWQ2MjkyNTdjNjJiNmU4YWI0OGIyMjdmZGU4NTExOSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L91-L110",
+          "version": "repo-lines-v1:sha256:b97f618ab2cbf6737596fd8c10563b3da5745668df22d34f032bb27587ac6bfd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczN2IzODE2ZTI2MzhhMjI2NDM5NDk4OWE4NmE3MzBkYjMyNDNkZjgzMDZlMjZlMTQ5ZmQxYWNhOTFjYTAzNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMzZiOTMxZTM5NDI0ODEwN2I5OTQwYWFhYTFlMjY4NDg5ZjY1MzkyOGFhNzczMDg5Zjg0N2M2ZTkwNzQ5YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2ZjUwYTZmZWZiYWI5NGRkYjI0MzljNGYxMjNkYTVhZDEwNjg3ZmQyNGYyYTZlM2JlMjUxYWQxMGZiZDljZGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f0ca78b73ab417d87565a572d7a6d3b",
+      "statement": "On mobile (<960px) .app-shell becomes a flex column and the map is not rendered on first paint: App renders MapStage only when isDesktop || mobileMapOpen || searchMode !== null. Until then the rail shows a 지도 열기 button (only when !isDesktop && !mobileMapOpen && searchMode === null); opening it mounts the map at flex 0 0 55dvh / height 55dvh above the sheet, and the map's 지도 닫기 button (rendered while !isDesktop && !searching) unmounts it. Entering a search forces the map open at the same 55dvh even if the user had it closed. The rail becomes the bottom sheet with border-radius 18px 18px 0 0 and box-shadow --shadow-sheet and owns the vertical scroll.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L151-L160",
+          "version": "repo-lines-v1:sha256:c716d1792280f88863a5082f95ed5ed223b3adeb4e67d908c5d961b586c5bc99:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MTMzMzEwZWRlOGE5OTQ1NWZmNGNkZDU4YWEwMjEwNDY1OTRhOTZkNGQ1MzEzYzA5MTMyZDZlNzI4Yjc2MDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMGIwM2E4NjhmZjk1MDBkMzk4ZWRkM2JmZGFmZThkMzI5YmVkZjQzNmIwZmEzNGRlMmMzMjNhMDI4NzZlNGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmMWEwZWE1NzEyYjg1Y2ZhNGViYzRjN2UwYmUzZTAwM2E0MmYyYmUyZTExN2ZiZjUxYzI3ZmY4ZjkxOWM5OWYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L260-L281",
+          "version": "repo-lines-v1:sha256:8321fd5729319c1bf754d33a86dbfe9370044d84d54b69d06ef0113f6a813299:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYWM4YTU5MmRkMDhlZDQwM2I1ODM3ZDM1ZmNhOTNkNzMyNjhjNzVmZGNhNDBiMTU5MzMyMTAyZGFkYzMxYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwNzcyYWRlMDU2ZWJjMjI5MmI0NTg4ODIyOGJjNjFlNmRjZGM3Njg5ZGViNmViMDA3NzVlODRlZjVjZWU5OTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3YWNkNjdlNThhMTE2M2QyZTdkZDUzOTY2MWFiNDVmMTcxMzg1ZDE5NDA2NTNjYjBkZGNiY2JjZTIyMmVkNDUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L125-L134",
+          "version": "repo-lines-v1:sha256:da27b216974154a4684a8c5ff22315706f5cedc8d52127d8fe060d421c824a25:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5OWE4M2U1ZjdhY2EyNGZiYWIxNTk4MzE4Y2MwYTRhZTU2ZmU5MTlkM2UxY2U4OWU1NDZhZjc0ZWRlNTU3YTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMDA5OTVlYjZmNmJjOGNmOTdjYTFmMThiOWEzMWQwY2MzNTk1NDNjNGE5NTMyY2MwMTM1NDAzZTE2OTgxYTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyMjY3NGQwOWYxODEzZTQxMTkwZTk3M2M1NmUxODk2MzRmYWQwMjg4YTQ1NmI3M2FkMTNmMjdmZjc4MTZjNDAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1056-L1085",
+          "version": "repo-lines-v1:sha256:048b2f5f8484e5f5c66afca78ece4039aa2625687963ebfd207ea37143f25283:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZjE3Y2M1YmJkMzJlNzBhYzI0ZDA3NDRlNzBjYjUxNmFjNzViOTAxZDUxNWMwMDZkYjgxMzZkYzY4MWIyYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlOTczNDAyMDI5YmU4NTM5NzU3NjMwNTA3ZjYxN2IyZGQ2MTYzNjFjZDZmZGFmN2YwNTcyMDFhMjIzNTViZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxNTEzZGUxMWE1OGExYTJmNzY5ZjNmYzQzMjY3NzZlOTUxNjQ5ZTFiNDg5Y2IwODUzNjA4YmM5ZjAxMmMyMTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7019144af9194cb6a3dc476870daf749",
+      "statement": "Two mobile rules keep arrivals on screen: .commute-switcher is position: sticky; top: 0 so the 출근/퇴근 tabs stay pinned at the top of the sheet scroll and the current editing target is always visible, and .point-selector.has-points .point-list is capped at max-height 128px with overflow-y: auto and overscroll-behavior: contain so the saved-point list scrolls internally (roughly two row heights) instead of pushing the arrival sections off screen. During a mobile search the candidate list is the horizontal .inline-map-result-reel (overflow-x: auto with inline scroll snap and min-inline-size: 0 so it shrinks before it scrolls) rather than a second vertical scroll surface.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/styles.css#L1867-L1877",
+          "version": "repo-lines-v1:sha256:2b718d9f63af786bb2aa98e16ccf6b87ece3a740c53ec49eab7da50a8619bd51:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2MjZjODJjZjZmYzkyYWJjNDU3ZTg1MDNiODkwMDU0MWQ1NmIyZDZhZTJjNjMwMWU0YmQ5MzMwMDIxNzUzZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5ZjRiYjkxYzg5ODhiYTJjOGQ3NjFhOTM5NmYxNDkxOWFjZDg3N2MwMWI4NzhhNDA0YjljNTI0ZTllZDEyNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwYWFmNzk2OTA5MTVhZDA4NDQwYjgxMzY4YTdiMDY3MWE4Mjc0NzYyZTM3NjZlZmViODQ0MTAwZjcyNmM5M2EifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1963-L1967",
+          "version": "repo-lines-v1:sha256:935baf5f6f59696baf57dc886afc41da7dc4972a18e3d4d0be4402b5fc939b39:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzU0NGVkM2U4NWE2NjU2YWM5Y2FiNTY0Njg3Nzg0MTMxNmRkNzdiMmYxMGNiOGI0MTYzZTY2NzM2MTA1MGQwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGFjZThjNzQwMmNhMzA0MjQxNzcyMzA2MjlkNWY1OTgwY2FlMTM1ODkzMjU4NjZiMDFiZTE4ZWQxODlmODY4MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2MwMmJmYWQ1ZTgxMzlhNjI2ODg5MGQzY2Y0NjNiNmIyNDQyY2IxZjBkMGIxMThkYTQxYTI2YjEwMWY3NjNjYSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L301-L308",
+          "version": "repo-lines-v1:sha256:924427e9c8daed5f35aeb668a876b03ca0bbc2fd208ca09b232bcdf244b02e86:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGFmOTZmZjdmYTI1MzIzMjViNzQyNDU2YzFiN2E3N2NkYzI4ZDkxZjNkOGU1NzQ5YzNlMDg3YzE0M2FlMzdmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWFiODVhZTg2NDZkNWJjZDg2Zjc1YzEzZDNhYzQxMGQ1YzYwZGE1MzMzNDRkOWNmYjUwMGVkNGZhMzgxYmYwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDllNDUzNzQ0NzViZDdjNzRjNTM0MzM4Y2Q5Nzc3MDY0NDNjY2YxMTBjOGY5YWQzNGQ5YzQ2MDViZGVhZWM0ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8e701da89aea4cfabfac7fa74a8b8489",
+      "statement": "All three tablists use the same keyboard contract: role=\"tablist\" with a Korean aria-label, role=\"tab\" buttons with aria-selected and roving tabIndex (0 on active, -1 otherwise), and arrow-key handlers that both change the value and move DOM focus to the target tab's id. CommuteContextSelector (\"출퇴근 선택\", exactly 출근/퇴근 with the routes 집 → 회사 / 회사 → 집, ArrowLeft/ArrowRight), TransitPointSelector (\"교통수단 선택\", exactly 버스/지하철, ArrowLeft/ArrowRight), and SubwayArrivalList (\"지하철 방향 선택\", ArrowLeft/Right/Up/Down plus Home/End cycling modulo the direction count).",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/CommuteContextSelector.tsx#L50-L80",
+          "version": "repo-lines-v1:sha256:0296ee8aa9ce40612106c02dabbe68940137b8d72a5415285b57e49d2026e9df:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MjdlZjQxYjhkNTMyMjgyOWViYjllNjUwNzg5NTFmNWYxZGU3MDNiNDA1MzYxNzllNzhmZTJhMjlhNDlkZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MzA4YzQ5NmY4Mzg1MzNhMWEwMTM3ZmZlMThlMjQ2Yjc0NzZjOTBhMWJjOTZlNjQzZjY1MjY4MmZiZjQzZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliM2NiZWY5MjhkNGYwZDEyNzdhMTA1MWMzMmJiMmZhMjU2ZjkwNDgyZDVlOWE5ZDMxYWFhYmViNDYwODBhNjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmYTQ3YmUzNzA4NjE3OWRhOWMyZTY5MTM2NjJhOWMwYzAxYjYxM2RkZTAxZGZhNzdjZjVjNDM4ZDZjMGRhN2IifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L100-L133",
+          "version": "repo-lines-v1:sha256:e6bf91351aa401debc5419865c3eb95f5194dac689372948494d51fcae2a7a77:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYjQ5OWEwNmRiNjQxNzI1Y2Q1MWYxMjY0MDdkYjgzYzkyNGExMWNlYTJlMDQ5ZjU5YWE4NjIwMTY0Mjk4NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwNzAzYzI5NDAyODcwMGI0NWRkNTc0MTZjMjc5ZWQ1MTI5NjViZTE0M2U5YTkwNTE4MWQ0MTQzYzRlNDYxNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmMWM3OTQ4Mjc5Y2RiMGVhYjdlZDE5OGJkYzgwZjBkNzUyMDM2OTYxNDViNjJlOTIzOWU3Y2UzNGFhMTcyNTgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/TransitPointSelector.tsx#L63-L96",
+          "version": "repo-lines-v1:sha256:ea8689e02007c0413f5ed78fbb40e3c616d4390b3481e1774759e6d40ef9dbe8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MjdlZjQxYjhkNTMyMjgyOWViYjllNjUwNzg5NTFmNWYxZGU3MDNiNDA1MzYxNzllNzhmZTJhMjlhNDlkZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyZjNjZmQxMWRhNjE1MDE5N2FjZWVkMDg0MDZhYzY0YjA1MDM0MGRlN2JjMDQxMjRhNGNiN2VmYTY3MTM0MGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4M2YxMzQ5ZDhhYmQwNDQxYzViMmNmZjQ0ZWFhY2Y5ZDA0YTgzZGU3M2UwZGQ2OGQ5NGQ5ZTM0YWY1YWFjYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwOWZjYjE0OGI1YmIxNjYyNGYzYzVjYTAzYWM0ZmE1YjNhOTRhMTU1NWEwZWVmOTNhMjdjMWFiZTEzOWNmYjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d3b7f2aa15004fd8843dd0938df88caa",
+      "statement": "Each commute tab's summary line reads from its own commute document (commutes[context]): \"버스 N곳 · 지하철 {미설정|설정}\", where N is that context's saved bus stop count and the subway half reflects whether selectedSubwayStationId is set. Switching commute context never merges or mutates either document — each tab keeps an independent bus stop list and subway station selection, which App.test.tsx pins for both bus stops and subway stations.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L284-L302",
+          "version": "repo-lines-v1:sha256:2580261e9a59d3d002412b1b0b13f170607541749f44e9d52cfed4ca423c0477:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzMmMyODNiY2YxNWQ1Mjc4MzJkY2UyZjJhMDJkNGYxNTIwYTZiNzRlOGVlM2YwN2JjMWYxY2I2NjI0MjU4YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0M2FlYTBiYzg5ZjZiMzk5NGE3ZWNkMDhmY2RiZmVjYzlhMTdiNDFkZTcyYzYzYzUzOGQzNjcwNGZmMjU4NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlM2QzZThhNGI2OTU4MzFkN2I2NmVjZmU1MzdhMjY3NjM1NmE5N2MyOTA2YmRhNDcyZTRjMjAzZGViZTc1MGYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L413-L430",
+          "version": "repo-lines-v1:sha256:d7e9bc31675dea17aa30ff45d4fbf3dfc1e834cb197b8e48227add9f3e936956:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNzc4NzI1ZDI4MGU2MjNiYTY5MGRlOTMwMWU1OGZkMmY4MWM1YTMyYjhiZGM0MjZkMTM1YjIzODU2MmQ4M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMWJlNGNlZWZlYjAxNDNlNDMxZGE3M2E3MThiMDA0ODM3YTY3N2Q3ODBiMDUwMDNlZGMxOTJhMDBjZmU2YjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/CommuteContextSelector.tsx#L55-L95",
+          "version": "repo-lines-v1:sha256:54c416b311eb20b10d0d9513bd235c241675a3adc22064c428adfb35ebcb6aa5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZDQ1MzZkMTY4OGU4ODQxNWY3OGZiN2E3NDFhNGU1MDRhNGE5NDhmMjBhY2MwZTRhNDM5OTc0YjY4NGJjNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlMmE3YmNlMDc4M2ExYjJjOTkxNTJhY2E1M2FmMDdlY2FkNTU1OTU2NGYxYzM2MTkxM2JlNGQyMTBjYWI4OTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2NDlmODJjZjdiZDVjNDVlNWQ4NzViYWRkOWZjMmM3NzEwNjkwMzU2MjNjZTFjYjdkNTliZWRjMmMwNGU5NTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlZjFhZjYxZWRiYWY0Zjk4YzBhM2NiNjljMWQ2MmU1ZjI2ZDhjY2NmODM1OTNlYTgxZTFhNmE5M2Y0MzRkYjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a715ca002e274f7aae678258eda38cd4",
+      "statement": "TransitPointSelector's saved rows are whole-row aria-pressed selection buttons (min-height 64px) showing the stop name plus \"ARS {arsId}\" or the station name plus stationDisplayLine(station); the active row additionally renders CheckCircle2 with the text 지금 보는 곳, and the CSS applies a 3px lime signal strip (point-row.is-active::before) and --signal-soft background. Deletion is a sibling point-remove button with its own aria-label (\"{name} 정류장 삭제\" / \"{name}역 삭제\"), never nested inside the selection button. The find trigger (id=\"point-search-trigger\", aria-pressed, MapPinPlus) flips its text from \"{정류장|역} 찾기\" to \"찾기 취소\" while a search is active.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/TransitPointSelector.tsx#L103-L195",
+          "version": "repo-lines-v1:sha256:e4def746ef95e456fb78646116c49e5469a446fcf579162503386c8109f44887:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyOGMyZmFiMzNhZWRjZDNiNDcyYzhlOTUwZDg4ZGNhZjZkNzAwODRjZmI2YTgyODIxMWRjYjczYWUwZGMxNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMjE1ZmQwM2NmYzJiZWViZjgwNGExN2FjNWU5NDc5NTFmN2NkMmRjMDU2MDUyMjQ5OWM2MDZmZGJjZDcxODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5OThiOTVmOGU1OWUzMDczZjcxMjdkYjRjMDdiOTZkYTg0ZGNlZTFlMzllNmNlNjE0YmY3Y2E5NmZlMzk3ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzMjEyNzViMTY3MmUwZjUyNGZhZTlhYWQwOTIzMTNhYWUyNTVkZjIzMGE2MDc5OGU1OGJiNjRhODA2MjE0ZDkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1421-L1450",
+          "version": "repo-lines-v1:sha256:0b0d59468d3e9be3b6436539059454574554a899d8bbbc19b8439333623afbea:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxNjRiMWViMTU4NTcxZDk5ZDliYTcxZDlhZmVjMWMyNWQ0MmQzMDQyZmY1ZTVhMDU0ZGJhNDNkODJhZmQyYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMGZiZTM0ZmY5N2Q0YTNiMWQ4MWI2NzJhMDFjOGFiNDZkYjQ2NDgxMGRhY2E2MTJjNzZkNTgyZjMzNzE3ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxOTk5ZjIxZGIyY2ViOGI3Nzg3YzNkMzcxYjZhNjc4MWNhNDg5Yjc4OTkzN2U5ODU0Y2I2ZjgzMzVhMTcxNTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_66388bcf46b3415fbe9c812a6738e87f",
+      "statement": "useTransitSelections owns the TransitSelections document ({commutes: {toWork, toHome}} each with busStops, subwayStations, selectedBusStopIds, selectedSubwayStationId) and exposes syncStatus plus six mutators, each parameterized by CommuteContext, with pure transitions in hooks/transitSelectionMutations.ts and storage in hooks/transitSelectionStorage.ts. Anonymous mutations write through mutate() to window.localStorage under mota:transit-selections:v1 immediately; authenticated sessions instead hydrate from GET /api/settings and serialize every subsequent change onto a promise chain (saveChainRef) of PUT /api/settings calls carrying the last known version for compare-and-swap, guarded by a generation counter and the active user sub so stale responses from a previous user or generation are discarded.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L126-L186",
+          "version": "repo-lines-v1:sha256:4095d56ef37fca4c56d94db927ed1cd400c176806e6e5d01eb965bb8b24b24b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmZDdmZTdlNmFkZGFlMzhlZjM4NThhNDYyZGY0NWUzYjM2Y2YzN2U0MTUzYzQ3Y2Q0MGU1MzVmMjdiMTVkZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxYzE2NWY5NDk4N2RkZThmNTQwYzk3N2Y3ODhhZWUwMWI1MmZjZDY1ZDMzMTAyNjZjMzgyNjIxNWQ0OTQ4YjIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L33-L47",
+          "version": "repo-lines-v1:sha256:343a52f23f418354e4b8f97c5632b8678271098f8d9c416b803d1f320a593c83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxYmYxMmViNTEyNTNlMmFkOWFlN2M4YzZhMjBhZGFiNzBkNGIxOWJlNTc3NDE2YjBhZjVjMjk2YTAzNThlMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNzZiYTBjNjhhOGE1NWJlNjgxMjc0YjIxODViNzgyMjQwMDVhOTE1Y2I4NmI2ZWUwNzc3OGExNThlMDlmMjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwODAyMzYzMzllOTgwZjk2OGM5MjU5MDAzMGZmZGFlYjc3NDA4NGVmMWJmNDZkMWM1MTRkNDRkODg5NjNjYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwMjJjYmE5YzNmZDZkZDA2OTE5OTljOTM0ZjljZDM3Y2ZiNTkwN2FiNDBkMmY3MDYxZjBiMjEwMzRhMGE3NTIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useTransitSelections.ts#L54-L124",
+          "version": "repo-lines-v1:sha256:5c0ea6e92bdf8bc5000aaba1d92e606289fc10f1c5f01a7f0efbfb369ee1ca05:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmOWRiYzdmMmYyNGI1Mjg0MzU3Zjk4NjMwNmZlZjA0MTdjYzZmODFhODNhMDJiZjgxNTBmNzExMmY4ODNiMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTUxMTk0ZWJlMGJmOWQ2YmU1NWQ3MmZjYWE2ZDdlMTg2YzMyMjk2MDFmYjA3YzIwZWE2YWM1NjE0NzYwMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjZmJlMTQ4ZDhkMzE0MjlkOTBmM2NmNTcyMTg0MDY3ZWU4YTIyYzdjMGZjZmVkZjFhYTc0NDc5MTFhMDNiNTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0722cff02ef74e9ab24d222d356b68aa",
+      "statement": "loadTransitSelections() JSON-parses the localStorage value, validates it with transitSelectionsSchema.safeParse, and then normalizes each commute: deduplicates stops and stations by id, drops selectedBusStopIds pointing at unknown stops, caps the watched set at MAX_SELECTED_BUS_STOPS (4), falls back to the first saved stop when the selection list ends up empty, and falls back to the first saved station when the selected station is missing. A parse failure (including a JSON SyntaxError) degrades to the empty document, so corrupt storage never blocks the app.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L26-L96",
+          "version": "repo-lines-v1:sha256:a49e275f5fcd565e9175e3c13aa7e83778a02d16d36b8c54332f0ce2cb45ae54:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2MWNiZjA1OWNmZDBlODhhYzA0YWM2ODViMGM3NmUzM2QxOWM1ZThjZDI4OTQ2NTIwNGI3MjUyYzU0ZmFhZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxM2QzZjU4NjZkOTIwMDdmYzUwNTExMmFmNTA1YjYyNWVhZTBiOTYzYjdhYWJmNTBjNmRkZjgxN2U5NTFhNjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f842973891a4b16b0cb7df145376496",
+      "statement": "transitSelectionsSchema in packages/contracts/src/transitSettings.ts is a union of the modern {commutes: …} shape and the legacy flat single-selection shape carrying selectedBusStopId; the transform migrates the legacy form by duplicating it into identical toWork and toHome documents, and transitPointSelectionsSchema normalizes the singular selectedBusStopId into a one-element selectedBusStopIds list on read. App.test.tsx pins this: seeding localStorage with a selectedBusStopId document yields an active selection in both commute contexts on the next render.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L334-L360",
+          "version": "repo-lines-v1:sha256:3e8bce41b707de9c22311e4091295707366e839ab9578a451a32fe29503b3496:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzNkMTUzYjM0MDRiZWI2YjJhZjUwZDg1NmQ1NTNjNGZiMDVmN2ZkM2M3MjU5ZWQ5OTgzYjhiZjVmYWY2MWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxMjhlODU2ODgzMjU2NmVmNWZmNmRmZWE1OTRkNzQzM2M0ZDAxMzA4MzY0Yjg0ODY3NjU0MGYxODU2OTdiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5N2IyMTNhMTgxNjJlZjNhZWQ2MDIxMjliMTg3ZTFhMTM5NTQ1MzMwZGIxZGYzNjY2MDcxZjI2Yzg2MGM0ZmYifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/transitSettings.ts#L12-L65",
+          "version": "repo-lines-v1:sha256:9520bd755e20a4ce6784181c291a3910b516a0da566698c167a66a68d7985540:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjMjVkZDk3MGU2ZTZiMWYwMDYzODYwNmNjNzFlNTk2NDEzYTA3MTM4NTZmM2Q3NGI0NzAzMDc5NGRkYmUxOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0NGQ3ODkwMTk1MWRiYzliYjk3ZGFjZjhhNzhlYzBhMjY4MzQ3ZDY3YTk1ZWU3YzVkZmZlYjhmNzQwYmFlNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4N2JlMTg3ZjU0M2UzZjE3NGY5ODhhOTQ5ZTE5ZTA0NzY1YTEyYmFmNDUwYjg4ZDcwOWIyZDI3ZTE5MjM4YzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f57b22497aba4c39b79c5bba6aeee03b",
+      "statement": "useInlineMapSearch searches once when searchMode becomes non-null (the effect clears all candidate and pending-selection state and runs search() against the current map center) and does not re-request on map movement; re-searching happens only when the user presses 이 위치 다시 찾기. Results are filtered against already-saved ids so a saved stop never appears as its own candidate; an empty result sets the error sentence \"이 주변에서 새 정류장을 찾지 못했습니다.\" / \"이 주변에서 새 지하철역을 찾지 못했습니다.\"; transport failures map to mode-specific retry sentences except isServiceAreaError (ApiError with code INVALID_LOCATION), which maps to \"서울 서비스 범위 밖이에요. 지도를 서울 근처로 옮겨 주세요.\". A request counter discards responses from superseded searches.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L113-L124",
+          "version": "repo-lines-v1:sha256:937195a05c53354bfc47d4f583db6638abbfb352cb4aea0b9ca3c7dec7438fce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1N2E5NjVmZjUyMjM4MTdkMjZlMTU5NzVhOTFlZmE4ODg1ZjBmMmYxMmRkNzc4ZDBkYTYwYjU2ZGY2MmEzZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MzAxZTA1OTQzNDBlNjIwZjA3ODEyOGQwMTg1NTE4NDVhNzc5NTUxNzI3OWQ3MTUwZTA1M2RmNDYxY2NlYTkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useInlineMapSearch.ts#L23-L111",
+          "version": "repo-lines-v1:sha256:adc36562936646240fb0db56b6b6775f4d57d235d95ac419ca9e48ee3ff55255:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMjVkOGNkZDY4NTFmNDEzNTQyODFlNmFlMzA4MzliNmFlMWMyODYxODhmMzY4N2RkZjg5NTU3ZmFkNmE1NGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmOGJhMDU3YzA1ZDJjYzIwZjMyY2Q0Y2I2ODQwNmEyZDQ1MzBhYzVmMjEyNDEzMTk5OWEzMTM3NTIxYWE2ZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1ZmFmODg4NTBjNTdjNDMzNWIxMGVkNWVkZDI0MjM0OTY2MThlMjY1MWQ0YTQ2MzhhYjllNTBkYTIwYjdlYjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fae967e558ab42f89565439c29c94290",
+      "statement": "Finding happens on the current map, not in a dialog: when searchMode !== null, MapStage renders InlineMapSearchControls over the same MapCanvas with no dialog, scrim, or second map instance, and the map keeps whatever center the user left it at. Pending candidate markers and the result-reel buttons share the same aria-pressed state (both read search.selectedBusStops/search.selectedStations), nothing is written to the saved document until 저장 is pressed (the button reads \"{n}곳 저장\" and stays disabled until at least one candidate is chosen), and 취소 discards only the candidates while preserving both the saved document and the map center. MapStage.test.tsx asserts the absence of role=\"dialog\".",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/InlineMapSearchControls.tsx#L47-L134",
+          "version": "repo-lines-v1:sha256:a8ef2c1f0ecdcb389566d97ec16c719ae126b40b370844229d733c8e506745e1:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlODEyOTZkZTFkMzE3NGY0NTQ3M2ZlYTJmMDExNTM4YjVlMGIwZWI2ZDllYzE0YjM0NDhmNmQ2NTZlNDZkZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMDA4NTlhZmNmODA2ODdkODkwZDg1YTY0Mzg4OGIzYTljZjcwMGFjZmY2MWJmNzE2ZjMyN2ZmMWM5NmYyODkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.test.tsx#L144-L174",
+          "version": "repo-lines-v1:sha256:1bac58c1228ca8a88421f15d4f2e80c82857984bdf6ded1f728d4782fbae2cc6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1N2IyNjUxNmU4MDZiZWE4YjYwMTlkODBhZGM5NmVhNzJmMmFmOGQzYzEzZjVkZjI0MGZjYzg3NmNkZTZlYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NTIxNjE1ODk1MzU1Njk3YTVhMDZmYzRlYjc5OWNmYWNiODI4MmVjMDdmMjQzNGE3ZjMzMTk2YWY4NzI3YjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1OTlmZDljOTA2NjMzMjU2NjRjMDc3MzAxZmEzMmY1YmViMTQ4N2EzZDBjNWU5YjgyNWRiZWQwYWZmYWYzODEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L70-L123",
+          "version": "repo-lines-v1:sha256:ac9e1632ad803a771397e53262897203163a77eb6029c1937f18e7de56937336:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NjllYjU2ZDZkMDE2NDgxMmU0NzdjY2JlMGI1NDMxMTU4NDNjYjdjNDA5MWEwNjBiMDM1YTI3M2QzODJlZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljNDQ2OTY1NzNmMDIzMTg5NWVkZjA3MjRlNWJjNWE1ZmZlMjQxMjkzYWYyNWI0ZjFjM2M2M2I2M2I0ODc5NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMTM4NjI3ODNmNTczZDllYzdkZGUyODAwN2I2NTBlZmNkNDg5OTY1MzU1MWQwMmUwOTBhZTIzZDQ3YjYwODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98456a606d3c4136970aec984ea8174e",
+      "statement": "MapStage keeps a working map center in its own state seeded from the center prop, with two flows keeping it coherent. Anchor → map: a useEffect on the center prop calls setMapCenter whenever App's anchor changes, and inside MapCanvas a CenterObserver effect compares the prop center to map.getCenter() and calls map.setView(center, zoom, {animate: false}) when they differ by more than 0.0001°. Map → working center: Leaflet moveend events report the new center to MapStage via onCenterChange, coalesced through requestAnimationFrame and skipped when the change is below 1e-7°. The inline search reads this working center, not App's anchor.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L194-L236",
+          "version": "repo-lines-v1:sha256:a25e3cbceec5247839e3df97629bac9e371f9f4cd5192bb269de674f64de6b05:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllODc5MmU3ZGQ4NjE4NDIwNmVjMTk1MzZmOGE2NTdiYzlhNGU5NDI5MjQ0MTAwZDI4NTRkM2M1MDFkNmU5YjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGZjMGMxNzNkMWVjM2ZjNTAxZDdkZmE5Mjg1NTAxYzUyN2NmYjQ3MTI1ODNkYTNjYzM2MTgwNTY2YjRiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2ODc2ZjMxMDY2ZDQxOGI4MWJhYWQ2YWFhZmNhYzk3MjMwYWMwZTA2YWJmMmEwZDlkYTRjOGEzN2Q2YjJiOGQifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L274-L283",
+          "version": "repo-lines-v1:sha256:86e68754519bef0f1cf863947390452e665ca01caca4d2845ca8e70d5c55a89a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZmRjMWIzYTgyNGYyM2U3NTMxMjEzNWQzOWUxODU3MmI2YTViMzQ3M2E3MmFlMTllMTcxOGEzY2MxMDE3NmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNTk5NTNlNDYzZjRmNWFjY2NmYzNlMmNkM2M2NDVkM2UzNTYzOWZlYTkwZWRhYmQ1OTMwYWU3MjNmMmM4OWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViOTIwYzIxOTQ1Y2IyZmQzNGJiZTk4MzBkNjEwNTM1MDFlNjVmNWQyZGFhOWM5MDk2OGUzZmQzZTA3MGY3YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkOTFlNWQwODkzNTAxZjVmZGY2NmNjOTc3NGZiNDZjNmFiMjQ0Njg2ZWExNTE5ZWM4ZDYwZGE2OTE3NmE0YjUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapStage.tsx#L48-L61",
+          "version": "repo-lines-v1:sha256:7cfb972e0de0949fa0ff3c50ca37ebd27cf5bbd6cb00c228dac10c9702b97c2d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3NGU2ZTFkMDBmMTg2MGE1NmE4NDFiOWQyMGMyODY0Yjk3OWIzYmNjNWRjNzQxMzE5Mzc3ZTczMjhkMGMyZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxZWJmZmVkNjY0NTU4YzU0ZjhlOWIyMmY1YjBjMThmZWNhNTdlMzVkODE3MWJkNjFiZTBlYjkzMGU1NDIwYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMGM4YzRkNzU0NmM4MWJjZGQwYzhlOTQyMGE1MWVhMTQwMjA5OWZlOTI3MTg1MjE1YmYzZTU3MzhmZGJkNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMzgzOWQyOGMxYjdhZmRkYjUwMzBlZjM5YTdhZjIyMjBkZDFjOTdjNTgyMTBjZWQxM2MyYWVkYjBmMjIxNzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_27069b43be0644d08bbcbad9dcf6e7ca",
+      "statement": "MapCanvas constrains Leaflet to the product surface: maxBounds [[37.2, 126.6], [37.95, 127.45]] with maxBoundsViscosity 1.0 clamps every drag to the Seoul service area (matching the API's INVALID_LOCATION window), zoom is clamped 11–19 with the OSM tile layer capped at 19, inertiaMaxSpeed is capped at 2.0 px/ms, and scrollWheelZoom/touchZoom/doubleClickZoom are all anchored to \"center\". Under prefers-reduced-motion: reduce, useMediaQuery turns off inertia, zoomAnimation, fadeAnimation, and markerZoomAnimation individually, and the resolved options are written into container dataset attributes so QA can prove them without trusting CSS.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L312-L321",
+          "version": "repo-lines-v1:sha256:0abd8a742d404afbe5d0d99b07f432c0dadec3e63088d32329a6c1696e9c9e85:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmMTUwNWNiYzU5Y2U5NzUxNDk1MWRiNjIzZjMwNmFjMzUwMWQ2MzI0ZWM0ODkwZWM5MzgyMTA1N2U1N2RmNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZDA0NjUxZDQzYTUyYTQ0YzVlY2JmNmM4ZDZiYjAzMzVmNDFlNTc4Nzc3MDZlZTIyYjE5M2JmMjg4MDBkYzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5ZjFiZmNiZGUyMzdhMTIxNDEyMDUyNDRhOWNhNDAzM2I4OGVkYzAwNTlmNmQ1YzAzM2U0MTcxMmRhYTEyMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzYzA4MTFmNjRmOGY0MjkwZTBiODI2MmI3ZTRlZTdmYmUwNDcwMjkyMjIxYmU3NzliZTg5ZTI4YWUyZDAzYWQifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L335-L349",
+          "version": "repo-lines-v1:sha256:a83503ae43d01bc05c172326619ab05617935400692fd718c9ca8cc7fb65e213:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkZThhNDhlMzdiMTZhODMyMzkxOTgxNjRjY2U5NjhiNGVkZTUxOTdmOTYxNTljODA3MjUxMWU4NzIwZjIzZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2YWUyZmM2ZjI2NzdkMzFjM2Y4NGJjNDU1MWQ0NmQ1YWQ2YzY0OTg0MjVlZmZjODIzY2NmODdhZGQwY2JjYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4ZGUxOTcwMjlmZDAyYzg1OGQxMjZjOTFmMDdkNjRlNjA3ZGNjZTI1ZGFiMjc4YmYwNTgxZmRhYjJjY2Q4YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MDc2ODE0NjNiYzFiNjFlZjk2M2Q0YzNiYWE4ODFjNDg0YzY1N2YxNmE3MWIzNWZlM2M4NDVmYjM3ZGE1NzAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L435-L451",
+          "version": "repo-lines-v1:sha256:3a993c35ad986ad9962e8e3c57635391bfa9c9c8627351bd7d8fa74999aa830a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0OTA0ZDFmZjM1YzI5OTU0Njg5ODkxNDQyNDYyMGQ4MGExNmMwM2MyOWZiNjFkNjg4MWVjZjJiOTUyNTczZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzYTNiZjRjN2RkMjQwMWQ3MjZiMWU4MTQzNGUxZWY3M2FlN2FhNzE1MjlkM2Y1YzQ4YTJjMDg0MWNiMWIxNmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0N2M0Yjk0NjJlNzUyYTEwYTQ1MGFlZWRhNjM5MjlkZWViNDVmNzk2MmY4YWIzMGI2NjYwNjEzMGY5ZGRhMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiN2YwZjQ3MmRhNmFmNzBlYjY5ZDljOGNiM2RiNDQ3YTY4MWY0OWZmYjExZjY4ZTZhZDc5MmEyOTBmY2Y3NTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_353a43902da540e0ace2e9e05dfa7e7d",
+      "statement": "Each map point renders two CircleMarkers: a visible 9-radius circle and an invisible 22-radius (44px-diameter) hit circle that carries role=\"button\", tabindex=\"0\", a Korean aria-label (e.g. \"{name} 정류장, ARS {arsId}, 중심에서 {n}미터\" for saved stops or \"… 눌러서 추가\" for candidates), and a current aria-pressed kept in sync by an effect because Leaflet fires the add event once and a stale closure would freeze the pressed state. Enter and Space select and re-open the popup; Escape closes it. Pending candidates use dashed stroke classes (map-marker-pending / map-marker-pending-subway) distinct from saved markers, and is-active is toggled on the element because Leaflet applies pathOptions.className only at creation.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L118-L192",
+          "version": "repo-lines-v1:sha256:643c5ad1949a8eda0bf8b4b1b40c1cfe0baa71e7f61b1f4a64a44c9f7bbe1cf8:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjOGQwZWExYzZiZWJjOGZhYWJiMjhlYTYyN2I4NjlhYTZiNjliM2I2M2VkNTE0MWYxYjMyZGUyMTZjMzYwZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NGZjMGMxNzNkMWVjM2ZjNTAxZDdkZmE5Mjg1NTAxYzUyN2NmYjQ3MTI1ODNkYTNjYzM2MTgwNTY2YjRiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4N2UzMjBmYWUwZDFjMWVmNmU1M2I0OTNhNTFjODM5Y2U0ZDQ3NGM0NDBjNTZhM2VhZDBmOWVlM2Y1MmMzZjgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L45-L116",
+          "version": "repo-lines-v1:sha256:e2141f70e7796115107415630cfbc2a3af27bcadd1921ba8cf02cdc48059286c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZjBiNjRkMzM4NmM4ZmZlNWM0MDA1MmIxYjRkMTIxODI2MjZlN2VjMTczY2UyN2M1OWZkMWVhMGQwODNmZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4ZjJkZWY5ODkzODdiZjRkNDI4Y2ZlOWFlNmZmNWQxM2FmM2MzN2E4M2RlYzdjMTU5N2VjNGFkNWE5MWE0YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzMjhiNzQ0NGNjZDE3NzExNThlYTBlNmQ1YTc1N2NkN2Q5OWJlNmRhMWNjM2JiZGIxNmYyZDI3MGM5M2NkMDcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L842-L880",
+          "version": "repo-lines-v1:sha256:3cbfc7136776e5b90f4dc19066c48ffa8e2b41479c774ca45bc6a3703e863ffe:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmZjAzNzUyNzc2NGE2MjE4Y2RiMjhiN2U1NzMxMGJiZDE2NDI0NTY3MTVkODljNWMyZDBlZGQyNGQxZTQ4ZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3YmViN2MxMTExOTJiMDdhNGUzMzdkZDc4NzBlN2NkMDI3ZDg0ZjYzYTZiM2NiYzM5MjQ4NWEwZmQyYWMyMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhNDBmMGI5MTg1YTVmYmFmNzcxOGJmYmI1OGI4ZmE4NWY0YTg2OWUwZjVkMGU4ZjRmODZhOGEwZmU5NGVmNzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3bd510cc1ef949e5a5d3c0aa75b27bb8",
+      "statement": "MapCanvas installs two frame-level safety nets: Leaflet's popupopen/popupclose are re-dispatched as bubbling custom DOM events so a frame-level Escape handler can close whichever popup is open (clicking the popup's close button and restoring focus to the owning marker only when focus was inside the popup content, verified by MapCanvas.test.tsx in both the inside and outside cases), and a capture-phase click handler calls preventDefault + stopPropagation for any click inside .leaflet-control-attribution a so a finger grazing the OSM link during a drag cannot navigate away and blank the app. A ContainerSizeObserver also attaches a ResizeObserver calling map.invalidateSize({animate: false}) because Leaflet only tracks window resizes and stage height changes (55dvh sheet, dvh shifts) would otherwise leave stale bounds and gray edges.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.test.tsx#L189-L283",
+          "version": "repo-lines-v1:sha256:cff7841d65bb895d7fdc9fcd101bd0563052055a1d3b957c424741855516c1c4:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3YTVmYWFiMGU4Nzg5ZTAxYzIxZjI5MmExZDg5NWIwNzg5YmExOGFkY2UzMzczYTRhODU1MDNmMjg2ZjBkNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjZjAwNmExY2EzNWMzNmQyOTIzMTY3MTMzZmI5MTQ5ZGY5NzZhZTgwNGQ1YzdiOGRlZDA3ODRmM2IzNDU5ZjUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L288-L310",
+          "version": "repo-lines-v1:sha256:9fd21854ed43dd3fddf9381071c7e861171b8d275679205e5eac0ee282aaac40:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNGJlYWE3YmIwOTJiNzk1MzJkZDc3YWZlZjFkNjA3YmQzODlmNjEzOTNiNGI3ZmU3OWFmYTRkMTFiNzQ1ZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5ZjFiZmNiZGUyMzdhMTIxNDEyMDUyNDRhOWNhNDAzM2I4OGVkYzAwNTlmNmQ1YzAzM2U0MTcxMmRhYTEyMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiNTY5YWM1NGM3ZDZlODg0YmU0YmUyMjU0YjkxMjM2Y2M3YWY1YzZmZjUyY2Y3MDRmZjQ3ZjBiYWNlN2ZkZjYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.tsx#L354-L426",
+          "version": "repo-lines-v1:sha256:abc3df48bcd50c00b13f593519d6d32911ef0cac8d0120e98789062118d38506:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0MjNmYjYyNDVlOWYwYjdiODk4YmI4MGI4OTAyNWY5MDRmODBkNzBlNDUyYjAwMTI2OTg0ZjhjMWMyZDIyNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlNWMyMzhlZGQ3YjUxZmFiNTAwMDhjMGVkNjE2NmFmMWU1MjBjMzEyZGM0MGIyNThhMmZiYjdiYTExNmVmNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2c9ef732acc54a22af6779b63dc9723b",
+      "statement": "useArrivalDetail keys bus detail state per stop id in a Map (each entry holds arrivals, loading, error, and updatedAt) and keeps one subway detail object. Effects reconcile state with the selection: entries for stops no longer selected are deleted, missing ones are fetched, and the subway detail is cleared when the station is null. Every fetch bumps a per-target request counter and a response is committed only if its counter is still current, making rapid selection changes race-free. A refresh spreads {loading: true, error: null} over the previous state, so a refresh in progress never erases the last successful rows; there is no polling — data is fetched on selection change and explicit refresh only.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L132-L168",
+          "version": "repo-lines-v1:sha256:81bbeb2283cdcbb85f58be04fee200c58c5a70f57468d1071b7db9c14e4956bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMTQ4ZDgwYzc3N2U1MDkwN2ZiNTQzZDJlOGVmY2ViZjNmZWRiNjVkODI5MDllNTEwOGEzYzRhOTE5YmE4ZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MzM0MGZjYjk3YTg5YTZlOTBjYWFjYTRkYjczZTU0MWUwZTRhOTQ0MDgxYTdlYWEzMDlmMjEwM2FmOGI0MzIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L71-L110",
+          "version": "repo-lines-v1:sha256:9216f37fc756dab13f236a815f96fe346bf1176e897d5a97d6aa9c8ef88d757b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZTI0NDg2ZDNlYmQ0OWRkNmQ5YWI1MmVmNDcwM2FhYWUxOGNkNGU1NjljMzE4MTRlNGNlN2Y4ZmE2ZmFkMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjNzQ2ZWEyODM0MTgzOTIzYjViNGIxY2EwOThmMmM0MWE1NWMyY2NkNGVkZWRiZjMyZWM1OTQ1MWUxYWE5NzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4ODUzZDIzOGJmMjQ0NjZhN2YyOWRhNjdmMzkyYmRiMjRiODE3MGJlYjZhYTFjMDFhZGU3MzNlNTAxNThhMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxOTJmZjhmNzg0NGQ0YmMyYTg4MDVhZDhjNTQ1ZjhkN2YzNmQ5NTZhMDZiMmZhOGNkZDliNTI0MWJhNjg3MDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1161f7178f4043dd843b218e391a1c4a",
+      "statement": "The three-arrival cap is applied only at the presentation boundary, exactly as AGENTS.md requires: ArrivalList renders arrivals.slice(0, 3) with a visible rank digit (1, 2, 3) plus an sr-only \"{n}번째로 빠른 버스\", and SubwayArrivalList filters arrivals to the active direction before slicing to three. ArrivalList.test.tsx and SubwayArrivalList.test.tsx both pin that a fourth row never renders.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md",
+          "version": "repo-file-v1:sha256:636073090aeb102022268ef9c2fc8b585942d57725c6f5410253c7e2f367a14d"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.test.tsx#L24-L54",
+          "version": "repo-lines-v1:sha256:1c6565a92d1a56a84eca8a6d71cea52e149a426372649f09d5e0b8863c294fc8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxYWI0OGE1MjU5YmNmY2EyN2JiY2YxYjA2NDNmODUxMmFhYTg0ODkyNGMzYWRhMGYwYTlhOGMxNWVmMjVkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NGQ0ZmM2OWE0ZjhmMzRhMGU3OTZiYzMwMDc0Y2FiOWYzYjk4NTdjMjNjNWJhOWNlYjQyZDZiZjIxMjg3YjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5YmI5ZTNhMTk4Y2JhNWNjMGMzY2UxOWUyNTQ1YjVlNDc2ZmMwNDQwMWU3NWUxMTY4NGFkZTZlMjhiMzY3M2IifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L108-L155",
+          "version": "repo-lines-v1:sha256:560b6911f2b5f9c41f8ba547daa46f784b7f7775b3451dcdb51be78857b82c63:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMGQzOTJkYTNmYTg0MGY5ZGE0NGUxZjc3YjU1NTM5MDk2MDU5MzMzYjQ0NTAxM2JjYjVhZDk3N2ZlMGVkZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyZjNjZmQxMWRhNjE1MDE5N2FjZWVkMDg0MDZhYzY0YjA1MDM0MGRlN2JjMDQxMjRhNGNiN2VmYTY3MTM0MGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3YzY3ZjQ2NWQ1NzlhNGE5Y2U2Mzg2ZGM4YmE1N2Q4MzBmY2Y4MTkwMTIzNTM3MzJhY2IyMTg0M2JmZjJjNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyMjY3NGQwOWYxODEzZTQxMTkwZTk3M2M1NmUxODk2MzRmYWQwMjg4YTQ1NmI3M2FkMTNmMjdmZjc4MTZjNDAifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L94-L99",
+          "version": "repo-lines-v1:sha256:a39ad515726bac41016c1ea1361c5120f912742b6139f0cfa06e0935f7e21a4e:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQxYmUyYzliZjcwOGYzMmIyZmRjMmM0OGI5M2M0MzcxY2IzNWVlZmI4M2QzNGIwYmI4OWMxMWI0N2U1MzNkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY5OTUwNTk3NzIxNWU0ZGIxMjRjNTg2MTJkYTA1OTI3ZWRjZDExZTczZWZiMzA0Y2I4ZGIyZTRiNjhkMzFlYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGYxOTQ2MWFjOTJmMTcxYzJmN2QxMGY4ZmJjMzcwN2Q0NTRjZjQ3NDY4Njc1ZGE5NTQ3MmE1Mzk0MjkwNjBiNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjlhMzc0Mjg5NDY0ZjNkN2RjYzQ4MDY4MWY4M2VjZGI5NmZjNTJjOTI0MmJjMGNjYjE3MjVjYTAzOThmYjU5ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_913e2d61136c42b3a674cedbf772fd47",
+      "statement": "Both arrival sections expose the full state set with text, not color: a polite aria-live refresh status (\"도착 정보를 새로 받고 있어요.\" / \"{HH:mm}에 새로 받았어요.\" / the pre-selection utility sentence), errors in a role=\"alert\" block with a 다시 시도 button, a no-data sentence (\"지금 도착 예정인 버스가 없어요. 잠시 후 다시 확인해 주세요.\" and the subway equivalent), and a skeleton placeholder while loading with no data. The refresh control is never icon-only: RefreshCw is paired with the text 새로고침 and an aria-label (\"{stopName} 버스 도착정보 새로고침\" / \"지하철 도착정보 새로고침\"). Headings use the eyebrow 곧 오는 순서 with \"{stopName} 다음 버스\" or \"{stationName} 다음 열차\".",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L49-L98",
+          "version": "repo-lines-v1:sha256:ea3d92b672fed313fccf0a3f39e936f507a1af66911c92d754dd4f6a465ddada:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYTNmZjcyMjQ5YmY1MmY5MjQxZDg1YWQwNTc4NDQyZWJkNjM4YTc0MmNiMjU3YmRlODJiN2RjMGYwMzA1ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkYTU0NzBhYjczMGRkYjZlNGIzOTE0OWIyNmViZjQ4ZjVjNTJlMTM1YTNlMzM4ZGJmMWVhNzNkMDE0MTNiMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkODg4MDBlZmFhOWUxZWMwOWY4ODYwYTJkYTdkN2Q1NmExMjQxNzYwN2ZiNmM1NWRhOGRiNzhiMWI4MDEyYjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L135-L217",
+          "version": "repo-lines-v1:sha256:0d5d7a17e2991781c5e601a08271e7e8b8a31474cd9c34891bc79a1faeb55f34:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjOTVhNjlkMTM3YjI3OTljZjI4Njk5M2RmNGU4NzQ3YjRlZGRlM2Q5NGI1MGY1MjQ4NWJmMWU4NjI5MDgzZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyNTE5MzUxNzE1YzY5ZWIyZWMyNDRhZmFjMWFjYzkzZGZjNWM0NzQ5ZjAyMDU5Y2YwYzc3MDg2MjI0ZTllNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_de3b3954b3494369bf581baf7f75f605",
+      "statement": "SubwayArrivalList derives its direction tabs only from the {subwayId}:{updnLine} combinations actually observed in the arrival data, groups them by line, and defaults to the first direction in arrival order — which satisfies DESIGN.md's rule that the earliest arrival's direction is the default, because the API adapter normalizes arrivals with normalizeSubwayArrivals (which sorts by ETA) before they reach the client. Each tab pairs a direction icon (ArrowUp for 상행, ArrowDown for 하행, ArrowRight otherwise) with the text label, the terminal direction stays visible as separate row text, and 막차 is a text flag rather than a color.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L39-L44",
+          "version": "repo-lines-v1:sha256:ae2f42bf0e1d197f4c3bc9c500bdd4acdba55692d5904e52b18d0909d7ed055e:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRkZThkYTVkZjhkYzMzZWVjNDE4NjZkODBhN2NlNDg0YTg4OGY3MGFiNDk3OGM0M2UxYjM5YTg1NzlmMGFkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjliYWEyZjBiYWM3NWY1MzMwZWI1Yzk0MTc0Y2RhNGNjOWJmNjZlOTA1ZDU0NGRlMjkzZjQ3OTU2NGMzNmEyNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY1MzlhNTI4MzQyNzUzN2U4NGE2M2U5NjQxMWJhNzk2OGE1ODA3YmVlMTkxN2U5ODdmZjA2N2FlZTBiNzhlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L219-L258",
+          "version": "repo-lines-v1:sha256:c499893ed331ffcf4af21df3021efd1083b713722932e4883456a20523defc4d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMGQzOTJkYTNmYTg0MGY5ZGE0NGUxZjc3YjU1NTM5MDk2MDU5MzMzYjQ0NTAxM2JjYjVhZDk3N2ZlMGVkZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYTEyZDg1ZjRmY2JhODJkNGIxYTE2MjA0NDEzMTNiNDIzZjljZGIxMGE0MDgzYzdhZjBjMmZjZWQ3ZTgxNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3YzY3ZjQ2NWQ1NzlhNGE5Y2U2Mzg2ZGM4YmE1N2Q4MzBmY2Y4MTkwMTIzNTM3MzJhY2IyMTg0M2JmZjJjNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMDA4NTlhZmNmODA2ODdkODkwZDg1YTY0Mzg4OGIzYTljZjcwMGFjZmY2MWJmNzE2ZjMyN2ZmMWM5NmYyODkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L45-L99",
+          "version": "repo-lines-v1:sha256:61b7f588741832af95d96700b24751afaf37707e57ba96745067c5fbdd801684:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiZjkwMjZkMjA0NjhjZTgwODhlMzM1MzgxZDA4MGVhYmY2MTUyMzYxNTU0NGM1YTEzMzQ3NjI1MDZlMGY3YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmOTk1MDU5NzcyMTVlNGRiMTI0YzU4NjEyZGEwNTkyN2VkY2QxMWU3M2VmYjMwNGNiOGRiMmU0YjY4ZDMxZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4M2YwYzNlMzUzMzk4YjkwN2U0NGNjNDM4ZjlmODViZWJhMzJjOTc0OTQwYmM1YTAwYzYyYzMzZTgxYWM5ZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YTM3NDI4OTQ2NGYzZDdkY2M0ODA2ODFmODNlY2RiOTZmYzUyYzkyNDJiYzBjY2IxNzI1Y2EwMzk4ZmI1OWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cc3bf2ed69674d628f209576641cd3ce",
+      "statement": "Subway ETA freshness is computed client-side: useElapsedSeconds runs a 1-second interval only while updatedAt is not null and returns elapsed seconds since the last successful refresh, and subwayEtaDisplay (domain/subwayEta.ts) marks a row expired once elapsed > seconds + 90 grace, returning null seconds and the message 새로고침 필요; a relative upstream message matching the pattern for \"N분/N초 후\" is relabeled 도착 예상; sub-minute values render 곧 도착 and a null renders 정보 없음. Timestamps format as HH:mm in Asia/Seoul via Intl.DateTimeFormat.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.test.tsx#L42-L83",
+          "version": "repo-lines-v1:sha256:4384195d98c19313622f477985c92f1b41aed7c8b0b1f412ae85a0ba550ead9d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNTJlOWQ1ZjEwY2FiYzUzM2NhMTlkZDNiMTJjYWNkZjY5MWVjZGE4NjU1ODUwYjRkMmY5OWY5NTU4ZWI5ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwZTFkY2Q5MGVmNjI5ODhlYjBmOTAyYTlkODNmZDlhZWYxYjMzZTkyYTU0M2RiMzE5MjZmZmE2ODk2NDU0MzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmZjY2N2IxMmExZWM2ZmM4YTc4YzZlMDliZDA2NmYwZGY3MzFiZTY4MGM0ODc0MzY3NzU5OGRjZjdiNDgyODcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/domain/subwayEta.ts",
+          "version": "repo-file-v1:sha256:7c1dc87da255abf55682f2381cce86176db2abec85444a6cce477cd5e0639fb4"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useElapsedSeconds.ts",
+          "version": "repo-file-v1:sha256:ae520eb5b8e40f0568d9e82b5023968d6b89907fb6dbd4865c9b8ef032a7cec5"
+        }
+      ]
+    },
+    {
+      "id": "claim_f8d159b48b1344eb90ecec90a2ce75b3",
+      "statement": "The DESIGN.md token contract is implemented as CSS custom properties on :root in styles.css — --ink #0b0b0b, --paper #f7f7f3, --surface #ffffff, --line #d9d9d2, --muted #62625d, the lime signal trio --signal #c7f000 / --signal-soft #f4fbd6 / --signal-ink #182000, --route-blue #155eef for bus and map focus, --subway #7c3aed for subway identity only, the --danger* triple, --map-base, the --skeleton-* pair, and --scrim rgb(11 11 11 / 48%). styles.css contains no gradient at all, and shadows are limited to the floating map controls and the mobile sheet.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L50-L94",
+          "version": "repo-lines-v1:sha256:d4f7e301ac77544dd229a60869aa16580768c97d4a101db55c09dc80a5d20638:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwMTZmYzE3NWExMzdiNzBlZDQyYjM1ODFhNDVhMjljOTMwODZmYWM2YmE4MmYyMmJkYmQ5ZWUxZjIwYTBiNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyYzQzNmI4MGJiODIwMGY0YjMyYWIxOWQzYzg1NTRiNDA3MWNkMjU4YWNjNDJjYmJhNzFmZDY1YWIxNGNmM2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1YTMzMTk5MTMzZGE4YTEwNGI4NWQ3ODI4YjRhOGVlNmFmMDM1OGYyY2QxMDJkYjY3YjA3Y2JmNzVhMzI4ZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwZWM1ZjYzYjlkZTRhMWYxZTVjMzA5MzU0YjQxNjYwMGMzZGRmMzdlNjhlNzAxM2Y2MGQ4ODdmMjAyYzEzZGIifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L3-L42",
+          "version": "repo-lines-v1:sha256:277ba8f6b742f3455a36bad5f8ac33e2d46f61bb34f4498d007f28de4945c66d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZWE1MDRiZjIwYjQxYzQ3MjlkM2NjZTQwYzIzODUxZDNhZTk1YjUwMTdlNmIwYTFhOGNhMzg1ZWIzMzU3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxODkzZTU1OTM4OTBkNWQ5MWZhYjBhZWVlMTFhMTE0MDNjMTA0MjE5NWM5OGY4MDdhMjlkODNhMjIzMmZmMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3YjVkMWIzNjQ4YTQzNDZiMjAzODhkODNiMmU2M2E3ZDg1OTA1NDdkYzE3NzU5MGI1MDkwMmQyYzI4Njk0OGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_324fe02a3abb4638b03ad81362408824",
+      "statement": "Color never carries state alone: active state combines aria-selected or aria-pressed with font weight, borders, and a lime signal strip — commute-tab[aria-selected=\"true\"] gets the black --ink surface plus a --signal bottom bar from ::after, transit-tab[aria-selected=\"true\"] gets the --signal background with --signal-ink text, and point-row.is-active gets the 3px --signal left strip plus --signal-soft background.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L76-L77",
+          "version": "repo-lines-v1:sha256:609274889d89cc3266654c35ea148ccbdc0e522b1582b4f8968f9a01826577de:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjc3NjkyZWNjZmIyMDE3MDNhZGM2NzQwNjdmZjIzZDU3NTdmYTk1MjU5MmFkMTE5YWQzMmUxNDQyOTg1NTBjMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWY5ODZhNjcwMjE5OWQ3NzBiZTdiNGQ4ODQyNTQ2MmYwYTZjMTVjNjIxNjQ0ZTE0MmI0NDQyNjI1MjNhNDUxNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjczMWI3NTkxZGRhMTc0M2Q0NzZhNjQ1MTcxYzQ2NTk4NjlhZGNkZjAzYWQ0MmE5NTFhYTJmYjQwNzU0YTkxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTBhOGVhOWEwN2Q5M2EzMGJhNjEyMWJkNTUwNzMzZjg5YmIwOTViYmI4YWE1MzYwYzVlMGM0OWRmYjcwZTA3OCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1306-L1322",
+          "version": "repo-lines-v1:sha256:4496ce183d609d9c287eac343dd4d2fde8095635c897922d03f8faad9059a67c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MTM2MDExMjkzNDA2ZjM4MWY5OGQ4YjcxNzU3MGIyZDRlOWU5OTc4ZDQyNjg0Zjk0NjRjZDkwNGNiZDY4NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1YWNkNjM0MmM1Zjk4ODIzNDY5N2VkN2I1YWUwY2E1YzM1MjBmNzNmNjc5MjY5MmY2NDJlYzRlODFmZGQ2YTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExNzZkMWZiNTRlNTUwZTY0MGM5ZWM5YjBjNjJkYTVkZmRmZTMxY2NlY2I3YTc1ZDZjMTU3ZWNmMjYzZDQyMjEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1421-L1436",
+          "version": "repo-lines-v1:sha256:3c5bf71271070b77a2d4ecbda7b224c332c8117583544e11483605163c72a770:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxNjRiMWViMTU4NTcxZDk5ZDliYTcxZDlhZmVjMWMyNWQ0MmQzMDQyZmY1ZTVhMDU0ZGJhNDNkODJhZmQyYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMGZiZTM0ZmY5N2Q0YTNiMWQ4MWI2NzJhMDFjOGFiNDZkYjQ2NDgxMGRhY2E2MTJjNzZkNTgyZjMzNzE3ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1MDZiZTA3NjFmNDNjNjA1YmE3NGJkMzQzOWI5NWM5NzkzMDE4NmFkZmFiMDEzYjY3YThmYTUyNzI4NjdjMjMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L351-L372",
+          "version": "repo-lines-v1:sha256:d108be892bdcb0088ee8290977a81ce5e829be965382ca5e9cb03b984ccc3862:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhMDI4Mjg5NDRlY2RlNGRiOWEyMGMyMWRmNjM1OTA2YzdhNDZhOTgwZmZjZDIxZWRhYTk0ODY1NWZhYjk2NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmY5ZTA2OTcwMDkwNGQyMmNjZDc0MTI3MGQ5Njc3ZTVkZTJlOTJiNGU0ZmI3OGE5MjU3MDZiMmZkZTQzZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMjM4OTIwMjNjZWExNDE4MTZmYTI2YTBkNjMxYzcxYThjN2VjYmViNjlkNDkxOTQ5MGU2NDhlMWIxNDFmMzUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_01030d667f3d413f85d0795aad87f3ef",
+      "statement": "Every interactive control meets the 44px minimum: interactive classes carry min-height 44px (point-select rows use min-height 64px), and map hit targets are 22-radius circles — real SVG geometry rather than a CSS box. No control is icon-only: refresh is RefreshCw paired with the text 새로고침, find is MapPinPlus paired with 정류장 찾기/역 찾기, save is Check paired with {n}곳 저장, and map open/close are 지도 열기/지도 닫기. Icons are aria-hidden and meaning lives in the adjacent text.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L63-L74",
+          "version": "repo-lines-v1:sha256:1c774bd9ad3004f16a443d1d1abe32b9a06d893151d1b84562963e17538f21ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1NWRhMDIxZTNlMjA0MmViOTlhOGMyZDJlMTBiYjQ3ZGRjMDg3OGFmMmE3NmY0ODRiNWVlZDBiNWI5NTFiODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjOTE2YTZkYzkyMGUwMmYxNGY4NGM5NWZkYjBhZjEwZjAyNTIxYzczNjlmMGJhNWE1ZGNhNWU3N2E3YjRlNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxODYyYWYyNDk0YmZkYzE0NTRmMmM1MmI1ZDU3MTEwNTBlYzI4NTkzMTQ4OGRkZjVkZWYxNWY2NWM3OGFmMmEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1688-L1717",
+          "version": "repo-lines-v1:sha256:9a87c3babc086b747f585c6aff0e1fa71d859cfb054e62df0dd6c098dd5b5d99:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzODUxZGYzZTM2N2E5N2Y1Y2ExZTc0NTM1ZjQ4NGViYzcxODQ3NmZlMjQxOWNlYjQyZWVhNTQ1Yjg0MmUzOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjYzMzYzhmNTA2Y2Y3OTE0NGVlZTg5Yjk5NjhjN2NkNGViOGEyM2I3ZDBhOTdmNDUwZWY3NmNjZmY3YjQyYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTY0YTQwMDJjMDFlZDM2YTA5ZDE4ZjViNzE4ZWJmYmI0YTk2N2FiYjA4MTM3ZGZmNGQyZDExYmI3MTY2ZGEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1785-L1798",
+          "version": "repo-lines-v1:sha256:91985501b19acfa47645b2ebc5700b09e4d16f24f8f1549d64d6f6146f279b74:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2YmI3ZjlhODkzYjYzZjIwZDYwZTJmMDBmYTNlOWFlN2JmYzI3ZmFlMzJkZmRjNmU2N2Q1OGJiNzc0M2E0NTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5ZjkxYTljNDU1OWYwNTg2OTc3MjNkZGNkMDI0ZTk4MDAzZTAwNTc4NGUxYjYzY2E3ODRjNDkzY2ZjYTVjNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzYTFjZWQ3NjYwYzlmMzllYjQ0ZTljNGMwNjQwN2E0YjcyMzY3ZTYyZDg1MmExMzFiNTljZWQ3Yjk2MTdmMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjNDQ2YWY4ODRkMjk0M2I5MjQ5YjY2NDM5OGUyMWU1NmRlMjIyMDczY2U2NTlkZTA1NWYzOWVkMDJiZjRhNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_19720d89e01640f09bdbf42234919cd8",
+      "statement": "Motion follows DESIGN.md §6: buttons use only transform: scale(0.98) on :active, state transitions are 160ms color/background/border transitions only, and layout heights and positions are never animated. Under prefers-reduced-motion: reduce the CSS collapses transition-duration to 1ms across the interactive classes and disables the skeleton pulse animation, while MapCanvas independently disables Leaflet inertia and the three animation flags — MapCanvas.test.tsx proves both the normal and reduced-motion branches.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L211-L217",
+          "version": "repo-lines-v1:sha256:979768bc2a6f57b183996d56804c22f0de340bdef7ed1fdc47e12c31d77adb35:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQzN2VhM2E1OGU3MTFiODEyODI5MGFkNzcwODYzNzFjOWQyZDU3MGFkMzg0NDFlOGNmMzcyZmU5ZDhlNTUzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTg5ZTZjZmFmZjlhNjNhNzZiZjRhMjg0N2NiOTZlZmVhZTgyZjdiMjNkM2FkMGZjYmNhYTY5NDAwNzFjZjNhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTEyMDFmMjA5NzkyZmUyMDg0YzQwYmU0Y2U1OWVjMDM4ZmRkOGUxNGQzNjI4MjZmZjUxNzkxYTM3N2MzNzQzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTI5MTIzMjlmNGY4OTE5OTczYzYyMDMyNTQwYzMyMTI3Mjg3OWQ2YWMzYmRjZDhhYTdhZmRhZTkwOGQ4ZjFjYiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/MapCanvas.test.tsx#L286-L334",
+          "version": "repo-lines-v1:sha256:07098782a7d905d98d3a3b1ef754fdd390715a7e54b101a618fcfaba414e2890:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NGZmM2QwMjcwMjE5MTE4ZTAzY2YxZGRkYTgwMTNkZTBkMDE5YjE5ZDE5NmIzOWRhM2RmYzA1MTYxM2I0ODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzY2M1ZjEwYzU5OTAxMGNmZGZmY2IzM2FmZmVhNzFlMzNlYmZhMmU2ODRiYjY0ZDhhOGQzNjFlYzBmOTg1ZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjMDNmMmU0Yzc5ZjQyMDQ0Y2ZlZjk0MmMyNmQ5NGFiNGI4NjM4NTEyZDcxNjg0NDIxNTdiYTQ1YmVlNzVlMmMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1168-L1185",
+          "version": "repo-lines-v1:sha256:e25154fbce4c6efb9b0f25e3789f0dc658fbebedb05ff4a03ae054f9eea48f0b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzYTY5NzQxNzI5YWRlNjg1Zjg2N2JhZGY5OWU2OTcyN2ZkNjYwOWM4ZGNlMTk3ZTIwNjkxMDcxMzY1NGM2NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2MDhkZThhOWU1MWE0OGM2ZjZkZTNiMjhjMmE4ZTUzMWIyZTA0NzcwYmJhYzBiZGU0M2RkNzhmZGMyMzY5Y2IifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L2042-L2061",
+          "version": "repo-lines-v1:sha256:47039dcc47d6034489153e486e015df4d2d1180198818a8065012369f928b32c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzYTY5NzQxNzI5YWRlNjg1Zjg2N2JhZGY5OWU2OTcyN2ZkNjYwOWM4ZGNlMTk3ZTIwNjkxMDcxMzY1NGM2NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_298b16a96e75406a82f66b116adac23b",
+      "statement": "Accessibility structure is concrete: button:focus-visible and a:focus-visible get a 3px --route-blue outline with a 2px offset (above the 2px minimum DESIGN.md §7 requires), Leaflet's stock popup close button is re-styled to the same ring, interactive markers get the same focus-visible treatment, and the tree uses main.app-shell, header.brand-header, aside.control-rail, and section landmarks throughout with role=\"alert\" for errors and single-sentence aria-live regions (saveAnnouncement, the arrival refresh status, the search status) rather than re-reading whole lists.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L136-L143",
+          "version": "repo-lines-v1:sha256:16ecae7189c6891bd98115f0d127de9109885bbd57e64bc57f3a1afe3cf2c8e7:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWEzYTA3OWRmOGUxMDdhYTAxYTRkN2NiM2RlNTI3MjhlYmZlOGM4NGYwNjZhYjA0NzQyNTNmYzI1NmEyNDlmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDNiMjY1NWFkMzU3NjM0ODkxNzY5ZThkNmY1OGE3ZWUxMjcyZDhiNDA3M2QyYWFlNmM3MjNmYjNmNzBlMGVkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmY2ZGM2Njg5ZTQyYmUyY2IyZTYxYjhiZjJkNDEwN2Q1YWFhZWJiMjk0MTYyMjk5MDdhNmE0ODU0YWUxMzE2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2ZjMzYxZDE3NTc0NTBiZmI5NWI2ZWQ2MTE0MzU3ODZjMWIwNTVmZGY2MDkxNDhmZmU5ZTQ5ZTc1NTI4NjgwZSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L1187-L1193",
+          "version": "repo-lines-v1:sha256:fd71c06ea15b462c7e7a7f12fb6ac8d4888c673200941fbdb9e625abfcf06a01:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzk0MTI4NTgzMGE0NTI1ZmRmZWE4NWQ0ZWM0ZWI1ODg0MTY3YzhjNmU2YmU5ZGNlODQwZWY5MjlhZDUzZmMzMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI1ODBlOTY0ZjgzYTQ3M2Y0M2Q0NDM4NDYyOTQ5ZDY4YjU2MDBmZGE3ODdmMTYzNzQ1ZDAwZGU4OWNiZjM2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGQxOGYxZDkxN2NmMmNmNTY5M2UzNmFlYTg0YmQ4YzkyZDI5NWZjNzk4MjNhMjdkYTBjZDllMWNiY2E4YjNjNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L68-L72",
+          "version": "repo-lines-v1:sha256:003d1a76b29f7ef76115148a6ad6efe0e3b093675a8f5566e971ee022755d30e:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ViOWFkNmEyOTExMWRmYmI0ZWU2Y2NiNmUxYWVmNjBkOTJmNmI5ZmQ4YzQ4NmUzMjlmNDk4NmI0MDg2MWQ4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjY1ZTQ3MDg5YmZkODVjYjYzZDExYzZkMWRlMjIwMWJlYmRlYzA4MzQxNzBkN2ZhYmNhYTQyODAxYTMwYjY2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNjZWQ1NDkwYTA2NDViMzhiNmNkYmNmNjQ3YWJhODg5YzNjM2FmYzUyMThmYTJhYjc1MjdmZjczM2U1ZTRjYyJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L882-L885",
+          "version": "repo-lines-v1:sha256:023fb5aa999c40b31eafe5aa9416d1e1a1c586bfb1c2ebb0fdc372baee0e72b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIxNTMxMTU0MGRiZGEzZjdjZDc1Y2QxYzIxZTExZTI3N2QzNTVmZmFjMDJjNTUwNjMxNDRmY2U0MTg4ZjBkZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2FhYTU2NjkzMjc2MDAzYWI4M2IwYjZjYWNjYTQwODNlYzg3N2M5ZjdiZGI5YzQxMjdlMTc5MDIyZjJkYWY0NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTE1NTczOWJmN2I2ZmNlNGI4NDdlZjJjZjY2NWMzYWIyMzc3OWU0YzE0MzdlNjk2MzVjMzgxOTgyZWI4YzhlMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_84977a2799984bf49b726e0597968929",
+      "statement": "BrandHeader shows only 모타, the hook 지금, 뭐 타?, the /pwa-icon.svg mark, and the GoogleLogin control — no other auxiliary actions. GoogleLogin renders three states: 로그인 확인 중 while the session check is in flight; an account chip with the user's email plus a TransitSyncStatus label (이 기기에 저장 / 설정 불러오는 중 / 서버 저장 중 / 서버에 저장됨 / 저장 확인 필요) and a 로그아웃 button; or a Google로 로그인 link to /api/auth/google?return_to=… that round-trips the current path.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/BrandHeader.tsx",
+          "version": "repo-file-v1:sha256:d3802d84ee3ce998fab9455dd03e02b71b82752b85de182a3f40c48a44b8afa5"
+        },
+        {
+          "resource": "repo://apps/web/src/components/GoogleLogin.tsx#L11-L61",
+          "version": "repo-lines-v1:sha256:d8207b8c1201c27bfacb6c27fc84c1534cd0f6ed50291b9f0d870778dc824ebf:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4MmJhNmM1NTcwNTYzMmZjMzQ4ZGZiNzNiMjA2NmE5YjQ2NmIxNGQ3ZGJkZmVkODg3YTJiMWQ3YzVjMWQ3MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5NWZhNTg3MTRlNTExNGExYTk2Y2IwODA1YTI0NzcxNWU3YzU4N2I1ZGU0ZTkzZThmMGM4NTQ0OTAxMzgxYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5cb6be337b1944048d2624d39426ea40",
+      "statement": "useAuthSession fetches /api/auth/session once with credentials: \"include\" and an 8-second AbortSignal.timeout, parses the body with authSessionResponseSchema, and yields {authenticated, checked, user, error}. Any failure collapses to an anonymous session with the error string \"로그인 상태를 확인하지 못했습니다.\" — the app always boots into a usable local state. logout() flips the session to anonymous optimistically before the POST /api/auth/logout round trip so the UI never waits seconds for the cookie clear; a server cleanup failure can simply restore the session on the next load.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useAuthSession.ts#L28-L97",
+          "version": "repo-lines-v1:sha256:1790d274518641872c0d1c502cdad19bde59e653c70397d6d6e56cccd3e38301:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwZTg5MWYxYTgzM2Y0N2QxNDlhNzE4YmVkZTRiMmYxZDkzMmQ4NDUzZjRiYWFkOWNkNDgxNzAyMzJlYWY0NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViYThjMjY5NTkyNTIzYmQzYjg3N2FlYTAxOTgyMzhiODRjNjk2YTBkNmFiMDRmYzg5OWZlYmRjNjMwM2FmZTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1Y2QwMzE2YmZlNTQ5YWVlMWEyNTFmY2Q2MWNiMjliZWM1YzZkZjRlY2UxYzY2YjVhZGQyZTI3MjRmMmZkNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ae6178e7f6848e3b97a0697bf335a5f",
+      "statement": "All browser HTTP goes through apps/web/src/api/client.ts, which validates every response body with Zod (busStopSchema, subwayStationSchema, an inline arrivals schema, subwayArrivalSchema, transitSettingsSnapshotSchema) and throws a structured ApiError(status, code) on non-2xx, reading the body's error string as the code when present. It exposes the endpoints GET /api/stops/nearby (radius default 800), GET /api/arrivals/{arsId}, GET /api/subway/nearby (radius default 3000, 35-second timeout), GET /api/subway/arrivals?station=…, and GET/PUT /api/settings, each standard request wrapped in an 8-second AbortSignal.timeout.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L109-L166",
+          "version": "repo-lines-v1:sha256:40c0f1edb8006413e7131b31fe9627d455a5a6eda1c5ecf6772c26f6d4eb107c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMzg1ZjY1NGU5NmJiMzI4NTdiZDA1ODBhYzM4MjQ2MGRiMGRlN2I4MDYzN2E5Y2JjYjU2NjAyY2MwYmVlZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjODRhYWJhNTcyN2ZkNjU1YmJlZGQwMDI5ZjE1YTQxNTMxMzRmOTllMWEzOTNkYTI2NTJlNWNhOTMwZTJmNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L19-L108",
+          "version": "repo-lines-v1:sha256:c87a682650317115e007fb75a2645dfee4997af1dccbc557603ba74c4be377de:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMDRkYzdjMzU0NGE5OWFjZDRkOWVlYWEwNDMwNTUwZjEwY2RjM2QzYTAyMzQwNWJhOWY4Njk4NWJlMDZjMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMjUwODk4ODAwYjgxYjg1ZjEzZGMzMDFlZWVlN2Q1OThiNDFmMDI3YjIwMDJhZDQwOWQ1YzVmMTgzM2U3ZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5NjlmOTkwZTNhNTc4MzhkOTc2MjEwODU3OGJhYzU3NTg2NTI5NzdhOWI4MzQ2NDkwY2E1ZTllM2Q2ZjBjMDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_100dc951907a42e2a962089bbef0c0a9",
+      "statement": "The product-scope boundary is enforced by a test, not just convention: App.test.tsx's first-visit case asserts that the 출퇴근 선택 and 교통수단 선택 tablists plus the 정류장 찾기 button and the Google로 로그인 link are the primary controls, and that no text matching 절차 (procedure) or 즐겨찾기 (favorites) exists anywhere in the rendered tree — so the out-of-scope features DESIGN.md lists (commute procedures, favorites, journey planning) cannot silently reappear.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L16-L22",
+          "version": "repo-lines-v1:sha256:ff0a0ca478c4fc48ab6c8d3b0a4100c4bf829db6708dbd29fecac82a4b843b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVlZmQ0NWNmZmVjZDcyN2Q0ZGQxNjNhNjY1M2U5ZGEwZGFmMzVmZWJhZTViOGY0Y2ZiY2M2YzBjZWQwN2Y0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQwNjhlNmU0N2UxYmM5YjRjMzg5NDNlMGE1YzMzYzgwZGUxNmZiNTFlNjMxNzAxMmM5MDZhYWM2ZmMyYTcwNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWNjY2E5NmY0MjMwMjVjZGM3MmNjMjUxNjVjNmRmZDQ3MDljNWQ2N2MwNTkyMWY2ODE3MGY2ZmVlNTc3NTdlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjUyMzczNDVjM2I0ZWNhMjMxZmYwYWFiZTNkYWIzMDhlNWM3MDMyZGFhMDcxMjM4MDIxMWFmMzhhYTQ3Nzg2NCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.test.tsx#L201-L226",
+          "version": "repo-lines-v1:sha256:672e7faa657ffb81b31bf8a8566f2534fe58b3885294824bd08c8ff70ee73ae6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2MmQxODNjNGRmMTUxODI4Yzk4YzhlYjU5M2FhZjQyNjQ0YWY3N2VlZmI5Y2ViMTk2YmIzYTVmNTlhMGUxMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyNmNmZjYzOTA2NTQ2OWVkZDFkMjhkNWJhYjZlOTdlNDVkMjY5MzA3NmFiYmFlOTdkODdlNjFmNmQyMjI2ZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a66c6e86a3064e378e1d514ec8a5373f",
+      "statement": "components/locate.ts is a self-contained geolocation boundary (requestCurrentPosition returning a located/unsupported/unavailable result with a coarse flag above 200m, locateCoarseNotice producing Korean notices with a 3000m IP-fallback threshold, and locateFailureNotice) that accepts coarse fixes rather than rejecting on accuracy, but it currently has no callers in the tree, and the .locate-button CSS is equally dormant — no locate control exists in the shipped UI.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/locate.ts",
+          "version": "repo-file-v1:sha256:539d4f5fc4e5d6e8fab43077d4c2172c291a9d2a63d137291738813cbdedc437"
+        },
+        {
+          "resource": "repo://apps/web/src/styles.css#L924-L945",
+          "version": "repo-lines-v1:sha256:cb268847ea38c856843dc2447bac102d39f6c9d0a8349970780c1bf52db53a65:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YWI3NGJkZWUwYjg1YTM5MWY5YWVjZmQ0MGE1NGM1N2RmMmE2YWIxMjYyMzMxNDYyMDRjMGEzNjBhMzRkNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzMjZkOTk5YWE1MDVkOTVjNDI5MTJiM2JiZjQ5YTcxZmI1ZGQwMzEyY2QxNmZjNTAzZmQ3Zjk1YTMyNDQzOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczY2IwNmNlNTlkODMxOWQzYTIxMjBkZDFmYWIzYWE0MWU1ZmUxYTUzZDNmMWQ1ODc2MWI2NDMzZjU5Y2FmYjMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

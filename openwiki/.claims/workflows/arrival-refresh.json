@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e22e188dc81e320b252dab0de52816cb3f306061f4710d0dbd8b74bb9a397d0e",
+  "claims": [
+    {
+      "id": "claim_0d093d6c17114324bb4dff6d66b3f08e",
+      "statement": "useArrivalDetail (apps/web/src/hooks/useArrivalDetail.ts) is the single owner of arrival request state: bus detail is a Map keyed by BusStop id, subway is one object, each holding arrivals, loading, error, and updatedAt. App mode-gates its inputs (activeStops = mode === \"bus\" ? selectedStops : [] and activeStation = mode === \"subway\" ? selectedStation : null) so a subway screen never fetches bus arrivals and vice versa.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L64-L70",
+          "version": "repo-lines-v1:sha256:0e6216eaa6a8530a285614241ae911542be3689c1778abdb8762945711a46cef:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODI2NGE2NDE1Yjk5YzE3OWI3YTNjMmNiNmZhZDBkOTAxNTcxN2UzNjQzZWZjMDgyMTVhNjFhMWE5MDg4MDJmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJkMTFjYWY0M2U5N2VmMzY5ZTZiZWVkMWEyNjhiZDA1ODM4ZjI5YjlkZDI1NGJmNjliYTY0ODg0MTQ3MjM0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTZlZDdmY2E2YzFhY2U0NjZmMWE3ZDJmNTdkMzgyYjU0NDg1Mjc3YWEwODI3ZmZkMWRlNmRkODQ2YTZlZjA0OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTYyY2MwMzllZDhlMTY5M2UwZWVjNmQwY2M0ZDhkYzdlMjU5MzdhNzRlZTc5ZjRjZWRlMDQxNjcxMWEwOGJlZCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L42-L70",
+          "version": "repo-lines-v1:sha256:c0f88309d148b205f594e44ef085e3bb1c1c2881d955d0f5503dda72c634f69b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwYjBjMGIzZWRkNzg0Nzk1ZjFlMzQxOTY1MTNlMTAzMDhiOWQ4NmM5ZmU1NDdkZDFkYjNmODNhN2E0NmQ5MTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZDc1OGRiNGI0ZTUxYTE4ZDZjMGVmZTljYmFhYjljZTY1Y2Y3N2M3ZWQ5MzhkODI4MDMwZDIxYThiOTRmNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2N2RiYzA2OWRkY2QxMTlmN2NlY2VlN2NhYjk4Yjk5NDg2MGU0ODE1MDk5MDU0NWQyMGY0ZGQ5YjBhZDdhN2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_67da57517b024d98b52b6dd4d7a7237d",
+      "statement": "Fetches fire only on selection change and on explicit refresh — there is no polling. The bus reconcile effect fetches only stops with no existing entry, deletes entries (and their request counters) for deselected stops, and refreshBusDetail re-fetches every watched stop via stopsRef; the subway effect refetches whenever selectedStation changes and resets to EMPTY_SUBWAY when it is null.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L132-L168",
+          "version": "repo-lines-v1:sha256:81bbeb2283cdcbb85f58be04fee200c58c5a70f57468d1071b7db9c14e4956bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMTQ4ZDgwYzc3N2U1MDkwN2ZiNTQzZDJlOGVmY2ViZjNmZWRiNjVkODI5MDllNTEwOGEzYzRhOTE5YmE4ZWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MzM0MGZjYjk3YTg5YTZlOTBjYWFjYTRkYjczZTU0MWUwZTRhOTQ0MDgxYTdlYWEzMDlmMjEwM2FmOGI0MzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7670be1989e741e2a1a5e3e14b02aa42",
+      "statement": "The per-stop refresh button in ArrivalList is labeled \"{stopName} 버스 도착정보 새로고침\" but its onRefresh handler is the hook-level refreshBusDetail, which loops over all currently watched stops — pressing one stop's refresh refetches every watched stop. Subway's refresh button refetches only the selected station.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/App.tsx#L218-L243",
+          "version": "repo-lines-v1:sha256:6494066da918c59b97ee7a6493f32635ac27b5225ed071177403db2e61ead5d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4YzY4Mjc3YThmNWYzMmQ0OTNjNzlkMDUwMWU4NThiYTc3NzUxZWI0YTc1NmRmODJmYWNmOGU4MTNlZDgxNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNDE0MzY3NjZiMmY4YzRmZDcwNzZlOWE3YmUyZmIzYzI0NTcyODIyOGJjYjlkYzNhNzZmNTFhNWE0MGMxZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5YTFhMzBiZjRiNTIwODU1ZmNiZGVhNTE4MTM0NDI3YzcxMWVhZmM2NjJkMDQ0M2I3ZGQxMDUwYzk3Mzk4NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyNTQ0ZDAyMDg3NTEwMmI0N2VlODM0ZDdlYzNjNTIxYTA5MWJjNzc1Y2FiMzZlODcwNjkyNjExMWI1ZGFmMDYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L63-L74",
+          "version": "repo-lines-v1:sha256:1c774bd9ad3004f16a443d1d1abe32b9a06d893151d1b84562963e17538f21ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1NWRhMDIxZTNlMjA0MmViOTlhOGMyZDJlMTBiYjQ3ZGRjMDg3OGFmMmE3NmY0ODRiNWVlZDBiNWI5NTFiODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjOTE2YTZkYzkyMGUwMmYxNGY4NGM5NWZkYjBhZjEwZjAyNTIxYzczNjlmMGJhNWE1ZGNhNWU3N2E3YjRlNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxODYyYWYyNDk0YmZkYzE0NTRmMmM1MmI1ZDU3MTEwNTBlYzI4NTkzMTQ4OGRkZjVkZWYxNWY2NWM3OGFmMmEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L164-L179",
+          "version": "repo-lines-v1:sha256:be24898c6e98625b62f56c533666a63bf5f014cdbdc0eac4711131ecc3d9a634:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjODYyMzE2N2IzNjg5MTc0ODExZmMzMTg2ZWZjZjE0OWFhZWVlMjk4Y2VlZDNiN2E1NDEwZGFkMWQyMWNhY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3YzQ2ODFjYzc2MzYwMTI5YWEzODFkNmI5NDZlZjE2NWY4NjdmMTZkZjM3MTVhYzY1MjVmZDAzYjc1YzcyOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjMDEwZTY5ODM0M2Q2MWI2ZDQzMjQ3M2ZlNDNkMDljZjAwMjVmZTY5NmFjN2JlMTNkNmIwZjI3ZDMzNmQ3N2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9bed3956d6494db38b158f6a9812825c",
+      "statement": "Bus detail state is deliberately held twice: busDetailsRef (useRef Map) is the read path inside callbacks so consecutive fetches always see the freshest entry, and busDetails (useState Map) is the render path. writeBusDetail mutates the ref then calls setBusDetails(new Map(busDetailsRef.current)) — a fresh Map object per write, since mutating a state-held Map would not re-render. readBusDetail returns the EMPTY_BUS constant for unknown ids.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L20-L31",
+          "version": "repo-lines-v1:sha256:ca89a09ba3e782b5e3e2bd5fae27d30edcd783d411e117101791176406a74a44:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxZGYzN2MyMjViMjIwMmU4MDdjZjBjYjAxY2IzZDliMTU1OGE1NGJhY2VjMjFhOWJiNmFlMmNjMmYzZmEzN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwZTFlMmRlNzdkNDdhZjJmMjQ2YzZmZTU3MmQ1NTZjMzI5YzIwNWRlOGQ1NWExM2QxMGYzNzhjYzBkMTI1MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5NTgyOGI3MTBhYzFkZDYyMmUyZmIxZjYwYWVkYzQ0OWMzMTgwMDJjMzEzNDg0ZDVkNjI4ZDc2MTBjZDgxZjUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L51-L69",
+          "version": "repo-lines-v1:sha256:749f3c7cb87722e01d7b73ae4b8695165e0b2700d776ae88e0bc6d4926b57649:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzNzYzZmY1ZmQwMmQwZTJiMjAwMzQ5ZGM0NjZkZDE4ZjhiMjFhNTZmZDNiMzNhOTZiZjRmNWQ5OGE0NDdiYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5NzBjMDZiODE3MjQ3YjJmNjFkYzViN2IyZGQ0MGM0YjlmMmEyZjA0NzIwZWNhMDYwMTFhNTMwNDFhYjYwZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzMDgyMWM2NDg2NTgxZWE4NjA5OTU5YTJiZGM1NDEzMTY0ZDY4YWRlYTJmOTg1YmQzNTFkNmVhYmZmOTc3MjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8d0d1656de0a4462b3c4074cfdc35db5",
+      "statement": "Race guarding uses monotonically increasing request ids checked after every await: busRequests is a per-stop Map and subwayRequest a single counter, both bumped synchronously before the request is issued. A response (success or failure) is committed only if the stored id still equals the issued one, so a slow earlier response can never overwrite a fast later one, and a stale failure can never raise an error banner over newer good data.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L71-L130",
+          "version": "repo-lines-v1:sha256:ca9908dfbb143a8c1392c08013622bde0475a3d86e0ead751cdad5428429afb5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZTI0NDg2ZDNlYmQ0OWRkNmQ5YWI1MmVmNDcwM2FhYWUxOGNkNGU1NjljMzE4MTRlNGNlN2Y4ZmE2ZmFkMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4ODUzZDIzOGJmMjQ0NjZhN2YyOWRhNjdmMzkyYmRiMjRiODE3MGJlYjZhYTFjMDFhZGU3MzNlNTAxNThhMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhYmQ4NjQ4MThlZWRhZDQ3Y2EyNzkzMTI5MTAxN2FhN2Q2ZmM2MWM2MWM1ZDE2NmNhMmMxOWUyMGQ4NGNmZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_26ed3ed6a16e4802b5308f808e7f3068",
+      "statement": "Deselection reuses the same counter mechanism as a race guard: the bus reconcile effect deletes both busDetailsRef and busRequests entries for removed stops (a deleted counter makes the post-await check fail, discarding an in-flight response for a just-unwatched stop), and clearing the station bumps subwayRequest before resetting to EMPTY_SUBWAY so the previous station's late response cannot repopulate a cleared screen.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L132-L159",
+          "version": "repo-lines-v1:sha256:5d32e55ae852e87dc47146e3041b3d5d9ef81bcc5dd1215b3837fafbb6844809:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MjFiMWNlODQzNzk5YjNiYmZhMDc5NTZlZThjNmEyYmNlYzU2MjE0YTFjYzNhY2U0YmQ4YWQzMjE3NzJkYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NjE3YzU5NWQxYzc0NjA2MDlmMGMyZGMxMDVlNDg1MmU0OWIwMWY4OWI2NTQzNDhhYWU1YWVmYjE0ODVmYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhNDBjYjQ3NmFlZThjODczNmY2ZTJmZDU2NWYwM2IzYjQ5ZTAxMjhjNTEzMzU3OGU5ZmYyMzVhMjliNDJiMGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_70d4ce7dad5a4a6abbd53fdcba8cea7f",
+      "statement": "Error retention satisfies DESIGN.md's rule that a refresh in progress must not erase the last successful result: starting a fetch writes the previous state spread with loading true and error null, and failing writes the previous state spread with loading false and the error string, so arrivals and updatedAt are always preserved. Only the success branch replaces the whole object. The components therefore render the error block and the previous rows together, with a 다시 시도 button wired to the same refresh handler.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L199-L210",
+          "version": "repo-lines-v1:sha256:cecf7893c71f7ec31f25ef738c4091456ca799cc212554f79ad22967f22843f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMzNhZmU1NWVkY2RkNTA2NTI5NTNlM2UwNGM3ZDI4ODJkZGFmYjM3YjNjOTVhOWIyNWY1YTk0MGQwYmI4ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhOWY1OGVlMTI0YzJkZDg0OWYxM2Q4NTBmYWNjYWFlNDdlOWI3YjgwNTNhYTM1M2VhYzhjZmQ2ODBlNTQzYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwYTAzNjIwZTJkMzlhMTE1NzlmZGY3MGY4NDA1ZjNlZDRmZWFkYzg4YTM2MGY1YmY1NmNjMGMyMjhlZDI5NjkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L85-L98",
+          "version": "repo-lines-v1:sha256:762e74635b13db55447d1180832c464876de44147fa89d0d74c50f808f1dc8f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3ZWE4NzliZjYyNDI3OTk1MDVmZTc4ZTM5OWJiODg1OTA4ZmYyZmU1NzZkNWRjZWE1MTg3Yjg2YTNhZGE2ZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhMzZjNDQ1MzA2OWYyMDU4NDllNjAwNGQyMzdlNGI1OTAwYjljYjAxNjU1Yjc3ZjgxNTk3MzQ2ZmRlMTJmNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkODg4MDBlZmFhOWUxZWMwOWY4ODYwYTJkYTdkN2Q1NmExMjQxNzYwN2ZiNmM1NWRhOGRiNzhiMWI4MDEyYjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L196-L209",
+          "version": "repo-lines-v1:sha256:35c03a8db85b97e815d5d16de934fc2d6e991146a83907855ac99941e2ffaa1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3ZWE4NzliZjYyNDI3OTk1MDVmZTc4ZTM5OWJiODg1OTA4ZmYyZmU1NzZkNWRjZWE1MTg3Yjg2YTNhZGE2ZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3YzY3ZjQ2NWQ1NzlhNGE5Y2U2Mzg2ZGM4YmE1N2Q4MzBmY2Y4MTkwMTIzNTM3MzJhY2IyMTg0M2JmZjJjNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkODg4MDBlZmFhOWUxZWMwOWY4ODYwYTJkYTdkN2Q1NmExMjQxNzYwN2ZiNmM1NWRhOGRiNzhiMWI4MDEyYjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L71-L130",
+          "version": "repo-lines-v1:sha256:ca9908dfbb143a8c1392c08013622bde0475a3d86e0ead751cdad5428429afb5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ZTI0NDg2ZDNlYmQ0OWRkNmQ5YWI1MmVmNDcwM2FhYWUxOGNkNGU1NjljMzE4MTRlNGNlN2Y4ZmE2ZmFkMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4ODUzZDIzOGJmMjQ0NjZhN2YyOWRhNjdmMzkyYmRiMjRiODE3MGJlYjZhYTFjMDFhZGU3MzNlNTAxNThhMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhYmQ4NjQ4MThlZWRhZDQ3Y2EyNzkzMTI5MTAxN2FhN2Q2ZmM2MWM2MWM1ZDE2NmNhMmMxOWUyMGQ4NGNmZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e43e966236149c7baeee2249430595c",
+      "statement": "Failures are deliberately untyped at the hook layer: fetchBusDetail and fetchSubwayDetail use a bare catch, collapsing HTTP 502s, network refusals, client-side aborts at the 8-second deadline, and client Zod re-parse failures into one fixed Korean sentence per mode (BUS_ERROR / SUBWAY_ERROR). The arrival screens surface no service-area nuance.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L32-L35",
+          "version": "repo-lines-v1:sha256:c1d8b21e3c049de4bbdf27c2b64031d7652f4153ef77d21b79af895af0f0697d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVhOTc3YTBkNWRkYWIwNDRmOWQ2NjE5NDUwNGM5NDk2NjYyODFjNWYwYTM4Mzk3YzdiNWZiY2FlOGFlZTdjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGMwNjdiNzY0NGU3MDJkMWM0ZWY2OGRjZmNmYzViYmNmYjBhODFlYzYwNjJlYWZiYWUwMzdjNjc5MWQ5MzNlMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQyOTdmNGZiMTYyYjQ1M2FiODRjMzgxMTdlMjMxNGQ4ZDQ5NDBkZWVhZjQzMzM3ZDBmMzZlODM0Mjk3M2FkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGIxNmY3OGJlNGZhYjYzYTU3OTY1NDJlMWQwZDg1NjEwZGYxMDMwNzJjZWY0OTkwYjhjNTM1NDA2YmU4MzJmNiJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useArrivalDetail.ts#L80-L129",
+          "version": "repo-lines-v1:sha256:642dc48d75dc43490970e19d278006fe314272bb827f081ea7df165a966401e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YTdlNjUwNDc0YWVmNGU5Zjg1MDI0MGY5MzgzMzkwNzNiMWRjOTQxNTg2OTI0NmM5YWM5NmQ3ODdkZDY0ZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxMDA1OTZlMWIyNGQ0MjM0Njk0Y2YxZGNkYjkxNGQyZjdlZGMwYTA5NGJhYjA3MWU1MGEzZTQ3YTA2NDY1YmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjNzc0ZTE0OTA0MGM0ZjY4N2Q3MDU2MDNhNzE2NmUzM2M3ZDFhMTNiMzFhNTc5YjQ1MWI0MGNjOTZkODIxNDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_544dedc577214a75b2dcc4fc737c38dc",
+      "statement": "GET /api/arrivals/:arsId and /api/subway/arrivals are the only transit routes that hit an upstream on every request and are never cached, unlike GET /api/stops/nearby and GET /api/subway/nearby which are served from TransitCatalogService's in-memory ManagedCatalog snapshots. The two arrival handlers use only the injected API_OPTIONS fetcher/upstream base and do not consult the catalog service.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L32-L120",
+          "version": "repo-lines-v1:sha256:52eb6a43b5ce5e09ef8e18a0250623a22417ea90257329d433322c988c7ea477:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZmRlNDAzYzY3ODAxZDg2NjU0YjYzNjQyN2MxMDVmZDAyM2Q1NjgyYzgzNzEyNzJmNmE3Y2UzYWQ2MTlkZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3M2NlYjVjNDY0OTI2MWUxOTE4MGI0NzNjMjk2NTc0ZWJhYzMzMWM4ZTZjM2U4MmNjOWVkOTA4ZWQwYmE4YjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L100",
+          "version": "repo-lines-v1:sha256:b42fb7ad5fc7046599ab31ff549cb2a78fa797781e58259f218d7cac23c492c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyZTgxMTU1MjhkZWJhYTJkODk3YjNmMTg0NDI2ZjUxMDY0YjI1NmM0M2VhOGZhMjU3YjA5NDRlNzhkMjIwNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkZDhkOTFhNTE3YzVjMWQ3MDY3Mjk3YmY5YTM1OTliMzA1NTFmZDlkNzgzYjJjOGU5ZjVkODk1ZTE1NjlhZTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L263-L277",
+          "version": "repo-lines-v1:sha256:0f217e3cc0fb315aa314b6b7fe79bb0e1febffbf19dc7ab53b35cb6aeeceb779:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiOGFlOWVhMjhkN2Y4ZmRjMmEzODU0NTA2MDIzZjc4MzQxYmZiOWRjZTNjNGMyYWJhZDNlOGU3N2Q4YWU0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMDc0ZTgxMTIzZWI3Y2IzOTQ1M2UyNzNmYmQzOGQ1ZDE1NGIyMTYyYjdmNGE2NDA1N2VmZTIxZGVmMzhhOWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_76205905a0c441c589e8441a2203b056",
+      "statement": "TransitController validates before any upstream call: arrivalLookupSchema (branded five-digit ArsId) rejects with 400 INVALID_ARS_ID, and subwayArrivalLookupSchema (trimmed station of 1-20 characters) rejects with 400 INVALID_STATION without calling upstream. busArrivals stamps updatedAt itself as a new Date().toISOString(); subwayArrivals returns the adapter's object unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L74-L120",
+          "version": "repo-lines-v1:sha256:1022118df5865c9437c9fcb247a496669ea8eca4bb071914c369308903ee5921:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NjY0NmE3ODQ0YmUwOWExYTBiZTM5MDc1ZmEzZmU5M2JmYTVkMGNlZmYxMjJkYmY2YTI2Y2VkZWIxNDRiN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L638-L647",
+          "version": "repo-lines-v1:sha256:4c2341d01879618466539195eeaeb9d60dcab5fe1c7e36f4a4bbbf0072e4062c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTc0OGE0ODg2Njg4MGFhYmQxZjE4ZGY0MzQ0NTA4YTM1MTRhNzczYWQ1ODc5MzA0YmQzZmRkZjE3ZTU3ODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MDc5ZTdiMTNjNGFiOTAyNjYzNjA2ODkzNmU1ZWRjMTc1OWE5N2QyMDRjZmQwNGM1ZGU5NGYzNzNkYzYwMmEifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L207-L209",
+          "version": "repo-lines-v1:sha256:50f07e5aa8742e288d2dfd8de3f979cc9c19d4e6b8244b0a687f01d609683de3:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDEzMjdiYzVjODA5MGQ4Mjg3MDI2OWZjN2ZlNWI5Mzk4ZWYyZWYyZjFkZTA0M2IyZDQwNzkwYzQ5Mzc0YjI4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDFkNjA5ZTZiMWQyM2I1MjU1MjQwNTdjMDJlNmFhOGFhYmQ1NjFmZDY3NzFmMGYxNjdiYjYwYTY1NjJkOGQyNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5b6dd24e95184846bd1912a83c633564",
+      "statement": "Any error thrown by an arrival adapter (a non-2xx status via UpstreamError, an abort at the 8-second AbortSignal.timeout, a network refusal, or a Zod rejection such as an upstream row missing the strict updnLine key) funnels through TransitController.upstreamError into one HTTP shape: 502 with error UPSTREAM_UNAVAILABLE, a Korean message, and errorDetail. There is no retry, backoff, or circuit breaker anywhere in the chain.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L106-L128",
+          "version": "repo-lines-v1:sha256:87d0693c895c76c449a0a6491f4c57a4731495d4a71184bf8dcf16631c8e7da2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2YjY5NmRmNTBlOTM2YWFmM2RhMzMzMjVhMTBkOWNkMmQxNmJhMzBlMDNkYzhjNjI1NGI4YjU5MGQ0NGM4NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L29-L38",
+          "version": "repo-lines-v1:sha256:860a4d0918f0a04d3dbd90d0f8167cf84cb95eef8847a638f4780082a40c4f5f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZGQ3ZTE1ZWVkY2Q4MmI3YmI0YjY2NTM1NTA4NjRhMmM0MmU2MGFmZjc0NDJjYTU0YWFiZWVkNGZmODJmODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwNmRmZWM0OTZkYTJjNGI1NGJmZWZkN2YwMjE2ZGYwYmE0YjZlYWYwYmNhNjc4NTg3YTNhM2M0NzhmYzViOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhY2E4MjBjMjQ3ZmE5MDQ2NjNiOTU4YjI0ZDFhZjQxZTI1NTVmYmM2MGUzZjhlMWUxYjA5N2MxOTExNGI1MTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/upstreamError.ts",
+          "version": "repo-file-v1:sha256:bdadb1d9a2cf082fba7723c50b560a69654b1588016d71d38aa51702fc8ade37"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L602-L636",
+          "version": "repo-lines-v1:sha256:ac720ff1cb8a660f1f908928c6fba937c0a87406f4fac4f87be96f02d79846c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4OTBjZGRlNWMwNmIwNzBjODQ2OTkzYzg1ZDY0MTE4MDRkMzRiNzc1YTdkNGY0Nzg1OTYzZTgzNzhjMWU2NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2NDRlMjVmYzM5ZDUwMzhiOTcwMGIxYWI3MWYyNGQyMzA4YjFmNzJhYTVlMmMyODgzN2ZjN2M1NzM5NzAzYmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2d34f1a756f74bb69a817725faf4ed7c",
+      "statement": "updatedAt is the adapter receipt time, never the upstream recptnDt. normalizeSubwayArrivals already derives updatedAt from the max recptnDt, but fetchSubwayArrivals discards it and returns a new Date().toISOString(); the bus route applies the same rule from the controller. The adapter comment records why: both the 90-second expiry rule and the elapsed countdown key on updatedAt, and upstream data timestamps can lag receipt by minutes, which would mark fresh data stale and drop imminent trains.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L106-L120",
+          "version": "repo-lines-v1:sha256:71de25b121df3a3a76fd7c29e0c33a4a1ffe2668f03243931ae11ab4f6c5dbfc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2YjY5NmRmNTBlOTM2YWFmM2RhMzMzMjVhMTBkOWNkMmQxNmJhMzBlMDNkYzhjNjI1NGI4YjU5MGQ0NGM4NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L39-L45",
+          "version": "repo-lines-v1:sha256:db2208d01e69b9c0ae9747334f8bf51678ab64172ba76eed455ec9998a4808e2:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRkZThkYTVkZjhkYzMzZWVjNDE4NjZkODBhN2NlNDg0YTg4OGY3MGFiNDk3OGM0M2UxYjM5YTg1NzlmMGFkMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY1MzlhNTI4MzQyNzUzN2U4NGE2M2U5NjQxMWJhNzk2OGE1ODA3YmVlMTkxN2U5ODdmZjA2N2FlZTBiNzhlYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L538-L578",
+          "version": "repo-lines-v1:sha256:a9a01a4a351c0f766c73686c1725e03cc58a21a78ae248e542cef07716932dc9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1ZGM4OTA2M2EwMzJiMmVkNWM4ODA5ZGExNTg0ODc3MzFhZmEzOTM5ZjBhZTk4YjFhNzQ0ZTljZDA4ZTczZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxYmExNGY3NjczYjMyNzhhYWIwNmZhZmVkMzRkNGU2OWQyZGFmNWMyODA1ZTdkZWY5NTU3MDM5YTY5ODg3NTcifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L215-L259",
+          "version": "repo-lines-v1:sha256:34333244a423da04171babeb29b729577d9330fcb4e3671d527186a343b20f25:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YWY1MzAwMDg5NjY3M2Q5M2NkOGRhYTFiYTlhN2Y1NDMxZjM2NjIwNzNmZmVjMjM3ZDNjY2MyMTYzMWFiYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxYzY2NjdlZjVhODM0MjA1NmZiNDQ4Njg0YjM4ZTgxZmJjOTc4OGM4ZTNlNGUwNjM3MzgxMDkyZTM0MDljYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwZWU3YTRjZDU3MjMxNGJhM2UzODJkYWM5Mzg3MmQxMzBjN2YzMzRkMTJhNGQ5MWYwYTY3Y2EwZGU1MWZkODcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_157f4658fa774029a93b0364c7566c6d",
+      "statement": "useElapsedSeconds(updatedAt) re-syncs now to Date.now() inside the effect on every updatedAt change (so a new receipt immediately recomputes elapsed), starts a 1-second interval only while updatedAt is not null, clears it on unmount or updatedAt change, returns 0 when updatedAt is null, and otherwise clamps to a non-negative value so clock skew backwards cannot produce a negative elapsed.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useElapsedSeconds.ts",
+          "version": "repo-file-v1:sha256:ae520eb5b8e40f0568d9e82b5023968d6b89907fb6dbd4865c9b8ef032a7cec5"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b0cf1c0a4c74cd0adc1f6545a345cf0",
+      "statement": "subwayEtaDisplay applies a 90-second grace: expired is true when seconds is non-null and elapsedSeconds exceeds seconds plus 90, returning a null remainingSeconds and the message 새로고침 필요 when expired, and otherwise the maximum of zero and seconds minus elapsedSeconds so the countdown stops at zero. A relative upstream message matching the 분/초 pattern is relabeled 도착 예상 because the stale literal would contradict the ticking number. Expiry can only fire for rows that had a numeric ETA; rows arriving with a null seconds show 정보 없음 with their original message indefinitely. Because there is no polling, this grace window is the only mechanism telling the user the displayed number is no longer trustworthy.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.test.tsx#L42-L83",
+          "version": "repo-lines-v1:sha256:4384195d98c19313622f477985c92f1b41aed7c8b0b1f412ae85a0ba550ead9d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNTJlOWQ1ZjEwY2FiYzUzM2NhMTlkZDNiMTJjYWNkZjY5MWVjZGE4NjU1ODUwYjRkMmY5OWY5NTU4ZWI5ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwZTFkY2Q5MGVmNjI5ODhlYjBmOTAyYTlkODNmZDlhZWYxYjMzZTkyYTU0M2RiMzE5MjZmZmE2ODk2NDU0MzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmZjY2N2IxMmExZWM2ZmM4YTc4YzZlMDliZDA2NmYwZGY3MzFiZTY4MGM0ODc0MzY3NzU5OGRjZjdiNDgyODcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/domain/subwayEta.ts",
+          "version": "repo-file-v1:sha256:7c1dc87da255abf55682f2381cce86176db2abec85444a6cce477cd5e0639fb4"
+        }
+      ]
+    },
+    {
+      "id": "claim_35b75db8f17b4844afd7dff8bab14c4a",
+      "statement": "The elapsed countdown is subway-only: SubwayArrivalList feeds subwayEtaDisplay with the row seconds, message and elapsedSeconds, while ArrivalList renders formatEta directly from the server's first.seconds and message with no elapsed adjustment, so bus ETAs are static text until the next refresh.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L142-L152",
+          "version": "repo-lines-v1:sha256:20f40777496e463e900c30ddf4091bd2da4667e4c1a488938519e87d92b47cca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYmRiZDYzZDIxYmIwMTQ4OTRlODU1OWQwZDllMDk2MTU3N2IxNGIwYmU0OGFhOWE1ODY4OWFiMzczYzZkNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTAwNTlmNDhjYTU2ZjZiNTBmZGM2OWExNWM3YjdlNjMzY2MxZTEzNjA4ZGFhNTBlZDkyM2JlYjBmNjM2ZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiMTkwMGQxNmI3YjgxZmJkMWRkODMwYTIwNzc0NTUyMDBlODdlYzQ2MDYzZWFmYTMyOWRkY2NiODBmMWJkNzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1ZjFhYjMwMDRkYTUxZjlkNWZiODA4OGM0YjZkZTQ0Y2JhMThhN2JhYzJhZmMyMGQ2ZmVhMTE0MWQyYTQxMjcifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L15-L23",
+          "version": "repo-lines-v1:sha256:0e3f7a2662c797c9e28231ec135fe02a5f8bf068bce6bc5622c39c40bb9aa464:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTkwYjIwOWNmM2E0MGY0YzAwYWVhYjdjNmU0MDU5ZjEyNmM5MDhmY2U5Nzk2YTFiMDBmOWM2NTQ3NWM2NzRjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTMzNjAyMjgyNzZhNGMyM2FlMTRiOTI2YTQ4MTA3M2Q3MmNkNzI1MTA5OGI3ZDBjMDNjYjg0MWZlOTdjYzk3OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjVlYWY3MGViNzQ1MDgyZTIxMGE1NjYzNWI3MTM3YzMzOGRlNTdmODc5NmI2ZmZiNGU2M2QxYTJjYmRkMDMxOSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L219-L252",
+          "version": "repo-lines-v1:sha256:c9abdce765e43a25e193fd0787c9143fd8c2a5ff055325ed0bd7d4cd5ec5283c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViMGQzOTJkYTNmYTg0MGY5ZGE0NGUxZjc3YjU1NTM5MDk2MDU5MzMzYjQ0NTAxM2JjYjVhZDk3N2ZlMGVkZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwYWMxOTNiMTg3ZTA4MjBlNzVhNzRmNzY0YTg3ZmQ3NmYxZDUyOTY1NDkxZDIzZWM2Njg1MzMwOGE2ZTJkMTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3YzY3ZjQ2NWQ1NzlhNGE5Y2U2Mzg2ZGM4YmE1N2Q4MzBmY2Y4MTkwMTIzNTM3MzJhY2IyMTg0M2JmZjJjNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0NTY2YTU3ODU1MDAzZjJiMmZjM2IxMWViODU1Y2YzZDc3NTlmZGE0YmNlYTVkNWNjMGQ3MDc0YWZlYjQ5MGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8e3e24e62974f5cbcd6323f69ae746d",
+      "statement": "SubwayArrivalList derives its direction tabs from the arrivals actually observed, keyed by subwayId and updnLine in first-appearance order and grouped by line into a role=tablist labeled 지하철 방향 선택; activeDirection falls back to the first direction when the stored selection disappears from a new response. Because the server already sorted by seconds ascending, the first direction is the direction of the earliest train, satisfying DESIGN.md's default-selection rule without client-side sorting. App also remounts the component on station change via a key of selectedStation.id, resetting local selectedDirection state.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L190-L197",
+          "version": "repo-lines-v1:sha256:a35697360b974a76f9745ce4bf937bb29e626e3337acd2938979c6e18be895f2:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTViZWNjZWI1MjUxZjdjY2U5NjA3ZjQ4MmU4MGQyODEyM2M3ZjhmOTVjNGFlZTFhMTk1ZmVmMzlhM2M3ODZmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTJjYmI4NjQyNDdlYTMyYmJhNDI2MWQ3NDM3NTUzYjI1NjBmMmNlYmRlZWE2NjU5M2ZhOTM1YmMxYTE5MzgxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzdhNzlmZGY1YjI5MWQ2OGY1YWY1MTAzODUwYjA2NmY3OTE2NGU2NTFlODA4NWMwOTgyZTk4YjNlNWRmMTVkNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjlhMDUxNTFkNTM2ZDIxMzNkNWExMGZiZTg5ZDhkYzhhODkyMjBlOTUxNTA1ZmU3MDliZjhiZGY1ZjA4Y2FhNCJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/App.tsx#L234-L243",
+          "version": "repo-lines-v1:sha256:75a57e6ae5705c88a0d1b2e2b2c6f91e924643297b68c923ca102d3afd50bf93:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjMDk2NTBiMTNiMGJlMzgxZDNiNjI4YmJjNzZjYzU1YjJhODk0ZTVmM2IzNTQ4ZTlmNjQ4ZjhmZDMzMmViZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNDE0MzY3NjZiMmY4YzRmZDcwNzZlOWE3YmUyZmIzYzI0NTcyODIyOGJjYjlkYzNhNzZmNTFhNWE0MGMxZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjMTk0ZDU2NGJmODI5OGVlNTEwZGMyYWQzNzI5YTBiYTA0NjEwZDlhODNkYWRmMGYwZTI5MTFhYTQ4NDNiZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyNTQ0ZDAyMDg3NTEwMmI0N2VlODM0ZDdlYzNjNTIxYTA5MWJjNzc1Y2FiMzZlODcwNjkyNjExMWI1ZGFmMDYifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L22-L99",
+          "version": "repo-lines-v1:sha256:d42f8dd61e67062b13354882169eaa182a6391811b16db9031bf69d816d631fa:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljZjM2Mjk4ODA5YmQ4MGI5NmY1ZDgyZTYzZTlhYTRmYWIwYzRiMDc4OTEwNmQxNTdmZTNmNWFjMjM0ZDNkMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmOTk1MDU5NzcyMTVlNGRiMTI0YzU4NjEyZGEwNTkyN2VkY2QxMWU3M2VmYjMwNGNiOGRiMmU0YjY4ZDMxZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiYjk1NGQzZDRlOTdjNGEwYjNkZjM3NDU2NzZiM2FmMDhiOGRiY2ZmZDZiNDRiYzY3NmMyNzY0OWI0ZjhiODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5YTM3NDI4OTQ2NGYzZDdkY2M0ODA2ODFmODNlY2RiOTZmYzUyYzkyNDJiYzBjY2IxNzI1Y2EwMzk4ZmI1OWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f57babcfe473400fbb96be1779905717",
+      "statement": "The three-row cap lives only in the components, as AGENTS.md requires (\"Transit rows are limited to three only at the presentation boundary\"): ArrivalList renders arrivals.slice(0, 3), and SubwayArrivalList filters to the active direction and then slices to 3, making the cap per direction rather than per station. No adapter, normalizer, or controller truncates, so the API returns the full sorted list. Moving the limit upstream would break silently because the direction tabs are derived from observed arrivals — a truncated list would hide entire directions.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L27-L27",
+          "version": "repo-lines-v1:sha256:6ff4d6930d209ec8efc76c92a02f68ed0a92c6597c1979b517385363da28756e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZmNGQ2OTMwZDIwOWVjOGVmYzc2YzkyYTAyZjY4ZWQwYTkyYzY1OTdjMTk3OWI1MTczODUzNjNkYTI4NzU2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZmNGQ2OTMwZDIwOWVjOGVmYzc2YzkyYTAyZjY4ZWQwYTkyYzY1OTdjMTk3OWI1MTczODUzNjNkYTI4NzU2ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTMwMTRmZjIwZmYyODhkYmNiZTQzYjdmZThkNzk5NDBmZDhjNzY5MTI1NzZkOWI1Yjk3ZjRiMzlkZjkzYjAwZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjQxZTJlZWJlYmY3OTExODAyYmFmYWUzMWUwZDZjYjg2YjU0YjE3NjlkYTNiNGMxNjBlMTI1YzMwOTE0YTQxNSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.test.tsx#L24-L54",
+          "version": "repo-lines-v1:sha256:1c6565a92d1a56a84eca8a6d71cea52e149a426372649f09d5e0b8863c294fc8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxYWI0OGE1MjU5YmNmY2EyN2JiY2YxYjA2NDNmODUxMmFhYTg0ODkyNGMzYWRhMGYwYTlhOGMxNWVmMjVkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NGQ0ZmM2OWE0ZjhmMzRhMGU3OTZiYzMwMDc0Y2FiOWYzYjk4NTdjMjNjNWJhOWNlYjQyZDZiZjIxMjg3YjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5YmI5ZTNhMTk4Y2JhNWNjMGMzY2UxOWUyNTQ1YjVlNDc2ZmMwNDQwMWU3NWUxMTY4NGFkZTZlMjhiMzY3M2IifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L108-L114",
+          "version": "repo-lines-v1:sha256:4156944d6059bc26c74d6c2367306992a3453e22b564698895bb4eb84d2e236f:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWIwZDM5MmRhM2ZhODQwZjlkYTQ0ZTFmNzdiNTU1MzkwOTYwNTkzMzNiNDQ1MDEzYmNiNWFkOTc3ZmUwZWRkYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZhZGNlOTgxNjIyNTc5YzAyOTZkNDVkNWFhMDBmM2QwNjJhMGNlOGE1MGQxYmU0Y2U3M2FkYjk5NDY4YzZlNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjdjNjdmNDY1ZDU3OWE0YTljZTYzODZkYzhiYTU3ZDgzMGZjZjgxOTAxMjM1MzczMmFjYjIxODQzYmZmMmM0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWUxYmJhMTZkMGViNjE2YTA1NzBlNjhkNzNkMDdlMGIxYmFiMDhkZGMwODc2MzI3OGY4NTI4NzMxYjQ2YTc5YSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.test.tsx#L85-L145",
+          "version": "repo-lines-v1:sha256:492cd555439cf1e840838fb04b34385b9eefa6a2af05fc3ed44da18333f3a3d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5YWZjZjQ3MDVjNGFhM2M0NzQxNWYwYTBiZWQzZjgzYjE2MmU3NWE3NjMyZDc1MmUyNTAyYjkzMzJjMGY5MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2MWU3ZmQ4Yzc5MzA4YzIyZmRjYTYyMmEwZjI4ZGNkOTljOTA4NWE1NWE0N2I0MjRhNmI4MjU3MDg1ODcyYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0ZDQ5Yjc4MDc4YzFhMGYwOTExYWU3YTY1YzI0YzNkNzk4YzA3YzE0NjcwYjU1YjZjMTE3ZTI4MWY1ZmZhMzMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L94-L99",
+          "version": "repo-lines-v1:sha256:a39ad515726bac41016c1ea1361c5120f912742b6139f0cfa06e0935f7e21a4e:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQxYmUyYzliZjcwOGYzMmIyZmRjMmM0OGI5M2M0MzcxY2IzNWVlZmI4M2QzNGIwYmI4OWMxMWI0N2U1MzNkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY5OTUwNTk3NzIxNWU0ZGIxMjRjNTg2MTJkYTA1OTI3ZWRjZDExZTczZWZiMzA0Y2I4ZGIyZTRiNjhkMzFlYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGYxOTQ2MWFjOTJmMTcxYzJmN2QxMGY4ZmJjMzcwN2Q0NTRjZjQ3NDY4Njc1ZGE5NTQ3MmE1Mzk0MjkwNjBiNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjlhMzc0Mjg5NDY0ZjNkN2RjYzQ4MDY4MWY4M2VjZGI5NmZjNTJjOTI0MmJjMGNjYjE3MjVjYTAzOThmYjU5ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4b329c1eae8e4e218c98d7fd95a063e6",
+      "statement": "Both lists render the manual refresh as RefreshCw plus the text 새로고침 (never an icon alone), disabled while loading, with the aria-label pattern \"{stopName} 버스 도착정보 새로고침\" / \"지하철 도착정보 새로고침\". A polite aria-live paragraph reports 도착 정보를 새로 받고 있어요. while loading, the formatted HH:mm receipt time after success (Asia/Seoul), or the mode-specific hint sentence before any selection; the error block's 다시 시도 button calls the same onRefresh, making retry and refresh one code path.",
+      "evidence": [
+        {
+          "resource": "repo://DESIGN.md#L199-L210",
+          "version": "repo-lines-v1:sha256:cecf7893c71f7ec31f25ef738c4091456ca799cc212554f79ad22967f22843f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMzNhZmU1NWVkY2RkNTA2NTI5NTNlM2UwNGM3ZDI4ODJkZGFmYjM3YjNjOTVhOWIyNWY1YTk0MGQwYmI4ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhOWY1OGVlMTI0YzJkZDg0OWYxM2Q4NTBmYWNjYWFlNDdlOWI3YjgwNTNhYTM1M2VhYzhjZmQ2ODBlNTQzYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwYTAzNjIwZTJkMzlhMTE1NzlmZGY3MGY4NDA1ZjNlZDRmZWFkYzg4YTM2MGY1YmY1NmNjMGMyMjhlZDI5NjkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/ArrivalList.tsx#L50-L92",
+          "version": "repo-lines-v1:sha256:a8daf7ddbb9968af2d79c87dc481d389ad4bdc07bf0c872da876fa353a45823b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjZjQwMGM5YTFlYmVjYWJhOTFhMjVkZjNhOTJmNjJjY2EzZTE4ODMzODQ3ZWExMTFmYzQzNzMwN2M1MmUyZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjOTZlNWNjMThlODkzODE1ZmEwMTIwZTQ2OTNiNWRiNTI3MjQyNGU0NTdkMGU4ZWE5NzAwNjVmZWViYjhhNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjZGYyZDlmYzBlNTQzZjhlNjFhY2FhNjAxYWZmMWE3M2RiYzVmYjk3YWZkNDkwZmNhMWM4MDFjMzdlMTUzNGMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/components/SubwayArrivalList.tsx#L136-L160",
+          "version": "repo-lines-v1:sha256:f43bc252785edf3c95ebbd0a2d9d59ebb21b070c56bdcead58dd052689cac22a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjZTVmMWQ3M2QwODE3YmYwZTE0NGFlNmNjMDZkOWM3NThhZjUxN2IyNzIzM2E5Njk4NTJlNzFmYzZmMWY0OTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzYjI2NTVhZDM1NzYzNDg5MTc2OWU4ZDZmNThhN2VlMTI3MmQ4YjQwNzNkMmFhZTZjNzIzZmIzZjcwZTBlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmNmRjNjY4OWU0MmJlMmNiMmU2MWI4YmYyZDQxMDdkNWFhYWViYjI5NDE2MjI5OTA3YTZhNDg1NGFlMTMxNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmOWZjMWVlMTJlZDIwMDNiZTg1NmE3MzY2YmVlODEzNjA1MTY5NzZlMzNjZTk1YTlkZGViYjJiNGMxMTVjOTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2934de485355420596a5685c613c646b",
+      "statement": "The web api client applies its own 8-second AbortSignal.timeout and re-parses every arrival response body with Zod (arrivalsResultSchema and subwayArrivalsResultSchema, both requiring updatedAt to be a datetime string), so a malformed API response fails loudly at the boundary and lands in the hook's catch rather than poisoning React state; non-2xx responses throw a structured ApiError carrying the server's error code.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/api/client.test.ts#L88-L179",
+          "version": "repo-lines-v1:sha256:e43ec1e132c54b8757e8c4686263924ca1f96b91dbad0f6687d5606d7a8f2fe1:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxOTdjMDc1NGI4MjFkMmJjMTY4OTFjMjdmYjk2ZmE5Y2ZiMmRiZDQ1NzY4YjUyM2Y4MmMyY2E0OTJkZjNjMzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3NTAyZWU5MTllYTkwNjc4N2I5ZmViODU0ZDJiOWE4NzNhNDc2OGVkZDRkZDFiMmM5ZGZiOWExNzI2NTVjMGMifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L122-L154",
+          "version": "repo-lines-v1:sha256:742f04324649fbbaa24d0f78547a75d6de6ee79c3151d54f916fe8dfd397b675:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2MTFjNTVjNjYxMGI4MWM0NjdiNTk2OTNhMWRjMDM0MGVhZGZhY2I5OWIyYzczMDdlYTM3NWFjMGFkMmRjMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhZGViNWE5Y2RmNjdiNDMyYTlkYWZkZWNkMmIzMjFiNDkyOTM3ZDQyZjNjZTBmNzVkOGQwZDAxNGMwMmExNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlkOGM0ZjQ4NjA3MTgyNjA5MDQ0Y2U1OGZiYTI4ZmIzZTljNDUyZjNlNTMyMzlhOTY3MWMwZmRjNzIzZmU5ZTkifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L27-L87",
+          "version": "repo-lines-v1:sha256:9d18979bd18d645dcda7670b311d54123760f5df7afa5e2f902abcc353a3f588:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhNjY4MjRlYjk4YmQ1MTA1NmU2OWIzYmZkYmFhMzJjOTYxODI0ZWE5M2YxNTdmNTVhOTU1YTNhOGMzN2I4ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhNzdiNGExZjZkYjM5MjkwMDA0ODg4NjRkYTY5ZjRkOTE1ZWUyNGZlN2UwOTNhNDA1YjVmYTYyY2U5NWM4N2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzMzY1NDk2YWVmNGU1MTI5N2FhYTIyZmI3YWEwZTY4NzE0MWI2NDhiODBiMzIyNjZjZGI0N2Q0NjgxNDM2NjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7d99a8fd62e4f33b02ef31f8902724b",
+      "statement": "fetchSubwayArrivals applies apiStationName inside the adapter, before building the upstream URL, aliasing the three known OSM/API name mismatches (천호 to 천호(풍납토성), 군자 to 군자(능동), 총신대입구 to 총신대입구(이수)) so the saved short OSM station name never reaches Seoul's API. The upstream origin is configurable but the adapter always appends /v1/seoul-subway/arrival.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L19-L32",
+          "version": "repo-lines-v1:sha256:402ec99955322b63afa8424c4b6a31bbc2834f0539d302d70233f73f8885e861:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiN2NlZTk5ODhlODZlMDExZjM3YjdkNjZkZWNhNDViNjhjNTg4N2Q4ZDEwNzgyMTNkMzM2M2NlOTAzYTRkYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMzk2OTVmMWYxMmFlMjE4MDY3MTM0ZmU3Njc2NjJlMDgyN2NlNTM1NDAzOTQ2NDViOTRiZTMwYzYxNTMzZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkOWIxZDE2YThhNjhlZjdhYjkxZmRjNzFhOGEyNGU5ZjEyNWM3MWEwMTc3MmFhZDhjNmRhZDQ4ZjQxY2MyMDQifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L574-L577",
+          "version": "repo-lines-v1:sha256:87d3d29f03395b41ddd646ff3b2386de241899c9f6469260fe89e75c49a2c214:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU3NjkxMmI1ODg2ZmI3NWIyZjY1OGRjNTI2MTM5ZjE1ZTRiMmI1YjUxNWRjODM4ZWMzZTY0ZDhkNjVmNTE1MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNDIwOGNkNmZmYjhjNGEzNTQ3YjJmNTRhZGExOTk3OGMzZjM2NWU3OGY5NTAyZWY1MTQ1Y2RkMmFhODU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWE5OTk5MTA1YzIwMmZiYWJjMjliODI5MzBhZmUzYjg0YmI1NmU3NTJjZGUwMDUzZTBiNDVjYTg5MjhiNmFlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTdjZDUzZTc4MDJhNDZhMjI0MzQ5NjMxODdmY2RkNjc3N2M4Y2JhYTk0OTAyYzFmYTFhMzIxMTVjNzViM2VlNyJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L43-L53",
+          "version": "repo-lines-v1:sha256:564b103974923ff6edcb265fb103b558a60831bbad05295e85220ff81093603b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGQ3NjRhZjc3MWJjYTIwYzY2YTIyN2JlMjExMmIzOGMxYTYyYWZlYzg5NjU0YzBjMWRhZDg5YTdiMjhmMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljMmQ5NDM2NzJkOTlhMTU2ZTY3N2ZhYzViMDUwYmMyZjFlMDU2ZDE0MjJjNWFmZGIwZjkyYzEyNjA0ODM2YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlZWMwYTIyYWYzZDNiZjJkNGU4YmRmMjc5MWY5NWNkMjdmZWFiMDFlNDIyYWNlZDQ1NDhjMzlkNTQ3ZWUyMGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e0c159b7fa444169abc200ef9794cf6",
+      "statement": "The subway arrivals upstream origin is configured by SUBWAY_ARRIVAL_UPSTREAM (default https://k-skill-proxy.nomadamas.org), validated as a URL by the API env schema, injected as ApiOptions.subwayArrivalUpstream, and overridable per test app via AppModuleOptions.subwayArrivalUpstream. Only the origin is overridden; the adapter appends the path.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L8-L10",
+          "version": "repo-lines-v1:sha256:1637dd7fdca3c652f47b084071c6afd969ad82e1791d6b08b947306a8982b448:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjMwYTk5ODZlZDQzMGU0MjA3MGVmNzY5NDg2MDMzNTU5NGM2NjFiOTNmN2Y4OTIzMWQ1MTU3NjE0N2M5Njg0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjlkOGY5MjU4YjExMDU2ZDE4ZDU1NzZkM2I3MDk3NzljMzgwMWNjZDFkNDgyZjU3NDYwYTBiNjBmODkyMjVmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDA2YmVjYjZkZTY0Y2NiNjMzYmE3OWE2YjVkOWFhOTEyN2M1NzhkMTYzNzVlMmI3ZTFmMzJlYTczOGYzYzVkYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTEyMWZlM2Q5N2M2YjI4NmI1ZDg0ODliMmRjNDU4NTFiZWNkZGI5NjY4OTJjZmMxMzhmNDU2MTUxY2I5Y2VkMCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/app.tokens.ts#L23-L36",
+          "version": "repo-lines-v1:sha256:35bb4e942163459a7974a311ac2e5fb637bed0efc06b8fe1b9452c8aaf224dea:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyMzU4OTljODI4OTAxNzY1ZjU4YTAxMmVmMmEzNzUyZjBiNDc1MTU5YjBkYzE0MzFkZjk1M2U1YWE4OWEyMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0NDA3YTY4N2JjNjczMDFhMzUyZTJlOWNhMGFiODIzOWM4ZjY0YWU5YzdjMWMxYjE5NGExZTc1Yzc3YjFhZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0Y2M5NWRjOTEwZDJkNjY2ODgyZTVjOTJkZWU5NTcyZDIwOGUzMTkwODg4N2Y5OTE3YzgyNDBiNDJjODNkNWYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L12-L15",
+          "version": "repo-lines-v1:sha256:411e0469ec8f1df8f820720628db73e6ac30af254b7c40903b1fe45e0df00135:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQwNDJiYmE5MDRmOWUzN2I3N2UzZjFlMmRmYjY2ZGI2Y2VkODk5MWNkYzE1MzU3NTZhZTAyNGIxMmE0MDY2MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDM3YjM0Yzg5NzQzNDZlOWNlMmMyZDQ4Y2Q3MWYwZmM3NWNmMzI3ZDRhNDIyNGQwZDVkMTAxOWUwYjEzMTE1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjQ0MDgyYTQzOGY1YTc2ZWNmZmZiOGQxZGE5Zjg3NDdjMTllYjkwZGU3NTM5ZGI2MjA4MzM4NDIzMGE3NDFjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTRkMjA5MzBkN2Y3MzBmYzNjMWM4YzcwY2I5ZTcyNGZjMTc4ZWU5ZDViYzkyZDY4NzVkMmRkNGNhMWIyYTIwOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L9-L11",
+          "version": "repo-lines-v1:sha256:5f7bb8ad6f7218cc43dc25890a51739a3840a143b9dd36030b84111d432e2570:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc2YzAzM2QwMTZmNzRjMjJmZmZkMzkyMTNjYjI5NTVkMGYxYTY3MGJmOWJiNzk5NjkzMzdlZmMxZjE3ZWI1ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUyM2VmZjgyNGYwMzY3OTJhMTdkMjUwYjljYzcyYWVjMWY0NDZhOTk2MjI4NzM3MGI3NGY0Y2NjODM0MTE5MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzM1MDY3YTgyMjQwNTc4YTA3NzBiYWMzY2E1ZmY1YzQwMDQxMTYyODk4MGYxM2QzYmMzOTJiMzIzY2NmMDQxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYxN2VkMTljYWZlNjI5OWZhY2VjNmU5ZmJjZGI1OTRlZmIwYTc4OWI5MDc1MTNlYjRmNjg5MmI2NGNmMTUzZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_473ac717ff304ff1b642e328e6fb94f8",
+      "statement": "The service worker never caches /api/*, so the two live arrival endpoints stay live even in the installed PWA — an offline refresh surfaces the retry sentence rather than a stale cached response.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L74-L74",
+          "version": "repo-lines-v1:sha256:bae314e15c091d94efd1df96e6cd043ba3602ef94e4f3b154f09248517ac8ed6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFlMzE0ZTE1YzA5MWQ5NGVmZDFkZjk2ZTZjZDA0M2JhMzYwMmVmOTRlNGYzYjE1NGYwOTI0ODUxN2FjOGVkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFlMzE0ZTE1YzA5MWQ5NGVmZDFkZjk2ZTZjZDA0M2JhMzYwMmVmOTRlNGYzYjE1NGYwOTI0ODUxN2FjOGVkNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmU1NzM1YTMyYzU1NTAyNDExM2U3Y2Y4YWM1Njk5MTBmMGRkNDFmMjYxMzU3NGIwNjViOTg0ZjdmYThmNmUyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWIxYmM1YmM0YTIzN2Y1NzhlNmFmNGE0MTVkMDY0N2Y5OTEwYjAzYjM2NGUxZTI3YzFmMWRiYWE3NDNkMDNiYSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

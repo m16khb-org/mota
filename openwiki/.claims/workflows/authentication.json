@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ffa4eef6ab7f0756527db26313cad2db92b5d3b7bae43fc0d0d686bab16ae908",
+  "claims": [
+    {
+      "id": "claim_8cff4f08cb6145839991500a1931220b",
+      "statement": "Mota owns its Google login end to end: an authorization-code + PKCE flow against the shared Supabase project coordinated by the API itself, because the shared auth-gateway keeps host-only session cookies that never reach mota's origin, so mota exchanges the one-time login code for its own host-only cookies instead of forwarding gateway cookies.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L22-L25",
+          "version": "repo-lines-v1:sha256:54ffa8e97b2f8e2610bf836d48341cf602acb6ff4b6b066ffe023eca63027a41:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmExNTViYzQxNmYwOWUxZGZjNThmMjNlMDUyYWEwMjc3YTcyYjAyOWYwMTdiNDNlZmNkMjMyZDJkN2JlZjdmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODZlMmUxMjI1ZmFmZTA2ZWE0ZTEwN2E1MzM4ZjliNmVhZjQ3ZTkxZjhlNTc0MjU5MzljOTBkMmJkNjg1NWJkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzg4MjkyZWEyMTYwMWYzZDhhMGMzMGI3N2M2OGVhYzNjNzNiOTQ2MzIxNDEwOTk4MjUxNTU3MjAyZDAzMmQ3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzA4NzQxMzg1ZTYxYjI4NDdlOWEzZTgzMDk0ZjlhNDA3ZTc3ZjQxMTQ3MTYyN2M0MDljZDczYWI0MjczNzJmOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L44-L52",
+          "version": "repo-lines-v1:sha256:a90b23905989bc80f05ef8d3803c7ea98aa18678cf76e8eb57305bd1f62c4c7a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQyMGI2MTJhMGI4ODg5MGJlYWUyNzc4ZDU1MGNhMWM4NjUwOTMzMDA3YTUwNDlkZWNkMzA2Zjc5MGU4NTU3MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWQwOGQzNzNmMjY0YTk1OWI3MDI2N2E1YjlkNjJlNTI0NzFmNjlkZjM2MGFjNDhlNmIzMTU5YzA4NTVjZjU0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI2NWM5MmFiMGQxOGQ4YjMyMGEyMzlkMDFlYjg4MjIyYWI3NDY2MTE1MzlkN2Y0MzU4ZDBhZmU2MTRiZjgxMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_528eac7326c84c36ac3e0f4e8a5220ca",
+      "statement": "GET /api/auth/google validates the optional return_to query as a same-site path (must start with / and not //, otherwise HTTP 400 with no state created), generates the PKCE verifier and OAuth state, writes three flow cookies, and returns a 302 to ${SUPABASE_URL}/auth/v1/authorize carrying provider=google, prompt=select_account, redirect_to=${PUBLIC_URL}/api/auth/callback?state=<state>, code_challenge, and code_challenge_method=S256.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L178-L190",
+          "version": "repo-lines-v1:sha256:dcccd4ad29ac28f895d572a0d8d6a860e3cebfb49573ce0fd51896c8c178737b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOGE3NGUxMTk0YmNjODExYTRmYzBiNjM2MjQ1Yjg5NjQwMjkzM2VjYjcxN2Y3MTIxNzk4ZjFmYWMwMzQzYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0NTU5Mzg1ZTkwYjYxNTYwNGNmMmE5ZjY5N2I3NmI2ZjIwOTI0MjFmOGU1ZDE4ZmM4MTZlYTdkODRiNjUyOTYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L57-L90",
+          "version": "repo-lines-v1:sha256:283d6b75064a3149bfd59be2e898819434c6b0f77129dc18175a974e60d9b102:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjQ1ZWMwYzliNTA1NDg0MjNlYzM4OWU5OTJiNDUyOWIwMGMzMDgxZTQxYTNkODdlZDZiMWUxZDE1MGQ3YWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3ZTc2OWQ0MmI4NTQ5ZTM4NTQ2YTgwZGViZmM4Yjg4Y2QxY2UyYjYzMTIzY2U2ODg2NzY5MGVlYzdiNDY0MDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2ZGMyYzdlYjAyOWY0MTVmOGY1ZTEzY2FlMTVkYWIwMmVkNjY4NDdmOGUwNDNmNjYzMWUzMTljMWVjMjUxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwMDc5MTljMzUyNWQyYjE3YmI5NDBiNTU4YjBlNzRkYTMwNjI1YjE0ZGJkMmZiNjhhN2Q1YjBmODc5OWFlN2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c7e07065e2740c49de6b7734dff46df",
+      "statement": "prompt=select_account is set on the authorize URL so Google always shows its account chooser instead of silently reusing the previously used Google identity on the shared Supabase project.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L31-L33",
+          "version": "repo-lines-v1:sha256:05b30ed8876e0a5bf94311c1a9716859c81719ef8ac74287161d754a776a8861:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzVjZDQ4ZmQ0Y2UxOWUyYTdjYWQ1MGZkNTVlNjMwNGMzMWM2NjMyMTY3ZDI5MjczMmYwZThmYWRiMTc4MTEyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzdkYjRmNTcxMjMxZGFkMzMxNzY2ZmMxNGRlYzQwNDNjZDQyOWRkMDNiM2Y3OTMyMzFjMWYyNTY3ZTNlNDQwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjQxZTJlZWJlYmY3OTExODAyYmFmYWUzMWUwZDZjYjg2YjU0YjE3NjlkYTNiNGMxNjBlMTI1YzMwOTE0YTQxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDA0ZDhiYWIxZTAwMGZmMzgwMWM0NWQ0YTU2YjY3MGM1NjRkYWZkYTA2NmM5NWI4YjM5M2JmMTQyYmUyNjk4YyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L76-L78",
+          "version": "repo-lines-v1:sha256:7fecc9f277850b3b9447efcf88ffc132750cf9257398f29c7ee6cf526ad93d79:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ2ZjYyNTUxMTNhZTQyYzBmZmVjMjBmM2QwNmZjYjEzZTZiMmU0ZWIxMDBlMWJkN2VkNzc2NGJhZjJhMTAzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmQ5NDMxYzA5ZTRkODU1NzdkYzM5MTZkMDVhNWI2MDUxYzJiN2YzOTExNjJlNGQwNjE2NzAwOTUxY2RhNDUzOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzhiMmQ2MGI1NzcwNTJlMjFiMWNiYzgwMWFhZmY4ZTU3ZjI1ZWY0MGQzMWQ4ZWY4YmU5NjZkZDAxNmIzMGZkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWZjMjk2MDNhMDAxNDZmOGQ4ODI2ZGU5ZWUwNGQwMGNhYWVlMzQxZGQzZjFmNTMzMmJjNjhmY2ZkYWFiY2ExMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_85e5955b4ed342be93d19bc9419fc42a",
+      "statement": "PKCE material is generated in-process: the code verifier and the OAuth state are each randomBytes(32) encoded as base64url (43 characters), and the code challenge is the base64url-encoded SHA-256 digest of the verifier; the S256 derivation is pinned against the RFC 7636 appendix B test vector.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/pkce.test.ts",
+          "version": "repo-file-v1:sha256:f980f83a7f4aeb6d543c3158b1a62a15564c0dc68ba33b242c988867467d33c6"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/pkce.ts",
+          "version": "repo-file-v1:sha256:e3ebdf459f0b54b2921838b07499a125a37108e47c3560dca720f51f05714dd1"
+        }
+      ]
+    },
+    {
+      "id": "claim_0bd8e1bcae22450ab54150808ebad56b",
+      "statement": "GET /api/auth/callback requires a code query param, a state query param, the flow verifier cookie, and the flow state cookie; if any is missing or the state does not equal the cookie state under a length-check plus crypto.timingSafeEqual comparison, all three flow cookies are cleared and the request fails with 401 AUTH_CALLBACK_INVALID.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L208-L215",
+          "version": "repo-lines-v1:sha256:626393a3eef19cb14235c193a2cf973c971b50f80ffb9c095a4292577ec1a1ce:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmI5MDU4YjAwOTUzNTliZmM5YjZhNDM1OGZlODFjMjUyNDQ5ZDYxOGQ3MjY3MDU5ZTM4YjYyOGFjMTc4ODRlYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmRmZWU0YTY4ZmIwZDFkMzA4NTU4ZGE3YTQyNDE5NTY3NDhkYzdkMGE3ZGQ2ZGI3YTkxYjRjOGQ2MGNkMTlmZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L87-L112",
+          "version": "repo-lines-v1:sha256:fb04b0c358b8fb59e80589bf7ffa8de9d5f671b50828cb7d3c09b0d0ba33d40f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxZTFhYTM4OGJhNjFkNmUxYmNhN2RiMzc2YzU1MjdiMGZjZjYyMjZlODcyNTRjMzc4MzQ4YjA0MTFlMDIyNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzNzQ2NmY4OWVmZWJmMjEwNWYzYjVlZWZiNjY5ZDgyNjQ1OTVkNzc3NDM0OTcxZDEzYzI2YTlmMTRiNmJjNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzOWY1NzYwM2NjNDc2YzM0NzRlYjIyOGIxMzc5ZTgxNGE3NTdlODg2YjVjOGRiODJmZjdlODE2Zjg3NDVhOTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_996dcfa36c874091ad784c6d56faf854",
+      "statement": "During the callback code exchange a SupabaseAuthError (provider definitively rejected) clears the flow cookies and becomes 401 AUTH_CALLBACK_INVALID, while any other error from exchangeCode — including SupabaseUnavailableError from a failed fetch or the 10-second timeout — is rethrown without clearing the flow cookies, so a Supabase outage does not burn the in-flight login.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L114-L129",
+          "version": "repo-lines-v1:sha256:06193ac165abe8d2275783a3a13a3987f7e7c66370f8e3757fba8d57292e8f4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3ODUxNmJlMWUzM2Y2ZmY1MTMzZDU2MGRmMjQ1Y2M1MTIxNDE3YzUzNWM5NWJiYTZlZDhkZmYzYzJlZmE4ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwNjNiZjJlNzlmMDBjMDliZmUwNGExMzVkZmRjNmY4NTk1ZjUyODU2MmIzMWFlNDIzY2ZkN2MxNGI2MDlhNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2OGFhNzljNGY0N2JjMjZlZmQ0NWFiZjNkYmI3M2Y0YjE4ZTdlMjFhZjY3ZGQ5M2I5Nzg4MTNiZDFlM2ZiNTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e7e9c23f196a47f6a4a5926261ff5fbe",
+      "statement": "A successful callback replies with five set-cookie headers: three that expire the flow cookies (Max-Age=0) and the two session cookies; the redirect target is the mota-return-url cookie value when it is still a same-site path, otherwise /, so a tampered return cookie cannot produce a cross-site redirect.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L131-L139",
+          "version": "repo-lines-v1:sha256:658c262dea33a4dc8b415d91a7932bd427b68a4beb9246606e2d081e9fe1a0e2:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjU4ODU2Y2UyNTBkNDhmMjQ1MDVmY2NiNjJkM2Q4MTJmNGJhYTZiYzEyMjg1OGFlYzAyMmY5NjcwYzQ0Y2VjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFmYTI0NTExMTczNTQwMTI0YTQyODVhMzI4NDgwNTFiYTJmNWZhN2VhZTQ1NTFlZWRjYzllMzIzMDM3ZjlkMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODg3MDc1YjJjOTc0MDBhNTI1NmQyZDgzMzU4Zjg2MDhiYjU1ODgzMjRjNmIzNWM0NmJkZmNjMjljYjZlYTg0OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d2d79694fd1643029ebd6f60ca873654",
+      "statement": "All auth cookies are host-only: HttpOnly, SameSite=Lax, Path=/, Secure when the origin is https, and never a Domain attribute; the __Host- name prefix is applied only when PUBLIC_URL is an https origin, with unprefixed names over plain HTTP.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L35-L39",
+          "version": "repo-lines-v1:sha256:b58fb4873c895ed18fe2c164e3768463c19cf0a0dbbedaa7e38ebc7fdbbede02:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJkODE4YmY4NTUzZmJiNWY0ZWI4Zjg4MDliOTI5MjVmZGU0MDVjOTFiODJjYzdlODliMTBlMDdhYzI2ZjQwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODAyZGRkMGZjNzJkOGYxYjQ5ZDhmNjdkMGM2MWU0Y2Q3ZTc0ZjhkNDI5MjI3NDM3YmQ3NTE3MjExOWQ4YjNhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjdiZmQ1YzM5ZmZiZjU0OGE1ZTQ1MDQzNzZkYjJiODc5ZDcxYjQzZTBkMTM4M2IwYzI5NWQ3MTYyNzlmM2NhZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTEzMzU3NjQ0YTBkZTMxNjBkODk0ZTY1MzAyNGE2NmNjMTUwZTcxOWM3M2ZjMTI2NjJiZDhjYjY0NDkyOTQzNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L124-L131",
+          "version": "repo-lines-v1:sha256:2e68c58cd8631c4c1c0542cf13519cc06b5f839cea384824ed97ba502af7637f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYzNGM0NDdkOTE5OTNlYjM3NGU2YjUyOWI4ZjA1M2JhZTBiMjRhNmMzMGY3ZWNjODg0NGU1OWUyZDgyZGE2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk0ZmMwYzE3M2QxZWMzZmM1MDFkN2RmYTkyODU1MDFjNTI3Y2ZiNDcxMjU4M2RhM2NjMzYxODA1NjZiNGJlMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L30-L49",
+          "version": "repo-lines-v1:sha256:8b31a7aa0a89509ffd41fb5ec1576cf8d05982d694c743c761853dc64a5ed69e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZDJmOGFlYzZkZTAwNDUyOWMzMzYzMjlkNjIzMDZkNGIxZTZjZDUyZTllZTAwYjJjZDc5OGY1M2FjZTMyNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMTU5MjAzMzYzMDVkNGJiYWQzMjA5MDdmZjM0Y2U0ZmZiZWZmNDk1MmE5YTk0MjdlNzM3OTY2ZWJlZmU2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YmQ2ZWU3NjM5OWRiMmUxMDBjODY4NDRiNzY1NGYwNjljOGQzYzI4ZmUzMDNhMTIzMWYzMjNlMTk3OTY3ODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5577b29d84c840fca0fc78e4ae61c338",
+      "statement": "Cookie lifetimes: the access cookie's Max-Age is the Supabase session expires_in, the refresh cookie gets a fixed 30-day Max-Age (2,592,000 seconds), and each of the three flow cookies gets a 600-second Max-Age.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L62-L108",
+          "version": "repo-lines-v1:sha256:4e2f06f2d9b55212927f99981e3248bfc58765723457560d23175b7e77bbe39f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkOWE1ZGY1MzRlYTQ5MzU3NTdlNGVjYWRiZTBkZDdjNjJkOTE4OGQxYmQ4ZmQ1OWI3ODFjMjEwMTI4YjMxNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5NjBjNTJhYWMyZTAwNzI0MGFkZGU4MmVmNDI3ZmJkZWI5YTg4MGJlMDQzZmViMGE2Mzc4N2RmNGJjN2QxMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2YmM2NGRhOWQ5NTdjMjQ1MTNmOGU1M2VmZTMyNTE0ZGIyYmUwY2U0YTBjYjlkNzhkNTJjODBhNGNiMzc2YWMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L9-L10",
+          "version": "repo-lines-v1:sha256:04aeb43980af27b3cb247502b34082ce98ad3c7ecb2ceccbac5d90bf269e8bb1:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQ4OTU1MDIxZmE0Yzk1YTg0MDhhMWM3YmEwM2JlNjJlYmY0ZGUyNjI3NTEyMWIxOTM0OTYyOWQ2ZTZkYWIwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDczMDAyNDllMjdiYTZmNDhlMjAxZTViMTUwZDU0YzgyYjU1OWUxY2UzNmYzMjM5YTAxZjA1MzcwZjk5ZDYyNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDFlYmU0YjM2NjNkMTI0ZmRiODlkNmQ0YzQ3YjM4YzY0ODZhNjUxZWVlNjJhYTE4ZjBjMTQ5MGRiYWI4NjY0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGE2MzBkNmVhYzEwMjE1NWIwNTNmMmJkNGY1NGIxZTM5ZThlYTFiZGNiZDgxOGE5Mzk0MGRmODAxNDM3MWFjOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_cef33637717a43439919224e65c4b0ea",
+      "statement": "verifySupabaseSession's precedence is strict: a locally verified valid access token returns the AuthUser with no network call; otherwise, when a refresh cookie exists, the session is rotated server-side via the refresh grant and the fresh cookie strings are relayed through the optional onSetCookie callback before the new token is verified; SupabaseAuthError from the refresh yields null, while SupabaseUnavailableError propagates.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L31-L76",
+          "version": "repo-lines-v1:sha256:a468472511d983049356aa3f11e1c6e62322b0fbe9772649eec647de630a4c7f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNzNhNzVhYTVhYTJkODk5MTkyZTcxNTg2OTdmZDUwNmE4NzJjZmJjNWZhN2QwNTVkY2U5ZTExMWMxZTcxODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4YWVhOTViNjhlYzQ5OTkwMTgyOWQ5Yjg2MzczYWRiYzYxZDY2ZjJjNmY1NmRjMWQyNDBlNDQxNzQ4ZTY3NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8da53af0246b4db2b2bc5569d7209b8b",
+      "statement": "Refresh rotation has no dedicated endpoint: controllers pass an onSetCookie callback that calls reply.header('set-cookie', [...cookies]) — in AuthController.session and SettingsController.requireUser — so an ordinary request such as GET /api/auth/session or GET /api/settings can rotate the session and return fresh cookies alongside its payload.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/auth.controller.ts#L29-L35",
+          "version": "repo-lines-v1:sha256:ecc4b3277484686b23898363d64a9796a7444ec8a7f81fe0f7cc46a61a565278:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTFkZjg3YTQ3MzE2YzcwOGM1NTAyMDk4ZTlhZjZjNDQ1MzRlYjgwYmVhZGNmNjA2MzAyOGVmY2E4NTkzN2FiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdjNGE5YzNmMmY3YzM4Yjg1NjQ4MDAwZWQwMzFmNzJlNzVkYjc5ZDJkYzE0ZjZmZWUxMDJjZmQxZWZiYjg1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2FjNGJkYWYzOTJkYWJkNmQwN2I5ODA0NTc3ZTBlZmRhMGYxMGY5ZGYwNjY0MTQwODQzMGI5ZDI5NTllMDNkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzVhYzg4MGVkZWQ0MTAwOWY3NmUzNGRiZThiZjIxZWQ4YWYxMzQyYjk0NjY3MWExZjA1OTMwN2ZiY2NiNmQ5NyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L67-L68",
+          "version": "repo-lines-v1:sha256:93895f14d3c7d76ef1af0910d388cdcb744c467b1f091ab59b681a6756c7b9e6:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTI1YzU3NzIwODkwZmYwODZlYzkyMTgzYzg0ZGU5OWU0MTU1YTBmNzQ2ZmI1ZTNlNDViZTM2MmFiNzUxMmYxYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDRhMTQ1ZjUzY2Y5MTc5Mzc1NjA5MjM2ODAyY2RkYzA4MzI2YTY2NzU0NjRiMmY3N2QwMmI1Yzk4ZGYxZjgxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWExZDk1NjY5ZTdlZDk5MTU4YjEyZTA2NDZlNmEzNTUxZWY0NjkxMzY1M2M4ZDdmMGNiMjYyMThiYTRhNGU1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDQyZjgwODg0YjVhMGMzN2MzMWQ5MGUyOThmNjA2MWEwZjljZDEwZTI5N2RhYzViMjQ1NTIzYTQ5MWE3OWYxMyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L51",
+          "version": "repo-lines-v1:sha256:2352525858eb34d3789ccfd15236a122228d84e5af7f77876c573627b117fb7c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTAzMTAzMTBkMjM0MjA4MTVhOTgzNjI2MTZjZDZkNmJiMmQ3NTExMDEzMWM0MjdlNDIxODc1Nzk0NGU1MmFkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGQ4ZjYwNTM3NjZiNjBkZjc4OTBhMjcyZDAwY2U0MzM0NTNlODBmOTA4MGZhZGIwMTNlMzZmOWZhZGIxMTJkZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzVhYzg4MGVkZWQ0MTAwOWY3NmUzNGRiZThiZjIxZWQ4YWYxMzQyYjk0NjY3MWExZjA1OTMwN2ZiY2NiNmQ5NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f6131e5b51743d59c272cf946a01795",
+      "statement": "A freshly refreshed access token that fails local verification throws SupabaseUnavailableError rather than returning null, because a token minted seconds ago should verify; this treats it as broken infrastructure, not as an anonymous user.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L68-L75",
+          "version": "repo-lines-v1:sha256:cdc1402f0a3477dab56acd4e7f66c935b283d8c63e158411c1993d26305feb72:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDRhMTQ1ZjUzY2Y5MTc5Mzc1NjA5MjM2ODAyY2RkYzA4MzI2YTY2NzU0NjRiMmY3N2QwMmI1Yzk4ZGYxZjgxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjVlMTNlMjdhMDBhYzU4YzJlZWYyMTk3MzhiMjUzZWU1Y2VkMzUzMmE3M2NlYzE2YzEzODY4ZWU3YzI1MTNmMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzY1ZTE5OGFiOGE3NjEwNjRlN2JhNDUwNDM2MmFkOWFjMjNjZmZkZWRlOGUwNGIzNjgxZjQ0Y2QxYTMxYmMzMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2bdee7d184fd443280ec7f373799711c",
+      "statement": "verifyAccessToken enforces local verification with no per-request gateway call: ES256 only, issuer ${supabaseUrl}/auth/v1 (derived from the same base URL the client uses), audience 'authenticated', a literal role claim of 'authenticated', a required non-empty sub, an optional valid email, and 5 seconds of clock tolerance; the JWKS resolver is created once per JWKS URL for the process lifetime and cached in a module-level Map.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L37-L39",
+          "version": "repo-lines-v1:sha256:0075a143e458524be6555573cc1edabfe4218cd2fd8032d70aa88c0892d2ade0:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzRkNzZjYWVkZjVhYTc4YWMyOGYyNDc1M2U2NzUxYjY3YTVlMzA4YjViYzViNzE5ZTJiNThmOTdhMWI0ZTVmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODAyZGRkMGZjNzJkOGYxYjQ5ZDhmNjdkMGM2MWU0Y2Q3ZTc0ZjhkNDI5MjI3NDM3YmQ3NTE3MjExOWQ4YjNhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDA0ZDhiYWIxZTAwMGZmMzgwMWM0NWQ0YTU2YjY3MGM1NjRkYWZkYTA2NmM5NWI4YjM5M2JmMTQyYmUyNjk4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTEzMzU3NjQ0YTBkZTMxNjBkODk0ZTY1MzAyNGE2NmNjMTUwZTcxOWM3M2ZjMTI2NjJiZDhjYjY0NDkyOTQzNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L43-L47",
+          "version": "repo-lines-v1:sha256:59f579693fe7c325138c0b29cacc061a413943ba50d6daa87a04f0b816bd89db:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2I1YWFlY2RmY2RhMDM0YTQzMzBiMmQ1MDFiYWRiMWU5MTk4MmFhNDcwZWZlNTg5ZmMxMjAzNTY4YTkxYzcxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJiYTk3NWIyNTQ5ZDliZDRmMTU0NTU2NTQ5NDkxNWE0NWViYzdlMmMzYjY5M2JhNDNlYmVkN2FlNDBhMDFhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQwMjE0ZmVmMzliYzRlMzk2Yzc5OTdmMmQ5ODEyMDVhNjk1MWNjMjdkYWFlZjJlYzQ1MjQ5MmQxMjcxZmZkYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzgyZDc3MjYxZmYxZDkxYTc0ZmIyMDhiZGQyNTliYmY3NzY2NWFiMzMyNTRlNjAwZWMzOGY4NjllN2YyNjE3NyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L36-L54",
+          "version": "repo-lines-v1:sha256:57aa2cec6d073b42c1a7595df9ee4e6cf7a0c45200a2daed22f6b9024a90cd3d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMzFjNDA5OWE2OWQ1ZjhkMmY3NTYwMTE0OWEwNGY2MGRmMWUzM2NhYWY5NDdmMTBkMWI0ZTgyMDI3ZDA5ODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3YTNjMDhlMjBlYjM5OTczODk3OTBhMDQxNGMzODljNTNlMDNiODE0ODJkYTlmZWIzZTYxYmE2M2JiZmNmZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0ODMyYTAwNjg3MzQ3Mjk3ODdhOTgzMDg1NTNkNGJmMjNhZWU1YTQ0OGEyM2ZlZjVmYmUxY2JhMTQxNDUxZjIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L6-L29",
+          "version": "repo-lines-v1:sha256:7f03a583727cd4da9ff6a59d2bc7cddf8330ab5bfadccca3be8dab551de9781c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxNjY1ZjcwMDAyMWVkMmQ3NTAzMmM0MmQ5OTk3MzE5ZDI5MmMwN2NkM2JjOTZlMjliNDg4MjZmYjY5M2FmYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiM2MwY2Y0OWQwMTM1NjYwZDY2NDFhNTc1YTdmYjU5ZTRlZTk0MjNmNTcwNDMzODFjYWI2NzQyOTJiMmM1NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4ZjdjYWIyNzQ1OWU0NDg1NDA3NWNiZTdmOGI4ZjEwZDI5MDY1Zjc2YjhjZWYzZmE3Y2EzMDA3YjY5MDc5OTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6cdcb76cbcbe4ed6ba67e8e4b4617a0f",
+      "statement": "In verifyAccessToken any jose error (code starting with ERR_, covering expired, forged, wrong-audience and JWKS-miss cases) returns null, while non-jose failures such as a refused JWKS connection throw SupabaseUnavailableError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L16-L19",
+          "version": "repo-lines-v1:sha256:281294427a3236276a76c3f30bb8cbd87df5ea29407625605ffd1bc75e6b3834:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjcxYjExMDU2ZDYxN2RhZDc5MWE4YTE4YTEzODcxMmIyNGRlMzg2Zjk1M2JjNmU2NzM0NzZhOGM5YjRmZmQ3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmI1NzUwNjZmODA2ZDg5Yjc3OTBlMzkyMmE2NzliMjZkMjEwNDA4NTdlM2RiYTFlZTU0MDIxMjBhZjVmNTY5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2RmMWM1NTYzZmM2YzhhYjIxNzNkNTlkOGRmNzYzZTExMGRjNTQ2ZjUxNGNiMjM0YjVmM2UyZDMxOTIwMjViMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L49-L54",
+          "version": "repo-lines-v1:sha256:69b19aeeff030750c5bb152af803c087875fb53d18d31c1803ab383e76633f75:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGVkYmY4Mzg3NTM2ODk2NmYzMTNhZTYzOTUzOWM0MDM3MDA0NWJhNTNlMmUyY2VlOTNiYjY3ZDVkYTE3Yjk4MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDQ3NTViOGI3OGZhYmUwOGVhMWE3NzMxZmQ3OTU5NmU4ZDM2ZWM3ODNjODhmZmM3OTRlZDQ0YTU3MmRlNGRlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQ4MzJhMDA2ODczNDcyOTc4N2E5ODMwODU1M2Q0YmYyM2FlZTVhNDQ4YTIzZmVmNWZiZTFjYmExNDE0NTFmMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_74ea97e89d094ee6b1e1e2043528234c",
+      "statement": "The verdict is translated per controller: a null user is 200 { authenticated: false } on /api/auth/session (anonymous is a normal state) but 401 AUTH_REQUIRED on /api/settings, while SupabaseUnavailableError always becomes 503 AUTH_UPSTREAM_UNAVAILABLE with the same Korean message in both controllers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/auth.controller.ts#L24-L45",
+          "version": "repo-lines-v1:sha256:90bc9a2ab11da4f2ad4c7d5adedf0f62b5741efec7f27b8876e53ff0d7d813f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkNWI2NmM1OGMzOGY1MzJmN2M3NGM0MzZhYmI2MTc2ZmM2YjkyZGIwNjY1MTViYjIxZGY4ZTI5Mzc5YWUyOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZjkzZWExNmRhMjk1OGY4NmQ4Y2EwNjk3OGY3ZDcxYzI1NGVkYWM1ZTRhNTYxYWM4ZDg5ZDBiYTVkZGNkZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/settings/settings.controller.ts#L43-L68",
+          "version": "repo-lines-v1:sha256:5e0985e38fa0c640ab717554ddb177a8cc475d1346fa0caa4579b052ec8ca3f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzEwMzEwZDIzNDIwODE1YTk4MzYyNjE2Y2Q2ZDZiYjJkNzUxMTAxMzFjNDI3ZTQyMTg3NTc5NDRlNTJhZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkOGY2MDUzNzY2YjYwZGY3ODkwYTI3MmQwMGNlNDMzNDUzZTgwZjkwODBmYWRiMDEzZTM2ZjlmYWRiMTEyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyYWMwZDBjZTg4NzI5ZmFmNDNkMjAwMWU0ZmJlMzMwMzM0YWIxN2RlZDE0NmUwNjE2YWNhZTgzMjY5YzVkYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4505d9f5d00948089e837a418c9ac204",
+      "statement": "POST /api/auth/logout clears both session cookies first (two Max-Age=0 set-cookie headers) and only then calls the Supabase signout endpoint, and only when both access and refresh cookies were present; every revoke failure is swallowed so a Supabase outage can never fail logout — the worst case is a Supabase-side session outliving the cookies.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L141-L165",
+          "version": "repo-lines-v1:sha256:56b4533d48fbf66a519ef3cb4be311e5f1c6e0cdeaabf1b59fa0ab13d15f4654:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZjgxMWE3NmNlMjBmMmY0Yjk5MGY3ZDU3NDEyODNmYzA3ZDUxMWFmYzU0ZWFkYWEyOWVjMmY1YTU0NzFjNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MzUyMTA0Y2Y3NTdhYWJmODA2OGNlOTUxZDM5MzgzZmEzYzM1M2I5MjUxMmQ0Njk0NGMwYjUxMTc2NTA2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0N2JiMTJkZTNmMDBhZGQxY2IyYzNmNzZlYTU1ODZmNjI5NWI1YzE3OTM0N2E4MTZlZjdjMTA0ZTE1NjUyYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a6e1961155a64d0aac2bd2232a438aac",
+      "statement": "An anonymous logout (no session cookies) still returns 200 { status: 'ok' } with the two clearing headers and makes no call to Supabase.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L150-L164",
+          "version": "repo-lines-v1:sha256:fbaeef6825cd73eb721d64f68eee553f117169a4aad3069fe0834dc4daaa6e79:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkOWRmOTU0MzNjYzZjZDQyNTJlNGRkMDAzZTQzZjVlZGQxMGUzYTVlNjA5NmNkOTBkMjRmNWUxYjNhMzk3ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNWFhMWE5ZDJlZGVmMjNiZDhhZWQ3NjVmMzM1MjAxZjEwYTllNTgyNDdlMzRhM2RkNTIzNTBmZmM0ODA4MGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MmU2ZTkxZDRmYzEyNWE1MGE4ZjQ3OWI3OTBmYTdmNmViMDlmMTliZGNlNjBmYTMwZGFmOTRjMzk2ODYxNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjMzY4NzI1MzI1YjViNzBmNjRjNWE3NzM4NjE2MmIzM2NlOGQyOTAwOTMwZmMxZjFjZDQ0OTYwZmQ3M2I2YmQifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L242-L252",
+          "version": "repo-lines-v1:sha256:29712ade523bfb080f7fc4c4169378abb354e3dc6eb275af8101f269cd98781d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNTQ1MGE4OTBkYTI3NDdkYWM0YjdkMTA5ZTg5MTJhZmQ1OTc3Y2VmZDU0YTZjODhiNDBmMWQ0Y2QxZmRiMWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MTQ5NmNkOTE3OGQ0NDI0MzU2MDczNGEyY2I2MGE4YmVjY2M2ZWM4OWJlOTExODIxNGVhMTg3YmZhOWUzYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NzljMjIyYTQ5Yzk2MGU5NGM1YzU2NzBhOTZiMDYyZDIyMDdhNGI2YzU3NDYxOTA1MjVlNTM4MzQzMjBhMjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e57fe923fad74333abb1ed95f488f6f5",
+      "statement": "The web useAuthSession hook probes GET /api/auth/session once on mount with credentials 'include' and an 8-second abort, parses the body with authSessionResponseSchema, and distinguishes a genuinely anonymous visitor (authenticated false, error null) from a failed session check (authenticated false with the Korean error message).",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useAuthSession.ts#L34-L81",
+          "version": "repo-lines-v1:sha256:00eaf85026ffbdad0d1ba458a4417acfd425cd4a308fbb7d53a5f70455b8cd31:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4NzYxNTM4YmI4MDFhZmJhMTAzYmZiYThhYTIxNGQwZmUzMTQzMTUwMjk0MjNkZTUyMzIyMmI0OWRiZDQxMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjNmZhZTk4N2MwMTgyNGNiMzU0MzVlNGNkYzU3MTk5MzZjMDU5NmVlNTRjNjZmYTdmZDNiN2YzNWRlYzAxZmEifQ"
+        },
+        {
+          "resource": "repo://packages/contracts/src/auth.ts#L10-L21",
+          "version": "repo-lines-v1:sha256:ce0612bc3948e9d4d2db22fe44ac2dbb0002ec6df8d5e501bb3ff487b7cab639:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZTJjNDQ2OTQ4NzgyZWVlZmE4ODNkZTZlNjZmYzZkNDI4ZTZjZTlhYmE3N2I4YmRkZTZmMWVkZmI1OTY5OTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlMTRiZmIyYjA3NDI3YjI5M2MwMzg3ZTQ5YjA3M2RjNjNlNjM4Nzk4NWVjNTkzNzQ3NWUxYjg0MzVkMWQ5ODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1OWU4ZWNiNTk1MGMzMzg2ZjVkYjJhZjYxMzI1NTg2MDJiYjc4ZDcxOWFlMzEwZGYzOGRiZDE5NDRiNjA3ZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be2941838af0496e894d6105bf878145",
+      "statement": "useAuthSession.logout() sets the anonymous session state synchronously before awaiting POST /api/auth/logout, so the UI flips to anonymous before the round trip completes; a failed POST is swallowed and the session may be restored on the next load.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/hooks/useAuthSession.test.tsx#L77-L110",
+          "version": "repo-lines-v1:sha256:559421d35d3962448f9cf360dde42cb6d987d33df7bf758a2fb460accc39f319:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0ZjQ3MjBlMDcwNDA0YWI2YjU4MjRkMTY1ZWMxNmYxZGZlM2QzZTJjOGE4MjI0MTIxOTJlOGYwNDQwNTNhODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlYTJkM2ZhYzFhMTlhYTE3MjJiMDVjYjA5YzhhNTg1ZTRhNjVmNDViNDYwMmE4NDgzODEzNmJkOTQ1MjRiNGUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/useAuthSession.ts#L83-L95",
+          "version": "repo-lines-v1:sha256:4b83ef0bac94ba0618e1573d7ae6363e993615f3358d4695dbd51aca36c7c4bc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMjAzYjE0MTRhZjczMjc3NzU0Y2I5ODE2NjljNDEwZDEzMDE3YzBmOGJlODhiMmYyZDFiYjc3MGJjMWE2MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0YzFjNjc3MmRiNWY0ODViNDVmYzVjYTE1ZTkyOTk4N2E4MDFmZTJjOTNiNzExNmNkODRhZTI5MWJhMjZmNDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmN2Y2NjVkNWUzMjdlMDliZTk4NGM0MTFhNTQ4MjcyMzlkOGUzZGU5NzM4YzlmYWJkZmVjYzhkOWU1MDVkZjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_35d815388ebe4908b93568fc04abebb5",
+      "statement": "The GoogleLogin control renders three states — '로그인 확인 중' while the session check is in flight, an account chip with the verified email (falling back to '로그인됨') plus a logout button, or a 'Google로 로그인' link to /api/auth/google?return_to= the URL-encoded current path and query so login returns to the view the user left.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/components/GoogleLogin.tsx#L24-L61",
+          "version": "repo-lines-v1:sha256:918ced443c89531295f6afd727c24de86cc0cf3eb339f01665c0e596b7e689d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMTliMGE4MWM0MDBmNzU2NTA1NzRmZDEwMzg1YWIzNTI3ZTI1N2MwZmQ2OWQxZjBlNDQzZWY0ZDA0ZGQ3ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5NDk5ZTkwODM4MWUyN2NmMDY5MTA3YTZiZjNjYmE1ZDNlNDVhNmFjOGJiZDljMDU0YzMyYzNlYjQwNzlmMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ec9b62c00de04db791ca53e3c78ee105",
+      "statement": "Configuration: SUPABASE_URL and SUPABASE_ANON_KEY are required by the Zod env schema, PUBLIC_URL defaults to http://localhost:5173, and trailing slashes are stripped from both supabaseUrl and publicUrl so the issuer, JWKS URL, and redirect_to callback are canonical; compose.yaml sets PUBLIC_URL to https://mota.m16khb.xyz in production, selecting the __Host- prefixes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L70-L76",
+          "version": "repo-lines-v1:sha256:06847254fcc1543d225fa88492372c8077ede6f56b13259b0f17187934b6c042:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZkMzMwYzgyODA4NDRjYWIxZGYyOWIzOWU2MTFiMDkxOTdlZDY2YzM0NjFiYmZhYjJmNTdjMDBkNmMwNjk2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2E1MjAyNWI2M2I2OTgwNDM5NmI3YzQ1MzgxOWYwMzA1OGY2MmExZmNjZTM3MWZjMDY3NmM1M2IzZDJjMmU0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L9-L11",
+          "version": "repo-lines-v1:sha256:f44082a438f5a76ecfffb8d1da9f8747c19eb90de7539db62083384230a741c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjJjMzAxNDE2NGMyY2EzYzRkZDhmMWZjOTFmOTI5ZmE1MGFmYTc0Mzc4YTkwMmRiODYzZGI5Mjk4NzQ1NTc4NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY1NjQ4YWE0MzRjMzdhYTk2OTkxOGNhNWE2MjVhMzQ3MWM0YTFlYTFmNzllNmQxMDIzMzQxMzBlM2I5YjBiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2YzNjcxMzc2ZDNhZDcwOWE4OTNiYjI1MzRlZTNhNDZkZWE3MGNlNjBhOTk3OGY3ZGQ0MmQ0OGQ5MGU4MTMzZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTEwN2UwODNmZTZlODg2NTlkZmYzMzI3ZjEzMDc5NzZkNzVkMzJkZTYzMjI2MmMwNGMxNjdkZjA3ZjYyZDM5MiJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L12-L14",
+          "version": "repo-lines-v1:sha256:aec361fe81d6015d1ca17820ec50a837fcd4064301ec52ccd9afdcd04190bd11:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFlYzU3YzRhNDM5YzUzMGEzMDE1MDYwNGNlM2M5YjU3MTg5MGNjNjdhZjlmMDVkY2IzNWI3ZWYyYjBjOTZkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJhNzMwNjgwZGNiNDhkZjNlNjg3ZjMxYTNlMzE0NjFlYTY4ODkxMTNlNTJhMjBlZjYxMzcxNjc2MmUwMGZiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjE5NzBhMDBiZTQxYzY0MTIyM2MyMzJkZGI1ZTNhNGVkNmEyYzEzN2FhOTNjYzRiNjFhNjg5NGViODg2OWQ2NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2U3NmUwZjdlNWVjZTJiZGE3YzU4OWFlMjczNzY5OTVmMzI1ZmI2NmM0OGMyOTNlNjU1ZGRmMjhmM2MwMzJhYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8cd21b322e9244249394f29b561d009e",
+      "statement": "When AppModule.register is given no oauthConfig, AUTH_CONFIG is null and OAuthController.requireConfig turns every login attempt into 503 AUTH_NOT_CONFIGURED, and SESSION_VERIFIER falls back to a verifier that throws 'Supabase auth is not configured.' — so unconfigured deployments never expose a half-working login.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L113-L115",
+          "version": "repo-lines-v1:sha256:bf2f3b66addb3696e3731ab9481b2eaa95a9418513909bf8750f57262420b196:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhmZGNhN2NkNmU3NGI4ZTA5YzEwN2Y5ZjRhM2E1NzBjNGUwNjk4NWZmOTExNTJhZWJmOGNiY2RmMTIwZWNkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI1ODBlOTY0ZjgzYTQ3M2Y0M2Q0NDM4NDYyOTQ5ZDY4YjU2MDBmZGE3ODdmMTYzNzQ1ZDAwZGU4OWNiZjM2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L60-L70",
+          "version": "repo-lines-v1:sha256:f090eccd4f5f598eb1ab196dfb2b2a247fde09c4b041991d495fd28355bcc244:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjMjRkMmNiZWJkODRlMDNhOTk5Zjg1Mzk2M2M0MmFkNWU1ZmQ4MmQ4ZmE4NDQyOTNhOGM5ZTFkYzdhNzVjMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmOGUwM2I5ODEwMWYxNGQ2ODAyNWE2OTZiZDVlOWZiNzYxZGVmNGI2NzZmZDI4MmJhMGNjNGI4ODZmMTE1NjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MTcwMGY0NTFiMTY2YTUyODMwMDA4ZmYyOWMwNzgyMzcyNjZjZDU1ZTk4YTJiZDVmN2ZhYzRlYmQ4NWYyMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyYzk3MmJlNzAwM2FjZWQyZTgwNTc3M2I4MTdlYjcwNzE1Mjc5NTM0ODRkOTM4NWZmMmE3ZmMyNDkxNTU3MGMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L167-L175",
+          "version": "repo-lines-v1:sha256:d67287e2f3a79fdb5d0dfaf14f23c494d7fb3b505f8199d232a94e41773dfc1a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGJkMTIzMDViYWI4ZDhjZTQ1M2QzMDUyMmVkY2FiMzIwN2NmY2M1MTQwYzA0MTFmMzQ3YjdhMjU3Yjc4OGE3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQ0OWQ0YTQ0MDVhZmZlYTRiZmY3NzIzMTFkYjJjMTljZDA0MGNjMTYzNDFkMTBiOTYwNzI0N2Y2MWI5OWYwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTEzNWE4ODJjM2RmZWFmNTBmZjUyZDNkYmMxNDNmMmI1YmU3OTY0NTNkNGNmMDljNjQzMzFhNWI1ODMyNmEyZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_53471a6301254164a2f5883e30d29f61",
+      "statement": "Every SupabaseAuthClient call (PKCE exchange, refresh, signout) posts to the Supabase token/signout endpoints with the anonKey as the apikey header and an AbortSignal.timeout of 10 seconds; there is no retry or backoff, a fetch rejection becomes SupabaseUnavailableError, and a non-OK response or a body failing the strict Zod session schema (access_token, refresh_token, positive integer expires_in, token_type) becomes SupabaseAuthError.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L37-L58",
+          "version": "repo-lines-v1:sha256:895bd3b8fbbeac44e90fe8ce01d745edae2958a36f9c16ccd39e88a5b06dbb22:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyMjk0YWY5MWM4YjE2NzQ2YTQ1ZjUxZWQwZGNhNjM1NTMxNGM1MDBlY2MwNDk4ZThlM2I4NjhiMTlmMmZkOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3ZDk4MjRiOTFkNTE3NWM0N2M2MzhlNTRlNWM0NDEyZGEzOWIxYzRmYmViMjQxZTJjY2VlMDc1ZmMxMjgwNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMzVhZDI4Y2M5OGJhYzY0NjA1OTBiMWQ0YTkzNDk4MjYxOTA2YTVlNjNiOWU3MTllYzRkOTZkMDU3MDYzZWEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseClient.ts#L87-L116",
+          "version": "repo-lines-v1:sha256:06ff3323fa18e6562d0db25f51cfb6c4c14e81c50dbe113e4c5351578f46a779:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YzMwMzU1MTliZDY1YTBkODk5YzhkMDhjNTdkMzJhZjBmZWE2YzU0MjRhMzFiZjgxOTgwOWNiZTU5NWE5OWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_52450073fef247ab83b9123865bb6f76",
+      "statement": "The OAuth callback URL ${PUBLIC_URL}/api/auth/callback must be allow-listed in the Supabase project's URL configuration, so changing the deployment origin without updating that allow-list breaks login at the provider step rather than inside mota's code.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L33-L35",
+          "version": "repo-lines-v1:sha256:a7b8bff3952fa167cd03768d3806cbd5ee72318a4621a6e7c73fb5c5a73dc2e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzdkYjRmNTcxMjMxZGFkMzMxNzY2ZmMxNGRlYzQwNDNjZDQyOWRkMDNiM2Y3OTMyMzFjMWYyNTY3ZTNlNDQwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJkODE4YmY4NTUzZmJiNWY0ZWI4Zjg4MDliOTI5MjVmZGU0MDVjOTFiODJjYzdlODliMTBlMDdhYzI2ZjQwZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2E3MTNiMzhmYmUwYjM5MzRlOWUyOThiM2NiNmM1MDQ4MTM2NzhiOTA2MmFmYmU2YjliZWNkYzhiMTNmOTEwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGE4NTg3ZjM4M2RjYjVkZDkzY2EzZTk4MzQzYWYzYzcwNDhlOGQzZGVmOTg2MTEwZGZhNmU0NWIyNjk1NDM4YyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L79-L81",
+          "version": "repo-lines-v1:sha256:afc29603a00146f8d8826de9ee04d00caaee341dd3f1f5332bc68fcfdaabca11:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzlmYWEyZWUwNWY3MDQxZjI3M2ZhOGNiZTY3MTk1NTNlNTY5MGZhMTgzNTNhMGMxYzUxZmVlNWE4YjE3MTJiYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxMWNlMzMwMjU5NWFiZjc5NjZiM2EwYzk1NjY0ZjcyZDM2ODZkNzczZmQyYjdiNzQ3NTdjMDhmZGEzNzdhZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2ZlY2M5ZjI3Nzg1MGIzYjk0NDdlZmNmODhmZmMxMzI3NTBjZjkyNTczOThmMjljN2VlNmNmNTI2YWQ5M2Q3OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjBjMzVhZTk2ZjliODU3OGYzMWEyMWZmYzdlMmI4ZWRiZjE5YTcwMzZhNmQ5NzBjOGU3MmE1NTllZDk3ZjM3YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f10124f8de964ca4978b98b8aa27beed",
+      "statement": "The identity object that crosses the auth boundary is only { sub, email? } from packages/contracts/src/auth.ts; controllers never see the raw token or any other Supabase claim, and mota stores no duplicate user record.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L24-L26",
+          "version": "repo-lines-v1:sha256:53014ff20ff288dbcbe43b7fe8d79940fd8c76912576d9b5b97f4b39df93b00d:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjVlOTUyZWZmMzU2ZTVjYjQzMGRiZmQxYjBjNmMxMTdiZWRiZTE2MWEyZTc3MzE5MTRiMzgwZTc4MTk2ZWUwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjBkMzM4MzdkZGRjMDI0MDc5YzljZjg4ZTdjNDJmYTlhMjRkNWVmZjM4MjQzOGJhY2IyY2EwMTJmODEyMGY1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzNmZjk2NWNhNjljMWJmMjE5MjhkNDQ4Y2M3MGExMWY0NzY2ZjRkNTA3NTU1ZGJkNzFlMWM1OTZhMWVkZmU4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGZkYmRhYTI4YzRkZmI4ZjQ4Y2M2Nzc0NGI3OWY4MGQwOWNlNTQ4MDliMTQzY2I1NjM5NTlhMzdiNTFiMDQyZiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/supabaseJwt.ts#L55-L63",
+          "version": "repo-lines-v1:sha256:05ee6e020af51b51cc568a555aeb6f67b20e7a98d431dbcf1308ab5ef78b5076:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTc3OWIxNDFkYmI2MTk3ZWExZWI1OTUxZjgyZWI1OTRkMWNjNTllOTk4YTA1ZTQxMjc5NDIyYzY0YzM1ZmRlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTI5ZTQzNzExOTA1OTI2Y2VmMGViOTMyMTQ1YTc1ODVmYTIwMWU0OWEyOGFiNDc1YzZlZWMxZjljYjFiYjA0MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/auth.ts#L3-L8",
+          "version": "repo-lines-v1:sha256:6233b8f00a30b5facc81852cf0e2b80047798f684e7a5bb58ded1d29a518b3dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGYwOTBjNTgyMDlhNTJmZDE2NjY2YjBkYTU5OTdjMmMxMDVjNjk4NjA1Mzk5OWZhOTJhN2Q1MjgzNGE2Mjc1YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTIwYzYxMjI0MDU5MjJmNDJhN2Q5MzliYTA4NjAxMTJmN2NiZWQ3ODc3MzVlZjdkMWQzYjQ0OGNmYThiNTBhMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTI4YjBjYzA0NWQ3NTI2ZDFjZGIyMjU4ZGEwYTE2YTQ1YTBkNWFhOWI2NGU4ZDIyYWExZTRhNDlkNzg1ZWRmOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDc3ZWMzZTUwYzBjMzM5NjQ2MmMyMGE4MGNlMjgxYTYyOTk2ZmRlNmFmZWZiOTBlODE0ZmIzMDk0YjI5YWYxYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5e5a36a3dd594cd3acb8f814aa5362f8",
+      "statement": "The auth e2e suite drives the real Nest module against a loopback fake Supabase with a real ES256 keypair and pins the full contract: anonymous probes, local JWKS verification, 503 AUTH_UPSTREAM_UNAVAILABLE instead of an anonymous body when fetch throws, expired access tokens treated as anonymous, the authorize redirect parameters plus three Max-Age=600 HttpOnly SameSite=Lax cookies with no Domain attribute, 400 for cross-site return_to, five callback cookies with the refresh cookie at Max-Age=2592000, 401 for a forged state, logout clearing cookies and recording the signout, and refresh-only requests returning rotated session cookies.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/test/auth.e2e.test.ts#L31-L298",
+          "version": "repo-lines-v1:sha256:cb457d5ac1f85022d22010008277a3e839f5241edb3c57f5c83e2cc5e60485be:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmZjkxMDlmNTE3Nzg5N2UzYzI5YzYxYzFhMDlkZGNmYzMxOTY2ZWE1YThkOTEzMDY2NTI0MWM3MmQ5MjNiOTVkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZTEyYjYxMTg5NDNlMzBjMDA2ODMzZTc4MTYzMGE1M2IzMmY0MTdlZjVmOTc5NWMzZjEyZjMzMDgwMjRjNWQ5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIn0"
+        },
+        {
+          "resource": "repo://apps/api/test/fake-supabase.ts#L21-L69",
+          "version": "repo-lines-v1:sha256:17c272f371ce42fae3416e2e36524f46f1fb8d6618c6a6bee1037da873138dcc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiMjRiZGFiZGJlNzZlMWY0MTJiZjQyZWNiYTM2Mjc5OGZjMTcyODg5Mzk0MWE4ODExNWMyOTMyNWZiZDQxYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5M2NiMWE3YzkzN2E3NzM2N2RjMjY5NDY2MDM1YWVmZTJlNTlkYjA2OTAxNTQyNDQzYjIyYzZlZjI1MTZiYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2MmQ4YTg3N2Q0NzljMjUwNmJhYjAwMDY3ZGZiZWU1MzY4ZTEwYWEzNjIxZDdjMDQxYjlmNDdkZjBhN2JjOWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c77e7514666d4fe880377b10293098c4",
+      "statement": "The PWA service worker returns early for any /api/ pathname, so session probes, the OAuth callback, and logout always bypass the cache and reach the network.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L48-L57",
+          "version": "repo-lines-v1:sha256:71072482cd61d911421b7d3c003f348da25bc3ef3b895b0353109ee8fd73b643:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlODgyODNkMTE1NzJmZjkwNmY3MTAxY2ZiZjAyNGFmYWY4NzhhOTNmMGJjYTVmNTdlNmQxZDQ4ZjNkY2ZiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGQyZGQ0ZjI4OWQyNmRjNzU3YzJiNjVhMDZjMzkyMjdhNjcxN2M0YjQ4YjVhMzk3OTJjOWYxMWU0MWFlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YTU0NTk3M2IwNWQ1MjkyMzI0OTFmNWZjNDI3YmUyMzE4MTYxNzM2NGRkZTJkNDhmMDg5NzYzNDAwYjA4NWEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

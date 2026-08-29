@@ -1,0 +1,7 @@
+# Files
+
+- [API Service (NestJS + Fastify)](api-service.md) - How the NestJS 11 + Fastify API in apps/api is composed and bootstrapped — the AppModule.register dynamic module, symbol DI tokens, controller surface, SPA static serving, and the shared error-code response convention the web client keys off.
+- [Database (Drizzle + PostgreSQL)](database.md) - The @mota/db package owns mota's only table (user_settings), the compare-and-swap settings repository that guards it, and the boot-time Drizzle migration path used by the Nest API.
+- [Repository Topology and Boundaries](overview.md) - Map of the pnpm/Turborepo monorepo behind mota — the four workspaces, the one-directional dependency edges between them, the two ways @mota/contracts is resolved (Vite source alias vs compiled dist), and the shared Turbo/Biome/TypeScript toolchain.
+- [PWA Service Worker and App Shell](pwa-service-worker.md) - The hand-written service worker in apps/web/public/sw.js — install-time app-shell precache with HTML asset discovery, the mota-shell-v6 versioned cache takeover, network-first navigation with cached-root fallback, cache-first same-origin assets, and the never-cache-/api/* invariant.
+- [Web App — React 19 PWA Client](web-app.md) - Structure of the apps/web React 19 + Vite PWA — App shell state (commute, mode, searchMode, mobileMapOpen), the component and hook inventory, the @mota/contracts re-export layer, the 420px rail vs 55dvh mobile map sheet, and the DESIGN.md constraints the code must preserve.

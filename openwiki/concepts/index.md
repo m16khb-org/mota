@@ -1,0 +1,5 @@
+# Files
+
+- [Transit Arrival Domain Models](transit-arrivals.md) - The bus and subway arrival domain models in packages/contracts — branded IDs, Zod-edge normalization of Seoul upstream payloads, ETA message parsing quirks, station aliasing and line-name mapping, the receipt-time freshness chain, and the presentation-only three-row cap.
+- [In-Memory Transit Catalogs](transit-catalogs.md) - How TransitCatalogService and the generic ManagedCatalog keep the complete Seoul bus-stop and subway-station catalogs in memory — single-flight loading, stale-serving, jittered refresh timers, minimum-count and byte-cap rejection gates, bounded retry backoff, and the bus-only live-upstream fallback.
+- [Saved Selections Document Model](transit-selections.md) - The saved-selection document — two independent toWork/toHome commute contexts, the v2 multi-watch selectedBusStopIds list capped at four, the Zod migration ladder that promotes legacy documents, and the normalization invariants applied on every localStorage read.

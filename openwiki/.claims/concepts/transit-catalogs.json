@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:07b519ea0ac721ea0d4566c449080d7e40bab618affca3d530db494542ad2353",
+  "claims": [
+    {
+      "id": "claim_cc34ffaf158448f88ba584241af393e2",
+      "statement": "TransitCatalogService owns two in-process ManagedCatalog instances — bus (BusStopPoint, loaded via the fixed 45 km citywide selectNearStops.do query) and subway (SubwayStationPoint, loaded from the official T-Data CSV) — and serves /api/stops/nearby and /api/subway/nearby by filtering the full cached catalog with haversine geometry locally, while the arrivals endpoints (/api/arrivals/:arsId and /api/subway/arrivals) hit their live upstream on every request and are never catalog-cached.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L32-L120",
+          "version": "repo-lines-v1:sha256:52eb6a43b5ce5e09ef8e18a0250623a22417ea90257329d433322c988c7ea477:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZmRlNDAzYzY3ODAxZDg2NjU0YjYzNjQyN2MxMDVmZDAyM2Q1NjgyYzgzNzEyNzJmNmE3Y2UzYWQ2MTlkZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3M2NlYjVjNDY0OTI2MWUxOTE4MGI0NzNjMjk2NTc0ZWJhYzMzMWM4ZTZjM2U4MmNjOWVkOTA4ZWQwYmE4YjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwOGQ5YzZlNzcwNzMxNTUwNmZjMmQxOWNmZjI0YzlhMDQwOGRjZGYxMTgzNmE2NjQxOTcwNmFjODA0MjYyNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L33-L132",
+          "version": "repo-lines-v1:sha256:e1f647d0b5f63fd9b93fc62fb89cc603435040cabd83b7254838f308551b47d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNTYzOTM2ZWE0MGQ3ZTRkYzRlYWU1NzE1YmRhMjQxOTkxODI0NjJjZjkzNzhmNjhhMWExMWNkYzdhZjg0MGI1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjZWFkYzJmM2NhNjQ3YWViOTMyZGFhYjdhODc2ZmMwNWU0YTc0ZjliOWJiM2IzY2VjZmI0NjlkMjk5YzY4MjFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2NzJlODljYzFjYjE4MDM0MWI1NjMwMzg4MTc2MTE5ZDI2Yjc4M2ZhNWMxZDBhNWRmYzA1MjkyZDRlNmM1ZDJjIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_1f7a11b8e0494e66b0e9187d58589d43",
+      "statement": "ManagedCatalog refresh is single-flight: the private refresh() memoizes one in-flight loader promise (cleared in finally so the next refresh can start), so concurrent cold readers, scheduled timers, and stale reads share a single upstream call; the unit test pins two concurrent read() calls to one loader invocation and the e2e suite pins concurrent cold subway requests sharing one pending catalog load.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.test.ts#L27-L44",
+          "version": "repo-lines-v1:sha256:ab11aeb675bb67a40f9e1b1331e4cdd2d7db5e3151e1101d40addaf4bdc699f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4YjcwZWI4YjM1N2ZhODcyY2VmOGY5YTVkZjYzMjIyMTFkMGE0YjQzMWM1ZmRiZmIwZjFjYzlmMzA0YzM4ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkNmY3ZDUwNzM4YWEyMmMzZGVkN2FkZGRiNDlhMmVlZTY4NmRjYjdlOWYwNmZiYzIzM2RiMGVjNjllYjFiMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU5ZmMwNjQzOTIzMmZjODIxYzJiZGZkZDI0MWMyMzNkODNkZDUxN2I0MzA2NjkwNDBiNjUxNmFmZGVjMTZhYWYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L112-L117",
+          "version": "repo-lines-v1:sha256:2c2820300222cd2f397970cd19f65e903f9daf87053ac89cd4346373ed92cd99:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWExMmQ2OTFhMzU0ZjEzMDVjYmNiMjcwOThmODg3MzBkNTYwZDJiNDRiZDBjYTI4M2QxZTEyOTIyMDU2YTQ3YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmVlZWZkZDUxMTNkOTkwNTZmMWUxOWRlMWI3ZDViZWRlNmUwYTMwMWY5ZThmN2JlNGVhZDNmOGY4ZGE4NjZjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWYyN2FhNjBiNzBlYzVjMWUxOTQ3YTg2MzBiNTY4OWU1M2ZjNjUxNTkyMTlhZWY0NjA5YWRjMDgyZWJiODMwOCJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L430-L474",
+          "version": "repo-lines-v1:sha256:e17ea9f8bbbc37cee32d9de6892199a28a31071bf4ace1a3592cda485ece5f1e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNzQyNTRlNTAyODI3Mzc1NmM1MThjMDgzNDEyMzM2ZTM1ZGMxYjMzN2FkY2RjMTQ4NGNhYjBhYjMyNWQ3NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwYzlkNWNhNjUzMzI1OWEzOWJiODUzOWZhNjI4ODc3MjJkZTA5NjZjNzE2MDgzMGI3OWU5ZWFhZGI1N2U0NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwYmE1OTc4MDIxODg0NDE1MWEzNGFiNDk0MGQ0N2E5MzNkZmI2NTJiZDg1NmY1YjU1YTIwZGRiMmUxZmI3MDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_95464066db1446e0b66cbe7d30ce615b",
+      "statement": "read() with no snapshot rethrows the stored lastError immediately and makes no upstream call while now() is before retryAfter (bounded cold-path backoff: one error per retryMs window instead of one per request); otherwise it awaits a cold-request refresh and returns that snapshot's items.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L66-L71",
+          "version": "repo-lines-v1:sha256:b010712be7b80f79891cfd7d3644cb955ad251667dfb48e823582ac7fb6d4b28:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWZmMGZjZTIwMzYwM2IyMmQxYWZlNzY2NjhhMzFmNGFhZjlkZmEwOTE2ZjYwNmQ5MTViYmIxMjFmZmU3MmM2NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTYzOTM1NjBiYjUzYjAwNGE1NGMxYjhlM2Y0MzljYjE2YWNlODIwZGE4MzlmYzc3OTZmNmM0ODk1ZGM2ODQ3NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmMxOTk3Zjg0MjUxY2E0ZjVkZmY5Y2VjYThiMTdiYWE3ODM0NzM3YTZhMThmNmFkZTVjZjIyZDQ0NzFhNzg3NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2E2NDY1MjNjMDEwYWUyYzk3N2E0ZDUwNDM4Y2Q5Yjc4OGY3MThlNzY0MDA3MjU5N2NmYTExYjViY2U0YmJjNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5c26f9cd7a145da8c5ee5a8f7612500",
+      "statement": "read() with an existing snapshot never blocks: it returns the current items regardless of age, and only kicks off a background stale-request refresh (whose rejection is swallowed) when all three conditions hold — snapshot age at or past refreshMs, no load in flight, and now() at or past retryAfter.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L73-L82",
+          "version": "repo-lines-v1:sha256:56a370592639dbb909faf1f0409432dddafd03bac91d626efff2391abaafd5f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmOGRkNDEyMzBjNTdkMzhjMTNkMjZiMTBiMDcxNzAxMmMyNmViMmE2NDk4NDI2MzcxMDBhYzdjZmQwYjQ4NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3MThkMDgwN2ExNjljYjQ3YzRiZWRjMzdlMDViYjE1M2E1YmU3NGVjOTY5OTc5YjFhNDQxMWUwN2Y5YjA3ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3NmViZTk2OTFmNjY1NDc0Mzc0YmM4Y2FjYWEwNzczODNjN2Q2MDAzYjZiNGY5MDYxMWNiZmFlMjk4NDlmMzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8965daca13884117a48bc445c2765a5d",
+      "statement": "Snapshots are immutable and swapped atomically: a successful load assigns a fresh items-plus-updatedAt object and clears retryAfter and lastError, while a failed load leaves the previous snapshot untouched, so readers keep being served the stale-but-complete catalog indefinitely while refreshes keep failing.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.test.ts#L46-L74",
+          "version": "repo-lines-v1:sha256:3759f8387243dcb78f6fd168c502e11a584df651b299b368119a7fc4417f0ad3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5YTczMDZiZDE2ZjQ3NWE5MGU0NWIwNjc1YWVkMTk2NTYyNWU2NmI3MzVmNjBjYmY5MjkyNGIzMTk1Yjc1NWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMTFkYzAyNDZiYTViYWE3YzU5ZWZkZmIwNmYxNzNlOWQwMWU5ZTVkYzQ3YmJjYmE5MDViOTRjYTZjYjI2MTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmY2NkYzVkZDI5OTU0NmQzNjY3Mjk4NGJhYjI3NjM3NTQxOGJiMWFiN2MyNzQ0ZmY1YTM2ZWNkODExN2JjMGQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L119-L160",
+          "version": "repo-lines-v1:sha256:448b9fae930cb8a3a46685ee02af9c0b4aef230b83554d3d89a9978f1726e84b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjZTIyOWU4MTNkNGZhM2JkM2YyYzY0NjJmOTlhZjJjM2EzZTk1YjMzZDE4YWJmZWZhYzE3ZWY3YmUxY2NkMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwM2VmMjAyMDMwYmYzYTJmZmUyZmQwOTU5NTQ5NjQ2MGU1NmQ2OGViMGM3NTk3MDgyZjVhZGQ5Y2MyNzYzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OTlhMjgwYzkyMmI1MzE0ZGUzYzc1Mjk0NTBlMjIwN2Y4Y2I0NDgxMjU1MTgzNTc4NWMwZjA0ZjQzZjEzN2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fdb05317076c44deb8834e06eae15d91",
+      "statement": "ManagedCatalog.load() applies a minimum-count gate: a loader result whose items.length is below minimumItems throws UpstreamError (\"<source> catalog rejected\" with the contained count), so a truncated payload never becomes the cached catalog; the gate defaults to 1/1 (bus/subway) in AppModule.register for tests while production main.ts passes 10,000 bus and 100 subway.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L84-L85",
+          "version": "repo-lines-v1:sha256:ddbf59f13e41b1c4f09fbf080cd9c6a771bd19de1cfddb16748eebfb8b94cbc8:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGFiNjAyOTkwMWFjZGE3ZGY2ZWE1M2I3NTZjZTcwOWNmNzU0MDNhMjQ2MDk0M2ZhMzNlOTdlMjljOTljZGE3MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2E2MWU2NGVhNTI5YWZiNjI2Yzc0ZDRlMDMzY2YyNzFiM2NmNGJmZTQ3YjEwMDQ0ZGQ5MzBiYmQ5YTY5YzhiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODY2OTg2ZWMwYWVlNjA4YzZhNjBlNzMyOGRjZTcyNDk0YzhkMDc1ZjQzNzdkOTY0ZDI2MDQ5ZDA3YWFlZWMxOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2RjMzcxZmUzOGU4ZjU2ZTc2ZTdiMTBlZWJkYzA5ZGE3MWQ5YmViOWY5ZDgyMmY0NzAxMGU2NmE3M2UwZjE5YSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L25-L27",
+          "version": "repo-lines-v1:sha256:709412e3908072ed79561c2f79e5c5e8ce79eab234f4369b38b02412f7d9f02b:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQ0MDA3OTc2OTM4ZGIyZDY3YzY0MDliODJkMTZkMTczYTZmZDEzNmEwZTlmZWRlMjQ3Mzc2YjIyNjMxN2IxYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2VlMmU4ZDYzMWRjNTM2ODZlODkyMWRhMmU2YzNlODJjMjM2ZThlMjdhMWQwNWRhOWQ3YjA5YWQxZWNiZTcwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjdiOTJiM2ZlNzU2MWY1NTBkM2Y5ODMzMTExZDgxYzNlYWFjNjBjYjQ3OGQ0M2U1YWZmMTViMDc1ODZiYTUyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGZhMjkwNWJhYjY5ZWM3YjNhMTYyZDJiN2UyYThjZTBmMjliZTFiOGIyZjBjOGNjYzEyYTFmNDBjNjQzNmVlZCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L122-L128",
+          "version": "repo-lines-v1:sha256:f5eceb0c426609c921d0e6aaf8ac21b9dbfa763a3fa99acf38c1cf48e02eec5d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2I1NjY3Y2ViMjE5ZTk5M2NjMWMwMTJhYzJlNGE1MjA2NWRmOTNlYzczZmY3ZmY5YzQxNDBmYTdkZjNiNmY3YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI2MmY2MGQ4NTkwYTU3OWNmNDZmOGQ2NzM3OGM0YzU3MmI5NjJjZWNjZGI5MGM3YTVmN2I0MmI5NjA3ODJhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDMxMTc0OGI0OTNjN2U4ZmJhYWQ3NGQ1NDc3MDNiYzA3MWVkNzNmMzJiYmQzMmU2ZDhjODA3YjYzY2Y2ZjU5NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmZiNjI3NjAxODJmZDQyMmEyOGRmMjNiM2NmMjcxN2RiNjM3M2Q0ZGM1OTZhNjgxZmZhYzk1YTYyZGU4Y2FmMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9af70af5228a4400afb136aa5b6f3279",
+      "statement": "The catalog adapters enforce a byte cap before parsing — fetchStopCatalog rejects responses over 10 MiB (30 s abort timeout) and fetchSubwayStationCatalog rejects responses over 1 MiB (15 s abort timeout) — and non-2xx statuses also raise UpstreamError, bounding memory and rejecting misrouted or HTML error payloads posing as catalogs.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/upstream/officialSubwayStations.ts#L8-L41",
+          "version": "repo-lines-v1:sha256:a5737817941b40d9ef7a46a450f585f480ea0dc57f46912b90d4e6c8c6585d2b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0MTI3MTVlNThjMjMzNjc4ZmI1MTY1ZGEyZTlhZGEzNGNlZmI4NmU1NjNiOWVlN2YzZjdhNmIwNWY0OTE2YzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMzMwZTFhMzY0ZmNkMmQ5OTFkOTI1OWIzODAxYTc5NGZkZWFmMmNjNTlmM2M5ZDAyOWFmMjVmZDZjNzI1YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTA2N2E4MjI0MDU3OGEwNzcwYmFjM2NhNWZmNWM0MDA0MTE2Mjg5ODBmMTNkM2JjMzkyYjMyM2NjZjA0MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/seoulBus.ts#L54-L83",
+          "version": "repo-lines-v1:sha256:a767566bb0f7a96b84196765e55ef61bb98f28fcc556cdc90528ab1d7d2c4980:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YTUwODFjZTcyZjg0NWEyMGI3OGMyOGMwMzY0M2U3ODg2NWE3ZDE0ZTE0YjVkMDJkMWRjMzVmY2IxY2M1MzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1NTY5YjRjOTQzNzE0MzA3ZjhjYzVhNmY2ODI3MzY2MjI4NDllMDBmMWI4MmE2ZDZkMzkwOTBkOTAwZWIxMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkODhjOGM1N2UwMmE3ZjkzYmJhYmE5OTM2NTA0OWIxMTYwM2VkZjg5MDM1YzA4NjhjYWRmNDVmZGY4MjE1ZjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dcf7cbb8aaf54dd09a21acae89a28156",
+      "statement": "The degraded path is bus-only: nearbyStops catches UpstreamError from bus.read() and falls back to fetchLiveNearbyStops (the same selectNearStops.do endpoint scoped to the user's location, kiloMeter = radius/1000, 8 s timeout) while rethrowing non-UpstreamError failures; nearbySubway has no fallback and its errors propagate to the controller's 502 UPSTREAM_UNAVAILABLE — pinned by transit-catalog-fallback.e2e.test.ts, which shows a count-gate rejection (kiloMeter=45) answered by a live lookup (kiloMeter=0.8).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transit.controller.ts#L53-L72",
+          "version": "repo-lines-v1:sha256:111da34800649548ea308cc76968dbb946bf512e2847854f7d7d8d0e9753a27a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViNzgwOGMxNzhiMmJiNTk2YjMwZDViMDMxZGQ5ZDU4OTE2ODY1MzJiYWM4NWFlYzA4MTdhZjVjOGY0ZjdiNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZDYyZDk0ZmI0MjE1ZGVjZDJhODdkNGYyNTNiZTRiOWMwMDRmOThiNjQ3YmUzNGFmNGYzZjhlNGQyYzcwMzQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L93",
+          "version": "repo-lines-v1:sha256:2780d1dbd90dfa477cbac87cefb0a6c0b2c6add908e05f46aeb2fe697acf53fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMjk1YTEwYzUxMDM0MWJiYjljYTVlNzYwNmY4YjNlYjhiNzFiYjAyNWUzNzBkOGE0Mjg3ODgzYTg1YzU1NDEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/transit-catalog-fallback.e2e.test.ts#L21-L51",
+          "version": "repo-lines-v1:sha256:2f51eb87b62f78b8e1ce8be8429497bff5610f31e27467e21129179424187d72:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiYjliZmVhYjFkYTM5NTMxZTgwMjIwYTI3ZWIyNTNjOWQ3NjFhMjQzYmViNGZmODU4YTA3MzI2OWFiNDdhNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMzhlZTljYzczYzlmMWYyYzhmOGM1NmQwMGJkMDBkZTViMDczNjlmMTJlMDgwYWJiZDc5YzhjNDM3NTZjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8c7891edcfe45d8877bfe91d5a32aff",
+      "statement": "Refresh scheduling is jittered on success but not on retry: a success schedules the next refresh at refreshMs * (1 + random() * 0.1) using the injectable options.random (default Math.random, so the 24 h default lands uniformly in [24 h, 26.4 h]), while a failure sets retryAfter = now + retryMs and schedules a plain retryMs timer that fires exactly as the backoff window expires; timers are unref()ed, replaced on each schedule, and cleared by stop().",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L79-L87",
+          "version": "repo-lines-v1:sha256:ac1886bc27f4eaef5f374049275f39e4d060dab1e26890e62198cd1d3572979f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDIwMDhhOGU2OTFjMTlkMWM2ZGVhNWFjYjRkOTBkYjg1YjM4N2FlZjUwYjEyNzg1ZmFjMDk3MjgzMDg0YzhlZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk3OGUyNTAzYjhjZjM3YTA2ZjdkNmYwYTNhNmI2ZmUzNTY5MWZiY2FiNTBiODc3NWNhYjZmYWJjNzFjNTkyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2YxYjczMTUxMWU0MDVhZmI0NjY3ZWQ3MjU1MWI1YTVjYTJlZTc5NTFlZGY5NjA4ZmY2YTZlNTUxODUzNzg3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjZmNzhiZDU1ZjQzYjEwYzg0Y2MzODkxYWQ1MmQ4MTc2ODE2Zjg2MWUwNTVhODM4NDVjNTcwNDdjMGFjODM2NCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L129-L180",
+          "version": "repo-lines-v1:sha256:301dd6940ce134243c8169db42f5bf4325e76b9885ae489feefd0e67da25a223:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5ZWIwMjU0NjlkZmVmZWQ3MTM5ZjQ3MGE2OTFlYjA2MjM5NmE5ZjhjYWJmNDM1MDkwNzlhNWZjNzFjYzQ5MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkYmM4Y2E5Mjg4MzY5NGY3ZDQyMGFiYTdiMzVkMDYzNDc1MTgxNDdiMGNlMGFlMDQ5YzkyMzQwYzRhNGJlZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4NGY0MTRlM2YxZDk1MTNkNDRmOTQzNzEwOWQxYzk2NjIzOGQzMmMzZmNhZWMzZjJmN2JmYjIyZjI3NWZmNTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8017373400d54343b76fc363a05db20a",
+      "statement": "refreshIfDue() is the gate every scheduled timer routes through: it returns false without loading when the snapshot is still fresh or now() is before retryAfter, so a timer firing mid-backoff does nothing rather than hammering a dead upstream; refreshNow() bypasses the gates, and TransitCatalogService.refreshDueCatalogs() runs both catalogs' refreshIfDue under Promise.allSettled — neither refreshNow nor refreshDueCatalogs currently has a caller in the repository.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L84-L100",
+          "version": "repo-lines-v1:sha256:6f0fd8184117034cad0b003f033e6f32666b8f084fc8662bebe900f7d665c2d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMzlkYTgzYzNlNzkxOWM5M2QyZWUzY2FlZmE3ODQ4MTU2YWRhNjk3YTFhNDlhZmRiMDI5OWQ1ZGY2YjM2OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MmZlM2VjNTIzZThmYTQ0ZWRhMTU1ZjAyYTU3MzFlNzNjYTFlZTQzMzNkMDYyODE0NWNkMWU3OTM0MjQzNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlM2RhOTljNmZlYWI3NzdjYmQ4MzMwYmE4ZjE2MGVjMmUyNjhhMjQ5ZjM3NjYzNzYwMDExNGMyY2NiNzZiOTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L134-L139",
+          "version": "repo-lines-v1:sha256:089dbb31efbe676fc37dba4eb9b70045b491e5ca70f88a97feab40cad046b5c6:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzhlZmQ2NGMzOTUyY2JhOTc3NjhkMDFjMjI1ZGVjNWVmNzNjOWIzYjExNzUyZjI3M2IxODliMTFhMGE1YzY5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWRiM2U3Y2QwYzNhNjIzMDQ3NjY4MTYxZDEwNGU5OWQ4NjIwOWNhM2U3NzU0YTI1YjExOWE0OTA3ODc4MDQyNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGYxMDVmODQ2MTk3OTllNDIyZTk4YTVjYmNhNWExMzc3ZmEyZDVkNGZmNWExZTIyMmQ0ZDdlMGEzZDRkMTU3ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_01e9a757dbde4e008d332a1cec5f2ed2",
+      "statement": "start() is a no-op unless options.schedule (the warmup knob) is enabled, in which case it fires an immediate warmup refresh with its error swallowed; stop() clears any pending timer and nulls nextRefreshAt without aborting an in-flight load; TransitCatalogService wires these to onModuleInit/onModuleDestroy, so with the default warmup=false the catalogs stay lazy and timer-free until the first cold request.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L51-L64",
+          "version": "repo-lines-v1:sha256:37a5ac15a07b2d97ae146514e6a7d1fdf8bcd09e9f297c4bd92bbaa7a74c4aee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNzQ3NmVhNTljMTdiYmEyNmIyZWY5ZjI0ZTA3MTkzYTE3YjgzMjVlNWU0M2YwMzFiNjFkMmFmYTljMjY2MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0MjgzNWY4OGVkNzczMTIzMzkzZDkxZDM2NWVlY2ZmNDBlYTE5NGVmOTMzOGRhYmEyNzg4NmJmYWU0ZWZlYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjNzBiM2Y1ZDRjMzAyNjgwZTVlZmIyYTdlNTU0MmZkZTI3NGE0OTE0OTk5MDVhNjljODZlZDQzNTM1Y2UxOTAifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L74-L82",
+          "version": "repo-lines-v1:sha256:bed0f0cab502f22e271183be0784fd25980d0cdc5c705e4c844b0ceaf6b11c7c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFlOWRmNTA3MzM1Y2M2ZWJjNzk0YjQ0Y2YzYjYwMjExZGNmNzdhZTM4ZTlmNDhiYzY5YzY0Y2RiNzRmNjlmZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWUxMmI2MTE4OTQzZTMwYzAwNjgzM2U3ODE2MzBhNTNiMzJmNDE3ZWY1Zjk3OTVjM2YxMmYzMzA4MDI0YzVkOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzRlOTI5ZDU5NGVhODE0ZjM3MDgxNDY2Yzc3MDUxMzVhMWNjOGUxOTIxYWM4YTJlMDdmMmM4OWFkMTk3ZDllMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_757d0ddc8ac34c209ce368d88f389958",
+      "statement": "Timing defaults are a 24 h refresh (DEFAULT_CATALOG_REFRESH_MS) and a 15 min retry (DEFAULT_CATALOG_RETRY_MS); production main.ts enables warmTransitCatalogs and reads TRANSIT_CATALOG_REFRESH_MS from env, where loadEnv clamps it to between 60 s and 7 days (default 24 h); retryMs, the minimums, and random are not env-configurable.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L26-L27",
+          "version": "repo-lines-v1:sha256:d1435a97a1c229fba5621e5c15fd7ed0cfa2535f718413674b4d0186605bc0f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmIxZGE1M2JlN2ZkMGY5OTA4OGQxYTU3NDMzNzU3NmY4OTgwOGI5MTUyZTNlMjlhMjY2NDQ2NTg4NzM2ZDE4ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE2MWI4YzZjZTNkZGZiODAzMDgyZWFhZThlODE0ZWE1YWRjYTg0OGU1YjEyNjgzY2U3ZjlkMGQ3Y2MyYTIxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTk2NjFmMzczZWU2M2JjN2M5NDE5ZWUyNGVkM2I3ZmVjNDQyN2QxODc0NjkxOWYyMDdhM2M1OTlkN2RjMjNkOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTM2YTNmN2EwOGU0MTgxYjI2ZTU2ODc1YWRhZmVjMjgxYmIyYzA4MWQ3OWJjMGFlZGJjZDBjNjAzMTU1Yzg0OCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L24-L29",
+          "version": "repo-lines-v1:sha256:55414aa3095d3a0726324d048f02ccb911d2f1784c5ed3c4a07e1ef6b55c4ced:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzg1NWU0ZTcxNGZlZmQxOWE0YjMxYjdlYjJhMTdjZjAyYjBkYWQxMDNkNDY2ZDJhZGQ4ZTk5NDE1ZGYwMjllMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGZlYzk1N2YxNDUwOWM2NWY5NDRhOWI3MzUyODI1ZDhhNWI5NGI5MmYzMWYyYmE2M2YxYjg1ZGYzNDM2MDAxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjE4YzViZWE3NjZhZTliZjgwZWZhMDI3NDljNzM1ZThhMDRlZmFjNTMzZjAxODJjYTJlNGM5NzkzYmJjZmM0YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk5NGM2MzEzODQ3NGZkNmY2YjlkOGQ5ZTE0ZTg4YTM0MDY1NDJjZjUwYWRjMzU0YmZkNmQ3MGMwMjBmNzA4NiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L21-L34",
+          "version": "repo-lines-v1:sha256:0ccfda5fff937a7664d5921ea04541dc68b3de722e86a9dea6c03c7f6049f132:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4Njc3ODg3YWFhMjU3MGFmZGU1MWMxZDQ2MjI3MTVkZmEyNjBiYTRlMDllYWViM2Y0ZGYxMTc2NjgwOTY2ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4ZGJiNjNiZDA5YjdmZWZkYzIwN2UyNzhjNzMwZGIwNTc3NjczOWMwNGJlOTY3ODk5ZGNmYmZmZDg4MDk1YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NjhjMWMzY2YzMGNlYWM5MDVhZTdiNGE1NWQyMDU1ZDgxODUzYzlmZWVlZGYzZWI0YzA5ZGY5ZTg2NDlmNDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_11c2deb6e56b486384d8844eefc32383",
+      "statement": "The bus loader strips the upstream diffMeter (a distance from the fixed catalog center, meaningless for a user query) and dedupes the citywide response through a Map keyed by String(stop.id); the subway loader returns the CSV-normalized SubwayStationPoint rows unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L52-L71",
+          "version": "repo-lines-v1:sha256:ee3e8f8d109c76ae2af3237cc1a07fc1ebf598ff334e8e70a7c54c4b21cc2dbc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4ZGQzODRiMzJkMTA3MmMwNWVhM2U4MDFlN2RjMTI0ZjFmOGI5NTkxMmYwOTU4OWY0ODBjYmE3NjRiNmMxMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhNDEwN2M3NmE5ZDJjMDM3NTA1NTAyN2YwOGVmZTM1OGM0YzlhYjBhNTA4YmU0MGRmMTVjMzQ5MWE0MzgxM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4YzAxNTQ5NGIxNDM2NjY2NTUyNzY2YjAyZmI0ZWJhNTU2N2NiYmM3ODViZDgyNjA2ZWMyNWRkNTNhM2UyN2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_edf7742200244ee5846584af923865f0",
+      "statement": "Query-time semantics differ per mode: bus nearby annotates each point with haversine distance, filters to distanceMeters <= radius, sorts by distance then String(id) localeCompare as a stable tiebreak, and rounds distances; subway nearby filters to radius, then dedupes by station name keeping the nearest point per name (the CSV has one row per line, so transfer stations repeat) and sorts by distance then Korean-name localeCompare.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L94-L132",
+          "version": "repo-lines-v1:sha256:e8d823a580c2c3be3abc1b5146e053fdeed3d14e0ade8023914200288cfea284:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjODA3NmM3N2EzM2VkMzE3MjE4OThlYzEyZGNlNjUyNjYyMjVlN2NjMjNiZDljNDZiYzE5NTEwYmEzZjIwMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxNWZhZGI5MmI5ZTAwN2JmZmY0OWE0YjdkYjYyNzhmNDM4N2E5ZWFlYjY2N2JhNzdmOGNkMjY4ZjY0MGRmNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY3MmU4OWNjMWNiMTgwMzQxYjU2MzAzODgxNzYxMTlkMjZiNzgzZmE1YzFkMGE1ZGZjMDUyOTJkNGU2YzVkMmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_44727dd4d5f94a058fe0cb1924463f87",
+      "statement": "Row-level and wholesale failure handling are deliberately complementary: the @mota/contracts normalizers drop isolated malformed rows (normalizeStopCatalog per-row safeParse; normalizeOfficialSubwayStationCatalog skipping bad CSV lines) so one bad row never discards thousands of good entries, while the minimum-count gate and adapter byte caps reject wholesale truncation or bloat as UpstreamError.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contracts/src/bus.ts#L104-L112",
+          "version": "repo-lines-v1:sha256:6e5d3fa6a5d2f9f2040ea567ab6179cb51c531925d7dfd27c5e5377f592ffc6c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTZjMDVmNWU2OGMwMGQxYTkyNDI0YmRiMDczN2UxZTA2Nzc2MjBhNzRmMjI0MDBmMzBhNTE0ZTBjMWRkZTMzOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTkzNGEyMTFiZmVlNjRiOGVlYzE3OGRlNzk2YjI0NTY0YWZhMzU2MzIzYmZiNjJjMzAxYmJkMWUzNmY4OWIyZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNiZjFlMWQxMTY1ZTJmODM5NDIwZmQwYzE0OGZmZDZkNDc5MzIyYzRlZjBkYWI4YzcwN2I2MGE5OGMzZDM2YSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/src/subway.ts#L261-L290",
+          "version": "repo-lines-v1:sha256:44b7ea5c1840c4cea38e62d1512d8c2bbac1acef16eecf24f01bd2baf1e1edc4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZGZmODE2MDFjOTk3NGZkMDZkNGVmZjBhNDdjNWZmZGFhZjMyNjU3YjBjOGVjMDU5OWIxYTMyMGU3NmE3YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjNGM4YzJjY2EwMjljODM3ZWIzYjczMjU0ZDU0NTE3ZDNlMmNjZDQzY2ZhYTNiZmJmZDYzM2U5NzQ2ZWQ3ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzODRlYzQ3NmIyOWIxYjkzNWM0MmJkMmY1NjE2OGE3ZjZiNDJmMWNmODY4ZjI1NDAxZTlkYThmMTExN2Y1NWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_72e1c3b0b63748aba43b8f1329ade5ff",
+      "statement": "Every load emits a CatalogEvent through the shared onEvent callback, logged as one JSON line keyed event: transit_catalog_refresh with source, trigger, outcome, durationMs (performance.now around the loader), itemCount (the surviving snapshot's size on failure, not zero), nextRefreshAt, and detail — failures at logger.warn and successes at logger.log; the trigger string (warmup, cold-request, stale-request, scheduled, manual) records why the load ran.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L119-L160",
+          "version": "repo-lines-v1:sha256:448b9fae930cb8a3a46685ee02af9c0b4aef230b83554d3d89a9978f1726e84b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjZTIyOWU4MTNkNGZhM2JkM2YyYzY0NjJmOTlhZjJjM2EzZTk1YjMzZDE4YWJmZWZhYzE3ZWY3YmUxY2NkMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwM2VmMjAyMDMwYmYzYTJmZmUyZmQwOTU5NTQ5NjQ2MGU1NmQ2OGViMGM3NTk3MDgyZjVhZGQ5Y2MyNzYzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OTlhMjgwYzkyMmI1MzE0ZGUzYzc1Mjk0NTBlMjIwN2Y4Y2I0NDgxMjU1MTgzNTc4NWMwZjA0ZjQzZjEzN2YifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L51-L99",
+          "version": "repo-lines-v1:sha256:34481a7df697a61abb8e71ce28bcd39009646363cc965c8507e5555084484d3a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNzQ3NmVhNTljMTdiYmEyNmIyZWY5ZjI0ZTA3MTkzYTE3YjgzMjVlNWU0M2YwMzFiNjFkMmFmYTljMjY2MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3Zjc5NDBlZTc0ZTRkZGUyYjE3MjY1ODI5NWIxZGI0ODU4ZTYzNTkwMzc2OWM5M2Y2ZGY3NmI5MTk0OTlhMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0MjgzNWY4OGVkNzczMTIzMzkzZDkxZDM2NWVlY2ZmNDBlYTE5NGVmOTMzOGRhYmEyNzg4NmJmYWU0ZWZlYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhZmVlOTFkMWY4YmQ3Y2I1ODI5MjdkOTUxODVlZDU1N2Q2MTgxZjg5ZDI5NTdjYmI5OGFmNThhYzBhNGJiMmYifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L151-L161",
+          "version": "repo-lines-v1:sha256:58cfe162d7352ec9b503b966c25b34760e18e922759de096accbb4c0a8926db2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGQwMmU1OTg4NzhlZTZhMGQzMjA0MjZiNjdhYWIyMjA2NzQ3NmQ4M2I3NDU0YzAyNmI1NWZiOTUzOWJmNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlZWVmZGQ1MTEzZDk5MDU2ZjFlMTlkZTFiN2Q1YmVkZTZlMGEzMDFmOWU4ZjdiZTRlYWQzZjhmOGRhODY2YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjNTYzZDg2ZTRiOGU2NmJlNjVlMTdhNjViMGQ5OTQ4ZmVkNzZkYTVhOTUxN2U1ODkxZTg5NWYzODhjNjUyOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_05c671af7c3d4c5bbb458732c21832f4",
+      "statement": "GET /api/health reports each catalog's status non-gating: it always returns 200 status ok with transitCatalogs: bus and subway CatalogStatus (ready = a snapshot exists, count, updatedAt, lastErrorAt, nextRefreshAt as null-safe ISO strings), so an unloaded or backoff-stuck catalog shows ready false rather than failing the Compose healthcheck that probes this endpoint; the e2e suite pins the ready and count transition after the first nearby request.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/health/health.controller.ts#L11-L18",
+          "version": "repo-lines-v1:sha256:e240614709e93464937921a6412a5963ed88732ac55c316fdc03fec1010fb721:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWViOTlhYmZiNDc2N2I0OGYyMzBiMTVkNTZhMjU4MmUxODE2NzMwZDJiZTQ4MDhmYWM0MGU0OTg3Yjk3ZjNkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDczY2ViNWM0NjQ5MjYxZTE5MTgwYjQ3M2MyOTY1NzRlYmFjMzMxYzhlNmMzZTgyY2M5ZWQ5MDhlZDBiYThiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L141-L149",
+          "version": "repo-lines-v1:sha256:2c6c0fcda84d3491985722421c41bd6d1954deae16e788086e3e499a0aab3701:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTM5MWM0MDZhOTgwYmFhYzYyODllMzUwZWVhNzdlNDViZjU1YjQ0ZTA0YjBkMmQxZWEwOTVkYjgwYThjNmYyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQ2NjI3MGEzMDg0ODU5ZGIxNjM4MTI2MGRmOGUzMDgxYjcyNmI3ODc0MWU4ZTVhMzY1MjRhNTNlZjQ5NmUzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTNjZDNkNWI3ZWQyOWRlMjYyMzIxZGI2ZWI4YjcwNzk1M2FlOWU4NDA0ZWFiY2MyYjA1NzUyNjBhZjNlMzU3NiJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L175-L219",
+          "version": "repo-lines-v1:sha256:9d88a813b2e8a6c1105bb34c042eeec3713132d12008012a44bd984d888a7b2c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiODRhMjY5MzUxZmNiYzE0NzZmN2M5MjhlMDlhMzRlOTk0MzFiZjQ2NGQzOGQ2MWUzMzYxZTE3ODkzZTY0ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMDdlZGQ4ZGU5YTFlNzgwY2UwYjEzZDM4ODhmZGEyYjE3MzVjNTc5ZGI3NzEyYzMyM2I1NjMxMDE4M2ViNDQifQ"
+        },
+        {
+          "resource": "repo://compose.yaml#L30-L39",
+          "version": "repo-lines-v1:sha256:c9b5eefe9c27bc84c7e805b1748c88748e51ed805365157e58d153d0cef2fd31:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3MWRiNGU4NzVlYjlhNmFmMTQ1NTYzMDU4NjE5NmY3NDIyMjMxMjhiMzYyNTgwMDk4NDlhNjhmODAyY2NmOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZjAzYzc1YmUzYWRjMTliOTBmZTM4NDhlYWRhMDNkODJmODdkODk5OWE4ZDU4NDIyYWEzNTFkZWU1MzYwMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxZmFlMTY3NDQyN2EzYTY4NTQ3MTdhNjI2ZTU0NzdmZWI1NmNmY2MwNDBmZTdkZWExNzEwZjk4Y2MwYzgwZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2NTVlZTk2ZDM2NmRmNWViNWY0MTFlNWNhMTU4OWFlYjkwZjY1MDg1Y2UwMGI0Y2Q4NWIxYmQ4NGI3N2M1YWYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}

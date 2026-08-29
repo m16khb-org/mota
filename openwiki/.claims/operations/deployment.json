@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:90faf2e9ceb45048df64b26d6eb118ee5f1cf4fbca5ef8bb342cb9821b4be8bd",
+  "claims": [
+    {
+      "id": "claim_e3dd6fbe134845fab48a97cbc54c449e",
+      "statement": "Mota deploys as a single Node 24 container (both Docker stages are node:24-alpine) whose one process serves the built Vite SPA from WEB_DIST_PATH and the /api/* JSON surface; there is no separate frontend host or sidecar.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L69-L75",
+          "version": "repo-lines-v1:sha256:d0ba2a2c5566b4e986c7d29379005c221c1c2956c2b8c5e48c07617042570f4a:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2JmMzM5NzRiOThkNTEwMWU2ODUyNTViYjBiNDkyZjYzNDRiODc1ZWJmMjcwYzYxNjUwOTI3N2UxMjQxMDA2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTliNDhjMWM5M2FmNjMyZDBkNTRmMzc1ZjM0YmU2M2JmZTA4NGRhMjFkYmY5OGQ4OWYyYzUxNzRmNGY1NjZlYSJ9"
+        },
+        {
+          "resource": "repo://Dockerfile",
+          "version": "repo-file-v1:sha256:dcc941d208098e9d9910bdd3b3d16cfebfb76f87f694b182ea7e82163b9d1c16"
+        }
+      ]
+    },
+    {
+      "id": "claim_c1e7ec1321ba427683d49217d9f3341b",
+      "statement": "Mota never runs its own PostgreSQL: it connects as the dedicated mota role to the database owned by ../home-server-infra, reaching it as home-server-pg:5432/mota over the home-server network.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L15-L17",
+          "version": "repo-lines-v1:sha256:56e579f953f1688cf41471a69bc0634ee2b78d9b3f8b80c52d5e51e2d341e026:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzgyYmJkZDZlYjU5ZGJiOGMwMmM5YWRhNDRjMzUyZGJhNzRjNjIwM2ZmNjJkOTAxMGJjNDYzOGJhZGU4ZWMwOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTVhZjJmN2FhYmQ1NDk4OGVlM2IxYzM4MDhjNDBkNTRhNTM5MzMyYzY3ZTFmZDQzNzJlODhhNTZjZGM3ZjA3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjk1NTg2ODBmNjFlZjkyM2I4ZjViMTM3MGUwMmQzZGRhNjljNTMxNzlmZTg2MDRhNGI2NzhlOTYwY2IwNjk2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjc0ZmIxMjMzYWRhYmVkMmM1Zjk0ODMyYzBjNGE0M2Y0YzZkZDNkZTI5OTljZmI5NGRmMzhjOTIzNDIzZmQyMSJ9"
+        },
+        {
+          "resource": "repo://AGENTS.md#L71-L73",
+          "version": "repo-lines-v1:sha256:fe5735a32c555024113e7cf8ac569910f0dd41f2613574b065b984f7fa8f6e2c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RiMmMwZGYxMGNhZWM2MzM1M2NkYWY0MzU3NjI2Mjg4MTAxYTRiODZhNWUwOGEwOGUxY2Q3NjFlNjQzYmY0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDI4MDQxYzI1OWVmNjliNjhkZjZlYWExY2Q4ZTNkNDU4MmJhZWUwODgzNWNlZmZhMGYzMjhlMTk0ODZkYzRkZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2Q0ZGMxODBmNDBmODUzZGU2MGRiMjk2ZGZhYTQ5NzJiNDAxZmU0ZTRmOWY0NzA3OTU1Y2FkYTBiZjliZGNhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmZkMzIxZjdjMDcxNGFiMTRiNjc0NGFjMWVmMTNmNzBhMzdlZTBkNTM2NGQyOWYxNGQ2MDQ0YmU4M2NiMjUyNCJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L14-L24",
+          "version": "repo-lines-v1:sha256:645067f9d35d60e7ec4cc82a6b24d4cd0a524deac02262200f3309dfe81fb28c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYTczMDY4MGRjYjQ4ZGYzZTY4N2YzMWEzZTMxNDYxZWE2ODg5MTEzZTUyYTIwZWY2MTM3MTY3NjJlMDBmYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3YjlhYWRiNDM1YjNiYTFhNzYwM2MzMjUzOThiN2NlZTY3NzdkZWY3MWFiMWEzMTIxNjc4ZDgzMTNhYjFjMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwMGFjZGE3NDI1OWI5MDc4NzYwNGJiZGNiYWMyZmMzMWVjMDNlZjNlZTNlMTQxMTI5ZWM4M2RiMjE2NTlkYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViYzdiZmMxNzk4ZWM3NWM0YWQ2Njk0MjIwY2M3NWNkMDdjZmRjZDNmZDU3MTYzZjZmODFlMmU0YzM4NjUxNTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc650097d7704c1d9fa18080ffd1874e",
+      "statement": "In production Compose the service publishes only 127.0.0.1:3100 on the host, and joins two external networks owned by home-server-infra: cloudflare-tunnel (with DNS alias mota, how the tunnel reaches the container) and home-server (how the container reaches home-server-pg); Compose never creates these networks.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L55-L57",
+          "version": "repo-lines-v1:sha256:050a49e0209d569893af114c675a50ef338681c07c37ef1880f1a310bdf190f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE5OTM3ZjY5MWIwYjA3YjY5MThhZjVkYjc0NjcyZTczYjg2YTRjZWI5NjNkNWY3YzQ2NmI4OGI4ODc2OTg5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTIzZjU0Njk2ZjA5M2U0M2YxNjJmMjkyOTI5YmQ0MGU4YjBhMmExMzBkNjI0NDMxNWRiNzcxYTYwMTY4YWE3MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L23-L31",
+          "version": "repo-lines-v1:sha256:2e1c53a9c0fc8a4c86ab245da2c7441b60ecb85e31abf0f8111baf1a4f32b9c7:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmMxNmVkMjM5YTM2NTFiNTA3OWMwZTRlN2YwNzg0NGVhMzI5Yzg3NjI4YmY5ZmNjNDYzNjc3MzNmNWUxZTkzZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTkyYWRmZWQ3YzBhNmUzYzRlOGQzZWM4YzVhOThjMGI4NjljZThkNmQzZjc2MWNkYTYxNTUzNzI2ODRmZjQ5ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmYyOGUxNTJiMzliZWRjZDU3MGVkMDNmZTk4M2QwNjJjMTNlYjkwM2U1NTBlN2MyZGU3Mjk5NjNkYWU5YmVmMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmFlNWI5MjMyNTI4OWQ2NTU4MmYzYWUzY2QyZmYwY2ZkMDdlODAzMWNmZWNhZTkyM2Q5ZDA1ZjNjMmRlZDIxOSJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L44-L48",
+          "version": "repo-lines-v1:sha256:eaed845f2aa4a5da21d9c9495d063ede77f57a1c782278ba7b8c67bca272e9b4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUxODhlMDVhNzBjYzkwZDdjZTg4ZjMwYzdlYWI0N2NmMzgyMWE1MDljZmQ0NDU0NmU3ZmYyN2Y5YWIwYTg1YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGJhZWI2OTNjNGU4NzBmYzg4YmRkYjdhZjdjMjA5YWE4OWI5YTgzN2NlNWQyOTM0OWUzNDEyOWVhNTBjMTRhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWFjMTg0Y2QwMTBlMWJkMTJiYjk2NDUwMmYzZDkxMGI2ZmFlYjJkNzhlOTEyZjFmNTEyZjYwYTQzMjYxZWMwNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6822b398389f48548804ec10e36f0746",
+      "statement": "compose.yaml interpolates SUPABASE_URL, SUPABASE_ANON_KEY, and POSTGRES_PASSWORD with the ${VAR:?} form, so a missing value aborts docker compose up with the message to run compose with ../home-server-infra/.env instead of starting a container that would crash; the documented command is docker compose --env-file ../home-server-infra/.env up -d --build.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L50-L54",
+          "version": "repo-lines-v1:sha256:71431dca7b2877a91bd74f7de5a5e9ea59ce658a55cbea45192bc82a6a1a041d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzE5YjdlYWJiOTlmMmJkNzJkMTgxODliOWY1ZGUwNGJhNGEwZDQ5NDkxMTk4OGI0M2NlMWYwYzAxODE2YWU2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMDZjNTYxZDVjMzI3MzQzNjg1MjY4YTQ2YjMzOTFmMzk5OGVlZTg5MGQyYmU1MWYwZDIxY2M0YTUzYWU2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTBhNDIzOWYxYzVjNWY2NGYwZTI0YTA4ZDgzYzIyOWVlZDZhYThiYTE3NWUyNWJlMjEzYzIyZTU2YzYxZTg0ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDUwYTQ5ZTAyMDlkNTY5ODkzYWYxMTRjNjc1YTUwZWYzMzg2ODFjMDdjMzdlZjE4ODBmMWEzMTBiZGYxOTBmNyJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L12-L13",
+          "version": "repo-lines-v1:sha256:fc07b436cec15a73a70cbb810e75fd910cc12e442e6e3353957e8eceac71ff05:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFlYzU3YzRhNDM5YzUzMGEzMDE1MDYwNGNlM2M5YjU3MTg5MGNjNjdhZjlmMDVkY2IzNWI3ZWYyYjBjOTZkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI5M2RkZTIwMTg4ZDAwOTAyMzYxZmM3MjIxOWMzOGI3NTg1MWNlODhlZGUwODRhNTRiODk2OWM1NGNhNWE4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjE5NzBhMDBiZTQxYzY0MTIyM2MyMzJkZGI1ZTNhNGVkNmEyYzEzN2FhOTNjYzRiNjFhNjg5NGViODg2OWQ2NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTFkNjE1MTVjNDg2ZWE1ZmM1ZjM5MTBlYzViZDk5NTBmZmZhNTZlOWYwMmQyZjk4OTVhMzBlNjQxN2IyZGEwZSJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L19-L19",
+          "version": "repo-lines-v1:sha256:8b073058f27bc0971181ec65aaf7c65d01cb43c13d39be6204f4479713d498e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIwNzMwNThmMjdiYzA5NzExODFlYzY1YWFmN2M2NWQwMWNiNDNjMTNkMzliZTYyMDRmNDQ3OTcxM2Q0OThlMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIwNzMwNThmMjdiYzA5NzExODFlYzY1YWFmN2M2NWQwMWNiNDNjMTNkMzliZTYyMDRmNDQ3OTcxM2Q0OThlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDRjMzFlNjVmYzYyODYyN2FlYTdkYmQ4NTU0YWI5YTVmZmEzZDlhY2QxN2I4ZmU4MWNlMzJjYzIyY2ZmZDU1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmYyOGUxNTJiMzliZWRjZDU3MGVkMDNmZTk4M2QwNjJjMTNlYjkwM2U1NTBlN2MyZGU3Mjk5NjNkYWU5YmVmMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6995733c080042bc9a76f8013b2d83a7",
+      "statement": "The Docker build compiles packages/contracts and packages/db with tsc against their tsconfig.build.json files (emitting dist/ with declarations) before vite build of apps/web and nest build of apps/api, mirroring turbo's ^build dependency for typecheck and test.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L11-L15",
+          "version": "repo-lines-v1:sha256:1dded077e375eb4d956533e47e0442aa8614cdda201f199bf928c3cdf90934df:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTY0ZDlhOWM2YWI1MTVjNjE4ZjU5NDIzODIxMzBlYmVhNmNlNjM5ZDgwMmY0NDMwNGUyMGMwODI0MTBhY2NjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGVkZGQzNTQ4OWFhM2JhNTcyMjNjOTYzMzJmZTdhYjQ2NmIxN2Q0ZGE3NDgxZTMxM2ZlODMxYTU2OGU1MDFiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzQyNzQ1MjEwODM4ZWI1NWExMjllMTM5ZTM5YmQ2NmU4MmFkNmJiNzViNTM1NTEwYjRkNWE4YTI2MjcxNjU0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmFiY2IyODQ2NzVjNTc0OTk3NTFhM2NjOThiMWUzOWMzYmQ4ZTMzYWUwOThlMDU1MDVkNzVlZGRiYTBkMDIwYSJ9"
+        },
+        {
+          "resource": "repo://packages/contracts/tsconfig.build.json",
+          "version": "repo-file-v1:sha256:bb9ec46945b1082e77062db863b13cb5db03539231f8d34862ddbc80cf15c2e6"
+        },
+        {
+          "resource": "repo://packages/db/tsconfig.build.json",
+          "version": "repo-file-v1:sha256:9bdc932ad941af4023b81707232620f633cd72be7bbf23730db07ca99b227e37"
+        }
+      ]
+    },
+    {
+      "id": "claim_57efba6a15894c3da785c09458baad5c",
+      "statement": "The runtime image copies the hoisted node_modules tree plus each package's package.json and dist, then creates node_modules/@mota/contracts and node_modules/@mota/db as symlinks to ../../packages/contracts and ../../packages/db so the compiled API can resolve the workspace packages at runtime.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L26-L37",
+          "version": "repo-lines-v1:sha256:384572b11e1fe17e9839d20133985aa9192ab4377037ca441010469d7de0be3c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5NDIzN2U4ODg2ZmEwNDk4ZTRkM2I3NjU0NjkyOGJjZGY3OTlkYWRhZjUyNTQwYTU0MTYyMDA2ZDBjNDc3OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1YjIyNzQ1ZThkNjlhMzEwNzE0ZmZjNDc2YWEwY2I0Njg1YmIyMjFlYmM5N2Q3MTY4NGYyNTQxYWI3MmQwMGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2YjIxOWMxNmFiMTQzZmU3NTM2NzRiZTgyOTQ4NmQwYjhiZmRhYjdkMDNkOTNiYmUyNjk3YzY3ZjBjZDFlYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMWZiZjY3NWQzZTRmZTBlYmYyYjkxNWQxNzY4Njc3NTk1NTQ2YzkzNjNlYmU1ZGMyNWFmOWViM2MwYzcyM2YifQ"
+        },
+        {
+          "resource": "repo://pnpm-workspace.yaml#L5-L6",
+          "version": "repo-lines-v1:sha256:61777a4a6e92749f5c1df0f41ff1958476f3a67c25e0e328c995d9af7b66fbf4:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjY0Yjg1ZWY2ZTExMmI4MDFjNjdiYjg4ZTM4YmRlNjIyNWM5Yzk5MDI1YjRmZTAxMjkwOTdkNDlkYTRiNTk3YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGNhZTJhYjE2YTNhYTE2YmVkNTFkYmZlMjg2ZjZkYjUxOGM0Y2M0MGYyMjkzOGI5NmM0OGRkMDM0NThkYWY4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzE1N2JjN2ZhMzdjYTYyMzZmNzRlZjI4MjFjZDg2YWRjMzFiYmU5YWVmMzlhYjEyNWFmMDAwZWNjOWFkYjMwYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTU3ZmJmYzQ5NjE1NTk5MWFjODYyOTQxYjI1MzRhYjgxZDQ4OTY2MTBiMzhjZDAyNTFhZWI4MGQ3MDEzNjVhMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_cbace10b0ea744fe86d7beef31b16d51",
+      "statement": "The Docker build copies packages/db/drizzle to /app/drizzle, which is exactly the default and Compose-set value of MIGRATIONS_PATH, so boot-time migrations never depend on the source tree; apps/web/dist is copied to /app/web matching WEB_DIST_PATH.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L23-L24",
+          "version": "repo-lines-v1:sha256:ee7ddb45ceefae66eb5173a8fff340815fa391d3b75df5856af283c09ca9183f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOThjZTM5NWVmZTkyMTc4YjM3M2Q2NTFhZWYwM2JhODVlZWQ3YTEwMWZjYWE0OGY5NDg0NzFjYWU5NDY1YTc2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk5MWEwYjI0OTkzMWYyZmFhNTRlNjk1ODM4Y2ExZGUxOWUzZTJlNGY0NDg3Y2Q4ZDBlOTBhNTk3MWMwYzllNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTdmY2JjYjhlYjUwMTE0YzM3Y2I2ZGFiYzFkMmMzZDFjMWQyM2EzM2E5MGMyOGU0Mjc0ZDc2YmJhZWQ0YjA1OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmQ5MWM1NjI2ZjQ4NzBiMzU2N2U4OTBjZGU5ZmI0NjcyNmJlN2M2OWE2NmIwOTYzNDkxOWEzODk5YWQ0NjYyMyJ9"
+        },
+        {
+          "resource": "repo://Dockerfile#L34-L34",
+          "version": "repo-lines-v1:sha256:20053d52278a7aac6afa0e98f7c20282514a8694102e29841153e21c9f0db94a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAwNTNkNTIyNzhhN2FhYzZhZmEwZTk4ZjdjMjAyODI1MTRhODY5NDEwMmUyOTg0MTE1M2UyMWM5ZjBkYjk0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAwNTNkNTIyNzhhN2FhYzZhZmEwZTk4ZjdjMjAyODI1MTRhODY5NDEwMmUyOTg0MTE1M2UyMWM5ZjBkYjk0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGU2MmVjNWYzZGFhNmIyNDI5YzQ4OTFmZDc3MjUxMzFiYTAxNzcyM2JhNjRhNTBmYjhkN2M1YWZkOGJhZjk1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGUzNWFiMjNlYWNiYmE1YjI4NjI3NWViZjNkNWEzZTVlNDIwYzhhYmJiNGVmZmJkNjhjNjQ3NGYxNDM3YjY1MiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L22-L23",
+          "version": "repo-lines-v1:sha256:2f3495c12b3352b97e864fe6d1aff93360c0a14ca7d062afe4c7c0a01d20aa08:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjYzMjkzODQ3N2Q2NjA5ZjYyMjA3ZmZiOWM3YTAxNTQ0M2M3YTEzYjE2ZjUyZmE0ODJkN2U4ZGZlYjY1OTdjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGQ5YjY0YzU4ODhjMTkyN2E4Y2UwM2Y3OGZmZTA4ZjBmY2FhYTdlYmJlMTBhZjEwMjAyYWI3ZGQ4NmJhNDg0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDEwMWZkZDc3OGY1Y2VmNTNlZjNlMGQyY2JlZGY3N2I0NjdlYjY0MjA3YTZiNDVkMWNiMmY3MzEyMDFlOGJjYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjNiMmM0ZmQ1OThhN2M1MWZkZDUxOWU1MmFkNjNiOTk2ZDMzZTlmNDY2MjQyNGFjZDZlNTA5MzM3YzhlYjk1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_af189f663e6f4f31a55abd9347fc2139",
+      "statement": ".dockerignore excludes .env and .env.* along with node_modules, dist, .git, .turbo, and coverage, so no secrets or build artifacts enter the image or build context; all configuration arrives as run-time environment variables.",
+      "evidence": [
+        {
+          "resource": "repo://.dockerignore",
+          "version": "repo-file-v1:sha256:d5e2be9e002f6e239d3b8b9ffe44bd7ae113243a03f090c2a2851193b86e3b4c"
+        }
+      ]
+    },
+    {
+      "id": "claim_7268427f54b74f74ae53ebc7e0b7cb12",
+      "statement": "The image activates pnpm 11.21.0 via corepack while package.json declares packageManager pnpm@11.23.0, so a bump to one should be checked against the other.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L3-L3",
+          "version": "repo-lines-v1:sha256:0995814f9de87229627e1bdcd1bf50fcfd557d092f27f2b92747f7f0db98b0f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk5NTgxNGY5ZGU4NzIyOTYyN2UxYmRjZDFiZjUwZmNmZDU1N2QwOTJmMjdmMmI5Mjc0N2Y3ZjBkYjk4YjBmNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk5NTgxNGY5ZGU4NzIyOTYyN2UxYmRjZDFiZjUwZmNmZDU1N2QwOTJmMjdmMmI5Mjc0N2Y3ZjBkYjk4YjBmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmMzM2ZhOGM4ZDg4ZTQyNzhjOGI5YTg5ZDNlODZkMTE1OTkyN2M1OTZhODA1MjFmNjQ1NTdjYjE2NmIyOTA1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTZkMWU2OGZhNGZlOWE4Njg5ZGI0ZGJhZGI1M2UxOGQ4ZjQ5ZmI2NTNkMWE4NGI3NGUzNTRhOTY5MmIyMTA5ZSJ9"
+        },
+        {
+          "resource": "repo://package.json#L5-L5",
+          "version": "repo-lines-v1:sha256:606c7cdb1f01384c31933984e61b3872d2c4e7e1d3ccff5d7144bab403c727be:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjA2YzdjZGIxZjAxMzg0YzMxOTMzOTg0ZTYxYjM4NzJkMmM0ZTdlMWQzY2NmZjVkNzE0NGJhYjQwM2M3MjdiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjA2YzdjZGIxZjAxMzg0YzMxOTMzOTg0ZTYxYjM4NzJkMmM0ZTdlMWQzY2NmZjVkNzE0NGJhYjQwM2M3MjdiZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzliOWMxMjkxNGIzYzA3YTJlMTkzOGFkOTgxM2Y5MGJlYTY0MTM3YmRjMzg3MjVhNGFkMWZkZjE0N2MwMzQ5ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTkwMzI5OWE0MTIzYzA2ZjI5YzVkNDAwNTk2MTUzMThmMTQ0ZDIzZTk0NTBjYjk2MjM0N2I0ODg0NTMzMTlkYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_746f38869a9c4dc182ff37ab8c91f6dd",
+      "statement": "main.ts runs loadEnv, creates the postgres-js pool, and calls migrateDatabase(database, migrationsPath) before constructing the Nest app and before app.listen, so Drizzle migrations run at every boot and an unreachable or rejecting database fails the container before it starts serving.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L15-L49",
+          "version": "repo-lines-v1:sha256:fdd0096b09d933d495dd5ee0d471a23d2d796fc4a1560e87ab81f838f30bba91:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNzk4ZjI2M2ViZWYxYmU3YzBhOTRmZTQ3NTBhNTVhOTZmM2JiNjRmNjRlOTZjMjM2NTMxNjNhYTdiZDcyNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ZjBhY2Y2YjExMTNlMDBlNmRkMjE4MTk1OGM0OTI2OWE1ODFkYTY0OTZiNWZkZDdkZWFlNTNlNzc2NTZlMDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNDlhMzljMjZiZWU4MzQyNWNjMzdmNGRlM2U5YzUxYTRmMzU2M2QzZDQ2N2IxMWQ3MWU2MGE2NWU3MzFmMjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3YzI2NWZkZmFiMzBhNTBiNzdjMTlmOWE3YTQ5NjRlNDVhNmNlYzI2Y2M5YmE3MDA1ZTFhZDg0Y2Y0OTczZjMifQ"
+        },
+        {
+          "resource": "repo://packages/db/src/migration.ts",
+          "version": "repo-file-v1:sha256:cb0284526a1235ddbaf7392a42c317b2604d7d6d0c198c91793c1db4e4103cd5"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e8ec44881c24bf2b0409a3046ee4bb3",
+      "statement": "main.ts sets production-only catalog knobs that differ from AppModule defaults: warmTransitCatalogs true, minimumBusCatalogItems 10_000, and minimumSubwayCatalogItems 100 (the completeness gates that make a truncated bus catalog fall back to the live nearby lookup), whereas tests default to warmup false and minimum 1.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/app.module.ts#L79-L87",
+          "version": "repo-lines-v1:sha256:ac1886bc27f4eaef5f374049275f39e4d060dab1e26890e62198cd1d3572979f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDIwMDhhOGU2OTFjMTlkMWM2ZGVhNWFjYjRkOTBkYjg1YjM4N2FlZjUwYjEyNzg1ZmFjMDk3MjgzMDg0YzhlZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk3OGUyNTAzYjhjZjM3YTA2ZjdkNmYwYTNhNmI2ZmUzNTY5MWZiY2FiNTBiODc3NWNhYjZmYWJjNzFjNTkyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2YxYjczMTUxMWU0MDVhZmI0NjY3ZWQ3MjU1MWI1YTVjYTJlZTc5NTFlZGY5NjA4ZmY2YTZlNTUxODUzNzg3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjZmNzhiZDU1ZjQzYjEwYzg0Y2MzODkxYWQ1MmQ4MTc2ODE2Zjg2MWUwNTVhODM4NDVjNTcwNDdjMGFjODM2NCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L20-L34",
+          "version": "repo-lines-v1:sha256:c2503ea2db3233791e62cfae2977c8c3fa8d82721cc7c658de388f25b18e1b91:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNjNjYjVhYmI2YzJkNDkyNzJhMTZjZjhkOGNmMTUyZTg4NTY3MjExYmYwNWZkODcyMjhjZGRhMDgyYWRiY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2N2MxZWJmMmM5N2M2YzUzMTBkYmUxMzQ2YTQwY2I1NWE1NmYwZWUxMTVhYWYwOTBlNGIzMzNhNjM1MmY4NmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NjhjMWMzY2YzMGNlYWM5MDVhZTdiNGE1NWQyMDU1ZDgxODUzYzlmZWVlZGYzZWI0YzA5ZGY5ZTg2NDlmNDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f8b0ad1adeec4e948d50e073ef8c0aa9",
+      "statement": "The Fastify adapter is created with requestTimeout 65_000 (above the web client's 35-second allowance for a cold subway catalog load), app.enableShutdownHooks() is enabled, and SIGTERM/SIGINT handlers end the postgres client; catalog refresh timers are unref()ed and cleared by TransitCatalogService.onModuleDestroy.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L35-L48",
+          "version": "repo-lines-v1:sha256:61fb7b70cc819208ef20392c3e796a92864e7171603886ebf9a102963c55e535:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNDQ5NGI4YzViYTc2ZDJhY2FlYWM3YmIxNGNiNWM0MDlmOTc2OTM2ZWMyODY3ZmZjYzU5MjIwOWQ3ZmYwYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1NmVhNjlmN2ExNDE0OTQzZGY1NDI3OWMwYmZhMGMwMzRmOGI0NDM4YjAwNGFjOWE4ODU5Mzk0NDViMzM4YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2YmNmNzgzNzhkMmVhMDhjZDI4OTkwZDRjZTk3Zjc0OTY1ZGNjMjkyYzFkOGM3NTJhNjIwNjU3ZTE5NjM2OGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyZmU0NTgxODdlMjI3ZjVhYzYzMDI3NTdlNTIzMmY5MDljNjQ2YzAxM2IzNmYxMGI2NWUxNWE3NWI3NzYyZTMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L168-L180",
+          "version": "repo-lines-v1:sha256:af0a7175e35fc3379e48272b951bb3f1ec2bf4d1c6adbb87eec153ce9ee64e1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwY2Y2YmI5MzExY2NlOTUzNDYzNWZkNWVhOGUwNzcxMDQxYTYwODk3Y2I5NGMwODZhMzQxMWIzMDE1Nzc2MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjNlN2NkMGMzYTYyMzA0NzY2ODE2MWQxMDRlOTlkODYyMDljYTNlNzc1NGEyNWIxMTlhNDkwNzg3ODA0MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4NGY0MTRlM2YxZDk1MTNkNDRmOTQzNzEwOWQxYzk2NjIzOGQzMmMzZmNhZWMzZjJmN2JmYjIyZjI3NWZmNTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L79-L82",
+          "version": "repo-lines-v1:sha256:473774d7998bee88b54427d572e75f2f7cf0ad287466082be22b5b5ebf68221f:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTJjOWViODE2YzZkZjI4ZWI3MGQzNGQ0ZGNiNWViM2FjNzFjZGI4MGRlMmQxNzk1ZTNmMDgwNzlkM2NmOGUxYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTU0MjM3NjVhYzBmMGVmNTgxMjU1MTFjYjE1YWI2NjAxMjI2YmMyZTZjNzZkYTgyMGE3ZWQ5NDM1MGMyMjE5MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzRlOTI5ZDU5NGVhODE0ZjM3MDgxNDY2Yzc3MDUxMzVhMWNjOGUxOTIxYWM4YTJlMDdmMmM4OWFkMTk3ZDllMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2f3a935680b442408977d9ee239bbb49",
+      "statement": "Static SPA serving is useStaticAssets with root WEB_DIST_PATH, prefix '/', wildcard false, plus WebController's catch-all @Get('*') that returns index.html only for text/html navigations not under /api/, everything else 404 — the mechanism by which one container serves both halves of the surface.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/main.ts#L40-L45",
+          "version": "repo-lines-v1:sha256:c2d0593db88f534e2c432247e656d66c81e0f5bd6253f7503c9ecd2a335ff5cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmJlYzcyYjRhNDkxYjE2ZTI1YmQyMmE0MTk0MDUzNWViMGEzMjZkODI5OGU2ZDg3OWJlNmFjMzc4N2YwMWQyZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZmNjMxZGM5MDJmNDJjZWQ5ZTU4YjczYWM5YTExM2YyMGUxOGVkYmM4NmI2YWU1MjliOWE0OGEyMzgzZTkzNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDkwMTAyMjQyMTBhMjI5ZDBmZmFhZThjOTc3YmQ3NTc3NDdhMTIwYzg4MDNiMDM5YTJjYTliOWQ5YjNmZGVhOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/web/web.controller.ts#L14-L26",
+          "version": "repo-lines-v1:sha256:529c9e374e6a864945c9afbe952857f41e3137e92ca289bfbe9d52cb674a514a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5YzE2MjYxYmFmMzY3Y2E3MDU1ZGMzZWFhOWZlNTFhNzQ2YzlmNWIzZWZiNTI5YmFkMTE0Yjc5ZDMyN2FhMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwYmE2YTI2NjM5OTIyNWE4MzYwNTE5NDgyNTc0NWZkMWY1MjlmMTlhMDA3YTJlM2RjMjU3NGEwMGE5OWRmZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_77312abac5cb4fd3aef1f08e35530e2f",
+      "statement": "All environment variables are validated by one Zod schema in apps/api/src/config/env.ts with defaults matching the shared home-server deployment: HOST 0.0.0.0, PORT 3000, PUBLIC_URL http://localhost:5173, DATABASE_HOST home-server-pg, DATABASE_PORT 5432, DATABASE_NAME and DATABASE_USER mota, WEB_DIST_PATH /app/web, MIGRATIONS_PATH /app/drizzle, TRANSIT_CATALOG_REFRESH_MS 86400000 bounded to 1 minute through 7 days, with SUPABASE_URL and SUPABASE_ANON_KEY required.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L6-L30",
+          "version": "repo-lines-v1:sha256:df1f7d8fcc7bef152a5455a23291a9015f5d7d860c314d76035adf42641cd138:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMDIyYjFlMmM4MmYxN2NmYjdjNmI1OWExMmMzMDcwNjQxMjQxOWM2MmNmOGUwN2RiYmRiMjc1YjNmYmY1ZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2OWM1ZWE4NDYxNThmMmQ5YjQyMDk3ZDY4NzZmYzZlNDZlZjQ5ODYxYmU0MjdiY2IyNTQ0OWFmODE0M2RmYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhMzE5ODdiNGU0MzIyYjVkZDhkZGFjMTJhZjcyZmVmNjYzMDBlNzVlODQ3MjAwMTczYWU5N2M2ZjM1NGQwOWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c16f277562b24867a33d35ace53855a0",
+      "statement": "loadEnv resolves the database connection by giving DATABASE_URL precedence, otherwise assembling postgres://user:password@host:port/name from the DATABASE_* parts with encodeURIComponent applied to user, password, and database name (s/ecret becomes s%2Fecret), and it throws 'DATABASE_URL or DATABASE_PASSWORD is required.' when neither is present.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.test.ts#L33-L59",
+          "version": "repo-lines-v1:sha256:217c67e7c88c0a379cc6719f4c0d286fc839777fcf6bab2dab8d1f11eccecf9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MWU0ZDk3ODE3MmYxZDcxMDdhNGQ5NGUyMDYxOTQ1NzkxMzkyODA4ODQyZTYyMjQ0ZDVmMTMzODA1ZGZiY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0Yjc0MjYyMDgzN2Y3MmJjNjg4NDg5YmEzMjdjNzBjZWNjNDlhNzBkY2U4NTMxYmRkNDA2ZGEzY2QzNTQxOGUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L50-L62",
+          "version": "repo-lines-v1:sha256:0d193a04eeccdb59061dfadd5a2b9fae26223566181af13b0e6907b42ddda6cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMjZkZjU1YzgxZGVkZDY5MmY4ZWYwNjA3OTdlYWIxZDJhMGVhMzI5YWJiOTZjOGYyZThhODk2ZTg2OGVhYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyY2MzYTgxMGJmMzYyYjY3MjdhMDMxY2IwZmZjMTM3N2M2MmNkYzRkMjAxMTg0ZGFlMWNhNjE4MGI5YWEyMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxNDQzZTk5ZTBjOWU4OTkyNmU2NmI0OWM0YzExMzYyNjI3MzRlY2FlYjc0YTY0NjBkMzY5ZGM4N2QxZDRjNWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dcff39cf10384baaad27f512ea337e3c",
+      "statement": "loadEnv strips trailing slashes from SUPABASE_URL and PUBLIC_URL before exposing them as oauth.supabaseUrl and oauth.publicUrl, because both are concatenated into strings such as the auth/v1 base URL and the /api/auth/callback redirect.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.test.ts#L11-L31",
+          "version": "repo-lines-v1:sha256:557e17a59b9dd11e3b7110cb484956cf1b96a552d1d61c78bb09de33a8557928:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlY2NiYzZiYjI2MjliMmE1YmU1NmFjNDIxMGI0ZGUxM2Q2ZjhhOGZhMzllNjllNTMxNjM1NGQ3Y2ZlYWQ5OGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5MWI1N2MwYWQ4Y2I3MjJhZjNjYWE2N2UzNGJiOWVmN2NlMDE2ZGZlMTZiMjA1M2Q1OGUwMzZmNDE3Y2RlZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYzODM0ZmQ0Yjk4YmMxZmZiNGM1YjI2NjBlZDliMTlmZDI5M2E1NTU3ZDAwM2VmYzRjZDE5YmM1YmNlNmU5OGQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L70-L76",
+          "version": "repo-lines-v1:sha256:06847254fcc1543d225fa88492372c8077ede6f56b13259b0f17187934b6c042:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZkMzMwYzgyODA4NDRjYWIxZGYyOWIzOWU2MTFiMDkxOTdlZDY2YzM0NjFiYmZhYjJmNTdjMDBkNmMwNjk2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2E1MjAyNWI2M2I2OTgwNDM5NmI3YzQ1MzgxOWYwMzA1OGY2MmExZmNjZTM3MWZjMDY3NmM1M2IzZDJjMmU0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6647e1759ad54c09a8043f515278ff61",
+      "statement": "SUBWAY_ARRIVAL_UPSTREAM overrides only the origin (default https://k-skill-proxy.nomadamas.org); the adapter appends /v1/seoul-subway/arrival itself, so setting a full path breaks the request.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L8-L10",
+          "version": "repo-lines-v1:sha256:1637dd7fdca3c652f47b084071c6afd969ad82e1791d6b08b947306a8982b448:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjMwYTk5ODZlZDQzMGU0MjA3MGVmNzY5NDg2MDMzNTU5NGM2NjFiOTNmN2Y4OTIzMWQ1MTU3NjE0N2M5Njg0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjlkOGY5MjU4YjExMDU2ZDE4ZDU1NzZkM2I3MDk3NzljMzgwMWNjZDFkNDgyZjU3NDYwYTBiNjBmODkyMjVmNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDA2YmVjYjZkZTY0Y2NiNjMzYmE3OWE2YjVkOWFhOTEyN2M1NzhkMTYzNzVlMmI3ZTFmMzJlYTczOGYzYzVkYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTEyMWZlM2Q5N2M2YjI4NmI1ZDg0ODliMmRjNDU4NTFiZWNkZGI5NjY4OTJjZmMxMzhmNDU2MTUxY2I5Y2VkMCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/upstream/subwayArrivals.ts#L9-L24",
+          "version": "repo-lines-v1:sha256:b3b0e3dd8692a1c65c91142de9a31920877b6043935a1b1a7ba7591fb52bb052:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3NmMwMzNkMDE2Zjc0YzIyZmZmZDM5MjEzY2IyOTU1ZDBmMWE2NzBiZjliYjc5OTY5MzM3ZWZjMWYxN2ViNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NDBjNjJiZGJmYTE4NmZhNjIyZTU1MmIyMTNmYWJjYzc4OTRmYTIyZGY0NTAwODU5ZWI2NjAzZmNkYzBlNDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNTA2N2E4MjI0MDU3OGEwNzcwYmFjM2NhNWZmNWM0MDA0MTE2Mjg5ODBmMTNkM2JjMzkyYjMyM2NjZjA0MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxMGY4YjAwZGQzZmMxODNjMDEyNjY4NzFhMjEwZGVmMTVkYzk4YmFhMmFjY2E5ZTY4ZTg2YjY0YzM5ODE2YjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_deea3b40672042ad9e1f27f991f6f193",
+      "statement": ".env.example is the local-development template: it points DATABASE_HOST at 127.0.0.1 and DATABASE_PORT at 15432 (a forwarded home-server Postgres) and documents that production Compose loads POSTGRES_PASSWORD from ../home-server-infra/.env.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L15-L20",
+          "version": "repo-lines-v1:sha256:14981d450bb23f5bf9402eb77a36d6a16c462eec7679c479d71339ba546c7435:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzgyYmJkZDZlYjU5ZGJiOGMwMmM5YWRhNDRjMzUyZGJhNzRjNjIwM2ZmNjJkOTAxMGJjNDYzOGJhZGU4ZWMwOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGMyZDNiYmE4NDI4Mzc5OWRkYzQyY2U3YmMyNTEyZjdhYzU3NDBjYjcxNTFjYWI4OGQwNjg0ZTMyYzZjNTAzYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjk1NTg2ODBmNjFlZjkyM2I4ZjViMTM3MGUwMmQzZGRhNjljNTMxNzlmZTg2MDRhNGI2NzhlOTYwY2IwNjk2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTA5YWFlOGIxNjA0NjcxNTg0NzE3N2RkYmVjOWFkYWNmNzZlYzQ4YjVmNWVjNTQ3MzRmOTllNTcxNjRiMWI0YSJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L15-L20",
+          "version": "repo-lines-v1:sha256:6c7323fa561b1a4f28edcd66ab58de4dd6dd65df467c063eb5c62c09712fa787:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTY5ZWFiYzQzNGM0NDVjM2NkODYwNmUzZDNhNWI4NzVhYjYzNzZjM2U3NTAxZDM2ODUxZTE0Mzg2N2MyZTVhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjNhNDQyMDkwZTFjZDE0OGJkZTY2MTY1ZGEyMDdkMzhiZTczMDkyOTUwNGVkMjhjMGFjZGNlNmUwZDRlNzViZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWVjMzYxZmU4MWQ2MDE1ZDFjYTE3ODIwZWM1MGE4MzdmY2Q0MDY0MzAxZWM1MmNjZDlhZmRjZDA0MTkwYmQxMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjZhNGVmOTUyN2JlZDY1OThlNDIwZmViZWE4NWJlNmY4OTM0NTYxYWNlMGFlYjkyM2VmYzU0NmFhMWZjYmIyMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_74091e3de82b45d597d89d4a0bfb4148",
+      "statement": "PUBLIC_URL acts as a security switch: when its protocol is https: all five cookie names get the __Host- prefix and the Secure attribute; on http:// (the local default) they fall back to unprefixed names without Secure, because browsers reject __Host- cookies over plain HTTP.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L68-L69",
+          "version": "repo-lines-v1:sha256:9469f669e9c371cd9881a8fd145e9d3cd0f06f571928d6bc1f5e0183dcf37443:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODliYmU2MTVhN2E4NDA1YWI4MjZmMzY1YWJiNjhiYzA0NzAzZTc4ODQwOTY1YTY2OGM1NzViMDY4ZDkzNjAxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1M2ZjZTg5NGM1MjBmNWYxNTEzY2U1NmI4OTcxNWY3ZjRlZTNkYTlkYmVlYWZhNjI3MGNmY2NmNWExYzkyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTgyZjM4NjhkZmUwMmJkYjNmMGM0Y2ZkNWE0MmYzNDNiMjA3OGU3MWFhY2I5OTZlMGIyYjQ3YWM1YzE0ZmJjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjc3NzE5ZmU4MWNmMjUwMjUxZTA5MmI3NWVjNzA3MjM5ODM0N2NjZmM0ZDUyNjI3NzMxN2M5NWY1OGU1ZmU4ZSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.test.ts#L13-L25",
+          "version": "repo-lines-v1:sha256:1803b983b1f1d9d221e36d66b5c24f2034654349efaa28c7f186e47a01043e6a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhMTQ0OTQ4NDFjZjVmNDIxN2IzYmRhOGYwMmEwZmUxZTlkNTU2ZTAwNjRiZjgzZjdhMjFmZWUxNDAzZmI2YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiOThjOWQzNzkyYzAwYzM2MjY5ZTcxMDQ3NmJkODYwZGFlZGE5ZTNhMmVhYmQzZmUwYWRkYTJhNjQ5OGVkZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxZDQwZTcxMGYzMDMyZjk5OGVhNmRmMThmMWE5NDdmY2I1YWUyNmQ0ZjNmY2NlYzYzMDdkYjMxMDU5YjUzNzEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.ts#L30-L49",
+          "version": "repo-lines-v1:sha256:8b31a7aa0a89509ffd41fb5ec1576cf8d05982d694c743c761853dc64a5ed69e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZDJmOGFlYzZkZTAwNDUyOWMzMzYzMjlkNjIzMDZkNGIxZTZjZDUyZTllZTAwYjJjZDc5OGY1M2FjZTMyNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMTU5MjAzMzYzMDVkNGJiYWQzMjA5MDdmZjM0Y2U0ZmZiZWZmNDk1MmE5YTk0MjdlNzM3OTY2ZWJlZmU2NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YmQ2ZWU3NjM5OWRiMmUxMDBjODY4NDRiNzY1NGYwNjljOGQzYzI4ZmUzMDNhMTIzMWYzMjNlMTk3OTY3ODUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a352f68445e4cfd97977b9cac00c377",
+      "statement": "The secure flag derived from PUBLIC_URL is applied consistently at both ends — writing flow cookies in OAuthController, writing and rotating session cookies in verifySupabaseSession, and reading them back by name — so changing PUBLIC_URL changes every cookie name and invalidates existing sessions; PUBLIC_URL is also the OAuth redirect origin, the /api/auth/callback URL that must be allow-listed in the Supabase project.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L76-L84",
+          "version": "repo-lines-v1:sha256:18645ceddffaa41ad5a5e7e086e8fa45a7926d92349569eae8d3bc30b7772bfc:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTQ2ZjYyNTUxMTNhZTQyYzBmZmVjMjBmM2QwNmZjYjEzZTZiMmU0ZWIxMDBlMWJkN2VkNzc2NGJhZjJhMTAzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTE2NGRmMWZmMTBiZWU0N2MzNmI2MDU4MzcxZmY1ODgyOTQxZDNjMzkxZjNhOTM3OWViOWYyNGIzZjRhYzUwNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzhiMmQ2MGI1NzcwNTJlMjFiMWNiYzgwMWFhZmY4ZTU3ZjI1ZWY0MGQzMWQ4ZWY4YmU5NjZkZDAxNmIzMGZkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGM4ODkxOGVkMDc2OTA4ZDhkZjEzNzFhNmM2ODI1MDNlNGUxMzYwYjg1MTRmNjhmNzdjZTdjMzBlM2I4MjVkOCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/oauth.controller.ts#L93-L99",
+          "version": "repo-lines-v1:sha256:ffb4f11a1e46d46a6e1a4f97b618ad81e1223092b511b44c115e21d6f543a2a5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGU5OWYzNTkyZTNkMmViNzNmZmZlOGNmYjEzNGUzNDVhZjI2NmQ5YmI5MGVkMzU0M2JlNTA2NjRmYWJiOGQwNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzNhN2FiYmZjMmFkNzI5ZTA4Nzg4Y2RiYTM5YTY4ZTJhMDhhZjhjNDU4NmI4OWFiZTg5NzVmNThmNzhlNTVmNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzJhYjE0ODdhYjM1N2MzZTVlNzNkNWUyYjFlMTA4ZTM3MmQxNjdkNDIxZGViNWQ0ZjMzY2NlMGRkNmIwNWFiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzU3NjM4OTIzZjM3ZGYxNzZhNjA3Mjk1N2ZmYzQ0NGJhMWUwZWQ1MWNjYTAxZGU5Y2UwNDI3MDY4ZTJjOTQ2NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/auth/session.ts#L35-L38",
+          "version": "repo-lines-v1:sha256:615fa563d220dec167fa114042a0acebe2b2746affcdda7acd85ec8982d6c563:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQ5NmYyM2Y1ZDMxZmY4NzYyZmZiZDU4Mzk1MTRmOTE4NGJjNjE0YTMzY2QyZTJhYTg4YzdmNmUxMmE0MTNlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQ4YzgzMThlNjYxY2IzYTk2MDFhMWRlZmQ4ZWE0ZjI2Y2Y0NDMzYTI2NWI2Mjg1YTI1Y2I3MjI3MDllMmE3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk1ZTVkMDU3ODk2YTA3ZWJhMDNmYjMxMjQxNjgyNmIyMDRlMzdmNGM5Nzk3ODRhMTQ5YWU1MDE2NzlhYWM4NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2YxNTAwOWEzY2RjMDk5YTNkZWEwYTNhZjcwMWQzMDI0OTc1ZmZkMzJlNjkyNWY5ZjUzYmUyODc1YzliYmMzNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_eff52ea58b00429a8acc565c1400f752",
+      "statement": "Local testing pairs with the Vite dev server: apps/web/vite.config.ts binds 127.0.0.1:5173 and proxies /api to http://127.0.0.1:3000, so a developer API on port 3000 with the default PUBLIC_URL http://localhost:5173 produces unprefixed cookies the browser will store.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/config/env.ts#L11-L11",
+          "version": "repo-lines-v1:sha256:b65648aa434c37aa969918ca5a625a3471c4a1ea1f79e6d102334130e3b9b0b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY1NjQ4YWE0MzRjMzdhYTk2OTkxOGNhNWE2MjVhMzQ3MWM0YTFlYTFmNzllNmQxMDIzMzQxMzBlM2I5YjBiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY1NjQ4YWE0MzRjMzdhYTk2OTkxOGNhNWE2MjVhMzQ3MWM0YTFlYTFmNzllNmQxMDIzMzQxMzBlM2I5YjBiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmNhYTIyNWRjNzBjNmRmZGU1ZGZlNDI4ZWZiYWIzM2FjMzM4ZTgwNzVmZTI4NTYwZTI5NmU3MDZlMzY4M2FhZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTEwN2UwODNmZTZlODg2NTlkZmYzMzI3ZjEzMDc5NzZkNzVkMzJkZTYzMjI2MmMwNGMxNjdkZjA3ZjYyZDM5MiJ9"
+        },
+        {
+          "resource": "repo://apps/web/vite.config.ts#L28-L34",
+          "version": "repo-lines-v1:sha256:d3e4108810eb7bb663adf668b40b96947a5472cad57325d58e72301d81773a0d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjBlNjZhZmUzMTAyMzFkMmU2MDkxYTVkODlhNjNlNzQ5ODVmYzdjMDIzNjRhODk5YjRjYWNmN2Y1MjcyOTY1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWNmOTdhOGU4YjA4YjUwMjY3MDEwNWY3MzMzNmFlNDhkZWZhN2VhZWZjNzQ0NmY1Njg4MWY2MjBkYjMxOTQ3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjRmNGU3MzczYjY0YTUzYTMwNzQ0ZTQ5NTgzNmQzNjM2MGMxYjU1YjZiMzE1NWQyNGRhNzk4OTQwNDgzMzcwYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_de441add55424ab5a7865c4e5d564a1b",
+      "statement": "The container runs hardened: the image sets USER node (never root), Compose sets read_only: true on the root filesystem, and security_opt no-new-privileges:true; this is viable because the process writes nothing at runtime — state lives in Postgres and catalogs live in memory.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L39-L41",
+          "version": "repo-lines-v1:sha256:20e26e4e599bdbcead036f9a594334ccf59b44f9e53e3d2ccaf468a3399b81c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IzMGRlMmJkYTdmNzgyYjEzY2ViNGFjZDBjMGJkZTcwMjVjMjhmMWJlODY0MzQ3ZTY5OTQ0NjcyMmIwMWRlZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTgxNzFlNjJiNzVlMGFhMzc3NzA1MTk5N2MyMTQ5OTJkN2E2MGExZTY1MjIxMWI2OTQ3OGE2ZDNlYjJiMDA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGEyZWMzZGI1YWFjMTAyZjRmNzI5MGEzZDYzMDgxZDlhODhlMGYxY2ZjYmUzOGYxNDMxYWE4YzNjNzZlNGY1MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://compose.yaml#L40-L42",
+          "version": "repo-lines-v1:sha256:b655ee96d366df5eb5f411e5ca1589aeb90f65085ce00b4cd85b1bd84b77c5af:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjgzZGUyNjFjMWQ1NWY4Y2Y1NzZjZmQ0MGQ5NWJlMzk2ZjY2ODA0OWRjYzVjNDk0MWRjNGVlZTI4Y2E3N2I5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNjMmEzY2Q2ZDRhYzM0YmRkMTQ0ZTkyZTFkZWI1NjlhMTMzYzZmNDk1NDc3NDE1ZGViMTkyNmI1Y2NmNWJmMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTkyYjJmYjAzMmI1NGI1NmVmOTExZjJiMTNiMDAwOTM1NWVkYTZlMTQyMDAwZmE3MGJkZjczZjhmZWYyYzhkNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTJhNzU2NThhYjhmNzVlM2NlYTdiZGM2NWYzNjRjZTVmYTI1N2QwNzI5YzA5YjVjNTgzNjJhNGI0NjkzZmQwMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_14d29ad5dbd7402cba54804c305df3ba",
+      "statement": "The Compose healthcheck uses node -e fetch against http://127.0.0.1:3000/api/health every 10s with a 3s timeout, 5 retries, and a 15s start period, targeting the in-container port (not the published 127.0.0.1:3100), which requires HOST=0.0.0.0 to be reachable.",
+      "evidence": [
+        {
+          "resource": "repo://compose.yaml#L30-L39",
+          "version": "repo-lines-v1:sha256:c9b5eefe9c27bc84c7e805b1748c88748e51ed805365157e58d153d0cef2fd31:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3MWRiNGU4NzVlYjlhNmFmMTQ1NTYzMDU4NjE5NmY3NDIyMjMxMjhiMzYyNTgwMDk4NDlhNjhmODAyY2NmOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZjAzYzc1YmUzYWRjMTliOTBmZTM4NDhlYWRhMDNkODJmODdkODk5OWE4ZDU4NDIyYWEzNTFkZWU1MzYwMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxZmFlMTY3NDQyN2EzYTY4NTQ3MTdhNjI2ZTU0NzdmZWI1NmNmY2MwNDBmZTdkZWExNzEwZjk4Y2MwYzgwZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2NTVlZTk2ZDM2NmRmNWViNWY0MTFlNWNhMTU4OWFlYjkwZjY1MDg1Y2UwMGI0Y2Q4NWIxYmQ4NGI3N2M1YWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_758ac7d46e1c4532b7b111e29336550d",
+      "statement": "GET /api/health always answers 200 with status 'ok', service 'mota', and a transitCatalogs block mirroring ManagedCatalog.status (ready, count, updatedAt, lastErrorAt, nextRefreshAt per catalog), and readiness is deliberately non-gating — a cold or failed catalog does not fail the healthcheck or restart the container; the e2e test pins ready false/count 0 before a request and bus ready true after one.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/health/health.controller.ts#L11-L18",
+          "version": "repo-lines-v1:sha256:e240614709e93464937921a6412a5963ed88732ac55c316fdc03fec1010fb721:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWViOTlhYmZiNDc2N2I0OGYyMzBiMTVkNTZhMjU4MmUxODE2NzMwZDJiZTQ4MDhmYWM0MGU0OTg3Yjk3ZjNkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDczY2ViNWM0NjQ5MjYxZTE5MTgwYjQ3M2MyOTY1NzRlYmFjMzMxYzhlNmMzZTgyY2M5ZWQ5MDhlZDBiYThiMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L102-L110",
+          "version": "repo-lines-v1:sha256:0daa4285b687b944cc176193aa4c9ce56c386c6f59b2fac584de138dc01bd631:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDJlNjUwMmQ2ZGU4Y2FlNTBlZWI0ZjJkOWU2YTFjNDFhM2Y2ZTNkYzU2OTY5NDg3YzZiN2ZmZmVhMGJmMTc3NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGJiNGM1NWZmMjkxYzBiYTM5ZTk4MjM4YWFkMjYwNjY1MzliNWFlMzA1ODY4ZGQwOGFhNTI3ZmQ0MzgxYzc1MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmE0ZjEwODY4Y2QyM2U2MDgzNzQxMjJlNzdiZDVhNTViZDFhYWFlNTYxNDY4N2U0OGE5ZTQ3NDM1MWY4YzE5YiJ9"
+        },
+        {
+          "resource": "repo://apps/api/test/app.e2e.test.ts#L175-L219",
+          "version": "repo-lines-v1:sha256:9d88a813b2e8a6c1105bb34c042eeec3713132d12008012a44bd984d888a7b2c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiODRhMjY5MzUxZmNiYzE0NzZmN2M5MjhlMDlhMzRlOTk0MzFiZjQ2NGQzOGQ2MWUzMzYxZTE3ODkzZTY0ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjMDdlZGQ4ZGU5YTFlNzgwY2UwYjEzZDM4ODhmZGEyYjE3MzVjNTc5ZGI3NzEyYzMyM2I1NjMxMDE4M2ViNDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2e77180730ec4a1aa41edb90f50fbfbf",
+      "statement": "Catalog refresh attempts emit one JSON log line each (event transit_catalog_refresh with source, trigger, outcome, durationMs, itemCount, nextRefreshAt, detail — warn on failure, log on success), which is the primary way to observe TRANSIT_CATALOG_REFRESH_MS behavior in production.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L144-L158",
+          "version": "repo-lines-v1:sha256:e1966ba5b93d0778fc579d16eb723cfbf803ada2c2b77dfef7745cea3fab59ba:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZGI3NDYwODE4MmNiN2NhNGQ5ZmJhNDlhMzk0OTlhN2YzOTA3YjRlYTAzM2IxNDkyYWQ1Y2YwYmVlZWVjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiYzM5NzI2N2E5MWE3OTA4MmY2MmE5NThhZDdmYzFiNzY5OTNkOTZjYWIyN2ExZGQ3NjA1NjVjMDU5YWFlZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwZGE5NzE5YTM5YmFmOGJiNGI4YmU2MWM4MjhiMzk5ZTQ3NmY5MDM5ODc5YTc2NmE3OGY5MTY5OGJkMjg3OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L151-L161",
+          "version": "repo-lines-v1:sha256:58cfe162d7352ec9b503b966c25b34760e18e922759de096accbb4c0a8926db2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGQwMmU1OTg4NzhlZTZhMGQzMjA0MjZiNjdhYWIyMjA2NzQ3NmQ4M2I3NDU0YzAyNmI1NWZiOTUzOWJmNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlZWVmZGQ1MTEzZDk5MDU2ZjFlMTlkZTFiN2Q1YmVkZTZlMGEzMDFmOWU4ZjdiZTRlYWQzZjhmOGRhODY2YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjNTYzZDg2ZTRiOGU2NmJlNjVlMTdhNjViMGQ5OTQ4ZmVkNzZkYTVhOTUxN2U1ODkxZTg5NWYzODhjNjUyOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8e967b210dfc40d8a8b0d3e0c71026e9",
+      "statement": "On refresh failure the managed catalogs keep serving the stale snapshot and retry after 15 minutes of bounded backoff, and the bus nearby endpoint falls back to the live location-scoped upstream when the complete catalog is rejected for being below its minimum item count — so upstream trouble degrades results without failing health or restarting the container.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/transit/managedCatalog.ts#L66-L96",
+          "version": "repo-lines-v1:sha256:db41d9857344d3ffd541aa94cea6e109fb6254f15f4317fade125030d233bbea:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmZjBmY2UyMDM2MDNiMjJkMWFmZTc2NjY4YTMxZjRhYWY5ZGZhMDkxNmY2MDZkOTE1YmJiMTIxZmZlNzJjNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjMTk5N2Y4NDI1MWNhNGY1ZGZmOWNlY2E4YjE3YmFhNzgzNDczN2E2YTE4ZjZhZGU1Y2YyMmQ0NDcxYTc4NzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ZGMzZWM2MjZkZjZlMWYwODhhY2I4MjJjZTEwOWZjMjhkZTI2NmFjNjE3YWU3NGFlZjFlNDdhOGZmNWE5M2IifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/transit/transitCatalog.service.ts#L84-L93",
+          "version": "repo-lines-v1:sha256:2780d1dbd90dfa477cbac87cefb0a6c0b2c6add908e05f46aeb2fe697acf53fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNWFjYTE0Mjk5ZTI5NDE0MzNjZGU1YWI5YTk1ZjcyZGRlYjFlZWI3NGI5NGMzY2U2ZmJhZjNjZDFiNTkwNzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhNmM2ZWIzNDRjMWEyM2VjMDhlMWYyYTMyNTYyMDg0NjU5MDRmNDIwYmMxMGRmZGU4ODEwYTZlYmI0YjdmNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMjk1YTEwYzUxMDM0MWJiYjljYTVlNzYwNmY4YjNlYjhiNzFiYjAyNWUzNzBkOGE0Mjg3ODgzYTg1YzU1NDEifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/transit-catalog-fallback.e2e.test.ts#L22-L51",
+          "version": "repo-lines-v1:sha256:7900ae19f543d35f0783401d2fc408978d6fba9fd922164c7af01ac567b6b279:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2YTlkYmQ3NDQ2ZDYzMDY0NTc1ZWQ2Zjg0NGJhMmUyZGY2MGE2ODAxMmE0YmQ3Mjk4ODI2MDMzN2UzZjhmNTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MzdiYjc1ZWYyNmQyYWZhZWJjMzY5NDc1MGUzZDYxOWFlZmFlODkyNGQ2ODMzNTU1MzhjMzM1NWRjMjlhZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_78d2125cde634a0cbb442135c59c8c92",
+      "statement": "The deployment contract is pinned by apps/api/src/config/env.test.ts (shared-service defaults, encoded DATABASE_* URL assembly, trailing-slash stripping, both required-credential failures), apps/api/src/auth/sessionCookies.test.ts (the __Host- prefix switch and exact cookie serialization), app.e2e.test.ts (non-gating health) and managedCatalog.test.ts (the refresh lifecycle), while the Postgres integration tests run only when DATABASE_URL is set via describe.runIf.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/auth/sessionCookies.test.ts#L13-L52",
+          "version": "repo-lines-v1:sha256:9cce4539013df856a891eabd1320062d7d4785a1e057ab2a16cf8381dab5d36f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhMTQ0OTQ4NDFjZjVmNDIxN2IzYmRhOGYwMmEwZmUxZTlkNTU2ZTAwNjRiZjgzZjdhMjFmZWUxNDAzZmI2YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiOThjOWQzNzkyYzAwYzM2MjY5ZTcxMDQ3NmJkODYwZGFlZGE5ZTNhMmVhYmQzZmUwYWRkYTJhNjQ5OGVkZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBjYzE2ZTEzMWU4YzRhMDQ4MjZhYmMyMDExMTY2NGExMWMyYmVlNjExMDI0MjkzZmMxMjNhZWQ5MGMxZDU3NmIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/config/env.test.ts#L11-L67",
+          "version": "repo-lines-v1:sha256:7945eb3f053177d474c1c61bb1a8b2cd3c4c85754bb61688b9962c603d5f5c44:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlY2NiYzZiYjI2MjliMmE1YmU1NmFjNDIxMGI0ZGUxM2Q2ZjhhOGZhMzllNjllNTMxNjM1NGQ3Y2ZlYWQ5OGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5MWI1N2MwYWQ4Y2I3MjJhZjNjYWE2N2UzNGJiOWVmN2NlMDE2ZGZlMTZiMjA1M2Q1OGUwMzZmNDE3Y2RlZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/test/settings.postgres.integration.test.ts#L11-L15",
+          "version": "repo-lines-v1:sha256:b692605e34e1c49221e0aae27a23f3ff6b87c8fba7c5227a45aa2526242dd96a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDk4ZjMyZDc3YjE3ODFmZDUwYTJjYjUzNzg3M2RlZTA3YTA1NjJkNzk2YjAzMmI4MTA2NWQ0YzQwMTM4MjE2ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTk0NTViYzNkYmFjNThiZDI3NGE0M2JmOTMyYzlhZTNhMjI2NzgxZjExOTIwYzEyOWE1MmQ0NDBjNWQ2NGFiMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjhiNzNkNjZiN2Y4OWIzNDJlN2NmOTI1ODc3OGQyZDAyNTdiNDFmZWRkZDc5NTdhN2E4OTk4YjY0YjFlYzc4NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDZmOGIwYmU0MWFlNjM4YWVlM2I4MmM1NmQyMmNkMjBhNzVjNDk2ODI4ODdkNjU4MzZmY2ZmOWVmOGUxYmYxMCJ9"
+        },
+        {
+          "resource": "repo://turbo.json",
+          "version": "repo-file-v1:sha256:d67a7a4f6196d8842ac056b3e883d2d9f88558a1cc3eb7c5653e2c49283d50a5"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-29T08:06:29.177Z"
+  }
+}
