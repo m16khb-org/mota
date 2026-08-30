@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d8f45ff96bc52b1064ed8507484cf8384b8e9f60502d9a5a739a27703b5da8db",
+  "pageVersion": "sha256:26bf1d97bd78379223978dc360033972ed569f9b10d71d2c1e4df1c4007c9019",
   "claims": [
     {
       "id": "claim_bf7b03cf38694772a9cf07c7c3291e97",
@@ -35,6 +35,10 @@
       "statement": "At install the worker fetches \"/\" with { cache: \"reload\" } and derives the shell asset list by regex-matching (?:src|href)=\"([^\"]+)\" over the HTML and keeping only root-relative paths, unioned (deduplicated via Set) with REQUIRED_SHELL; this picks up Vite's hashed /assets/* bundles from each deployment's own document without the worker knowing the hash scheme.",
       "evidence": [
         {
+          "resource": "repo://apps/web/index.html#L22-L22",
+          "version": "repo-lines-v1:sha256:e3331d46384dbc39463ae10f9ddb1eb50e041ef639fe968aa4c1b3e1e24253c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTMzMzFkNDYzODRkYmMzOTQ2M2FlMTBmOWRkYjFlYjUwZTA0MWVmNjM5ZmU5NjhhYTRjMWIzZTFlMjQyNTNjMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTMzMzFkNDYzODRkYmMzOTQ2M2FlMTBmOWRkYjFlYjUwZTA0MWVmNjM5ZmU5NjhhYTRjMWIzZTFlMjQyNTNjMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWY3NjI3ZWU2YWZkM2E3YmZkOTY4YTIwNjMxZTIxNTU3ZDEzZDBiMzlmMTkwZjUyZTI3MDM0ZjNhNjY5OTkwMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTRiYmUxYWViMzAxODlhOTVjZTQ0MzQwNmVmNTczODdiZTgyYjRkOGIzMTJiMWRhNDIxYTE3ZDgyODk5NTcyZSJ9"
+        },
+        {
           "resource": "repo://apps/web/public/sw.js#L10-L14",
           "version": "repo-lines-v1:sha256:ef12747203193715267321786d51b128dcb8fe66d30e0e8d20198766e2d75f6c:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZmZmUxOWYxMmQ1YzBlY2JiMDY0NTEwYmU5NmE2YmRlNzgwMDM2ZmQyZWMzOWIxODk2NDZmMWFmNWFiZTE0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjQ4MGYzMDRlYzYzNGUxMWQ0NjRmMjgzMjg4YWExZDVjYmZlYzY5YjkxNTk3NzdmMzdlMWE5NGQxMDE1Njc4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmM5OTI3ZDI0ZDU1NjA3OGIzZWI5OTcxZjA4NWE5NmNhYjRjOGJlYzIzMTA4NmI3ODNiMmI3YjFlNzNiMTViNiJ9"
         },
@@ -43,8 +47,8 @@
           "version": "repo-lines-v1:sha256:7cf037fb81b6a21592889f350e0d20439d6c0ff512d52ab29a1107742fc0d894:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYjQyYmQ3M2Q1YmQ0MGViNmQ1ZjczMjkyMWUwZWZjYzY4NjAwMjQwZmJmYWFiMmJmMzAwYjRkMThiZGU3NjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2M2RiMzdjNDU2YWMyZDU3NzAwNTZhNjQzMGIwZDkxZmY5YzNmOGRkNjgwNDk4YzMyZmFhMTMzM2Q1ZjdmNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YmU2ZWE3Y2UyMGZmODFhMjE5ZDQyYWRhMWNhMmI5NmE1OTAzNDI4NDY5NDEzNjk0N2JhZmU3OTNhNzA2ZmIifQ"
         },
         {
-          "resource": "repo://dist/index.html#L19-L20",
-          "version": "repo-lines-v1:sha256:4a787eda78e83ce0fbb6e03de2dde3b5537bd70bfaa1cd8b40dc3874dc0d3792:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODBlNjBmMTJkMjU5MDI5NjAwYmZhMTQxMGYxNjQ3NDk1NzhkYTc0ZmRhMTA2MmYzZWIzZTg5ZTQ0ZWYwZmZjNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJjYmM2N2EyOWJlOTYwNGVlYTRiOTk4NzAzOWNlZWFjN2M1ZWM2ZjlhNjg0NTBkN2QyNTRhZmRmMzEzZjMwMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGRkOTMyMjY1NmRhZjMwODUzMGZhZWY0YjU1NjE4YzE3ZGRiNDk1ZjU3MWYzZTMxZTNhOWIwZmJjMDQxM2ViOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWY3NjI3ZWU2YWZkM2E3YmZkOTY4YTIwNjMxZTIxNTU3ZDEzZDBiMzlmMTkwZjUyZTI3MDM0ZjNhNjY5OTkwMSJ9"
+          "resource": "repo://apps/web/vite.config.ts#L1-L38",
+          "version": "repo-lines-v1:sha256:b2d1ec79e1beb10bcabde313aed792622845e65df9518c9d45201877c7340a56:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlN2Q1ZjFiOWJhMjdhY2U1OTMxYmY5NmRhMmE2ZWZmYTJjYTM0ZjYyNTU3NWFhNjQ3NGE2YTlkM2RkYTg2OTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -234,15 +238,19 @@
     },
     {
       "id": "claim_06dcb05238784cc98c11602f3d306b8b",
-      "statement": "The worker is hand-written with no Workbox, precache generator, or build-time plugin: apps/web/public/sw.js is copied verbatim by Vite into the build output (byte-identical to the emitted dist/sw.js), and its offline guarantee covers only the shell, not application data.",
+      "statement": "The worker is hand-written with no Workbox, precache generator, or build-time plugin: Vite ships apps/web/public/sw.js verbatim into the build output — vite.config.ts sets no publicDir override, so the default public/ directory (sw.js, register-sw.js, manifest.webmanifest, pwa-icon.svg, and the raster PNG icons) is copied unchanged — and pwa.test.ts reads and executes the committed public/ files directly, so the tested artifacts are the shipped ones. The worker's offline guarantee covers only the shell, not application data.",
       "evidence": [
-        {
-          "resource": "repo://apps/web/dist/sw.js#L1-L93",
-          "version": "repo-lines-v1:sha256:b972ce6e6f3b62979b2ae58117071576d4a37662291ed58f22413a055403a561:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmY2JlZjU2Y2YwYzE1ZGU4YmIwOTM3N2ZkMzk1MTNmM2MxNzJiMDI3MzljMTU5ZTIwODY5ZGVkNzU5MmY2MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
         {
           "resource": "repo://apps/web/public/sw.js#L1-L93",
           "version": "repo-lines-v1:sha256:b972ce6e6f3b62979b2ae58117071576d4a37662291ed58f22413a055403a561:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmY2JlZjU2Y2YwYzE1ZGU4YmIwOTM3N2ZkMzk1MTNmM2MxNzJiMDI3MzljMTU5ZTIwODY5ZGVkNzU5MmY2MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts#L74-L137",
+          "version": "repo-lines-v1:sha256:97ae75605eb65be25e96bf76e26e901c4e9ddb64a9e58de5ebec443026658f8b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZmQwMDk0ZjE4NDliZDJmZDkyZjNhMmQxYjNlYTBhZjg0YTA1OWExNTcxYWQ1NmM3NzMyYzNlZGJlOGRlYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NjZmY2E3NmFhZDE3MDU4YWJlNThmNDg3ODdjZTlkMzZmNjQzY2Y3YTE3NDBhN2NjNzA4ZjZmYzhlZThjYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/web/vite.config.ts#L1-L38",
+          "version": "repo-lines-v1:sha256:b2d1ec79e1beb10bcabde313aed792622845e65df9518c9d45201877c7340a56:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlN2Q1ZjFiOWJhMjdhY2U1OTMxYmY5NmRhMmE2ZWZmYTJjYTM0ZjYyNTU3NWFhNjQ3NGE2YTlkM2RkYTg2OTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -263,10 +271,46 @@
           "version": "repo-lines-v1:sha256:e1800a1e9ff9254e3eb86de873d9474bc70d18688fc75d2f349ef31a8677bac3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYmExYjEyYjI4YzUxZjI2NzQwNWY3MTEzYWE4ZjRlMGY3NTU3MTVlYTViOWM4MDRkZTZhYzU3MDkxNWQ2ZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjYzc0MGQ4ODEwMTI2MTg1ZDg5YWI4YzQxNjZjNzY0MTdlODE5MWFiNmYyMjZkYmE4ZjQxYjI5YmIwNmIzYTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_6c2b6c1681824e6692109e52b7680e09",
+      "statement": "The service worker guarantees only an offline boot of the shell, never offline data: because /api/* is excluded from every cache, arrival and settings requests still fail without a network, while anonymous transit selections survive offline solely because they live in localStorage under mota:transit-selections:v1 rather than being served by the worker.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/public/sw.js#L48-L57",
+          "version": "repo-lines-v1:sha256:71072482cd61d911421b7d3c003f348da25bc3ef3b895b0353109ee8fd73b643:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlODgyODNkMTE1NzJmZjkwNmY3MTAxY2ZiZjAyNGFmYWY4NzhhOTNmMGJjYTVmNTdlNmQxZDQ4ZjNkY2ZiMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4MGQyZGQ0ZjI4OWQyNmRjNzU3YzJiNjVhMDZjMzkyMjdhNjcxN2M0YjQ4YjVhMzk3OTJjOWYxMWU0MWFlYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5YTU0NTk3M2IwNWQ1MjkyMzI0OTFmNWZjNDI3YmUyMzE4MTYxNzM2NGRkZTJkNDhmMDg5NzYzNDAwYjA4NWEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/api/client.ts#L118-L164",
+          "version": "repo-lines-v1:sha256:31b32569ffb2f9100004aaad13a2d36b45cd14e299f801f2146d8845134f1061:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiNGU2OGU0ZjE2NDg3ZGVhMzM3ZGRmMDJhZGQ4YzI2MmZjMDBhOGYzODJlOGJkNGYzNWFiOTBiYTBkNTU0OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMjMyNTdhNTY2ZWY2MDMwNGMxNDNmYjgwYjRiYWUyMGFhODM2NGE1YzJiNjE2MTZiYWZmOWI1NTQzZTlkYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiN2EyZDc2YmY2NTljMmRmYjI1NDA3MmZmZmFlOWE2MWU1YmExM2NiODViYzA3MGE0MWUxODkwMTNiMzJjYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkMmEzMDkxYmExNWUwNjEwYmU5Nzk5ODI4MmNkZDI3YTc0NDQyY2RmMGRkMTdiOWU5M2E1Y2ExNTkwOWUzNzgifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/hooks/transitSelectionStorage.ts#L8-L8",
+          "version": "repo-lines-v1:sha256:4416ce9e717ba6d413a63e5703759521ddaa10a11b3bcf2070ebfb85c8a96c88:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQxNmNlOWU3MTdiYTZkNDEzYTYzZTU3MDM3NTk1MjFkZGFhMTBhMTFiM2JjZjIwNzBlYmZiODVjOGE5NmM4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQxNmNlOWU3MTdiYTZkNDEzYTYzZTU3MDM3NTk1MjFkZGFhMTBhMTFiM2JjZjIwNzBlYmZiODVjOGE5NmM4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmQ2NTk5NzhiZThkZGEzMGYzZWJjZjAwOTk1OTkyMWM4NDg2ZTUxMzc4ODk5NTM3NDllZjI4MDk4YjEzYjBjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTVkNGFiY2NlZDc2NTA4ZjEwMjI3MjE2ZWY5ODFhODM5ZmFkZmVmN2QzYjQ2Yzc2OWU1MGU1NmFhMDI4YTYwOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4c64f57663bf47e39f57494e1a77e659",
+      "statement": "Shell and API share one origin in production: the Nest Fastify app serves both the built web bundle (static assets at /) and the /api/* controllers on the same port, so the worker's same-origin fetch rule sees navigations and /api/* requests alike; in development the Vite dev server serves the same public/ files from the project root and proxies /api to http://127.0.0.1:3000, mirroring the layout.",
+      "evidence": [
+        {
+          "resource": "repo://Dockerfile#L17-L24",
+          "version": "repo-lines-v1:sha256:c5d691c11411209acdf7ce7792db97f8f679bbb05a62fded52d4010b6bf64dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmI4YTI3OTdjNDkxM2E3MWE1YWQ3NWY2OWZlMDVmMGM5ODg1ODkzZTNmMDVjNDliMTMzYjU4YzU4YjVmMjQ1ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk5MWEwYjI0OTkzMWYyZmFhNTRlNjk1ODM4Y2ExZGUxOWUzZTJlNGY0NDg3Y2Q4ZDBlOTBhNTk3MWMwYzllNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDcwMDdkZTkyZjdkYmE3M2Y1OWU2N2Y3ODA1NjNmOWY4MTZmMjdkMDYyODFmYmU4Y2I4ZmM0OGI1NDM5YjdhNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmQ5MWM1NjI2ZjQ4NzBiMzU2N2U4OTBjZGU5ZmI0NjcyNmJlN2M2OWE2NmIwOTYzNDkxOWEzODk5YWQ0NjYyMyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/main.ts#L40-L49",
+          "version": "repo-lines-v1:sha256:a5712ba5854d8b53b5baeaaadd86ed25471956d489cef12e211856f49ca815cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZWM3MmI0YTQ5MWIxNmUyNWJkMjJhNDE5NDA1MzVlYjBhMzI2ZDgyOThlNmQ4NzliZTZhYzM3ODdmMDFkMmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ZjBhY2Y2YjExMTNlMDBlNmRkMjE4MTk1OGM0OTI2OWE1ODFkYTY0OTZiNWZkZDdkZWFlNTNlNzc2NTZlMDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmZjYzMWRjOTAyZjQyY2VkOWU1OGI3M2FjOWExMTNmMjBlMThlZGJjODZiNmFlNTI5YjlhNDhhMjM4M2U5MzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3YzI2NWZkZmFiMzBhNTBiNzdjMTlmOWE3YTQ5NjRlNDVhNmNlYzI2Y2M5YmE3MDA1ZTFhZDg0Y2Y0OTczZjMifQ"
+        },
+        {
+          "resource": "repo://apps/web/vite.config.ts#L28-L34",
+          "version": "repo-lines-v1:sha256:d3e4108810eb7bb663adf668b40b96947a5472cad57325d58e72301d81773a0d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjBlNjZhZmUzMTAyMzFkMmU2MDkxYTVkODlhNjNlNzQ5ODVmYzdjMDIzNjRhODk5YjRjYWNmN2Y1MjcyOTY1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWNmOTdhOGU4YjA4YjUwMjY3MDEwNWY3MzMzNmFlNDhkZWZhN2VhZWZjNzQ0NmY1Njg4MWY2MjBkYjMxOTQ3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjRmNGU3MzczYjY0YTUzYTMwNzQ0ZTQ5NTgzNmQzNjM2MGMxYjU1YjZiMzE1NWQyNGRhNzk4OTQwNDgzMzcwYyJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:06:29.177Z"
+    "at": "2026-08-30T13:26:35.558Z"
   }
 }

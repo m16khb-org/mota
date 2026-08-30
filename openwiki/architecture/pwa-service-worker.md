@@ -5,7 +5,7 @@ description: The hand-written service worker in apps/web/public/sw.js — instal
 tags: [pwa, service-worker, app-shell, offline, caching, cache-versioning, manifest, web-app]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-29T08:06:29.177Z
+    at: 2026-08-30T13:26:35.558Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -15,8 +15,6 @@ sources:
     resource: repo://apps/api/src/main.ts
   - id: openwiki-source-882f4de81d7d8e4c6cc82784
     resource: repo://apps/api/src/web/web.controller.ts
-  - id: openwiki-source-c81ab24b37167e482a609e51
-    resource: repo://apps/web/dist/sw.js
   - id: openwiki-source-2a13c0bb8402509303c88a9d
     resource: repo://apps/web/index.html
   - id: openwiki-source-857e8899893741668cdf026e
@@ -39,28 +37,33 @@ sources:
     resource: repo://apps/web/src/main.tsx
   - id: openwiki-source-56d9e354fd31d5ec4d18248e
     resource: repo://apps/web/src/pwa.test.ts
-  - id: openwiki-source-b822ccb7a261a23b486360c5
-    resource: repo://dist/index.html
+  - id: openwiki-source-03f6dd3375679341910a29c1
+    resource: repo://apps/web/vite.config.ts
   - id: openwiki-source-bb1ebe868e35e9e500714501
     resource: repo://Dockerfile
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:06:29.177Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-30T13:26:35.558Z" }
 ---
 
 # PWA Service Worker and App Shell
 
 Mota's offline story is deliberately small and hand-written. There is no
 Workbox, no precache manifest generator, and no build-time plugin: the worker is
-93 lines of plain JavaScript in `apps/web/public/sw.js` that Vite copies verbatim
-into the build output (compare `apps/web/public/sw.js` and the emitted
-`apps/web/dist/sw.js` — byte-for-byte identical, including the comments). It
-does exactly three things: precache an app shell at install, delete every other
-cache at activate, and answer fetches with a two-branch strategy — network-first
-for navigations, cache-first for same-origin assets — while never touching
-`/api/*`.
+93 lines of plain JavaScript in `apps/web/public/sw.js`, and Vite ships it
+verbatim — `apps/web/vite.config.ts` defines no `publicDir` override, so the
+default `public/` directory (`sw.js`, `register-sw.js`,
+`manifest.webmanifest`, `pwa-icon.svg`, and the two raster PNG icons) is copied
+unchanged into the build output. The tested artifacts are the shipped ones:
+`apps/web/src/pwa.test.ts` reads and executes the committed `public/` files
+directly rather than any build output. The worker does exactly three things:
+precache an app shell at install, delete every other cache at activate, and
+answer fetches with a two-branch strategy — network-first for navigations,
+cache-first for same-origin assets — while never touching `/api/*`.
 
 The worker never produces offline *data*. It guarantees that the shell boots
-offline; arrival and settings requests still fail when the network is down.
-That split is the whole design.
+offline; arrival and settings requests still fail when the network is down, and
+the anonymous transit selections survive only because they live in
+`localStorage` (`mota:transit-selections:v1`), not because anything under
+`/api/` is cached. That split is the whole design.
 
 ```mermaid
 flowchart TD
@@ -140,13 +143,14 @@ written with `cache.put("/", rootResponse)` followed by
 `cache.addAll(shellAssets)`.
 
 The discovery regex is the mechanism that makes this a *shell* precache rather
-than a hardcoded asset list. In the production build the emitted `index.html`
-references the Vite-hashed bundle
-(`/assets/index-CJybvVql.js`, `/assets/index-CjulGPF-.css`); the worker finds
-those paths by reading the document it just fetched, so every deployment's
-current hashed assets are precached without the worker knowing Vite's naming
-scheme. `REQUIRED_SHELL` exists for exactly the assets the HTML does not
-self-describe: the manifest, the icons, and the registration script.
+than a hardcoded asset list. The committed `index.html` references its entry as
+`<script type="module" src="/src/main.tsx">`; a Vite production build rewrites
+those tags to content-hashed `/assets/*` bundles (the build config in
+`vite.config.ts` adds no naming overrides). The worker never learns that scheme:
+it scans whatever `src`/`href` attributes the document it just fetched carries,
+so each deployment precaches its own current hashed bundles.
+`REQUIRED_SHELL` exists for exactly the assets the HTML does not self-describe:
+the manifest, the icons, and the registration script.
 
 Two invariants fall out of this code:
 
@@ -205,6 +209,32 @@ failure mode it guards against is a browser pinned to an old worker URL while
 the shell cache has moved on.
 
 ## The fetch handler
+
+```mermaid
+flowchart TD
+  Req["fetch event"] --> Guard{"GET, same-origin, and not under /api/ ?"}
+  Guard -->|no| Pass["return without responding - browser handles it"]
+  Guard -->|yes| Nav{"request.mode == navigate ?"}
+  Nav -->|yes| Net["fetch the request"]
+  Net --> NetOK{"response ok ?"}
+  NetOK -->|yes| Save["cache.put / with the cloned response"]
+  NetOK -->|no| Return1["return the response"]
+  Save --> Return1
+  Net -->|network error| Fallback{"caches.match / finds the shell ?"}
+  Fallback -->|yes| Shell["return the cached root document"]
+  Fallback -->|no| Rethrow["rethrow the original error"]
+  Nav -->|no| Match["caches.match request"]
+  Match -->|hit| Return2["return the cached asset"]
+  Match -->|miss| Net2["fetch the request"]
+  Net2 --> Ok2{"response ok ?"}
+  Ok2 -->|yes| Fill["cache.put request into SHELL_CACHE"]
+  Ok2 -->|no| Return3["return the response"]
+  Fill --> Return3
+```
+
+*Fetch decision flow: the three-clause guard short-circuits first; navigations
+then go network-first with a cached-root fallback, and every other same-origin
+GET goes cache-first with network fill.*
 
 ### The bail-out invariant
 
@@ -278,9 +308,12 @@ set to the copied `apps/web/dist` in the Dockerfile) at prefix `/` with
 and returns `index.html` — but only for requests that accept `text/html` and are
 not under `/api/`; anything else is a 404. The split is therefore: `/` and
 `/sw.js` and `/register-sw.js` come from the static bundle, `/api/*` is routed
-to controllers and can never fall through to the shell. See
-`/openwiki/architecture/web-app.md` for the client and
-`/openwiki/operations/deployment.md` for the container layout.
+to controllers and can never fall through to the shell — and because the shell
+is served from the API origin, navigation fetches under the worker's
+same-origin rule hit the API host. Development mirrors the layout: the Vite dev
+server serves the same `public/` files from the project root and proxies `/api`
+to `http://127.0.0.1:3000`. See `/openwiki/architecture/web-app.md` for the
+client and `/openwiki/operations/deployment.md` for the container layout.
 
 ## Focused tests
 

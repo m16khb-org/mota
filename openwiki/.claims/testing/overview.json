@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7f38480f10a636a5e902dd3d7a48387e99fb644d96ff620889107eb9fb549001",
+  "pageVersion": "sha256:7f89b8e8ed0872cdf1e885c4b9ff2dcb2047f2b537abf9d00288b67cbb2a4580",
   "claims": [
     {
       "id": "claim_e574fed77a29415eaf85654f6d9e0c17",
@@ -384,7 +384,7 @@
     },
     {
       "id": "claim_b8b9da66659c4a348ce67a714d7411d8",
-      "statement": "Web tests are colocated as `*.test.tsx` next to their sources (`src/App.test.tsx`, `src/components/*.test.tsx`, `src/hooks/*.test.tsx`) with a per-file `@vitest-environment jsdom` docblock; `apps/web/vitest.config.ts` declares no `include` (vitest default discovery) but sets `setupFiles: [\"./vitest.setup.ts\"]` and `clearMocks: true`, and the setup registers `@testing-library/jest-dom/vitest` and unmounts the tree in an `afterEach` cleanup.",
+      "statement": "Web tests are colocated as `*.test.tsx` next to their sources (`src/App.test.tsx`, `src/components/*.test.tsx`, `src/hooks/*.test.tsx`) with a per-file `@vitest-environment jsdom` docblock; `apps/web/vitest.config.ts` declares no `include` (vitest default discovery) and no workspace-level environment, but sets `setupFiles: [\"./vitest.setup.ts\"]` and `clearMocks: true`, and the setup registers `@testing-library/jest-dom/vitest` and unmounts the tree in an `afterEach` cleanup — pure-logic suites like `pwa.test.ts` carry no docblock and run in the default node environment.",
       "evidence": [
         {
           "resource": "repo://apps/web/src/App.test.tsx#L1-L1",
@@ -464,11 +464,11 @@
     },
     {
       "id": "claim_a0bdb306a5494b1b90ef2029ca2fe05c",
-      "statement": "There is no CI pipeline running the tests: the only GitHub workflow is the scheduled OpenWiki documentation update, so the README's verification list (`pnpm typecheck`, `pnpm check`, `pnpm test`, `pnpm test:integration`, `pnpm build`) is a set of local commands executed only by whoever runs them.",
+      "statement": "There is no CI pipeline running the tests: the only workflow in `.github/workflows/` is `openwiki-update.yml`, which triggers on `workflow_dispatch` plus a daily `0 8 * * *` cron and touches no test suite — it checks out with `fetch-depth: 0` so `openwiki code --update` can diff HEAD against the commit it last documented (a shallow clone yields an empty change summary), installs pinned `openwiki@0.4.3` with `mermaid` and `jsdom`, and opens a PR limited to `openwiki/`, `AGENTS.md`, `CLAUDE.md`, and the workflow file itself. The README's verification list (`pnpm typecheck`, `pnpm check`, `pnpm test`, `pnpm test:integration`, `pnpm build`) is a set of local commands executed only by whoever runs them.",
       "evidence": [
         {
           "resource": "repo://.github/workflows/openwiki-update.yml",
-          "version": "repo-file-v1:sha256:c05213492a5b522f95c862dc301442f72edb3ca72df2340773037624f1f0c6ae"
+          "version": "repo-file-v1:sha256:bdfd2f04b0282fbda6893fc31cea849cc16590ed0d91a6fa14ebb54147bca447"
         },
         {
           "resource": "repo://README.md#L27-L35",
@@ -497,10 +497,20 @@
           "version": "repo-lines-v1:sha256:412ca345ccf75bf9c0806bce695be8de808b79984251a7a54d202cf6101dd451:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDMxYTc3OGQ2ODY5MjgwMTE5MzY1Njg5ZTM1N2M3NzQwNjU3MTM0YWQwOGY4YWY5NjBkYzIyY2U5NzA1MjdhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_702ddfe884b54a3c8b18d8cb033dce74",
+      "statement": "`apps/web/src/pwa.test.ts` verifies the installable web app directly against the repo's PWA assets with no build outputs: it parses `public/manifest.webmanifest` against a Zod schema (literal `/` id/start_url/scope, `lang: \"ko-KR\"`, `display: \"standalone\"`, hex colors) requiring a `maskable` icon, no `orientation` key, and `192x192`/`512x512` PNG icons whose bytes are checked for the PNG signature and IHDR width/height; it executes `register-sw.js` and `sw.js` in `runInNewContext` sandboxes to prove load-event registration of `/sw.js?v=6` and the `install`/`activate`/`fetch` handlers; and a regex enforces one identical shell version across `index.html`, `register-sw.js`, and `sw.js`.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/pwa.test.ts",
+          "version": "repo-file-v1:sha256:3f5b4de6638da425d055c14af942f3ae4f8267707e557d7c7d4cf9b0c5073e30"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:06:29.177Z"
+    "at": "2026-08-30T13:26:35.558Z"
   }
 }
