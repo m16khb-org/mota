@@ -1,11 +1,8 @@
 ---
 type: testing
 title: Testing and Verification Stack
-description: How mota is verified — the three vitest layers (colocated unit tests in every workspace, API e2e suites through the Nest testing module with a fake Supabase, and Postgres integration tests gated on DATABASE_URL), the createApp/inject harness, the seam design that makes it possible, and the Turbo task wiring that orders and gates them.
-tags: [testing, vitest, turbo, unit-tests, e2e, integration-tests, nestjs-testing, fastify-inject, jsdom, fake-supabase, jwks, postgres, test-harness]
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-08-29T08:06:29.177Z
+description: How mota is verified — the three vitest postures (colocated unit tests in every workspace, API e2e suites through the Nest testing module with a fake Supabase, and Postgres integration tests gated on DATABASE_URL), the createApp/inject harness and seam design that make them possible, the jsdom web component and PWA asset tests, and the honest gaps (no Playwright specs, no CI pipeline running the suites).
+tags: [testing, vitest, turbo, unit-tests, e2e, integration-tests, nestjs-testing, fastify-inject, jsdom, fake-supabase, jwks, postgres, test-harness, pwa, github-actions]
 sources:
   - id: openwiki-source-6d4b4e707b8d60b6ccfa3425
     resource: repo://.github/workflows/openwiki-update.yml
@@ -63,6 +60,8 @@ sources:
     resource: repo://apps/web/src/components/MapStage.test.tsx
   - id: openwiki-source-282f207e86ebd3fd3f383698
     resource: repo://apps/web/src/hooks/useAuthSession.test.tsx
+  - id: openwiki-source-56d9e354fd31d5ec4d18248e
+    resource: repo://apps/web/src/pwa.test.ts
   - id: openwiki-source-bbd53ba6601341ffa125390c
     resource: repo://apps/web/tsconfig.json
   - id: openwiki-source-03f6dd3375679341910a29c1
@@ -93,7 +92,10 @@ sources:
     resource: repo://README.md
   - id: openwiki-source-440ae1e215cb02721dda855c
     resource: repo://turbo.json
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:06:29.177Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-30T13:26:35.558Z" }
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-30T13:26:35.558Z
 ---
 
 # Testing and Verification Stack
@@ -181,6 +183,7 @@ constrains and needs no harness:
 | `apps/api/src/transit/managedCatalog.test.ts` | single-flight cold load, atomic snapshot swap on refresh, stale-keep on refresh failure, and — with `vi.useFakeTimers()` — that the proactive refresh timer runs and is cleared by `stop()` |
 | `packages/contracts/src/transitSettings.test.ts` | legacy selection-document migration (flat → two commute contexts, singular id → one-element list, dedupe) and the `MAX_SELECTED_BUS_STOPS` cap |
 | `packages/db/src/schema.test.ts` | `user_settings` table name, the exact four-column order, and `auth_user_id` as the inline primary key |
+| `apps/web/src/domain/*.test.ts`, `apps/web/src/api/client.test.ts` | client-side normalization of the same upstream payloads and the `ApiError`/service-area error mapping |
 
 `apps/api/vitest.config.mts` is the only API-side config and does two things:
 `environment: "node"` and `include: ["src/**/*.test.ts", "test/**/*.test.ts"]`.
@@ -376,11 +379,14 @@ or with real users even when pointed at the shared `mota` database that
 
 `apps/web` has no `environment` in `vitest.config.ts`; it declares only
 `setupFiles: ["./vitest.setup.ts"]` and `clearMocks: true`, with no `include`, so
-vitest's default discovery picks up the suites. Every suite opts into the DOM
-per file with a leading `// @vitest-environment jsdom` (or `/** ... */`)
-docblock. The shared setup registers `@testing-library/jest-dom` matchers
-(`toBeInTheDocument`, `toBeVisible`, `toHaveAttribute`, …) and unmounts the tree
-in an `afterEach` cleanup.
+vitest's default discovery picks up the suites. There is no workspace-level
+environment either: the component and hook suites opt into the DOM per file with
+a leading `// @vitest-environment jsdom` (or `/** ... */`) docblock, while the
+pure-logic suites — `src/api/client.test.ts`, `src/domain/bus.test.ts`,
+`src/domain/subway.test.ts`, and `src/pwa.test.ts` — carry no docblock and run
+in vitest's default node environment. The shared setup registers
+`@testing-library/jest-dom` matchers (`toBeInTheDocument`, `toBeVisible`,
+`toHaveAttribute`, …) and unmounts the tree in an `afterEach` cleanup.
 
 Tests are colocated as `*.test.tsx` next to their subject: `src/App.test.tsx`,
 `src/components/*.test.tsx` (`ArrivalList`, `SubwayArrivalList`, `MapStage`,
@@ -422,6 +428,35 @@ object exposing `getCenter`, `setView`, `invalidateSize`), and
 (`getByRole("tab", { name: "출근" })`), which is what keeps the a11y contract
 testable.
 
+### The pwa asset tests
+
+`src/pwa.test.ts` is the node-environment outlier that makes the installable
+web app verifiable without a build step: it reads the actual PWA assets from
+the repository — `public/manifest.webmanifest`, the PNG icons,
+`public/register-sw.js`, `public/sw.js`, and `index.html` — and validates them
+in place:
+
+- the manifest is parsed against a local Zod schema (`id`, `start_url`, `scope`
+  all literal `/`, `lang: "ko-KR"`, `display: "standalone"`, hex
+  `theme_color`/`background_color`, at least one icon) and must include a
+  `maskable` icon, omit `orientation` (so the installed app follows the OS
+  rotation lock), and expose `192x192`/`512x512` PNG icons whose bytes are
+  checked — the `PNG` signature and the `IHDR` width/height at fixed offsets —
+  to match their declared sizes (Samsung Internet requires raster icons);
+- `register-sw.js` is executed in a sandbox with `runInNewContext` and a fake
+  `navigator.serviceWorker.register`, proving it registers `/sw.js?v=6` on the
+  window `load` event and nothing else;
+- a version-consistency regex run over `index.html`, `register-sw.js`, and
+  `sw.js` requires the shell version (`sw.js?v=N` / `-shell-vN`) to be one
+  identical value across all four places it appears, and
+- `sw.js` is executed the same way to prove it installs `install`, `activate`,
+  and `fetch` lifecycle handlers.
+
+Because the assertions consume the source assets directly, a broken manifest or
+an out-of-step service-worker version fails `pnpm test` without any
+`vite build`; the corresponding runtime behavior is documented in
+[PWA and Service Worker](/openwiki/architecture/pwa-service-worker.md).
+
 ## What is *not* in the suite
 
 Two gaps are worth naming so they are not assumed away:
@@ -432,10 +467,17 @@ Two gaps are worth naming so they are not assumed away:
   config and no spec file**. The script as written cannot pass. Browser-level
   end-to-end coverage is provided by the API e2e layer (real HTTP boundary) plus
   the jsdom component suites, not by Playwright.
-- **No CI pipeline runs the tests.** The only GitHub workflow is the scheduled
-  OpenWiki documentation update. `pnpm typecheck`, `pnpm check`, `pnpm test`,
-  `pnpm test:integration`, and `pnpm build` (the list in `README.md`) are local
-  commands, so a change is verified only by whoever runs them.
+- **No CI pipeline runs the tests.** The only workflow in `.github/workflows/`
+  is `openwiki-update.yml`, the scheduled OpenWiki documentation update, which
+  triggers on `workflow_dispatch` plus a daily `0 8 * * *` cron and touches no
+  test suite: it checks out the repo with `fetch-depth: 0` so `openwiki code
+  --update` can diff HEAD against the commit it last documented (a shallow
+  clone yields an empty change summary), installs the pinned
+  `openwiki@0.4.3` alongside `mermaid` and `jsdom`, and opens a PR restricted
+  to `openwiki/`, `AGENTS.md`, `CLAUDE.md`, and the workflow file itself.
+  `pnpm typecheck`, `pnpm check`, `pnpm test`, `pnpm test:integration`, and
+  `pnpm build` (the list in `README.md`) are local commands, so a change is
+  verified only by whoever runs them.
 
 ## Adding a test
 
@@ -454,7 +496,9 @@ The conventions fall out of the above:
   `pnpm test:integration` while `DATABASE_URL` points at a disposable database.
 - For a web component, colocate `*.test.tsx` with a `@vitest-environment jsdom`
   docblock, mock only the leaves (`react-leaflet`, `api/client` fetchers,
-  `useMediaQuery`), and query by role.
+  `useMediaQuery`), and query by role. For a static PWA asset, extend
+  `src/pwa.test.ts` and assert on the file bytes or a sandboxed execution of
+  the script.
 
 See [Authentication](/openwiki/workflows/authentication.md) for the flows the
 auth e2e suite encodes, [Settings sync](/openwiki/workflows/settings-sync.md)
