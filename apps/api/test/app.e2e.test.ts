@@ -573,6 +573,22 @@ describe("bus API adapter", () => {
 		);
 	});
 
+	it("uses the official Seoul API when an API key is configured", async () => {
+		const upstream = vi.fn().mockResolvedValue(
+			Response.json(subwayArrivalUpstreamPayload),
+		);
+		const response = await createApp(upstream, {
+			subwayArrivalUpstream:
+				"http://swopenAPI.seoul.go.kr/api/subway/official-test-key/json/realtimeStationArrival/0/100/{station}",
+		}).request("/api/subway/arrivals?station=%EC%84%9C%EC%9A%B8%EC%97%AD");
+
+		expect(response.status).toBe(200);
+		expect(upstream).toHaveBeenCalledWith(
+			"http://swopenapi.seoul.go.kr/api/subway/official-test-key/json/realtimeStationArrival/0/100/%EC%84%9C%EC%9A%B8",
+			expect.objectContaining({ signal: expect.any(AbortSignal) }),
+		);
+	});
+
 	it("propagates stable subway service and direction keys through the Nest JSON boundary", async () => {
 		const upstream = vi.fn().mockResolvedValue(
 			Response.json(subwayArrivalUpstreamPayload),
