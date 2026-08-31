@@ -53,5 +53,15 @@ Load the shared PostgreSQL password from home-server-infra:
 docker compose --env-file ../home-server-infra/.env up -d --build
 ```
 
+The production Seoul subway API key is stored in macOS Keychain under account
+`mota` and service `SEOUL_SUBWAY_API_KEY`. Login shells export it from
+`~/.zshrc`. For non-interactive deployment, inject it without writing the key
+to a file:
+
+```bash
+SEOUL_SUBWAY_API_KEY="$(security find-generic-password -a mota -s SEOUL_SUBWAY_API_KEY -w)" \
+  docker compose --env-file ../home-server-infra/.env up -d --build
+```
+
 The service is published at `127.0.0.1:3100` and joins both the
 `cloudflare-tunnel` and `home-server` networks.
