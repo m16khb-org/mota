@@ -34,6 +34,8 @@ const BUS_ERROR =
 const SUBWAY_ERROR =
   "지하철 도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.";
 
+const SUBWAY_REFRESH_INTERVAL_MS = 60_000;
+
 interface ArrivalDetailInput {
   readonly selectedStops: readonly BusStop[];
   readonly selectedStation: SubwayStation | null;
@@ -156,6 +158,12 @@ export function useArrivalDetail({
       return;
     }
     void fetchSubwayDetail(selectedStation);
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void fetchSubwayDetail(selectedStation);
+      }
+    }, SUBWAY_REFRESH_INTERVAL_MS);
+    return () => window.clearInterval(interval);
   }, [fetchSubwayDetail, selectedStation]);
 
   const stopsRef = useRef(selectedStops);

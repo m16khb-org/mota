@@ -179,6 +179,68 @@ describe("SubwayArrivalList", () => {
 		expect(screen.queryByText("1분")).not.toBeInTheDocument();
 	});
 
+	it("shows provider position messages for both Amsa directions when numeric ETAs are unavailable", () => {
+		// Given
+		const amsaArrivals: readonly SubwayArrival[] = [
+			{
+				id: "1008-8071",
+				subwayId: "1008",
+				updnLine: "하행",
+				line: "8호선",
+				direction: "모란행 - 천호(풍납토성)방면",
+				trainLineNm: "모란행 - 천호(풍납토성)방면",
+				trainStatus: "일반",
+				seconds: 0,
+				generatedAt: "2026-09-01T00:00:26.000Z",
+				message: "전역 도착",
+				location: "암사역사공원",
+				isLastTrain: false,
+			},
+			{
+				id: "1008-8078",
+				subwayId: "1008",
+				updnLine: "상행",
+				line: "8호선",
+				direction: "별내행 - 암사역사공원방면",
+				trainLineNm: "별내행 - 암사역사공원방면",
+				trainStatus: "일반",
+				seconds: null,
+				generatedAt: "2026-09-01T00:01:19.000Z",
+				message: "[2]번째 전역 (강동구청)",
+				location: "강동구청",
+				isLastTrain: false,
+			},
+		];
+		render(
+			<SubwayArrivalList
+				stationName="암사"
+				preferredLine="8호선"
+				arrivals={amsaArrivals}
+				loading={false}
+				error={null}
+				updatedAt="2026-09-01T00:02:26.000Z"
+				onRefresh={vi.fn()}
+			/>,
+		);
+
+		// When
+		const downDirection = screen.getByRole("tab", { name: "8호선 하행" });
+		fireEvent.click(downDirection);
+
+		// Then
+		expect(screen.getByText("전역 도착", { selector: "strong" })).toBeInTheDocument();
+		expect(screen.queryByText("정보 없음")).not.toBeInTheDocument();
+
+		// When
+		fireEvent.click(screen.getByRole("tab", { name: "8호선 상행" }));
+
+		// Then
+		expect(
+			screen.getByText("[2]번째 전역 (강동구청)", { selector: "strong" }),
+		).toBeInTheDocument();
+		expect(screen.queryByText("정보 없음")).not.toBeInTheDocument();
+	});
+
 	it("defaults to the line selected at a transfer station", () => {
 		const baseArrival = arrivals[0];
 		if (baseArrival === undefined) {

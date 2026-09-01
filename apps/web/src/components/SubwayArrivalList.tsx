@@ -24,9 +24,9 @@ function directionKey(arrival: SubwayArrival): string {
 	return `${arrival.subwayId}:${arrival.updnLine}`;
 }
 
-function formatEta(seconds: number | null): string {
+function formatEta(seconds: number | null, fallback: string): string {
 	if (seconds === null) {
-		return "정보 없음";
+		return fallback;
 	}
 	if (seconds < 60) {
 		return "곧 도착";
@@ -257,6 +257,15 @@ export function SubwayArrivalList({
 
 			<div className="arrival-list">
 				{visibleArrivals.map(({ arrival, eta }, index) => {
+					const usesProviderPosition =
+						eta.remainingSeconds === null &&
+						(arrival.seconds === null || arrival.seconds === 0) &&
+						arrival.location !== null &&
+						arrival.message.trim().length > 0;
+					const etaText = formatEta(
+						eta.remainingSeconds,
+						usesProviderPosition ? arrival.message : "정보 없음",
+					);
 					return (
 						<article
 							className={`arrival-row is-subway${eta.remainingSeconds === null ? " is-inactive" : ""
@@ -280,8 +289,8 @@ export function SubwayArrivalList({
 								{arrival.isLastTrain ? <span>막차</span> : null}
 							</div>
 							<div className="eta-block">
-								<strong>{formatEta(eta.remainingSeconds)}</strong>
-								<span>{eta.message}</span>
+								<strong>{etaText}</strong>
+								<span>{usesProviderPosition ? "위치 정보" : eta.message}</span>
 								{arrival.location ? (
 									<small>{arrival.location} 부근</small>
 								) : null}
