@@ -16,7 +16,7 @@ with a React PWA.
 | [Overview](architecture/overview.md) | Architecture style, dependency graph, and change placement |
 | [Product and workspaces](architecture/product-and-workspaces.md) | Product boundary, workspace ownership, and browser composition |
 | [API and transit](architecture/api-and-transit.md) | Nest HTTP surface and Seoul transit adapter flow |
-| [Identity and settings](architecture/identity-and-settings.md) | Supabase PKCE identity and versioned settings persistence |
+| [Identity and settings](architecture/identity-and-settings.md) | Auth-gateway login proxy identity and versioned settings persistence |
 | [Deployment](architecture/deployment.md) | Production image, static serving, networks, and persistence |
 
 ## Universal boundaries
@@ -24,7 +24,7 @@ with a React PWA.
 - Applications do not import each other.
 - `packages/contracts` has no framework or infrastructure dependency beyond Zod.
 - `packages/db` owns Drizzle/PostgreSQL persistence and does not import Nest or React.
-- Mota owns its Google login against the shared Supabase project and verifies access tokens locally with JWKS.
+- Mota proxies Google login to the central auth-gateway and verifies its access tokens locally with JWKS.
 - Mota has no users table; authenticated settings are keyed by Supabase `sub`.
 - The active product shows at most three upcoming arrivals and excludes retired commute-planning scope.
 

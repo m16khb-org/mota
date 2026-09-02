@@ -19,9 +19,9 @@ When prose and code disagree, verify the current behavior and update the stale o
 ## Product invariants
 
 - Mota shows only the next bus or subway arrivals, with at most three results.
-- Mota owns its Google login: authorization code + PKCE against the shared Supabase project.
-- Mota verifies Supabase access tokens locally (JWKS, ES256, issuer, audience, role) and never calls a gateway per request.
-- Session cookies are host-only (`__Host-mota-access` / `__Host-mota-refresh`); no `Domain` attribute, no cross-service forwarding.
+- Mota logs users in by proxying the central auth-gateway; it runs no OAuth flow of its own and holds no Supabase key.
+- Mota verifies the gateway's access tokens locally (JWKS, ES256, issuer, audience, role) and calls the gateway only to start login, complete the callback, refresh, and log out.
+- Session cookies are host-only (`__Host-agw-access` / `__Host-agw-refresh`), set by the gateway through the proxy; no `Domain` attribute, no cross-service forwarding.
 - Mota stores no local user directory. `user_settings.auth_user_id` is the Supabase `sub`.
 - Anonymous local selections and authenticated server settings remain isolated.
 - Workspace dependency direction follows [ARCHITECTURE.md](ARCHITECTURE.md).

@@ -36,7 +36,7 @@ Shared wire/persistence schemas live in `packages/contracts`; do not fork equiva
 
 ## Errors
 
-- Use typed errors for infrastructure/domain conflicts (`SupabaseUnavailableError`, `SettingsVersionConflictError`).
+- Use typed errors for infrastructure/domain conflicts (`AuthUpstreamUnavailableError`, `SettingsVersionConflictError`).
 - Controllers map them to the HTTP semantics owned by [OPEN_API_SPEC.md](../OPEN_API_SPEC.md).
 - Preserve the last successful UI state on transient network failure and expose a short Korean retry/error state.
 - Never swallow errors or surface upstream technical details to users.

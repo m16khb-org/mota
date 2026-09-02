@@ -31,7 +31,7 @@ integration("settings API with home-server Postgres", () => {
   const app = createApp(fetch, {
     settingsRepository: repository,
     verifySession: async (cookie) => {
-      const authUserId = /mota-access=([^;]+)/.exec(cookie ?? "")?.[1];
+      const authUserId = /agw-access=([^;]+)/.exec(cookie ?? "")?.[1];
       return authUserId ? { sub: authUserId } : null;
     },
   });
@@ -51,14 +51,14 @@ integration("settings API with home-server Postgres", () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `mota-access=${firstUser}`,
+        Cookie: `agw-access=${firstUser}`,
       },
       body: JSON.stringify({ version: 0, selections }),
     });
     expect(saved.status).toBe(200);
 
     const first = await app.request("/api/settings", {
-      headers: { Cookie: `mota-access=${firstUser}` },
+      headers: { Cookie: `agw-access=${firstUser}` },
     });
     await expect(first.json()).resolves.toEqual({
       version: 1,
@@ -66,7 +66,7 @@ integration("settings API with home-server Postgres", () => {
     });
 
     const second = await app.request("/api/settings", {
-      headers: { Cookie: `mota-access=${secondUser}` },
+      headers: { Cookie: `agw-access=${secondUser}` },
     });
     await expect(second.json()).resolves.toEqual({
       version: 0,

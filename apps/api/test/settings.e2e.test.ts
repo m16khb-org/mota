@@ -68,7 +68,7 @@ function createSettingsApp(repository = new MemorySettingsRepository()) {
     app: createApp(fetch, {
       settingsRepository: repository,
       verifySession: async (cookie) => {
-        const match = /mota-access=(user-[^;]+)/.exec(cookie ?? "");
+        const match = /agw-access=(user-[^;]+)/.exec(cookie ?? "");
         return match?.[1] ? { sub: match[1], email: `${match[1]}@example.com` } : null;
       },
     }),
@@ -100,7 +100,7 @@ describe("authenticated user settings routes", () => {
     });
 
     const response = await app.request("/api/settings", {
-      headers: { Cookie: "mota-access=token" },
+      headers: { Cookie: "agw-access=token" },
     });
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({
@@ -110,8 +110,8 @@ describe("authenticated user settings routes", () => {
 
   it("relays rotated session cookies while loading settings", async () => {
     const setCookies = [
-      "mota-access=fresh-access; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=Lax",
-      "mota-refresh=fresh-refresh; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Lax",
+      "agw-access=fresh-access; Max-Age=3600; Path=/; HttpOnly; Secure; SameSite=Lax",
+      "agw-refresh=fresh-refresh; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Lax",
     ];
     const app = createApp(fetch, {
       settingsRepository: new MemorySettingsRepository(),
@@ -122,7 +122,7 @@ describe("authenticated user settings routes", () => {
     });
 
     const response = await app.request("/api/settings", {
-      headers: { Cookie: "mota-refresh=refresh-token" },
+      headers: { Cookie: "agw-refresh=refresh-token" },
     });
 
     expect(response.status).toBe(200);
@@ -136,7 +136,7 @@ describe("authenticated user settings routes", () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Cookie: "mota-access=user-1",
+        Cookie: "agw-access=user-1",
       },
       body: JSON.stringify({ version: 0, selections }),
     });
@@ -149,7 +149,7 @@ describe("authenticated user settings routes", () => {
     expect(repository.records.has("user-2")).toBe(false);
 
     const otherUserResponse = await app.request("/api/settings", {
-      headers: { Cookie: "mota-access=user-2" },
+      headers: { Cookie: "agw-access=user-2" },
     });
     await expect(otherUserResponse.json()).resolves.toEqual({
       version: 0,
@@ -157,7 +157,7 @@ describe("authenticated user settings routes", () => {
     });
 
     const originalUserResponse = await app.request("/api/settings", {
-      headers: { Cookie: "mota-access=user-1" },
+      headers: { Cookie: "agw-access=user-1" },
     });
     await expect(originalUserResponse.json()).resolves.toMatchObject({
       version: 1,
@@ -169,7 +169,7 @@ describe("authenticated user settings routes", () => {
     const { app } = createSettingsApp();
     const headers = {
       "Content-Type": "application/json",
-      Cookie: "mota-access=user-1",
+      Cookie: "agw-access=user-1",
     };
 
     const invalid = await app.request("/api/settings", {

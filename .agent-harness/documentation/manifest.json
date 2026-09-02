@@ -27,7 +27,7 @@
         },
         {
           "path": ".agent-harness/architecture/identity-and-settings.md",
-          "responsibility": "Supabase PKCE identity and versioned settings persistence"
+          "responsibility": "Auth-gateway login proxy identity and versioned settings persistence"
         },
         {
           "path": ".agent-harness/architecture/deployment.md",

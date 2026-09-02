@@ -13,7 +13,7 @@ const anonymousSession: AuthSessionState = {
 };
 
 describe("GoogleLogin", () => {
-  it("starts the local PKCE login with this page as return target", () => {
+  it("starts the same-origin gateway login with this page as return target", () => {
     render(<GoogleLogin session={anonymousSession} />);
 
     const login = screen.getByRole("link", { name: "Google로 로그인" });

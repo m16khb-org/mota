@@ -22,7 +22,7 @@ Versions below are manifest constraints, not claims about a globally installed t
 ## Runtime services
 
 - `apps/api` serves `/api/*` and the built React SPA.
-- `apps/api` owns the Google PKCE login against Supabase Auth and verifies access tokens locally with the project JWKS (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `PUBLIC_URL`).
+- `apps/api` proxies Google login to the central auth-gateway and verifies its access tokens locally with the project JWKS (`AUTH_GATEWAY_URL`, `SUPABASE_URL`, `PUBLIC_URL`). No Supabase key is configured here.
 - home-server-infra owns the PostgreSQL server and `mota` database/role.
 - The production container joins the `cloudflare-tunnel` and `home-server` networks.
 
