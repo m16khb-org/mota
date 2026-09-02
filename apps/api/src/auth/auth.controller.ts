@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import type { FastifyReply } from "fastify";
 import { SESSION_VERIFIER, type SessionVerifier } from "../app.tokens";
-import { SupabaseUnavailableError } from "./supabaseClient";
+import { AuthUpstreamUnavailableError } from "./authErrors";
 
 @Controller("api/auth")
 export class AuthController {
@@ -34,7 +34,7 @@ export class AuthController {
         ? { authenticated: true as const, user }
         : { authenticated: false as const };
     } catch (error) {
-      if (error instanceof SupabaseUnavailableError) {
+      if (error instanceof AuthUpstreamUnavailableError) {
         throw new ServiceUnavailableException({
           error: "AUTH_UPSTREAM_UNAVAILABLE",
           message: "로그인 상태를 확인하지 못했습니다.",

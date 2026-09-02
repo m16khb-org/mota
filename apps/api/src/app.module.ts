@@ -15,8 +15,8 @@ import {
   type UpstreamFetch,
 } from "./app.tokens";
 import { AuthController } from "./auth/auth.controller";
-import { OAuthController } from "./auth/oauth.controller";
-import { verifySupabaseSession } from "./auth/session";
+import { GatewayAuthController } from "./auth/gatewayAuth.controller";
+import { verifyGatewaySession } from "./auth/session";
 import { HealthController } from "./health/health.controller";
 import { SettingsController } from "./settings/settings.controller";
 import { TransitController } from "./transit/transit.controller";
@@ -64,7 +64,7 @@ export class AppModule {
       (oauthConfig === null
         ? unconfiguredSessionVerifier
         : (cookie, onSetCookie) =>
-            verifySupabaseSession(cookie, {
+            verifyGatewaySession(cookie, {
               config: oauthConfig,
               onSetCookie,
             }));
@@ -91,7 +91,7 @@ export class AppModule {
       controllers: [
         HealthController,
         AuthController,
-        OAuthController,
+        GatewayAuthController,
         SettingsController,
         TransitController,
         WebController,

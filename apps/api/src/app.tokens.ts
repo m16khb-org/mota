@@ -25,8 +25,9 @@ export interface ApiOptions {
   readonly verifySession: SessionVerifier;
   readonly settingsRepository: UserSettingsRepository;
   readonly oauthConfig: {
+    /** Supabase project whose JWKS signs the gateway's session tokens. */
     readonly supabaseUrl: string;
-    readonly anonKey: string;
+    readonly gatewayUrl: string;
     readonly publicUrl: string;
     readonly fetcher: UpstreamFetch;
   } | null;

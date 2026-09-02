@@ -4,7 +4,6 @@ import { loadEnv } from "./env";
 
 const SUPABASE_INPUT = {
 	SUPABASE_URL: "https://mionqcczituwkryrjsfh.supabase.co/",
-	SUPABASE_ANON_KEY: "sb_publishable_test_key",
 };
 
 describe("API environment", () => {
@@ -25,7 +24,7 @@ describe("API environment", () => {
 			transitCatalogRefreshMs: 86_400_000,
 			oauth: {
 				supabaseUrl: "https://mionqcczituwkryrjsfh.supabase.co",
-				anonKey: "sb_publishable_test_key",
+				gatewayUrl: "https://auth.m16khb.xyz",
 				publicUrl: "http://localhost:5173",
 			},
 		});

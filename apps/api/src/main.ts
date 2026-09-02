@@ -27,7 +27,7 @@ async function bootstrap() {
       minimumSubwayCatalogItems: 100,
       oauthConfig: {
         supabaseUrl: env.oauth.supabaseUrl,
-        anonKey: env.oauth.anonKey,
+        gatewayUrl: env.oauth.gatewayUrl,
         publicUrl: env.oauth.publicUrl,
         fetcher: fetch,
       },

@@ -23,7 +23,7 @@ import {
   type SessionVerifier,
 } from "../app.tokens";
 import { type AuthUser } from "@mota/contracts/auth";
-import { SupabaseUnavailableError } from "../auth/supabaseClient";
+import { AuthUpstreamUnavailableError } from "../auth/authErrors";
 
 @Controller("api/settings")
 export class SettingsController {
@@ -50,7 +50,7 @@ export class SettingsController {
         reply.header("set-cookie", [...cookies]);
       });
     } catch (error) {
-      if (error instanceof SupabaseUnavailableError) {
+      if (error instanceof AuthUpstreamUnavailableError) {
         throw new ServiceUnavailableException({
           error: "AUTH_UPSTREAM_UNAVAILABLE",
           message: "로그인 상태를 확인하지 못했습니다.",

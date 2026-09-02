@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { z } from "zod";
 import type { AuthUser } from "@mota/contracts/auth";
-import { SupabaseUnavailableError } from "./supabaseClient";
+import { AuthUpstreamUnavailableError } from "./authErrors";
 
 const SUPABASE_USER_ROLE = "authenticated" as const;
 
@@ -50,7 +50,7 @@ export async function verifyAccessToken(
     if (isJoseError(error)) {
       return null;
     }
-    throw new SupabaseUnavailableError();
+    throw new AuthUpstreamUnavailableError("supabase-jwks");
   }
   const claims = claimsSchema.safeParse(payload);
   if (!claims.success) {

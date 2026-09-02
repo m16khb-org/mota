@@ -17,7 +17,7 @@ const envSchema = z.object({
 	HOST: z.string().min(1).default("0.0.0.0"),
 	PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
 	SUPABASE_URL: z.string().url(),
-	SUPABASE_ANON_KEY: z.string().min(1),
+	AUTH_GATEWAY_URL: z.string().url().default("https://auth.m16khb.xyz"),
 	PUBLIC_URL: z.string().url().default("http://localhost:5173"),
 	SUBWAY_ARRIVAL_UPSTREAM: z
 		.string()
@@ -50,7 +50,7 @@ export interface ApiEnv {
 	readonly transitCatalogRefreshMs: number;
 	readonly oauth: {
 		readonly supabaseUrl: string;
-		readonly anonKey: string;
+		readonly gatewayUrl: string;
 		readonly publicUrl: string;
 	};
 }
@@ -84,7 +84,7 @@ export function loadEnv(
 		transitCatalogRefreshMs: parsed.TRANSIT_CATALOG_REFRESH_MS,
 		oauth: {
 			supabaseUrl: parsed.SUPABASE_URL.replace(/\/$/, ""),
-			anonKey: parsed.SUPABASE_ANON_KEY,
+			gatewayUrl: parsed.AUTH_GATEWAY_URL.replace(/\/$/, ""),
 			publicUrl: parsed.PUBLIC_URL.replace(/\/$/, ""),
 		},
 	};

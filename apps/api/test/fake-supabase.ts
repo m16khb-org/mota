@@ -5,7 +5,6 @@ export interface FakeSupabase {
   readonly url: string;
   readonly issuer: string;
   readonly jwksUrl: string;
-  readonly signoutRequests: { readonly refreshToken: string }[];
   close(): Promise<void>;
   signAccessToken(claims: {
     readonly sub: string;
@@ -15,13 +14,13 @@ export interface FakeSupabase {
 }
 
 /**
- * Minimal fake of the Supabase Auth endpoints mota depends on:
- * the PKCE and refresh token grants plus the public JWKS document.
+ * Minimal fake of the only Supabase endpoint mota still depends on: the
+ * public JWKS document its access tokens are verified against. The token
+ * grants and signout belong to the auth-gateway now.
  */
 export async function startFakeSupabase(): Promise<FakeSupabase> {
   const { publicKey, privateKey } = await generateKeyPair("ES256");
   const publicJwk = await exportJWK(publicKey);
-  const signoutRequests: { refreshToken: string }[] = [];
 
   const server: Server = createServer((request, response) => {
     const url = new URL(request.url ?? "/", "http://localhost");
@@ -31,37 +30,6 @@ export async function startFakeSupabase(): Promise<FakeSupabase> {
     ) {
       respond(response, 200, {
         keys: [{ ...publicJwk, kid: "test-key", alg: "ES256", use: "sig" }],
-      });
-      return;
-    }
-    if (request.method === "POST" && url.pathname === "/auth/v1/token") {
-      request.on("data", () => {});
-      request.on("end", async () => {
-        const grant = url.searchParams.get("grant_type");
-        const accessToken = await signToken({ sub: `user-${grant}` });
-        respond(response, 200, {
-          access_token: accessToken,
-          refresh_token: `refresh-${grant}-${Math.random().toString(36).slice(2)}`,
-          expires_in: 3600,
-          token_type: "bearer",
-        });
-      });
-      return;
-    }
-    if (request.method === "POST" && url.pathname === "/auth/v1/signout") {
-      let body = "";
-      request.on("data", (chunk: Buffer) => {
-        body += chunk.toString();
-      });
-      request.on("end", () => {
-        let refreshToken = "";
-        try {
-          refreshToken = String(JSON.parse(body || "{}").refresh_token ?? "");
-        } catch {
-          refreshToken = "";
-        }
-        signoutRequests.push({ refreshToken });
-        respond(response, 200, {});
       });
       return;
     }
@@ -102,7 +70,6 @@ export async function startFakeSupabase(): Promise<FakeSupabase> {
     url,
     issuer: `${url}/auth/v1`,
     jwksUrl: `${url}/auth/v1/.well-known/jwks.json`,
-    signoutRequests,
     async signAccessToken(claims) {
       return signToken(claims);
     },

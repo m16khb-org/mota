@@ -5,7 +5,7 @@ import {
   type StoredUserSettings,
   type UserSettingsRepository,
 } from "@mota/db";
-import { SupabaseUnavailableError } from "../src/auth/supabaseClient";
+import { AuthUpstreamUnavailableError } from "../src/auth/authErrors";
 import { createApp } from "./create-test-app";
 
 type PointSelections = TransitSelections["commutes"]["toWork"];
@@ -95,7 +95,7 @@ describe("authenticated user settings routes", () => {
     const app = createApp(fetch, {
       settingsRepository: new MemorySettingsRepository(),
       verifySession: async () => {
-        throw new SupabaseUnavailableError();
+        throw new AuthUpstreamUnavailableError("supabase-jwks");
       },
     });
 
