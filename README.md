@@ -8,7 +8,7 @@ arrivals.
 | Workspace | Purpose |
 |---|---|
 | `apps/web` | React 19, Vite, Leaflet, PWA |
-| `apps/api` | NestJS 11, Fastify, Supabase PKCE login and JWKS verification |
+| `apps/api` | NestJS 11, Fastify, auth-gateway login proxy and JWKS verification |
 | `packages/contracts` | Shared Zod contracts |
 | `packages/db` | Drizzle ORM, PostgreSQL migration and settings repository |
 

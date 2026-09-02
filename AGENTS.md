@@ -20,23 +20,25 @@ packages/db/          Drizzle Postgres schema, migration, repository
 - `packages/contracts` imports only Zod and its own modules.
 - `packages/db` imports contracts and Drizzle; it never imports Nest or React.
 - Apps do not import each other.
-- Mota owns its Google login (PKCE against the shared Supabase project) and
-  verifies Supabase access tokens locally with JWKS.
+- Mota proxies Google login to the central auth-gateway and verifies the
+  resulting access tokens locally with JWKS. It holds no Supabase key.
 - Mota never stores a duplicate user record; identity is the Supabase `sub`.
 - Untrusted HTTP, database JSON, and localStorage values are parsed with Zod.
 - Transit rows are limited to three only at the presentation boundary.
 
 ## Authentication and settings
 
-- Public login: `/api/auth/google` (PKCE, host-only flow cookies,
-  `prompt=select_account` so Google always shows its account chooser).
-- OAuth callback: `/api/auth/callback` (allow-listed in Supabase URL config).
-- Logout: `POST /api/auth/logout` clears mota cookies and revokes the
-  Supabase session best-effort.
-- Session cookies: host-only `__Host-mota-access` / `__Host-mota-refresh`;
-  never a `Domain` attribute, never forwarded to another service.
+- Public login: `/api/auth/google` proxies the gateway's `/auth/google`
+  with `return_to`/`callback_to` and relays its redirect and cookies.
+- OAuth callback: `/auth/callback` — not under `/api`, because the gateway
+  accepts a callback target only at exactly that path. It is declared before
+  the SPA catch-all.
+- Logout and refresh: proxied to the gateway with mota's `PUBLIC_URL` as the
+  `Origin` header, which the gateway's CSRF check requires.
+- Session cookies: host-only `agw-access` / `agw-refresh` (`__Host-` over
+  https), set by the gateway through the proxy; never a `Domain` attribute.
 - Token verification is local: JWKS, ES256, issuer, audience, `role`
-  claims; no per-request gateway call.
+  claims; no per-request gateway call while the access token is valid.
 - Anonymous selections stay under `mota:transit-selections:v1`.
 - Authenticated selections use `GET/PUT /api/settings`.
 - Drizzle table: `user_settings`, keyed by Supabase `sub`.

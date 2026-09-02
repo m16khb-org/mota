@@ -1,6 +1,6 @@
 ---
 name: identity-and-settings
-description: Supabase PKCE identity ownership and versioned Drizzle commute settings persistence.
+description: Auth-gateway login proxy identity and versioned Drizzle commute settings persistence.
 ---
 
 # Identity and Settings
@@ -9,33 +9,42 @@ Canonical index: [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## Authentication
 
-Mota owns its Google login end to end. The auth-gateway login stays a
-separate, host-only session that never reaches this service.
+Mota logs users in through the central auth-gateway, the same way liar-game
+and ai-character-chat do. The gateway keeps its cookies host-only, so mota
+runs a same-origin login proxy and ends up owning an independent session on
+its own origin. Mota holds no Supabase key.
 
 1. The browser navigates to `GET /api/auth/google` with a same-site
-   `return_to` path. The API issues short-lived host-only PKCE flow cookies
-   (`mota-oauth-verifier`, `mota-oauth-state`, `mota-return-url`) and
-   redirects to Supabase `/auth/v1/authorize` (Google, S256,
-   `prompt=select_account` so Google always shows its account chooser).
-2. Supabase calls back at `GET /api/auth/callback` (allow-listed in the
-   Supabase URL configuration). The API validates `state`, exchanges the code
-   server-side, clears the flow cookies, and sets host-only session cookies
-   `__Host-mota-access` (session lifetime) and `__Host-mota-refresh` (30 days)
-   — httpOnly, Secure, SameSite=Lax, Path=/, never a `Domain` attribute.
+   `return_to` path. The API calls the gateway's `/auth/google` with
+   `return_to=$PUBLIC_URL<path>` and `callback_to=$PUBLIC_URL/auth/callback`,
+   then relays its `Location` and every `Set-Cookie` header verbatim.
+2. Supabase calls back at `GET /auth/callback` — **not** under `/api`, because
+   the gateway accepts a callback target only at exactly that path. The route
+   is declared before the SPA catch-all in the module's controller list. It
+   proxies to the gateway's `/auth/callback` with the browser's cookies and
+   relays the response, so the session cookies `agw-access` and `agw-refresh`
+   (`__Host-` prefixed over https) land on mota's origin.
 3. Access tokens are verified locally with `jose` against the project JWKS:
    ES256, issuer `$SUPABASE_URL/auth/v1`, audience `authenticated`, and
-   `role === "authenticated"`. No per-request gateway or Supabase call.
+   `role === "authenticated"`. No per-request gateway call.
 4. When the access token is missing, expired, or rejected and the refresh
-   cookie exists, the API rotates the session with the Supabase refresh-token
-   grant and relays both rotated cookies to the browser.
-5. Mota uses only the verified `sub` claim as `auth_user_id`. The shared
-   Supabase project keeps the user id identical across sibling services.
-6. `POST /api/auth/logout` clears both session cookies and revokes the
-   Supabase session server-side (best-effort); anonymous selections are
+   cookie exists, the API calls the gateway's `POST /auth/refresh` and relays
+   the rotated cookies. That route enforces an allow-listed `Origin`, so the
+   proxy sends mota's `PUBLIC_URL` as the origin of its own server-side call.
+5. Mota uses only the verified `sub` claim as `auth_user_id`. The gateway signs
+   with the same Supabase project, so the user id is unchanged from the era
+   when mota ran its own PKCE flow — existing `user_settings` rows keep working.
+6. `POST /api/auth/logout` proxies the gateway's `/auth/logout` with the same
+   `Origin` header and relays its clearing cookies; anonymous selections are
    restored from localStorage.
 
-Mota stores no user rows. A rejected refresh becomes an anonymous session;
-Supabase Auth outages surface as `503`.
+Mota stores no user rows. A refused refresh becomes an anonymous session; an
+unreachable gateway or JWKS surfaces as `503`, never as a signed-out user.
+
+Prerequisites outside this repository: mota's origin must appear in the
+gateway's `AUTH_ALLOWED_REDIRECT_URLS` and `CSRF_ALLOWED_ORIGINS`, and the
+Supabase project must allow `https://mota.m16khb.xyz/**` as a redirect URL —
+the wildcard matters because the gateway appends `?state=` to `callback_to`.
 
 ## Settings database
 
@@ -53,9 +62,9 @@ user_settings
 ```
 
 `auth_user_id` references the Supabase identity logically; there is no
-cross-database foreign key or local user copy. Existing rows written under
-the previous gateway-era flow keep working because the `sub` value is the
-same Supabase user id.
+cross-database foreign key or local user copy. Rows written under either
+earlier flow keep working because the `sub` value is the same Supabase user
+id in all of them.
 
 The canonical `selections` document contains two independent contexts:
 

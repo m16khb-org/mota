@@ -5,6 +5,8 @@ description: Accepted decision record with rationale, alternatives, and conseque
 
 # Mota owns its Supabase browser session
 
+> **Superseded on 2026-09-03** by [Move mota onto the auth-gateway login proxy](2026-09-03-move-mota-onto-the-auth-gateway-login-proxy-superseding-its.md). Mota no longer runs its own PKCE flow; it proxies the central auth-gateway like its sibling services.
+
 - Date: 2026-08-25
 - Kind: `adr`
 - Summary: Mota runs its own Google authorization-code + PKCE login against

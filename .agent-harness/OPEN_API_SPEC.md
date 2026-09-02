@@ -12,10 +12,10 @@ Mota exposes NestJS controllers but does not currently configure Swagger or gene
 | Endpoint | Responsibility |
 |---|---|
 | `GET /api/health` | service liveness plus non-gating transit catalog state |
-| `GET /api/auth/session` | anonymous/authenticated session from mota's own cookies |
-| `GET /api/auth/google` | starts the Google PKCE login (host-only flow cookies, account chooser) |
-| `GET /api/auth/callback` | completes login, sets mota session cookies, redirects |
-| `POST /api/auth/logout` | clears mota session cookies, revokes the Supabase session |
+| `GET /api/auth/session` | anonymous/authenticated session from the gateway cookie on this origin |
+| `GET /api/auth/google` | starts Google login by proxying the auth-gateway, relaying its redirect and cookies |
+| `GET /auth/callback` | completes login through the gateway proxy; **not** under `/api`, because the gateway accepts a callback target only at exactly this path |
+| `POST /api/auth/logout` | proxies the gateway logout and relays its clearing cookies |
 | `GET /api/settings` | authenticated user's versioned settings |
 | `PUT /api/settings` | compare-and-swap settings update |
 | `GET /api/stops/nearby` | nearby Seoul bus stops |
@@ -45,10 +45,11 @@ Parse query/body/upstream/browser JSON at the boundary with Zod. Keep controller
 ## Error semantics
 
 - `400`: invalid query/body.
-- `401`: settings endpoint without an authenticated session; invalid OAuth callback.
+- `400`: `return_to` that is not a same-site path; a gateway start or callback the gateway refused (`AUTH_GATEWAY_REJECTED`).
+- `401`: settings endpoint without an authenticated session.
 - `409`: settings version conflict.
 - `502`: transit upstream failure.
-- `503`: Supabase Auth unavailable or auth unconfigured.
+- `503`: auth-gateway or Supabase JWKS unreachable (`AUTH_UPSTREAM_UNAVAILABLE`), or auth unconfigured (`AUTH_NOT_CONFIGURED`).
 - `404`: unknown API or non-HTML path.
 
 When an endpoint changes, update the shared schema, controller, browser client, and in-memory Nest tests together. Add Swagger/OpenAPI gates only if generation is introduced as a real project capability.
