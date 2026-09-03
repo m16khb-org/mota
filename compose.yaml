@@ -6,13 +6,14 @@ services:
       context: .
       target: runtime
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       HOST: 0.0.0.0
       PORT: 3000
       SUPABASE_URL: ${SUPABASE_URL:?run compose with ../home-server-infra/.env}
       AUTH_GATEWAY_URL: ${AUTH_GATEWAY_URL:-https://auth.m16khb.xyz}
       PUBLIC_URL: https://mota.m16khb.xyz
-      SEOUL_SUBWAY_API_KEY: ${SEOUL_SUBWAY_API_KEY:-}
       DATABASE_HOST: home-server-pg
       DATABASE_PORT: 5432
       DATABASE_NAME: mota
