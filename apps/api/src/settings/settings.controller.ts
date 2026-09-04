@@ -22,7 +22,7 @@ import {
   SETTINGS_REPOSITORY,
   type SessionVerifier,
 } from "../app.tokens";
-import { type AuthUser } from "@mota/contracts/auth";
+import type { AuthUser } from "@mota/contracts/auth";
 import { AuthUpstreamUnavailableError } from "../auth/authErrors";
 
 @Controller("api/settings")
