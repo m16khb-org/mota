@@ -21,6 +21,10 @@ async function bootstrap() {
     AppModule.register({
       settingsRepository: repository,
       subwayArrivalUpstream: env.subwayArrivalUpstream,
+      ...(env.subwayPositionTemplate
+        ? { subwayPositionTemplate: env.subwayPositionTemplate }
+        : {}),
+      ...(env.busApiKey ? { busApiKey: env.busApiKey } : {}),
       transitCatalogRefreshMs: env.transitCatalogRefreshMs,
       warmTransitCatalogs: true,
       minimumBusCatalogItems: 10_000,

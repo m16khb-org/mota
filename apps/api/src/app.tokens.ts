@@ -11,6 +11,10 @@ export type SessionVerifier = (
   onSetCookie?: (cookies: readonly string[]) => void,
 ) => Promise<AuthUser | null>;
 
+export interface RepeatingScheduler {
+	every(intervalMs: number, task: () => Promise<void>): () => void;
+}
+
 export interface TransitCatalogOptions {
   readonly refreshMs: number;
   readonly retryMs: number;

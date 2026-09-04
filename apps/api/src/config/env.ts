@@ -3,6 +3,7 @@ import {
 	SUBWAY_ARRIVAL_UPSTREAM_BASE,
 	officialSubwayArrivalTemplate,
 } from "../upstream/subwayArrivals";
+import { officialSubwayPositionTemplate } from "../upstream/subwayPositions";
 
 const DAY_MS = 24 * 60 * 60 * 1_000;
 const optionalSecretSchema = z.preprocess(
@@ -24,6 +25,7 @@ const envSchema = z.object({
 		.url()
 		.default(SUBWAY_ARRIVAL_UPSTREAM_BASE),
 	SEOUL_SUBWAY_API_KEY: optionalSecretSchema,
+	SEOUL_BUS_API_KEY: optionalSecretSchema,
 	DATABASE_URL: z.string().url().optional(),
 	DATABASE_HOST: z.string().min(1).default("home-server-pg"),
 	DATABASE_PORT: z.coerce.number().int().min(1).max(65_535).default(5432),
@@ -44,6 +46,8 @@ export interface ApiEnv {
 	readonly host: string;
 	readonly port: number;
 	readonly subwayArrivalUpstream: string;
+	readonly subwayPositionTemplate: string | undefined;
+	readonly busApiKey: string | undefined;
 	readonly databaseUrl: string;
 	readonly webDistPath: string;
 	readonly migrationsPath: string;
@@ -74,10 +78,15 @@ export function loadEnv(
 	const subwayArrivalUpstream = parsed.SEOUL_SUBWAY_API_KEY
 		? officialSubwayArrivalTemplate(parsed.SEOUL_SUBWAY_API_KEY)
 		: parsed.SUBWAY_ARRIVAL_UPSTREAM;
+	const subwayPositionTemplate = parsed.SEOUL_SUBWAY_API_KEY
+		? officialSubwayPositionTemplate(parsed.SEOUL_SUBWAY_API_KEY)
+		: undefined;
 	return {
 		host: parsed.HOST,
 		port: parsed.PORT,
 		subwayArrivalUpstream,
+		subwayPositionTemplate,
+		busApiKey: parsed.SEOUL_BUS_API_KEY,
 		databaseUrl,
 		webDistPath: parsed.WEB_DIST_PATH,
 		migrationsPath: parsed.MIGRATIONS_PATH,

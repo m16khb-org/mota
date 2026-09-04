@@ -10,6 +10,7 @@ Only record failures that actually occurred or recurring risks proven by source 
 ## Index
 
 - [Cautions overview](cautions/overview.md)
+- [Scope subway positions by station and route](cautions/2026-09-05-scope-subway-positions-by-station-and-route.md)
 - [Fastify static fallback route collisions](cautions/2026-08-23-fastify-static-fallback-route-collisions.md)
 - [Docker runtime must include workspace packages](cautions/2026-08-23-docker-runtime-must-include-workspace-packages.md)
 - [Authenticated settings must not leak to anonymous storage](cautions/2026-08-23-authenticated-settings-must-not-leak-to-anonymous-storage.md)

@@ -58,10 +58,21 @@ export function createApp(
         }
         headers.set(name, String(value));
       }
-      return new Response(response.body, {
+      const body = [204, 205, 304].includes(response.statusCode)
+        ? null
+        : response.body;
+      return new Response(body, {
         status: response.statusCode,
         headers,
       });
+    },
+    async listen() {
+      const app = await getApplication();
+      await app.listen(0, "127.0.0.1");
+      return {
+        url: await app.getUrl(),
+        close: () => app.close(),
+      };
     },
   };
 }

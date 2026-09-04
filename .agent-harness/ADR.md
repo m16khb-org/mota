@@ -10,6 +10,7 @@ ADRs record implemented or explicitly accepted decisions, not speculative propos
 ## Index
 
 - [ADR overview](adr/overview.md)
+- [Stream live transit without stale vehicles](adr/2026-09-05-stream-live-transit-without-stale-vehicles.md)
 - [Mota owns its Supabase browser session](adr/2026-08-25-mota-owns-its-supabase-browser-session.md)
 - [Turborepo, Nest/Fastify, and Drizzle topology](adr/2026-08-23-turborepo-nest-fastify-and-drizzle-topology.md)
 

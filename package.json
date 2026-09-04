@@ -15,6 +15,7 @@
     "test:integration": "turbo run test:integration",
     "test:watch": "pnpm --filter @mota/web test:watch",
     "test:e2e": "pnpm --filter @mota/web test:e2e",
+    "generate:subway-network": "node scripts/generate-subway-network.mjs",
     "db:generate": "pnpm --filter @mota/db generate",
     "db:migrate": "pnpm --filter @mota/db migrate",
     "db:studio": "pnpm --filter @mota/db studio"

@@ -18,6 +18,8 @@ describe("API environment", () => {
 			host: "0.0.0.0",
 			port: 3000,
 			subwayArrivalUpstream: SUBWAY_ARRIVAL_UPSTREAM_BASE,
+			subwayPositionTemplate: undefined,
+			busApiKey: undefined,
 			databaseUrl: "postgres://mota:secret@localhost:5432/mota",
 			webDistPath: "/app/web",
 			migrationsPath: "/app/drizzle",
@@ -40,7 +42,19 @@ describe("API environment", () => {
 		).toMatchObject({
 			subwayArrivalUpstream:
 				"http://swopenAPI.seoul.go.kr/api/subway/official-test-key/json/realtimeStationArrival/0/100/{station}",
+			subwayPositionTemplate:
+				"http://swopenAPI.seoul.go.kr/api/subway/official-test-key/json/realtimePosition/0/100/{line}",
 		});
+	});
+
+	it("loads an optional Seoul bus API key without requiring it at startup", () => {
+		expect(
+			loadEnv({
+				...SUPABASE_INPUT,
+				DATABASE_URL: "postgres://mota:secret@localhost:5432/mota",
+				SEOUL_BUS_API_KEY: " bus-test-key ",
+			}),
+		).toMatchObject({ busApiKey: "bus-test-key" });
 	});
 
 	it("builds an encoded Mota database URL from home-server fields", () => {

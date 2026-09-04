@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { transitMapNetworkSchema } from "@mota/contracts/transit-map";
 import { createApp } from "./create-test-app";
 
 const subwayArrivalUpstreamPayload = {
@@ -20,6 +21,57 @@ const subwayArrivalUpstreamPayload = {
 
 const OFFICIAL_SUBWAY_CATALOG_URL =
 	"https://t-data.seoul.go.kr/dataprovide/download.do?id=10229";
+
+const TRANSIT_MAP_QUERY =
+	"west=127.10&south=37.52&east=127.12&north=37.54&zoom=16";
+
+describe("transit map network API", () => {
+	it("returns a schema-valid static network for a valid viewport", async () => {
+		const response = await createApp(vi.fn()).request(
+			`/api/transit-map/network?${TRANSIT_MAP_QUERY}`,
+		);
+		const payload = await response.json();
+
+		expect(response.status, JSON.stringify(payload)).toBe(200);
+		expect(transitMapNetworkSchema.safeParse(payload).success).toBe(true);
+		expect(payload.bus).toMatchObject({
+			enabled: false,
+			reason: "unconfigured",
+		});
+		expect(response.headers.get("cache-control")).toBe("public, max-age=300");
+		expect(response.headers.get("etag")).toMatch(/^".+"$/);
+	});
+
+	it("rejects reversed and outside-Seoul bounds", async () => {
+		const app = createApp(vi.fn());
+		const reversed = await app.request(
+			"/api/transit-map/network?west=127.12&south=37.52&east=127.10&north=37.54&zoom=16",
+		);
+		const outside = await app.request(
+			"/api/transit-map/network?west=128.10&south=37.52&east=128.12&north=37.54&zoom=16",
+		);
+
+		expect(reversed.status).toBe(400);
+		expect(outside.status).toBe(400);
+	});
+
+	it("returns 304 when the network revision matches If-None-Match", async () => {
+		const app = createApp(vi.fn());
+		const first = await app.request(
+			`/api/transit-map/network?${TRANSIT_MAP_QUERY}`,
+		);
+		const etag = first.headers.get("etag");
+		expect(etag).not.toBeNull();
+		if (!etag) throw new Error("Transit map response did not include an ETag.");
+
+		const second = await app.request(
+			`/api/transit-map/network?${TRANSIT_MAP_QUERY}`,
+			{ headers: { "if-none-match": etag } },
+		);
+
+		expect(second.status).toBe(304);
+	});
+});
 
 type MockSubwayElement = {
 	readonly type?: string;
@@ -198,6 +250,10 @@ describe("bus API adapter", () => {
 		expect(before.status).toBe(200);
 		expect(await before.json()).toMatchObject({
 			status: "ok",
+			liveTransit: {
+				subway: { status: "unavailable", successCount: 0, failureCount: 0 },
+				bus: { status: "unconfigured", successCount: 0, failureCount: 0 },
+			},
 			transitCatalogs: {
 				bus: { ready: false, count: 0 },
 				subway: { ready: false, count: 0 },

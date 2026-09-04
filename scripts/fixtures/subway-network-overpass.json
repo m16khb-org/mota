@@ -1,0 +1,76 @@
+{
+  "version": 0.6,
+  "elements": [
+    {
+      "type": "node",
+      "id": 1,
+      "lat": 37.5,
+      "lon": 127,
+      "tags": { "name": "공유역", "railway": "station" }
+    },
+    {
+      "type": "node",
+      "id": 2,
+      "lat": 37.51,
+      "lon": 127.01,
+      "tags": { "name": "둘역", "railway": "station" }
+    },
+    {
+      "type": "node",
+      "id": 3,
+      "lat": 37.49,
+      "lon": 126.99,
+      "tags": { "name": "셋역", "railway": "station" }
+    },
+    {
+      "type": "way",
+      "id": 21,
+      "nodes": [1, 2],
+      "geometry": [
+        { "lat": 37.5, "lon": 127 },
+        { "lat": 37.51, "lon": 127.01 }
+      ]
+    },
+    {
+      "type": "way",
+      "id": 31,
+      "nodes": [3, 1],
+      "geometry": [
+        { "lat": 37.49, "lon": 126.99 },
+        { "lat": 37.5, "lon": 127 }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 2002,
+      "tags": {
+        "type": "route",
+        "route": "subway",
+        "ref": "2",
+        "name": "서울 지하철 2호선",
+        "network": "수도권 전철"
+      },
+      "members": [
+        { "type": "node", "ref": 1, "role": "stop" },
+        { "type": "node", "ref": 2, "role": "stop" },
+        { "type": "way", "ref": 21, "role": "" }
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 3003,
+      "tags": {
+        "type": "route",
+        "route": "subway",
+        "ref": "3",
+        "name": "서울 지하철 3호선",
+        "network": "수도권 전철"
+      },
+      "members": [
+        { "type": "node", "ref": 3, "role": "stop" },
+        { "type": "node", "ref": 1, "role": "stop" },
+        { "type": "way", "ref": 31, "role": "" }
+      ]
+    }
+  ]
+}

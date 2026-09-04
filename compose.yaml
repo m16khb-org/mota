@@ -20,6 +20,8 @@ services:
       DATABASE_USER: mota
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?run compose with ../home-server-infra/.env}
       TRANSIT_CATALOG_REFRESH_MS: ${TRANSIT_CATALOG_REFRESH_MS:-86400000}
+      SEOUL_SUBWAY_API_KEY: ${SEOUL_SUBWAY_API_KEY:-}
+      SEOUL_BUS_API_KEY: ${SEOUL_BUS_API_KEY:-}
       WEB_DIST_PATH: /app/web
       MIGRATIONS_PATH: /app/drizzle
     ports:

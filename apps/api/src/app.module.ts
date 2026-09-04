@@ -13,6 +13,7 @@ import {
   type ApiOptions,
   type SessionVerifier,
   type UpstreamFetch,
+  type RepeatingScheduler,
 } from "./app.tokens";
 import { AuthController } from "./auth/auth.controller";
 import { GatewayAuthController } from "./auth/gatewayAuth.controller";
@@ -21,10 +22,50 @@ import { HealthController } from "./health/health.controller";
 import { SettingsController } from "./settings/settings.controller";
 import { TransitController } from "./transit/transit.controller";
 import { TransitCatalogService } from "./transit/transitCatalog.service";
+import { TransitMapController } from "./transit-map/transitMap.controller";
+import {
+  BUS_TOPOLOGY_PORT,
+  EmptyBusTopologyPort,
+  TRANSIT_MAP_NETWORK_OPTIONS,
+  type BusTopologyPort,
+  TransitMapNetworkService,
+} from "./transit-map/transitMapNetwork.service";
+import { SubwayPositionCollector } from "./transit-map/subwayPositionCollector";
+import { BusPositionCollectorRegistry } from "./transit-map/busPositionCollectorRegistry";
+import {
+  BUS_POSITION_SOURCE,
+  EmptyBusPositionSource,
+  type BusPositionSource,
+  TransitMapStreamService,
+} from "./transit-map/transitMapStream.service";
+import { fetchSubwayPositions } from "./upstream/subwayPositions";
+import {
+  fetchBusPositions,
+  OfficialBusTopologyPort,
+} from "./upstream/seoulBusPositions";
 import { WebController } from "./web/web.controller";
 
 const DEFAULT_CATALOG_REFRESH_MS = 24 * 60 * 60 * 1_000;
 const DEFAULT_CATALOG_RETRY_MS = 15 * 60 * 1_000;
+const LIVE_SUBWAY_LINES = [
+  "1호선",
+  "2호선",
+  "3호선",
+  "4호선",
+  "5호선",
+  "6호선",
+  "7호선",
+  "8호선",
+  "9호선",
+  "경의중앙선",
+  "공항철도",
+  "경춘선",
+  "수인분당선",
+  "신분당선",
+  "경강선",
+  "서해선",
+  "GTX-A",
+] as const;
 
 class UnavailableSettingsRepository implements UserSettingsRepository {
   async find(_authUserId: string): Promise<StoredUserSettings | null> {
@@ -52,6 +93,12 @@ export interface AppModuleOptions {
   readonly minimumBusCatalogItems?: number | undefined;
   readonly minimumSubwayCatalogItems?: number | undefined;
   readonly random?: (() => number) | undefined;
+  readonly busMapConfigured?: boolean | undefined;
+  readonly busTopology?: BusTopologyPort | undefined;
+  readonly busPositionSource?: BusPositionSource | undefined;
+  readonly subwayPositionTemplate?: string | undefined;
+  readonly repeatingScheduler?: RepeatingScheduler | undefined;
+  readonly busApiKey?: string | undefined;
 }
 
 @Module({})
@@ -86,6 +133,54 @@ export class AppModule {
         random: options.random ?? Math.random,
       },
     };
+    const scheduler = options.repeatingScheduler ?? new IntervalScheduler();
+    const subwayPositionTemplate = options.subwayPositionTemplate;
+    const busApiKey = options.busApiKey;
+    const officialBusTopology = busApiKey
+      ? new OfficialBusTopologyPort(
+          apiOptions.upstreamFetch,
+          busApiKey,
+          options.now ?? Date.now,
+        )
+      : null;
+    const busTopology =
+      options.busTopology ?? officialBusTopology ?? new EmptyBusTopologyPort();
+    const subwayPositions = new SubwayPositionCollector({
+      lines: LIVE_SUBWAY_LINES,
+      loadLine: subwayPositionTemplate
+        ? (line) =>
+            fetchSubwayPositions(
+              apiOptions.upstreamFetch,
+              subwayPositionTemplate,
+              line,
+            )
+        : async () => {
+            throw new Error("Subway position API is not configured.");
+      },
+      scheduler,
+      ...(options.now ? { now: options.now } : {}),
+    });
+    const busPositions =
+      options.busPositionSource ??
+      (officialBusTopology && busApiKey
+        ? new BusPositionCollectorRegistry({
+            scheduler,
+            ...(options.now ? { now: options.now } : {}),
+            loadRoute: (routeId) => {
+              const route = officialBusTopology.routeSummary(routeId);
+              if (!route) {
+                throw new Error("Bus route was not discovered for this viewport.");
+              }
+              return fetchBusPositions(
+                apiOptions.upstreamFetch,
+                busApiKey,
+                route,
+                { west: 126.7, south: 37.3, east: 127.3, north: 37.8 },
+                options.now ?? Date.now,
+              );
+            },
+          })
+        : new EmptyBusPositionSource());
     return {
       module: AppModule,
       controllers: [
@@ -94,6 +189,7 @@ export class AppModule {
         GatewayAuthController,
         SettingsController,
         TransitController,
+        TransitMapController,
         WebController,
       ],
       providers: [
@@ -105,6 +201,31 @@ export class AppModule {
         },
         { provide: AUTH_CONFIG, useValue: apiOptions.oauthConfig },
         TransitCatalogService,
+        TransitMapNetworkService,
+        { provide: SubwayPositionCollector, useValue: subwayPositions },
+        { provide: BUS_POSITION_SOURCE, useValue: busPositions },
+        {
+          provide: TransitMapStreamService,
+          inject: [TransitMapNetworkService],
+          useFactory: (networks: TransitMapNetworkService) =>
+            new TransitMapStreamService(
+              networks,
+              subwayPositions,
+              busPositions,
+              scheduler,
+              options.now ?? Date.now,
+            ),
+        },
+        {
+          provide: BUS_TOPOLOGY_PORT,
+          useValue: busTopology,
+        },
+        {
+          provide: TRANSIT_MAP_NETWORK_OPTIONS,
+          useValue: {
+            busConfigured: options.busMapConfigured ?? Boolean(options.busApiKey),
+          },
+        },
       ],
     };
   }
@@ -113,3 +234,18 @@ export class AppModule {
 const unconfiguredSessionVerifier: SessionVerifier = () => {
   throw new Error("Supabase auth is not configured.");
 };
+
+class IntervalScheduler implements RepeatingScheduler {
+  every(intervalMs: number, task: () => Promise<void>) {
+    let running = false;
+    const timer = setInterval(() => {
+      if (running) return;
+      running = true;
+      void task().finally(() => {
+        running = false;
+      });
+    }, intervalMs);
+    timer.unref();
+    return () => clearInterval(timer);
+  }
+}
