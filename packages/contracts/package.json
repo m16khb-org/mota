@@ -21,6 +21,10 @@
       "types": "./dist/subway.d.ts",
       "default": "./dist/subway.js"
     },
+    "./transit-map": {
+      "types": "./dist/transitMap.d.ts",
+      "default": "./dist/transitMap.js"
+    },
     "./transit-settings": {
       "types": "./dist/transitSettings.d.ts",
       "default": "./dist/transitSettings.js"
