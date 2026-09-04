@@ -78,7 +78,7 @@ async function getJson(
 ): Promise<unknown> {
   const timeoutSignal = AbortSignal.timeout(timeoutMs);
   const signal = callerSignal
-    ? AbortSignal.any([timeoutSignal, callerSignal])
+    ? AbortSignal.any([callerSignal, timeoutSignal])
     : timeoutSignal;
   const response = await fetch(url, { signal });
   if (!response.ok) {
@@ -148,7 +148,11 @@ export async function fetchNearbySubwayStations(
     lng: center.lng.toFixed(6),
     radius: String(radius),
   });
-  const payload = await getJson(`/api/subway/nearby?${params}`, 35_000, signal);
+  const payload = await getJson(
+    `/api/subway/nearby?${params}`,
+    35_000,
+    signal,
+  );
   return nearbySubwayResultSchema.parse(payload).stations;
 }
 

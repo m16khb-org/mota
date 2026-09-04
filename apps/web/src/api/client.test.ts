@@ -3,6 +3,235 @@ import { ZodError } from "zod";
 import { arrivalLookupSchema } from "../domain/bus";
 import { ApiError, fetchArrivals, fetchNearbySubwayStations, fetchNearbyStops, fetchSubwayArrivals, isServiceAreaError } from "./client";
 
+describe("nearby request cancellation", () => {
+	const busStop = {
+		id: "100000001",
+		arsId: "01001",
+		name: "시청앞",
+		lat: 37.5663,
+		lng: 126.9779,
+		distanceMeters: 120,
+	};
+	const subwayStation = {
+		id: "osm-node-5801572034",
+		name: "천호",
+		line: "수도권 전철",
+		lat: 37.5385225,
+		lng: 127.1234021,
+		distanceMeters: 240,
+	};
+
+	afterEach(() => {
+		vi.unstubAllGlobals();
+		vi.restoreAllMocks();
+	});
+
+	it.each([
+		{
+			name: "bus stop",
+			request: (signal: AbortSignal) =>
+				fetchNearbyStops({ lat: 37.5663, lng: 126.9779 }, 800, signal),
+			expectedUrl:
+				"/api/stops/nearby?lat=37.566300&lng=126.977900&radius=800",
+		},
+		{
+			name: "subway station",
+			request: (signal: AbortSignal) =>
+				fetchNearbySubwayStations(
+					{ lat: 37.5366, lng: 127.1253 },
+					3_000,
+					signal,
+				),
+			expectedUrl:
+				"/api/subway/nearby?lat=37.536600&lng=127.125300&radius=3000",
+		},
+	])("rejects an in-flight $name search when the caller aborts", async ({
+		request,
+		expectedUrl,
+	}) => {
+		let requestSignal: AbortSignal | undefined;
+		const fetchMock = vi.fn(
+			(_url: string | URL | Request, init?: RequestInit) =>
+				new Promise<Response>((_resolve, reject) => {
+					requestSignal = init?.signal ?? undefined;
+					requestSignal?.addEventListener(
+						"abort",
+						() => reject(requestSignal?.reason),
+						{ once: true },
+					);
+				}),
+		);
+		vi.stubGlobal("fetch", fetchMock);
+		const controller = new AbortController();
+
+		const pendingRequest = request(controller.signal);
+		controller.abort();
+		const error: unknown = await pendingRequest.then(
+			() => null,
+			(reason: unknown) => reason,
+		);
+
+		expect(error).toBeInstanceOf(DOMException);
+		expect(error).toMatchObject({ name: "AbortError" });
+		expect(fetchMock).toHaveBeenCalledWith(expectedUrl, {
+			signal: requestSignal,
+		});
+		expect(requestSignal).not.toBe(controller.signal);
+		expect(requestSignal?.aborted).toBe(true);
+	});
+
+	it("keeps the timeout capable of cancelling a request with a caller signal", async () => {
+		const timeoutController = new AbortController();
+		vi.spyOn(AbortSignal, "timeout").mockReturnValue(
+			timeoutController.signal,
+		);
+		let requestSignal: AbortSignal | undefined;
+		const fetchMock = vi.fn(
+			(_url: string | URL | Request, init?: RequestInit) =>
+				new Promise<Response>((_resolve, reject) => {
+					requestSignal = init?.signal ?? undefined;
+					requestSignal?.addEventListener(
+						"abort",
+						() => reject(requestSignal?.reason),
+						{ once: true },
+					);
+				}),
+		);
+		vi.stubGlobal("fetch", fetchMock);
+		const callerController = new AbortController();
+
+		const pendingRequest = fetchNearbyStops(
+			{ lat: 37.5663, lng: 126.9779 },
+			800,
+			callerController.signal,
+		);
+		const timeoutError = new DOMException(
+			"The operation timed out",
+			"TimeoutError",
+		);
+		timeoutController.abort(timeoutError);
+		const error: unknown = await pendingRequest.then(
+			() => null,
+			(reason: unknown) => reason,
+		);
+
+		expect(error).toBe(timeoutError);
+		expect(requestSignal?.aborted).toBe(true);
+		expect(callerController.signal.aborted).toBe(false);
+		expect(fetchMock).toHaveBeenCalledWith(
+			"/api/stops/nearby?lat=37.566300&lng=126.977900&radius=800",
+			{ signal: requestSignal },
+		);
+	});
+
+	it.each([
+		{
+			name: "default bus radius",
+			request: () => fetchNearbyStops({ lat: 37.5663, lng: 126.9779 }),
+			payload: { stops: [busStop] },
+			expectedResult: busStop,
+			expectedTimeout: 8_000,
+			expectedUrl:
+				"/api/stops/nearby?lat=37.566300&lng=126.977900&radius=800",
+		},
+		{
+			name: "custom bus radius",
+			request: () =>
+				fetchNearbyStops({ lat: 37.5663, lng: 126.9779 }, 1_250),
+			payload: { stops: [busStop] },
+			expectedResult: busStop,
+			expectedTimeout: 8_000,
+			expectedUrl:
+				"/api/stops/nearby?lat=37.566300&lng=126.977900&radius=1250",
+		},
+		{
+			name: "default subway radius",
+			request: () =>
+				fetchNearbySubwayStations({ lat: 37.5366, lng: 127.1253 }),
+			payload: { stations: [subwayStation] },
+			expectedResult: subwayStation,
+			expectedTimeout: 35_000,
+			expectedUrl:
+				"/api/subway/nearby?lat=37.536600&lng=127.125300&radius=3000",
+		},
+		{
+			name: "custom subway radius",
+			request: () =>
+				fetchNearbySubwayStations(
+					{ lat: 37.5366, lng: 127.1253 },
+					4_500,
+				),
+			payload: { stations: [subwayStation] },
+			expectedResult: subwayStation,
+			expectedTimeout: 35_000,
+			expectedUrl:
+				"/api/subway/nearby?lat=37.536600&lng=127.125300&radius=4500",
+		},
+	])("keeps $name serialization without a caller signal", async ({
+		request,
+		payload,
+		expectedResult,
+		expectedTimeout,
+		expectedUrl,
+	}) => {
+		const timeoutController = new AbortController();
+		const timeoutSpy = vi
+			.spyOn(AbortSignal, "timeout")
+			.mockReturnValue(timeoutController.signal);
+		const fetchMock = vi.fn().mockResolvedValue(Response.json(payload));
+		vi.stubGlobal("fetch", fetchMock);
+
+		const result = await request();
+
+		expect(result).toEqual([expectedResult]);
+		expect(timeoutSpy).toHaveBeenCalledWith(expectedTimeout);
+		expect(fetchMock).toHaveBeenCalledWith(expectedUrl, {
+			signal: timeoutController.signal,
+		});
+	});
+
+	it("preserves a non-abort transport failure when a caller signal exists", async () => {
+		const transportError = new TypeError("network down");
+		vi.stubGlobal("fetch", vi.fn().mockRejectedValue(transportError));
+		const controller = new AbortController();
+
+		const error: unknown = await fetchNearbySubwayStations(
+			{ lat: 37.5366, lng: 127.1253 },
+			3_000,
+			controller.signal,
+		).then(
+			() => null,
+			(reason: unknown) => reason,
+		);
+
+		expect(error).toBe(transportError);
+		expect(controller.signal.aborted).toBe(false);
+	});
+
+	it("preserves a non-abort API failure when a caller signal exists", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue(
+				Response.json({ error: "INVALID_LOCATION" }, { status: 400 }),
+			),
+		);
+		const controller = new AbortController();
+
+		const error: unknown = await fetchNearbyStops(
+			{ lat: 37.2636, lng: 127.0286 },
+			800,
+			controller.signal,
+		).then(
+			() => null,
+			(reason: unknown) => reason,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 400, code: "INVALID_LOCATION" });
+		expect(controller.signal.aborted).toBe(false);
+	});
+});
+
 describe("api client error mapping", () => {
 	afterEach(() => {
 		vi.unstubAllGlobals();
@@ -82,29 +311,6 @@ describe("fetchNearbySubwayStations", () => {
 
 		expect(stations).toHaveLength(1);
 		expect(timeoutSpy).toHaveBeenCalledWith(35_000);
-	});
-
-	it("forwards a caller abort signal and rejects without committing a response", async () => {
-		const controller = new AbortController();
-		let observedSignal: AbortSignal | undefined;
-		const fetchMock = vi.fn().mockImplementation((_url: string, init?: RequestInit) => {
-			observedSignal = init?.signal ?? undefined;
-			return new Promise((_resolve, reject) => {
-				init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
-			});
-		});
-		vi.stubGlobal("fetch", fetchMock);
-
-		const request = fetchNearbySubwayStations(
-			{ lat: 37.5366, lng: 127.1253 },
-			3_000,
-			controller.signal,
-		);
-		controller.abort();
-
-		await expect(request).rejects.toBeDefined();
-		expect(observedSignal?.aborted).toBe(true);
-		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });
 

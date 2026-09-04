@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "leaflet/dist/leaflet.css";
-import { App } from "./App";
+import { Root } from "./Root";
 import { AppErrorBoundary } from "./components/AppErrorBoundary";
 import "./styles.css";
 
@@ -13,7 +13,7 @@ if (!root) {
 createRoot(root).render(
   <StrictMode>
     <AppErrorBoundary>
-      <App />
+      <Root />
     </AppErrorBoundary>
   </StrictMode>,
 );
