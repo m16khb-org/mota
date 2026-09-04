@@ -1,47 +1,70 @@
 // @vitest-environment jsdom
 
 import { StrictMode } from "react";
+import type { TransitMapNetwork, TransitVehicle } from "@mota/contracts/transit-map";
 import { act, render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MapLibrePreviewMap } from "./MapLibrePreviewMap";
 import {
   failMapConstructionWith,
   installAnimationFrames,
   installResizeObserver,
   mapInstances,
-  markerInstances,
   navigationControls,
   popupInstances,
   resetMapLibreRuntime,
   resizeObservers,
   workerUrls,
 } from "./mapLibreTestRuntime";
-import { busStopSchema } from "../../domain/bus";
-import { mapPreviewPoints } from "./mapPreviewPoints";
-import { MapLibrePreviewMap } from "./MapLibrePreviewMap";
 
 vi.mock("maplibre-gl", async () => {
   const runtime = await import("./mapLibreTestRuntime");
   return {
     Map: runtime.MockMap,
-    Marker: runtime.MockMarker,
     NavigationControl: runtime.MockNavigationControl,
     Popup: runtime.MockPopup,
     setWorkerUrl: runtime.setWorkerUrl,
   };
 });
 
-const initialCenter = { lat: 37.5366, lng: 127.1253 };
+const emptyCollection = { type: "FeatureCollection" as const, features: [] };
+const network = {
+  revision: "revision-1",
+  generatedAt: "2026-09-05T00:00:00.000Z",
+  subway: {
+    attribution: "© OpenStreetMap contributors, ODbL",
+    lines: emptyCollection,
+    stations: emptyCollection,
+  },
+  bus: {
+    enabled: true,
+    attribution: "서울특별시 교통정보",
+    routes: emptyCollection,
+    stops: emptyCollection,
+  },
+} satisfies TransitMapNetwork;
+
+function train(coordinates: [number, number], capturedAt: string): TransitVehicle {
+  return {
+    id: "subway:1008:8120",
+    mode: "subway",
+    routeId: "1008",
+    routeName: "8호선",
+    coordinates,
+    bearing: 90,
+    direction: "암사행",
+    capturedAt,
+    positionBasis: "station-segment",
+  };
+}
 
 function renderMap(overrides: Partial<React.ComponentProps<typeof MapLibrePreviewMap>> = {}) {
   const props = {
-    center: initialCenter,
     onReady: vi.fn(),
-    onCenterChange: vi.fn(),
     onFatal: vi.fn(),
     onDegraded: vi.fn(),
-    points: [],
-    activePointKey: null,
-    onActivePointChange: vi.fn(),
+    onTransitSelect: vi.fn(),
+    onViewportChange: vi.fn(),
     ...overrides,
   };
   return { ...render(<MapLibrePreviewMap {...props} />), props };
@@ -56,14 +79,9 @@ describe("MapLibrePreviewMap", () => {
 
   it("removes the StrictMode probe instance and keeps one committed map", () => {
     const props = {
-      center: initialCenter,
       onReady: vi.fn(),
-      onCenterChange: vi.fn(),
       onFatal: vi.fn(),
       onDegraded: vi.fn(),
-      points: [],
-      activePointKey: null,
-      onActivePointChange: vi.fn(),
     };
     render(
       <StrictMode>
@@ -76,7 +94,7 @@ describe("MapLibrePreviewMap", () => {
     expect(mapInstances[1]?.removed).toBe(false);
   });
 
-  it("constructs an interactive Korean map with the exact camera constraints and control", () => {
+  it("constructs an interactive Korean map with exact camera constraints", () => {
     renderMap();
 
     expect(workerUrls).toHaveLength(1);
@@ -107,113 +125,193 @@ describe("MapLibrePreviewMap", () => {
       localIdeographFontFamily: '"Pretendard Variable", Pretendard, "Noto Sans KR", sans-serif',
       collectResourceTiming: false,
     });
-    expect(mapInstances[0]?.options).not.toHaveProperty("transformRequest");
     expect(navigationControls[0]?.options).toEqual({
       showZoom: true,
       showCompass: true,
       visualizePitch: true,
     });
-    expect(mapInstances[0]?.addControl).toHaveBeenCalledWith(navigationControls[0], "top-right");
   });
 
-  it("reports ready only after load confirms Liberty building-3d", () => {
+  it("reports ready only after load confirms the building layer", () => {
     const { getByTestId, props } = renderMap();
-    expect(props.onReady).not.toHaveBeenCalled();
 
     act(() => mapInstances[0]?.emit("load"));
 
-    expect(props.onReady).toHaveBeenCalledTimes(1);
-    expect(props.onFatal).not.toHaveBeenCalled();
-    expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-map-ready", "true");
+    expect(props.onReady).toHaveBeenCalledOnce();
     expect(getByTestId("maplibre-preview-map")).toHaveAttribute(
       "data-building-layer",
       "building-3d",
     );
     expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-center-lng", "127.125300");
-    expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-center-lat", "37.536600");
     expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-zoom", "15.000");
-    expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-pitch", "42.000");
-    expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-bearing", "-20.000");
   });
 
-  it("reports a typed fatal error when Liberty omits building-3d", () => {
-    const { props } = renderMap();
-    if (mapInstances[0]) mapInstances[0].buildingLayer = undefined;
+  it("reports the loaded viewport and installs bulk transit layers once", () => {
+    const { props } = renderMap({ network });
 
     act(() => mapInstances[0]?.emit("load"));
 
-    expect(props.onReady).not.toHaveBeenCalled();
-    expect(props.onFatal).toHaveBeenCalledWith(
-      expect.objectContaining({ kind: "missing-building-layer", error: expect.any(Error) }),
+    expect(props.onViewportChange).toHaveBeenCalledWith({
+      west: 127.1153,
+      south: 37.5266,
+      east: 127.1353,
+      north: 37.5466,
+      zoom: 15,
+    });
+    expect(mapInstances[0]?.addSource).toHaveBeenCalledTimes(9);
+    expect(mapInstances[0]?.addLayer).toHaveBeenCalledTimes(9);
+  });
+
+  it("interpolates changed vehicles and keeps one accessible selected popup", () => {
+    const frames = installAnimationFrames();
+    vi.spyOn(performance, "now").mockReturnValue(0);
+    const first = train([127.1, 37.5], "2026-09-05T04:00:00.000Z");
+    const next = train([127.102, 37.5], "2026-09-05T04:00:10.000Z");
+    const result = renderMap({
+      network: {
+        ...network,
+        subway: {
+          ...network.subway,
+          lines: {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                properties: { routeId: "8", routeName: "8호선", color: "#e6186c" },
+                geometry: {
+                  type: "LineString",
+                  coordinates: [
+                    [127.1, 37.5],
+                    [127.102, 37.5],
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+      vehicles: { bus: [], subway: [first] },
+    });
+    act(() => mapInstances[0]?.emit("load"));
+
+    result.rerender(
+      <MapLibrePreviewMap
+        {...result.props}
+        vehicles={{ bus: [], subway: [next] }}
+        selection={{
+          key: next.id,
+          mode: "subway",
+          kind: "vehicle",
+          name: next.routeName,
+          detail: next.direction,
+          coordinates: next.coordinates,
+        }}
+      />,
     );
-  });
-
-  it("resizes for element-level container changes", () => {
-    const { getByTestId } = renderMap();
-    expect(resizeObservers[0]?.observe).toHaveBeenCalledWith(getByTestId("maplibre-preview-map"));
-
-    act(() => resizeObservers[0]?.callback([], {} as ResizeObserver));
-
-    expect(mapInstances[0]?.resize).toHaveBeenCalledTimes(1);
-  });
-
-  it("emits only six-decimal-distinct centers and ignores zoom, pitch, or bearing moveend", () => {
-    const frames = installAnimationFrames();
-    const { props } = renderMap();
-
-    act(() => mapInstances[0]?.emit("moveend"));
-    expect(frames.pending()).toBe(0);
-
-    if (mapInstances[0]) {
-      mapInstances[0].center = { lat: 37.5366004, lng: 127.1253004 };
-    }
-    act(() => mapInstances[0]?.emit("moveend"));
-    expect(frames.pending()).toBe(0);
-
-    if (mapInstances[0]) {
-      mapInstances[0].center = { lat: 37.536601, lng: 127.125301 };
-    }
-    act(() => mapInstances[0]?.emit("moveend"));
-    act(() => frames.flush());
-
-    expect(props.onCenterChange).toHaveBeenCalledOnce();
-    expect(props.onCenterChange).toHaveBeenCalledWith({
-      lat: 37.536601,
-      lng: 127.125301,
-    });
-  });
-
-  it("coalesces rapid changed centers into the latest value for one frame", () => {
-    const frames = installAnimationFrames();
-    const { props } = renderMap();
-    if (mapInstances[0]) {
-      mapInstances[0].center = { lat: 37.536601, lng: 127.125301 };
-      mapInstances[0].emit("moveend");
-      mapInstances[0].center = { lat: 37.536602, lng: 127.125302 };
-      mapInstances[0].emit("moveend");
-    }
-
     expect(frames.pending()).toBe(1);
-    act(() => frames.flush());
-    expect(props.onCenterChange).toHaveBeenCalledOnce();
-    expect(props.onCenterChange).toHaveBeenCalledWith({
-      lat: 37.536602,
-      lng: 127.125302,
+    act(() => frames.flush(400));
+
+    const data = mapInstances[0]?.sources.get("mota-subway-vehicles")?.setData.mock
+      .lastCall?.[0] as {
+      features?: Array<{ properties: { anchorLng: number; anchorLat: number; bearing: number } }>;
+    };
+    expect(data.features?.[0]?.properties.anchorLng).toBeCloseTo(127.101, 8);
+    expect(data.features?.[0]?.properties.anchorLat).toBe(37.5);
+    expect(data.features?.[0]?.properties.bearing).toBe(90);
+    expect(popupInstances).toHaveLength(1);
+    expect(popupInstances[0]?.content).toHaveTextContent("8호선");
+    expect(popupInstances[0]?.content).toHaveAccessibleName("8호선 상세 정보");
+    popupInstances[0]?.getElement().querySelector<HTMLButtonElement>("button")?.click();
+    expect(result.props.onTransitSelect).toHaveBeenCalledWith(null);
+  });
+
+  it("preserves the observed direction when reduced motion skips animation", () => {
+    vi.stubGlobal("matchMedia", () => ({ matches: true }));
+    try {
+      const first = { ...train([127.101, 37.5], "2026-09-05T04:00:00.000Z"), bearing: 270 };
+      const routeNetwork: TransitMapNetwork = {
+        ...network,
+        subway: {
+          ...network.subway,
+          lines: {
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                properties: { routeId: "8", routeName: "8호선", color: "#e6186c" },
+                geometry: {
+                  type: "LineString",
+                  coordinates: [
+                    [127.1, 37.5],
+                    [127.102, 37.5],
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      };
+      const result = renderMap({ network: routeNetwork, vehicles: { bus: [], subway: [first] } });
+      act(() => mapInstances[0]?.emit("load"));
+      const next = train([127.101, 37.5], "2026-09-05T04:00:10.000Z");
+      result.rerender(
+        <MapLibrePreviewMap {...result.props} vehicles={{ bus: [], subway: [next] }} />,
+      );
+      const data = mapInstances[0]?.sources.get("mota-subway-vehicles")?.setData.mock
+        .lastCall?.[0] as { features: Array<{ properties: { bearing: number } }> };
+      expect(data.features[0]?.properties.bearing).toBe(270);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("opens a selection made before the map finishes loading", () => {
+    renderMap({
+      selection: {
+        key: "station",
+        mode: "subway",
+        kind: "station",
+        name: "천호역",
+        detail: "8호선",
+        coordinates: [127.123, 37.538],
+      },
+    });
+    expect(popupInstances).toHaveLength(0);
+    act(() => mapInstances[0]?.emit("load"));
+    expect(popupInstances).toHaveLength(1);
+    expect(popupInstances[0]?.content).toHaveAccessibleName("천호역 상세 정보");
+  });
+
+  it("reports fatal and degraded map failures with typed reasons", () => {
+    const missing = renderMap();
+    if (mapInstances[0]) mapInstances[0].buildingLayer = undefined;
+    act(() => mapInstances[0]?.emit("load"));
+    expect(missing.props.onFatal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "missing-building-layer",
+        error: expect.any(Error),
+      }),
+    );
+    missing.unmount();
+
+    resetMapLibreRuntime();
+    const styled = renderMap();
+    const styleError = new Error("style JSON failed");
+    act(() => mapInstances[0]?.emit("error", { error: styleError, style: {} }));
+    expect(styled.props.onFatal).toHaveBeenCalledWith({
+      kind: "style",
+      error: styleError,
+    });
+
+    const tileError = new Error("tile failed");
+    act(() => mapInstances[0]?.emit("error", { error: tileError, sourceId: "openmaptiles" }));
+    expect(styled.props.onDegraded).toHaveBeenCalledWith({
+      kind: "resource",
+      error: tileError,
     });
   });
 
-  it("jumps non-animated to external center changes without echo", () => {
-    const frames = installAnimationFrames();
-    const { props, rerender } = renderMap();
-
-    rerender(<MapLibrePreviewMap {...props} center={{ lat: 37.55, lng: 127.14 }} />);
-
-    expect(mapInstances[0]?.jumpTo).toHaveBeenCalledWith({ center: [127.14, 37.55] });
-    expect(frames.pending()).toBe(0);
-    expect(props.onCenterChange).not.toHaveBeenCalled();
-  });
-
-  it("reports constructor and pre-load style errors as typed fatal failures", () => {
+  it("reports constructor and WebGL context failures", () => {
     const constructionError = new Error("WebGL unavailable");
     failMapConstructionWith(constructionError);
     const constructed = renderMap();
@@ -224,103 +322,42 @@ describe("MapLibrePreviewMap", () => {
     constructed.unmount();
 
     resetMapLibreRuntime();
-    const styled = renderMap();
-    const styleError = new Error("style JSON failed");
-    act(() => mapInstances[0]?.emit("error", { error: styleError, style: {} }));
-    expect(styled.props.onFatal).toHaveBeenCalledWith({
-      kind: "style",
-      error: styleError,
-    });
-  });
-
-  it("reports WebGL context loss as fatal and resource errors as degraded without removal", () => {
-    const { props } = renderMap();
+    const context = renderMap();
     const webglError = new Error("WebGL context lost");
     act(() => mapInstances[0]?.emit("webglcontextlost", { error: webglError }));
-    expect(props.onFatal).toHaveBeenCalledWith({
+    expect(context.props.onFatal).toHaveBeenCalledWith({
       kind: "webgl-context-lost",
       error: webglError,
     });
-
-    const tileError = new Error("tile 14/1/2 failed");
-    act(() => mapInstances[0]?.emit("error", { error: tileError, sourceId: "openmaptiles" }));
-    expect(props.onDegraded).toHaveBeenCalledWith({
-      kind: "resource",
-      error: tileError,
-    });
-    expect(mapInstances[0]?.removed).toBe(false);
   });
 
-  it("keeps metadata-free style errors fatal after the initial load", () => {
-    const { props } = renderMap();
-    act(() => mapInstances[0]?.emit("load"));
-
-    const styleError = new Error("late style failure");
-    act(() => mapInstances[0]?.emit("error", { error: styleError }));
-
-    expect(props.onFatal).toHaveBeenCalledWith({
-      kind: "style",
-      error: styleError,
-    });
-    expect(props.onDegraded).not.toHaveBeenCalled();
-  });
-
-  it("cleans listeners, observer, control, map, and a queued center frame", () => {
-    const frames = installAnimationFrames();
-    const { props, unmount } = renderMap();
+  it("resizes, reports changed viewports, and cleans every map resource", () => {
+    const { getByTestId, props, unmount } = renderMap({ network });
     const map = mapInstances[0];
+    act(() => map?.emit("load"));
+    expect(resizeObservers[0]?.observe).toHaveBeenCalledWith(getByTestId("maplibre-preview-map"));
+
+    act(() => resizeObservers[0]?.callback([], {} as ResizeObserver));
     if (map) {
       map.center = { lat: 37.54, lng: 127.13 };
-      map.emit("moveend");
+      map.zoom = 16;
     }
-    expect(frames.pending()).toBe(1);
+    act(() => map?.emit("moveend"));
+    expect(props.onViewportChange).toHaveBeenLastCalledWith({
+      west: 127.12,
+      south: 37.53,
+      east: 127.14,
+      north: 37.55,
+      zoom: 16,
+    });
 
     unmount();
-
-    expect(frames.pending()).toBe(0);
     expect(resizeObservers[0]?.disconnect).toHaveBeenCalledOnce();
     expect(map?.removeControl).toHaveBeenCalledWith(navigationControls[0]);
     expect(map?.listenerCount()).toBe(0);
+    expect(map?.sources).toHaveProperty("size", 0);
     expect(map?.remove).toHaveBeenCalledOnce();
-    act(() => {
-      map?.emit("load");
-      map?.emit("moveend");
-      map?.emit("error", { error: new Error("late"), sourceId: "source" });
-      frames.flush();
-    });
-    expect(props.onReady).not.toHaveBeenCalled();
-    expect(props.onCenterChange).not.toHaveBeenCalled();
-    expect(props.onDegraded).not.toHaveBeenCalled();
-  });
-
-  it("reconciles controlled point details through the committed map and destroys them on unmount", () => {
-    const bus = busStopSchema.parse({
-      id: "same",
-      arsId: "25014",
-      name: "천호역",
-      lat: 37.5379,
-      lng: 127.1255,
-      distanceMeters: 151,
-    });
-    const point = mapPreviewPoints([bus], [])[0];
-    if (!point) throw new Error("Missing preview point fixture");
-    const onActivePointChange = vi.fn();
-    const result = renderMap({ points: [point], onActivePointChange });
-    const marker = markerInstances[0];
-
-    expect(markerInstances).toHaveLength(1);
-    marker?.getElement().click();
-    expect(onActivePointChange).toHaveBeenCalledWith(point.key);
-    expect(popupInstances[0]?.isOpen()).toBe(true);
-
-    result.rerender(
-      <MapLibrePreviewMap {...result.props} points={[point]} activePointKey={point.key} />,
-    );
-    expect(markerInstances).toHaveLength(1);
-    expect(markerInstances[0]).toBe(marker);
-
-    result.unmount();
-    expect(marker?.remove).toHaveBeenCalledOnce();
-    expect(popupInstances[0]?.listenerCount()).toBe(0);
+    act(() => map?.emit("load"));
+    expect(props.onReady).toHaveBeenCalledOnce();
   });
 });

@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
+import type { TransitMapNetwork, TransitVehicle } from "@mota/contracts/transit-map";
 import {
   Map as MapLibreMap,
   NavigationControl,
+  Popup,
   setWorkerUrl,
   type Map as MapLibreMapInstance,
   type MapEventType,
 } from "maplibre-gl";
+import type { MapViewport } from "../../api/transitMapClient";
 import mapLibreWorkerUrl from "./mapLibreWorker.ts?worker&url";
 import {
   MAP_PREVIEW_BOUNDS,
@@ -17,13 +20,13 @@ import {
   MAP_PREVIEW_STYLE_URL,
   MAP_PREVIEW_ZOOM_LIMITS,
 } from "./mapPreviewConfig";
-import type { MapPreviewPoint } from "./mapPreviewPoints";
+import { prepareVehicleTransition } from "./trainInterpolation";
 import {
-  createPreviewMarkerPool,
-  type MapPreviewPointKey,
-  type PreviewMarkerPool,
-} from "./previewMarkers";
-import type { PreviewCenter } from "./usePreviewNearbyPoints";
+  createTransitMapLayers,
+  type TransitMapLayers,
+  type TransitMapLike,
+  type TransitMapSelection,
+} from "./transitMapLayers";
 
 export type MapPreviewFatal = Readonly<{
   readonly kind: "construction" | "style" | "missing-building-layer" | "webgl-context-lost";
@@ -35,28 +38,32 @@ export type MapPreviewDegraded = Readonly<{
   readonly error: Error;
 }>;
 
+interface VehicleSnapshot {
+  readonly bus: readonly TransitVehicle[];
+  readonly subway: readonly TransitVehicle[];
+}
+
 export interface MapLibrePreviewMapProps {
-  readonly center: PreviewCenter;
   readonly onReady: () => void;
-  readonly onCenterChange: (center: PreviewCenter) => void;
   readonly onFatal: (failure: MapPreviewFatal) => void;
   readonly onDegraded: (failure: MapPreviewDegraded) => void;
-  readonly points: readonly MapPreviewPoint[];
-  readonly activePointKey: MapPreviewPointKey | null;
-  readonly onActivePointChange: (key: MapPreviewPointKey | null) => void;
+  readonly network?: TransitMapNetwork | null;
+  readonly vehicles?: VehicleSnapshot;
+  readonly selection?: TransitMapSelection | null;
+  readonly onTransitSelect?: (selection: TransitMapSelection | null) => void;
+  readonly onViewportChange?: (viewport: MapViewport) => void;
 }
 
 const LOCAL_IDEOGRAPH_FONT_FAMILY = '"Pretendard Variable", Pretendard, "Noto Sans KR", sans-serif';
+const EMPTY_VEHICLES: VehicleSnapshot = { bus: [], subway: [] };
+const EMPTY_ROUTES = { type: "FeatureCollection" as const, features: [] };
+const VEHICLE_TRANSITION_MS = 800;
 
-function normalizedCenter(center: PreviewCenter): PreviewCenter {
+function placeVehicles(vehicles: VehicleSnapshot, network: TransitMapNetwork | null) {
   return {
-    lat: Number(center.lat.toFixed(6)),
-    lng: Number(center.lng.toFixed(6)),
+    bus: prepareVehicleTransition([], vehicles.bus, network?.bus.routes ?? EMPTY_ROUTES)(1),
+    subway: prepareVehicleTransition([], vehicles.subway, network?.subway.lines ?? EMPTY_ROUTES)(1),
   };
-}
-
-function sameCenter(left: PreviewCenter, right: PreviewCenter) {
-  return left.lat === right.lat && left.lng === right.lng;
 }
 
 function syncCameraAttributes(container: HTMLDivElement, map: MapLibreMapInstance) {
@@ -79,38 +86,38 @@ function isResourceError(event: object) {
 }
 
 export function MapLibrePreviewMap({
-  center,
   onReady,
-  onCenterChange,
   onFatal,
   onDegraded,
-  points,
-  activePointKey,
-  onActivePointChange,
+  network = null,
+  vehicles = EMPTY_VEHICLES,
+  selection = null,
+  onTransitSelect,
+  onViewportChange,
 }: MapLibrePreviewMapProps) {
-  const centerLat = center.lat;
-  const centerLng = center.lng;
   const containerRef = useRef<HTMLDivElement>(null);
   const [mapReadyData, setMapReadyData] = useState(false);
   const mapRef = useRef<MapLibreMapInstance | null>(null);
-  const markerPoolRef = useRef<PreviewMarkerPool | null>(null);
-  const lastReportedCenterRef = useRef(normalizedCenter(center));
-  const pendingCenterRef = useRef<PreviewCenter | null>(null);
-  const centerFrameRef = useRef<number | null>(null);
+  const popupRef = useRef<Popup | null>(null);
+  const transitLayersRef = useRef<TransitMapLayers | null>(null);
+  const transitDataRef = useRef({ network, vehicles, selection });
+  transitDataRef.current = { network, vehicles, selection };
+  const displayedVehiclesRef = useRef<VehicleSnapshot>(EMPTY_VEHICLES);
+  const vehicleFrameRef = useRef<number | null>(null);
   const mountedRef = useRef(false);
   const callbacksRef = useRef({
     onReady,
-    onCenterChange,
     onFatal,
     onDegraded,
-    onActivePointChange,
+    onTransitSelect,
+    onViewportChange,
   });
   callbacksRef.current = {
     onReady,
-    onCenterChange,
     onFatal,
     onDegraded,
-    onActivePointChange,
+    onTransitSelect,
+    onViewportChange,
   };
 
   useEffect(() => {
@@ -134,7 +141,21 @@ export function MapLibrePreviewMap({
         });
         return;
       }
+      transitLayersRef.current = createTransitMapLayers(
+        map as unknown as TransitMapLike,
+        (nextSelection) => callbacksRef.current.onTransitSelect?.(nextSelection),
+      );
+      if (transitDataRef.current.network) {
+        transitLayersRef.current.setNetwork(transitDataRef.current.network);
+      }
+      displayedVehiclesRef.current = placeVehicles(
+        transitDataRef.current.vehicles,
+        transitDataRef.current.network,
+      );
+      transitLayersRef.current.setVehicles(displayedVehiclesRef.current);
+      transitLayersRef.current.setSelection(transitDataRef.current.selection);
       syncCameraAttributes(container, map);
+      reportViewport(map, callbacksRef.current.onViewportChange);
       setMapReadyData(true);
       callbacksRef.current.onReady();
     };
@@ -157,23 +178,7 @@ export function MapLibrePreviewMap({
     const onMoveEnd = () => {
       if (!map || !mountedRef.current) return;
       syncCameraAttributes(container, map);
-      const mapCenter = map.getCenter();
-      const nextCenter = normalizedCenter({
-        lat: mapCenter.lat,
-        lng: mapCenter.lng,
-      });
-      if (sameCenter(nextCenter, lastReportedCenterRef.current)) return;
-      lastReportedCenterRef.current = nextCenter;
-      pendingCenterRef.current = nextCenter;
-      if (centerFrameRef.current !== null) return;
-      centerFrameRef.current = requestAnimationFrame(() => {
-        centerFrameRef.current = null;
-        const pending = pendingCenterRef.current;
-        pendingCenterRef.current = null;
-        if (pending && mountedRef.current) {
-          callbacksRef.current.onCenterChange(pending);
-        }
-      });
+      reportViewport(map, callbacksRef.current.onViewportChange);
     };
 
     try {
@@ -197,9 +202,6 @@ export function MapLibrePreviewMap({
         collectResourceTiming: false,
       });
       mapRef.current = map;
-      markerPoolRef.current = createPreviewMarkerPool(map, (key) =>
-        callbacksRef.current.onActivePointChange(key),
-      );
       map.on("load", onLoad);
       map.on("error", onError);
       map.on("webglcontextlost", onContextLost);
@@ -221,14 +223,15 @@ export function MapLibrePreviewMap({
 
     return () => {
       mountedRef.current = false;
-      if (centerFrameRef.current !== null) {
-        cancelAnimationFrame(centerFrameRef.current);
-        centerFrameRef.current = null;
+      if (vehicleFrameRef.current !== null) {
+        cancelAnimationFrame(vehicleFrameRef.current);
+        vehicleFrameRef.current = null;
       }
-      pendingCenterRef.current = null;
       observer?.disconnect();
-      markerPoolRef.current?.destroy();
-      markerPoolRef.current = null;
+      popupRef.current?.remove();
+      popupRef.current = null;
+      transitLayersRef.current?.destroy();
+      transitLayersRef.current = null;
       if (map) {
         map.off("load", onLoad);
         map.off("error", onError);
@@ -242,24 +245,107 @@ export function MapLibrePreviewMap({
   }, []);
 
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const nextCenter = normalizedCenter({ lat: centerLat, lng: centerLng });
-    const current = map.getCenter();
-    const mapCenter = normalizedCenter({ lat: current.lat, lng: current.lng });
-    if (sameCenter(nextCenter, mapCenter)) return;
-    if (centerFrameRef.current !== null) {
-      cancelAnimationFrame(centerFrameRef.current);
-      centerFrameRef.current = null;
-    }
-    pendingCenterRef.current = null;
-    lastReportedCenterRef.current = nextCenter;
-    map.jumpTo({ center: [nextCenter.lng, nextCenter.lat] });
-  }, [centerLat, centerLng]);
+    if (network) transitLayersRef.current?.setNetwork(network);
+  }, [network]);
 
   useEffect(() => {
-    markerPoolRef.current?.reconcile(points, activePointKey);
-  }, [points, activePointKey]);
+    const layers = transitLayersRef.current;
+    if (!layers) return;
+    if (vehicleFrameRef.current !== null) {
+      cancelAnimationFrame(vehicleFrameRef.current);
+      vehicleFrameRef.current = null;
+    }
+    const previous = displayedVehiclesRef.current;
+    const reducedMotion =
+      globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    const startedAt = performance.now();
+    const currentNetwork = transitDataRef.current.network;
+    const busTransition = prepareVehicleTransition(
+      previous.bus,
+      vehicles.bus,
+      currentNetwork?.bus.routes ?? EMPTY_ROUTES,
+    );
+    const subwayTransition = prepareVehicleTransition(
+      previous.subway,
+      vehicles.subway,
+      currentNetwork?.subway.lines ?? EMPTY_ROUTES,
+    );
+    if (reducedMotion || (!previous.bus.length && !previous.subway.length)) {
+      displayedVehiclesRef.current = { bus: busTransition(1), subway: subwayTransition(1) };
+      layers.setVehicles(displayedVehiclesRef.current);
+      return;
+    }
+    layers.setVehicles({ bus: busTransition(0), subway: subwayTransition(0) });
+    let lastFrame = -Infinity;
+    const draw = (time: number) => {
+      if (!mountedRef.current) return;
+      const progress = Math.min(1, Math.max(0, (time - startedAt) / VEHICLE_TRANSITION_MS));
+      if (time - lastFrame < 1000 / 30 && progress < 1) {
+        vehicleFrameRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = time;
+      const displayed = {
+        bus: busTransition(progress),
+        subway: subwayTransition(progress),
+      };
+      displayedVehiclesRef.current = displayed;
+      layers.setVehicles(displayed);
+      if (progress < 1) {
+        vehicleFrameRef.current = requestAnimationFrame(draw);
+      } else {
+        vehicleFrameRef.current = null;
+      }
+    };
+    vehicleFrameRef.current = requestAnimationFrame(draw);
+    return () => {
+      if (vehicleFrameRef.current !== null) {
+        cancelAnimationFrame(vehicleFrameRef.current);
+        vehicleFrameRef.current = null;
+      }
+    };
+  }, [vehicles]);
+
+  useEffect(() => {
+    transitLayersRef.current?.setSelection(selection);
+    const map = mapRef.current;
+    if (!mapReadyData || !selection || !map || !transitLayersRef.current) {
+      popupRef.current?.remove();
+      popupRef.current = null;
+      return;
+    }
+    const content = document.createElement("div");
+    content.className = "map-preview-popup-detail";
+    content.setAttribute("role", "group");
+    content.setAttribute("aria-label", `${selection.name} 상세 정보`);
+    const name = document.createElement("strong");
+    name.textContent = selection.name;
+    const detail = document.createElement("span");
+    detail.textContent = selection.detail || selection.kind;
+    content.append(name, detail);
+    popupRef.current?.remove();
+    let active = true;
+    const popup = new Popup({
+      closeButton: true,
+      closeOnClick: false,
+      focusAfterOpen: true,
+      maxWidth: "280px",
+    })
+      .setLngLat([...selection.coordinates])
+      .setDOMContent(content)
+      .addTo(map);
+    const onClose = () => {
+      if (active) callbacksRef.current.onTransitSelect?.(null);
+    };
+    popup.on("close", onClose);
+    popupRef.current = popup;
+    return () => {
+      active = false;
+      popup.off("close", onClose);
+      popup.remove();
+      if (popupRef.current === popup) popupRef.current = null;
+    };
+  }, [selection, mapReadyData]);
 
   return (
     <div
@@ -267,6 +353,29 @@ export function MapLibrePreviewMap({
       data-testid="maplibre-preview-map"
       data-map-ready={mapReadyData}
       data-building-layer={mapReadyData ? MAP_PREVIEW_BUILDING_LAYER_ID : undefined}
+      data-subway-vehicles={vehicles.subway.length}
+      data-bus-vehicles={vehicles.bus.length}
+      data-subway-vehicle-position={vehicles.subway[0]?.coordinates.join(",")}
+      data-bus-vehicle-position={vehicles.bus[0]?.coordinates.join(",")}
+      data-subway-lines={network?.subway.lines.features.length ?? 0}
+      data-subway-stations={network?.subway.stations.features.length ?? 0}
+      data-bus-lines={network?.bus.routes.features.length ?? 0}
+      data-bus-stops={network?.bus.stops.features.length ?? 0}
     />
   );
+}
+
+function reportViewport(
+  map: MapLibreMapInstance,
+  listener: ((viewport: MapViewport) => void) | undefined,
+) {
+  if (!listener) return;
+  const bounds = map.getBounds();
+  listener({
+    west: Number(bounds.getWest().toFixed(6)),
+    south: Number(bounds.getSouth().toFixed(6)),
+    east: Number(bounds.getEast().toFixed(6)),
+    north: Number(bounds.getNorth().toFixed(6)),
+    zoom: Number(map.getZoom().toFixed(6)),
+  });
 }

@@ -21,6 +21,8 @@ export class MockNavigationControl {
 export class MockMap {
   readonly options: Record<string, unknown>;
   readonly listeners = new Map<string, Set<Listener>>();
+  readonly sources = new Map<string, { readonly setData: ReturnType<typeof vi.fn> }>();
+  readonly styleLayers = new Map<string, object>();
   readonly canvasContainer = document.createElement("div");
   center = { lng: 127.1253, lat: 37.5366 };
   zoom = 15;
@@ -31,6 +33,16 @@ export class MockMap {
   readonly addControl = vi.fn();
   readonly removeControl = vi.fn();
   readonly resize = vi.fn();
+  readonly addSource = vi.fn((id: string) => {
+    this.sources.set(id, { setData: vi.fn() });
+  });
+  readonly getSource = vi.fn((id: string) => this.sources.get(id));
+  readonly removeSource = vi.fn((id: string) => this.sources.delete(id));
+  readonly addLayer = vi.fn((layer: { id: string }) => {
+    this.styleLayers.set(layer.id, layer);
+  });
+  readonly removeLayer = vi.fn((id: string) => this.styleLayers.delete(id));
+  readonly queryRenderedFeatures = vi.fn(() => []);
   readonly jumpTo = vi.fn((options: { center?: readonly [number, number] }) => {
     if (options.center) {
       this.center = { lng: options.center[0], lat: options.center[1] };
@@ -51,18 +63,23 @@ export class MockMap {
     mapInstances.push(this);
   }
 
-  on(type: string, listener: Listener) {
-    let listeners = this.listeners.get(type);
+  on(type: string, layerOrListener: string | Listener, maybeListener?: Listener) {
+    const key = typeof layerOrListener === "string" ? `${type}:${layerOrListener}` : type;
+    const listener = typeof layerOrListener === "string" ? maybeListener : layerOrListener;
+    if (!listener) return this;
+    let listeners = this.listeners.get(key);
     if (!listeners) {
       listeners = new Set();
-      this.listeners.set(type, listeners);
+      this.listeners.set(key, listeners);
     }
     listeners.add(listener);
     return this;
   }
 
-  off(type: string, listener: Listener) {
-    this.listeners.get(type)?.delete(listener);
+  off(type: string, layerOrListener: string | Listener, maybeListener?: Listener) {
+    const key = typeof layerOrListener === "string" ? `${type}:${layerOrListener}` : type;
+    const listener = typeof layerOrListener === "string" ? maybeListener : layerOrListener;
+    if (listener) this.listeners.get(key)?.delete(listener);
     return this;
   }
 
@@ -88,6 +105,15 @@ export class MockMap {
     return this.bearing;
   }
 
+  getBounds() {
+    return {
+      getWest: () => this.center.lng - 0.01,
+      getSouth: () => this.center.lat - 0.01,
+      getEast: () => this.center.lng + 0.01,
+      getNorth: () => this.center.lat + 0.01,
+    };
+  }
+
   getContainer() {
     return this.options.container as HTMLElement;
   }
@@ -97,7 +123,8 @@ export class MockMap {
   }
 
   getLayer(id: string) {
-    return id === "building-3d" ? this.buildingLayer : undefined;
+    if (id === "building-3d") return this.buildingLayer;
+    return this.styleLayers.get(id);
   }
 
   listenerCount() {
@@ -286,10 +313,10 @@ export function installAnimationFrames() {
   );
   return {
     pending: () => callbacks.size,
-    flush() {
+    flush(timestamp = 0) {
       const queued = [...callbacks.entries()];
       callbacks.clear();
-      for (const [, callback] of queued) callback(0);
+      for (const [, callback] of queued) callback(timestamp);
     },
   };
 }

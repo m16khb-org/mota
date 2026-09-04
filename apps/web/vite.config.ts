@@ -10,6 +10,13 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: "@mota/contracts/transit-map",
+        replacement: resolve(
+          currentDirectory,
+          "../../packages/contracts/src/transitMap.ts",
+        ),
+      },
+      {
         find: "@mota/contracts/transit-settings",
         replacement: resolve(
           currentDirectory,
