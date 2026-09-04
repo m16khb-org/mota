@@ -1,4 +1,5 @@
 import {
+  Box,
   BusFront,
   CheckCircle2,
   MapPin,
@@ -94,6 +95,11 @@ export function TransitPointSelector({
           </button>
         ))}
       </div>
+
+      <a className="transit-3d-preview-link" href="/3d-preview">
+        <Box aria-hidden="true" />
+        3D 지도 미리보기
+      </a>
 
       <div className="section-heading point-selector-heading">
         <div>
