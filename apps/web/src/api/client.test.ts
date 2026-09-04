@@ -83,6 +83,29 @@ describe("fetchNearbySubwayStations", () => {
 		expect(stations).toHaveLength(1);
 		expect(timeoutSpy).toHaveBeenCalledWith(35_000);
 	});
+
+	it("forwards a caller abort signal and rejects without committing a response", async () => {
+		const controller = new AbortController();
+		let observedSignal: AbortSignal | undefined;
+		const fetchMock = vi.fn().mockImplementation((_url: string, init?: RequestInit) => {
+			observedSignal = init?.signal ?? undefined;
+			return new Promise((_resolve, reject) => {
+				init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
+			});
+		});
+		vi.stubGlobal("fetch", fetchMock);
+
+		const request = fetchNearbySubwayStations(
+			{ lat: 37.5366, lng: 127.1253 },
+			3_000,
+			controller.signal,
+		);
+		controller.abort();
+
+		await expect(request).rejects.toBeDefined();
+		expect(observedSignal?.aborted).toBe(true);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
 });
 
 describe("fetchSubwayArrivals", () => {

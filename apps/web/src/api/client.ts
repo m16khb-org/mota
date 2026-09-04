@@ -71,8 +71,16 @@ const subwayArrivalsResultSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-async function getJson(url: string, timeoutMs = 8_000): Promise<unknown> {
-  const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+async function getJson(
+  url: string,
+  timeoutMs = 8_000,
+  callerSignal?: AbortSignal,
+): Promise<unknown> {
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+  const signal = callerSignal
+    ? AbortSignal.any([timeoutSignal, callerSignal])
+    : timeoutSignal;
+  const response = await fetch(url, { signal });
   if (!response.ok) {
     const code = await response
       .json()
@@ -109,13 +117,14 @@ async function putJson(url: string, body: unknown): Promise<unknown> {
 export async function fetchNearbyStops(
   center: { readonly lat: number; readonly lng: number },
   radius = 800,
+  signal?: AbortSignal,
 ): Promise<BusStop[]> {
   const params = new URLSearchParams({
     lat: center.lat.toFixed(6),
     lng: center.lng.toFixed(6),
     radius: String(radius),
   });
-  const payload = await getJson(`/api/stops/nearby?${params}`);
+  const payload = await getJson(`/api/stops/nearby?${params}`, 8_000, signal);
   return nearbyResultSchema.parse(payload).stops;
 }
 
@@ -132,13 +141,14 @@ export async function fetchArrivals(
 export async function fetchNearbySubwayStations(
   center: { readonly lat: number; readonly lng: number },
   radius = 3_000,
+  signal?: AbortSignal,
 ): Promise<SubwayStation[]> {
   const params = new URLSearchParams({
     lat: center.lat.toFixed(6),
     lng: center.lng.toFixed(6),
     radius: String(radius),
   });
-  const payload = await getJson(`/api/subway/nearby?${params}`, 35_000);
+  const payload = await getJson(`/api/subway/nearby?${params}`, 35_000, signal);
   return nearbySubwayResultSchema.parse(payload).stations;
 }
 
