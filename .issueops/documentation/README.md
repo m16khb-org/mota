@@ -5,13 +5,13 @@ description: Manifest contract, canonical owner map, and restructuring history f
 
 # Project Documentation Contract
 
-The required root documents under `.agent-harness/` are the canonical
+The required root documents under `.issueops/` are the canonical
 agent entrypoints. Each root owns a universal summary and navigation; focused
 detail belongs to its declared module directory.
 
 ## Architecture family
 
-`.agent-harness/ARCHITECTURE.md` is the only normative architecture
+`.issueops/ARCHITECTURE.md` is the only normative architecture
 entrypoint. The former repository-root `ARCHITECTURE.md` was consolidated into
 these modules:
 
@@ -24,7 +24,7 @@ these modules:
 | `architecture/deployment.md` | Production image, static serving, networks, persistence |
 
 Every module links back to the canonical root. Other document families link
-to `.agent-harness/ARCHITECTURE.md` instead of restating architecture rules.
+to `.issueops/ARCHITECTURE.md` instead of restating architecture rules.
 
 ## Lifecycle
 

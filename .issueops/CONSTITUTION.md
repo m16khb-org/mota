@@ -10,8 +10,8 @@ Read this document at session start after `AGENTS.md`; use MCP `project_docs_rou
 ## Source-of-truth order
 
 1. The user's current request and the nearest applicable `AGENTS.md`.
-2. Project contracts: `.agent-harness/ARCHITECTURE.md`, root `DESIGN.md`, root `README.md`, and current package/config files.
-3. The task-specific `.agent-harness` document routed by MCP.
+2. Project contracts: `.issueops/ARCHITECTURE.md`, root `DESIGN.md`, root `README.md`, and current package/config files.
+3. The task-specific `.issueops` document routed by MCP.
 4. Current source, schemas, migrations, and executable command output.
 
 When prose and code disagree, verify the current behavior and update the stale owner rather than duplicating a correction elsewhere.

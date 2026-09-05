@@ -388,15 +388,15 @@ as the only record:
 
 - `DESIGN.md`: replace the preview exclusion of route lines and vehicle
   movement with the approved live-map contract;
-- `.agent-harness/OPEN_API_SPEC.md`: add network, SSE, validation, and error
+- `.issueops/OPEN_API_SPEC.md`: add network, SSE, validation, and error
   semantics;
-- `.agent-harness/ARCHITECTURE.md` and `architecture/api-and-transit.md`: add
+- `.issueops/ARCHITECTURE.md` and `architecture/api-and-transit.md`: add
   network and live collector flow;
-- `.agent-harness/OPERATIONS.md`: add the bus key, upstream smoke checks, SSE
+- `.issueops/OPERATIONS.md`: add the bus key, upstream smoke checks, SSE
   smoke checks, and seven-day availability review;
-- `.agent-harness/TESTING.md`: add deterministic SSE and projected-position
+- `.issueops/TESTING.md`: add deterministic SSE and projected-position
   coverage;
-- `.agent-harness/ADR.md`: record the accepted SSE aggregation and no-stale
+- `.issueops/ADR.md`: record the accepted SSE aggregation and no-stale
   vehicle decision.
 
 ## 12. Acceptance criteria

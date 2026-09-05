@@ -16,7 +16,7 @@ description: Accepted decision record with rationale, alternatives, and conseque
   - package.json
   - pnpm-workspace.yaml
   - turbo.json
-  - .agent-harness/ARCHITECTURE.md
+  - .issueops/ARCHITECTURE.md
   - Dockerfile
 - Alternatives / rejected options:
   - Keep the legacy root src/server/public layout

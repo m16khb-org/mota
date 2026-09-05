@@ -7,7 +7,7 @@ description: Mota agent exploration, implementation, verification, and doc-maint
 
 ## Start
 
-1. Read `AGENTS.md` and `.agent-harness/CONSTITUTION.md`.
+1. Read `AGENTS.md` and `.issueops/CONSTITUTION.md`.
 2. Call `project_docs_route` with the concrete task; read only the routed owners.
 3. Inspect current source/config before making claims. [ARCHITECTURE.md](ARCHITECTURE.md) and root [DESIGN.md](../DESIGN.md) outrank generic templates.
 4. Check the working tree and preserve unrelated user/agent changes.

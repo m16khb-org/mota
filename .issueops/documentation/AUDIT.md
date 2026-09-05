@@ -8,15 +8,15 @@ description: Measured inventory and preservation ledger for project-doc restruct
 ## 2026-08-23 architecture consolidation
 
 Trigger: the user explicitly requested that the repository-root architecture
-contract be consolidated into agent-harness.
+contract be consolidated into issueops.
 
 ### Before inventory
 
 | Document | Lines | Responsibility before move |
 |---|---:|---|
 | `ARCHITECTURE.md` | 116 | Product, workspace, web, API, auth, DB, and deployment contract |
-| `.agent-harness/ARCHITECTURE.md` | 23 | Harness routing index |
-| `.agent-harness/architecture/overview.md` | 60 | Style, dependency graph, runtime flow, placement |
+| `.issueops/ARCHITECTURE.md` | 23 | Harness routing index |
+| `.issueops/architecture/overview.md` | 60 | Style, dependency graph, runtime flow, placement |
 
 Deterministic report before editing:
 
@@ -54,12 +54,12 @@ The restructure is user-directed rather than violation-driven.
 | Document | Lines | Canonical responsibility |
 |---|---:|---|
 | `ARCHITECTURE.md` | removed | Retired duplicate entrypoint |
-| `.agent-harness/ARCHITECTURE.md` | 36 | Canonical root and module navigation |
-| `.agent-harness/architecture/overview.md` | 48 | Style, dependency graph, placement |
-| `.agent-harness/architecture/product-and-workspaces.md` | 47 | Product, workspaces, browser composition |
-| `.agent-harness/architecture/api-and-transit.md` | 46 | HTTP and transit adapters |
-| `.agent-harness/architecture/identity-and-settings.md` | 49 | Identity and persistence |
-| `.agent-harness/architecture/deployment.md` | 38 | Production topology |
+| `.issueops/ARCHITECTURE.md` | 36 | Canonical root and module navigation |
+| `.issueops/architecture/overview.md` | 48 | Style, dependency graph, placement |
+| `.issueops/architecture/product-and-workspaces.md` | 47 | Product, workspaces, browser composition |
+| `.issueops/architecture/api-and-transit.md` | 46 | HTTP and transit adapters |
+| `.issueops/architecture/identity-and-settings.md` | 49 | Identity and persistence |
+| `.issueops/architecture/deployment.md` | 38 | Production topology |
 
 Strict verification after consolidation:
 

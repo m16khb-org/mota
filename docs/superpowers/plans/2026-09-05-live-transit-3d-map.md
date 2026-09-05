@@ -94,8 +94,8 @@
 
 - Modify `apps/web/e2e/fixtures/mapPreviewFixtures.ts`: network JSON and deterministic SSE fixtures.
 - Modify `apps/web/e2e/map-preview.spec.ts`: projected positions, movement, failure clearing, zoom gating, and responsive flows.
-- Modify `DESIGN.md`, `.agent-harness/OPEN_API_SPEC.md`, `.agent-harness/architecture/api-and-transit.md`, `.agent-harness/OPERATIONS.md`, and `.agent-harness/TESTING.md`.
-- Append one accepted decision under `.agent-harness/adr/` and update `.agent-harness/ADR.md` through the project-docs workflow.
+- Modify `DESIGN.md`, `.issueops/OPEN_API_SPEC.md`, `.issueops/architecture/api-and-transit.md`, `.issueops/OPERATIONS.md`, and `.issueops/TESTING.md`.
+- Append one accepted decision under `.issueops/adr/` and update `.issueops/ADR.md` through the project-docs workflow.
 
 ---
 
@@ -922,12 +922,12 @@ git commit -m "feat(web): redesign live transit preview"
 - Modify: `apps/web/e2e/fixtures/mapPreviewFixtures.ts`
 - Modify: `apps/web/e2e/map-preview.spec.ts`
 - Modify: `DESIGN.md`
-- Modify: `.agent-harness/OPEN_API_SPEC.md`
-- Modify: `.agent-harness/architecture/api-and-transit.md`
-- Modify: `.agent-harness/OPERATIONS.md`
-- Modify: `.agent-harness/TESTING.md`
-- Create: `.agent-harness/adr/2026-09-05-stream-live-transit-without-stale-vehicles.md`
-- Modify: `.agent-harness/ADR.md`
+- Modify: `.issueops/OPEN_API_SPEC.md`
+- Modify: `.issueops/architecture/api-and-transit.md`
+- Modify: `.issueops/OPERATIONS.md`
+- Modify: `.issueops/TESTING.md`
+- Create: `.issueops/adr/2026-09-05-stream-live-transit-without-stale-vehicles.md`
+- Modify: `.issueops/ADR.md`
 - Modify: `Dockerfile` only if the generated network is not compiled into API JavaScript.
 
 **Interfaces:**
@@ -1007,7 +1007,7 @@ projected features. Record unsupported console/network evidence as Not Run.
 - [ ] **Step 9: Prepare the final documentation/test commit if authorized**
 
 ```bash
-git add apps/web/e2e/fixtures/mapPreviewFixtures.ts apps/web/e2e/map-preview.spec.ts DESIGN.md .agent-harness/OPEN_API_SPEC.md .agent-harness/architecture/api-and-transit.md .agent-harness/OPERATIONS.md .agent-harness/TESTING.md .agent-harness/adr/2026-09-05-stream-live-transit-without-stale-vehicles.md .agent-harness/ADR.md Dockerfile
+git add apps/web/e2e/fixtures/mapPreviewFixtures.ts apps/web/e2e/map-preview.spec.ts DESIGN.md .issueops/OPEN_API_SPEC.md .issueops/architecture/api-and-transit.md .issueops/OPERATIONS.md .issueops/TESTING.md .issueops/adr/2026-09-05-stream-live-transit-without-stale-vehicles.md .issueops/ADR.md Dockerfile
 git commit -m "docs(transit): document live 3d map operations"
 ```
 
