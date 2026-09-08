@@ -51,8 +51,8 @@ describe("subway train model geometry", () => {
 				(Math.max(...corners.map((point) => point[1])) -
 					Math.min(...corners.map((point) => point[1]))) *
 				111195;
-			expect(width).toBeCloseTo(heading === 0 ? 3.6 : 31, 5);
-			expect(length).toBeCloseTo(heading === 0 ? 31 : 3.6, 5);
+			expect(width).toBeCloseTo(heading === 0 ? 3.2 : 31, 5);
+			expect(length).toBeCloseTo(heading === 0 ? 31 : 3.2, 5);
 			expect(ring[0]).toEqual(ring[4]);
 		}
 	});
@@ -99,7 +99,16 @@ describe("subway train model geometry", () => {
 			features.find((feature) => feature.properties.part === "car-2-stripe")?.properties.color,
 		).toBe("#e6186c");
 		expect(features.every((feature) => feature.geometry.type === "Polygon")).toBe(true);
-		expect(features.every((feature) => feature.geometry.coordinates[0]?.length === 5)).toBe(true);
+		expect(
+			features.every((feature) => {
+				const ring = feature.geometry.coordinates[0];
+				return Boolean(
+					ring &&
+					ring.length >= 5 &&
+					ring[0]?.join(",") === ring.at(-1)?.join(","),
+				);
+			}),
+		).toBe(true);
 		expect(
 			features.every((feature) => feature.properties.height > feature.properties.base),
 		).toBe(true);
@@ -112,7 +121,7 @@ describe("subway train model geometry", () => {
 			if (!feature) throw new Error(`Missing ${part}`);
 			const ring = feature.geometry.coordinates[0];
 			if (!ring) throw new Error(`Missing ${part} ring`);
-			const corners = ring.slice(0, 4) as Array<[number, number]>;
+			const corners = ring.slice(0, -1) as Array<[number, number]>;
 			const lat = (37.536 * Math.PI) / 180;
 			return {
 				widthM:
@@ -129,21 +138,52 @@ describe("subway train model geometry", () => {
 		const door = boxOf("car-2-door-front");
 		const roof = boxOf("roof-center");
 
-		// A sub-half-metre band renders sub-pixel at the model LOD zooms and
-		// antialiases away; the line color must be readable on the flank.
-		expect(stripe.height - stripe.base).toBeGreaterThanOrEqual(1);
-		// The belt must protrude past the body, the window band and the doors so
-		// it stays continuous from above and from both flanks.
-		expect(stripe.widthM).toBeGreaterThan(body.widthM + 0.1);
+		// The band remains large enough to read at close-model LOD without becoming
+		// a full-height fluorescent block.
+		expect(stripe.height - stripe.base).toBeGreaterThanOrEqual(0.6);
+		expect(stripe.height - stripe.base).toBeLessThan(1);
+		// The belt slightly overhangs the shell and doors, while the window band
+		// stays inset so the side reads as a layered vehicle rather than a box.
+		expect(stripe.widthM).toBeGreaterThan(body.widthM + 0.05);
 		expect(stripe.widthM).toBeGreaterThan(windows.widthM + 0.05);
-		expect(stripe.widthM).toBeGreaterThan(door.widthM + 0.01);
+		expect(stripe.widthM).toBeGreaterThan(door.widthM + 0.02);
 
-		// The car stack must be gapless: livery band overlaps the body top, the
-		// window band starts where the livery band ends, and the roof sits on
-		// the window band instead of floating above it.
+		// The car stack must be gapless: livery and glazing overlap at their
+		// boundary, and the roof overlaps the glazing instead of floating above it.
 		expect(stripe.base).toBeLessThan(body.height);
-		expect(windows.base).toBeCloseTo(stripe.height, 9);
-		expect(roof.base).toBeCloseTo(windows.height, 9);
+		expect(windows.base).toBeLessThanOrEqual(stripe.height);
+		expect(roof.base).toBeLessThan(windows.height);
+	});
+
+	it("uses neutral silver materials and beveled cab glazing instead of a lime roof", () => {
+		const features = vehicleModels([train], routes).features;
+		const featureOf = (part: string) => {
+			const feature = features.find((item) => item.properties.part === part);
+			if (!feature) throw new Error(`Missing ${part}`);
+			return feature;
+		};
+		const cab = featureOf("front-cab");
+		const windshield = featureOf("front-windshield");
+		const body = featureOf("car-2-body");
+		const roof = featureOf("roof-center");
+		const coupling = featureOf("car-divider-front");
+
+		expect(body.properties.color).toBe("#d4dad8");
+		expect(roof.properties.color).toBe("#eef1ee");
+		expect(featureOf("car-2-stripe").properties.color).toBe("#e6186c");
+		expect(features.some((feature) => feature.properties.color === "#c7f000")).toBe(false);
+		expect(cab.geometry.coordinates[0]).toHaveLength(9);
+		expect(windshield.geometry.coordinates[0]).toHaveLength(9);
+
+		const widthOf = (feature: (typeof features)[number]) => {
+			const ring = feature.geometry.coordinates[0];
+			if (!ring) throw new Error("Missing part ring");
+			return (
+				Math.max(...ring.map((point) => point[0])) -
+				Math.min(...ring.map((point) => point[0]))
+			);
+		};
+		expect(widthOf(coupling)).toBeLessThan(widthOf(body) * 0.5);
 	});
 
 	it("uses the same authoritative line color for the far readable point", () => {

@@ -159,7 +159,7 @@ describe("MapLibrePreviewMap", () => {
       north: 37.5466,
       zoom: 15,
     });
-    expect(mapInstances[0]?.addSource).toHaveBeenCalledTimes(6);
+    expect(mapInstances[0]?.addSource).toHaveBeenCalledTimes(5);
     expect(mapInstances[0]?.addLayer).toHaveBeenCalledTimes(6);
     expect(mapInstances[0]?.addSource.mock.calls.map(([id]) => id)).not.toContain(
       "mota-bus-vehicles",

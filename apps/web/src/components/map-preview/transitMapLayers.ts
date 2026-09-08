@@ -6,14 +6,13 @@ import {
 	MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM,
 	MAP_PREVIEW_ZOOM_LIMITS,
 } from "./mapPreviewConfig";
-import { staticModels, vehicleModels, vehiclePoints } from "./transitModels";
+import { vehicleModels, vehiclePoints } from "./transitModels";
 
 const SOURCE_IDS = [
 	"mota-subway-lines",
 	"mota-subway-stations",
 	"mota-subway-vehicles",
 	"mota-transit-selection",
-	"mota-subway-stations-3d",
 	"mota-subway-vehicles-3d",
 ] as const;
 
@@ -118,11 +117,6 @@ export function createTransitMapLayers(
 			currentNetwork = network;
 			setData(map, "mota-subway-lines", network.subway.lines);
 			setData(map, "mota-subway-stations", network.subway.stations);
-			setData(
-				map,
-				"mota-subway-stations-3d",
-				staticModels(network.subway.stations.features, network.subway.lines),
-			);
 			renderVehicles();
 		},
 		setVehicles(vehicles) {
@@ -216,7 +210,21 @@ function layerDefinitions() {
 				"line-opacity": 0.82,
 			},
 		},
-		extrusionLayer("mota-subway-stations", "mota-subway-stations-3d"),
+		{
+			id: "mota-subway-stations",
+			type: "circle",
+			source: "mota-subway-stations",
+			paint: {
+				// Stations stay as a small, neutral point at every zoom. Unlike the
+				// line-colored vehicle circle, its dark outline and white fill make
+				// the map location unambiguous without reading as a train model.
+				"circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 4, 19, 7],
+				"circle-color": "#f7f7f3",
+				"circle-opacity": 0.98,
+				"circle-stroke-color": "#111111",
+				"circle-stroke-width": 2,
+			},
+		},
 		{
 			id: "mota-subway-station-labels",
 			type: "symbol",

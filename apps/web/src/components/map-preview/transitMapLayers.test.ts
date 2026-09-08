@@ -98,7 +98,6 @@ describe("subway-only transit map layer manager", () => {
 			"mota-subway-stations",
 			"mota-subway-vehicles",
 			"mota-transit-selection",
-			"mota-subway-stations-3d",
 			"mota-subway-vehicles-3d",
 		]);
 		expect(map.layers.map(({ id }) => id)).toEqual([
@@ -111,8 +110,14 @@ describe("subway-only transit map layer manager", () => {
 		]);
 		expect(map.layers.some(({ id }) => id.includes("bus"))).toBe(false);
 
+		const stationLayer = map.layers.find(({ id }) => id === "mota-subway-stations");
 		const far = map.layers.find(({ id }) => id === "mota-subway-vehicles");
 		const near = map.layers.find(({ id }) => id === "mota-subway-vehicles-3d");
+		expect(stationLayer).toMatchObject({
+			type: "circle",
+			source: "mota-subway-stations",
+		});
+		expect(stationLayer).not.toMatchObject({ type: "fill-extrusion" });
 		expect(far).toMatchObject({
 			type: "circle",
 			source: "mota-subway-vehicles",
@@ -168,14 +173,14 @@ describe("subway-only transit map layer manager", () => {
 		layers.setNetwork(network);
 		layers.setVehicles([train]);
 
-		const stationModel = data(map, "mota-subway-stations-3d").features[0];
+		const stationPoint = data(map, "mota-subway-stations").features[0];
 		const farTrain = data(map, "mota-subway-vehicles").features[0];
 		const nearTrain = data(map, "mota-subway-vehicles-3d").features.find(
 			(feature) => feature.properties.part === "front-cab",
 		);
-		if (!stationModel || !farTrain || !nearTrain) throw new Error("Missing selectable fixture");
+		if (!stationPoint || !farTrain || !nearTrain) throw new Error("Missing selectable fixture");
 
-		map.emit("click", "mota-subway-stations", { features: [stationModel] });
+		map.emit("click", "mota-subway-stations", { features: [stationPoint] });
 		map.emit("click", "mota-subway-vehicles", { features: [farTrain] });
 		map.emit("click", "mota-subway-vehicles-3d", { features: [nearTrain] });
 
@@ -211,6 +216,6 @@ describe("subway-only transit map layer manager", () => {
 		layers.destroy();
 		expect(map.off).toHaveBeenCalled();
 		expect(map.removeLayer).toHaveBeenCalledTimes(6);
-		expect(map.removeSource).toHaveBeenCalledTimes(6);
+		expect(map.removeSource).toHaveBeenCalledTimes(5);
 	});
 });
