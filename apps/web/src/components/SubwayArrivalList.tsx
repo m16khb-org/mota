@@ -268,7 +268,7 @@ export function SubwayArrivalList({
 					);
 					return (
 						<article
-							className={`arrival-row is-subway${eta.remainingSeconds === null ? " is-inactive" : ""
+							className={`arrival-row is-subway${eta.remainingSeconds === null && !usesProviderPosition ? " is-inactive" : ""
 								}`}
 							key={`${arrival.id}-${arrival.direction}-${arrival.message}`}
 						>

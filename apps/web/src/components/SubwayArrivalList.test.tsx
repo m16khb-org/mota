@@ -83,6 +83,9 @@ describe("SubwayArrivalList", () => {
 		// Then
 		expect(screen.getByText("정보 없음")).toBeInTheDocument();
 		expect(screen.getByText("새로고침 필요")).toBeInTheDocument();
+		expect(screen.getByText("정보 없음", { selector: "strong" }).closest(".arrival-row")).toHaveClass(
+			"is-inactive",
+		);
 	});
 
 	it("subtracts each train row's provider delay from its ETA", () => {
@@ -230,6 +233,9 @@ describe("SubwayArrivalList", () => {
 		// Then
 		expect(screen.getByText("전역 도착", { selector: "strong" })).toBeInTheDocument();
 		expect(screen.queryByText("정보 없음")).not.toBeInTheDocument();
+		expect(screen.getByText("전역 도착", { selector: "strong" }).closest(".arrival-row")).not.toHaveClass(
+			"is-inactive",
+		);
 
 		// When
 		fireEvent.click(screen.getByRole("tab", { name: "8호선 상행" }));
@@ -239,6 +245,9 @@ describe("SubwayArrivalList", () => {
 			screen.getByText("[2]번째 전역 (강동구청)", { selector: "strong" }),
 		).toBeInTheDocument();
 		expect(screen.queryByText("정보 없음")).not.toBeInTheDocument();
+		expect(
+			screen.getByText("[2]번째 전역 (강동구청)", { selector: "strong" }).closest(".arrival-row"),
+		).not.toHaveClass("is-inactive");
 	});
 
 	it("defaults to the line selected at a transfer station", () => {
