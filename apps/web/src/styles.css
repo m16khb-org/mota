@@ -652,15 +652,25 @@ select:focus-visible {
 }
 
 .arrival-error,
-.arrival-empty,
-.inline-error {
+.inline-error,
+.arrival-empty {
   margin: 0 0 14px;
   padding: 12px 14px;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.arrival-error,
+.inline-error {
   border-left: 3px solid var(--danger);
   color: var(--danger-ink);
   background: var(--danger-surface);
-  font-size: 0.82rem;
-  line-height: 1.55;
+}
+
+.arrival-empty {
+  border-left: 3px solid var(--line-strong);
+  color: var(--muted);
+  background: var(--paper);
 }
 
 .arrival-error p {
@@ -1982,6 +1992,10 @@ select:focus-visible {
     margin-top: 16px;
   }
 
+  .add-point-button {
+    scroll-margin-block: 128px 8px;
+  }
+
   .point-selector.has-points .point-list {
     max-height: 128px;
     overflow-y: auto;
@@ -2036,6 +2050,52 @@ select:focus-visible {
 
   .inline-map-search-status button {
     width: 100%;
+  }
+}
+
+@media (max-width: 959.98px) and (max-height: 480px) and (orientation: landscape) {
+  .map-stage {
+    flex-basis: 45dvh;
+    height: 45dvh;
+  }
+
+  .app-shell:has(.map-stage.is-searching) .control-rail {
+    display: none;
+  }
+
+  .map-stage.is-searching {
+    flex-basis: 100dvh;
+    height: 100dvh;
+  }
+
+  .brand-header {
+    padding: 8px 20px;
+  }
+
+  .brand-mark {
+    --brand-mark-size: 32px;
+  }
+
+  .commute-switcher {
+    padding: 8px 20px;
+  }
+
+  .commute-switcher-heading,
+  .commute-tab-title small {
+    display: none;
+  }
+
+  .commute-tab {
+    min-height: 44px;
+    padding: 4px 8px;
+  }
+
+  .commute-tab-summary {
+    font-size: 0.625rem;
+  }
+
+  .add-point-button {
+    scroll-margin-block: 76px 8px;
   }
 }
 
