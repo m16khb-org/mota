@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import {
 	SUBWAY_ARRIVAL_UPSTREAM_BASE,
@@ -25,6 +26,10 @@ const envSchema = z.object({
 		.url()
 		.default(SUBWAY_ARRIVAL_UPSTREAM_BASE),
 	SEOUL_SUBWAY_API_KEY: optionalSecretSchema,
+	SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL: z
+		.string()
+		.datetime({ offset: true })
+		.optional(),
 	SEOUL_BUS_API_KEY: optionalSecretSchema,
 	DATABASE_URL: z.string().url().optional(),
 	DATABASE_HOST: z.string().min(1).default("home-server-pg"),
@@ -47,6 +52,8 @@ export interface ApiEnv {
 	readonly port: number;
 	readonly subwayArrivalUpstream: string;
 	readonly subwayPositionTemplate: string | undefined;
+	readonly subwayApiKeyScope: string | undefined;
+	readonly subwayQuotaCooldownUntil: number | undefined;
 	readonly busApiKey: string | undefined;
 	readonly databaseUrl: string;
 	readonly webDistPath: string;
@@ -75,17 +82,33 @@ export function loadEnv(
 	if (!databaseUrl) {
 		throw new Error("DATABASE_URL or DATABASE_PASSWORD is required.");
 	}
+	if (
+		parsed.SEOUL_SUBWAY_API_KEY === undefined &&
+		isDirectOfficialSubwayArrivalTemplate(parsed.SUBWAY_ARRIVAL_UPSTREAM)
+	) {
+		throw new Error(
+			"SUBWAY_ARRIVAL_UPSTREAM cannot be a direct Seoul Open API template without SEOUL_SUBWAY_API_KEY.",
+		);
+	}
 	const subwayArrivalUpstream = parsed.SEOUL_SUBWAY_API_KEY
 		? officialSubwayArrivalTemplate(parsed.SEOUL_SUBWAY_API_KEY)
 		: parsed.SUBWAY_ARRIVAL_UPSTREAM;
 	const subwayPositionTemplate = parsed.SEOUL_SUBWAY_API_KEY
 		? officialSubwayPositionTemplate(parsed.SEOUL_SUBWAY_API_KEY)
 		: undefined;
+	const subwayApiKeyScope = parsed.SEOUL_SUBWAY_API_KEY
+		? hashSubwayApiKey(parsed.SEOUL_SUBWAY_API_KEY)
+		: undefined;
+	const subwayQuotaCooldownUntil = parsed.SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL
+		? Date.parse(parsed.SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL)
+		: undefined;
 	return {
 		host: parsed.HOST,
 		port: parsed.PORT,
 		subwayArrivalUpstream,
 		subwayPositionTemplate,
+		subwayApiKeyScope,
+		subwayQuotaCooldownUntil,
 		busApiKey: parsed.SEOUL_BUS_API_KEY,
 		databaseUrl,
 		webDistPath: parsed.WEB_DIST_PATH,
@@ -97,4 +120,26 @@ export function loadEnv(
 			publicUrl: parsed.PUBLIC_URL.replace(/\/$/, ""),
 		},
 	};
+}
+
+export function hashSubwayApiKey(apiKey: string): string {
+	return createHash("sha256")
+		.update(`mota:seoul-subway:${apiKey}`, "utf8")
+		.digest("hex");
+}
+
+function isDirectOfficialSubwayArrivalTemplate(value: string) {
+	let url: URL;
+	try {
+		url = new URL(value);
+	} catch {
+		return false;
+	}
+	const pathname = decodeURIComponent(url.pathname);
+	return (
+		url.hostname.toLowerCase() === "swopenapi.seoul.go.kr" &&
+		/^\/api\/subway\/[^/]+\/json\/realtimeStationArrival\/0\/100\/\{station\}\/?$/i.test(
+			pathname,
+		)
+	);
 }

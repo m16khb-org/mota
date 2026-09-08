@@ -3,8 +3,12 @@ import {
 	apiStationName,
 	normalizeSubwayArrivals,
 } from "@mota/contracts/subway";
+import { z } from "zod";
 import { UPSTREAM_HEADERS } from "./seoulBus";
-import { UpstreamError } from "./upstreamError";
+import {
+	SEOUL_SUBWAY_QUOTA_CODE,
+	UpstreamError,
+} from "./upstreamError";
 
 export const SUBWAY_ARRIVAL_UPSTREAM_BASE =
 	process.env.SUBWAY_ARRIVAL_UPSTREAM ??
@@ -18,6 +22,21 @@ type UpstreamFetch = (
 ) => Promise<Response>;
 
 const STATION_PLACEHOLDER = "{station}";
+
+const quotaPayloadSchema = z.union([
+	z.object({
+		status: z.union([z.number(), z.string()]).optional(),
+		code: z.string(),
+		message: z.string().nullable().optional(),
+	}),
+	z.object({
+		errorMessage: z.object({
+			status: z.union([z.number(), z.string()]).optional(),
+			code: z.string(),
+			message: z.string().nullable().optional(),
+		}),
+	}),
+]);
 
 function subwayArrivalUrl(
 	station: string,
@@ -69,12 +88,36 @@ export async function fetchSubwayArrivals(
 		headers: UPSTREAM_HEADERS,
 		signal: AbortSignal.timeout(8_000),
 	});
+	let payload: unknown;
+	try {
+		payload = await response.json();
+	} catch {
+		payload = undefined;
+	}
+	const quotaError = quotaPayloadSchema.safeParse(payload);
+	const errorMessage = quotaError.success
+		? "errorMessage" in quotaError.data
+			? quotaError.data.errorMessage
+			: quotaError.data
+		: null;
+	if (errorMessage?.code === SEOUL_SUBWAY_QUOTA_CODE) {
+			const status =
+				errorMessage.status === undefined
+					? response.status
+					: errorMessage.status;
+			const message = errorMessage.message
+				? `: ${errorMessage.message}`
+				: "";
+			throw new UpstreamError(
+				"Subway arrivals upstream failed",
+				`Subway arrivals upstream returned ${status} ${errorMessage.code}${message}`,
+			);
+	}
 	if (!response.ok) {
 		throw new UpstreamError(
 			"Subway arrivals upstream failed",
 			`Subway arrivals upstream returned ${response.status}`,
 		);
 	}
-	const normalized = normalizeSubwayArrivals(await response.json());
-	return normalized;
+	return normalizeSubwayArrivals(payload);
 }

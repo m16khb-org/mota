@@ -5,35 +5,40 @@ import {
 import { z } from "zod";
 import { loadSubwayNetwork } from "../transit-map/subwayNetworkSource";
 import { UPSTREAM_HEADERS } from "./seoulBus";
-import { UpstreamError } from "./upstreamError";
+import {
+  SEOUL_SUBWAY_QUOTA_CODE,
+  UpstreamError,
+} from "./upstreamError";
 
 const SEOUL_SUBWAY_OPEN_API_BASE = "http://swopenAPI.seoul.go.kr";
 const LINE_PLACEHOLDER = "{line}";
+export const SUBWAY_POSITION_QUOTA_CODE = SEOUL_SUBWAY_QUOTA_CODE;
 
-const upstreamSchema = z.object({
-	errorMessage: z.object({
-		status: z.union([z.number(), z.string()]).optional(),
-		code: z.string().min(1),
-		message: z.string().default(""),
-	}),
-	realtimePositionList: z
-		.array(
-			z.object({
-				subwayId: z.string().trim().min(1),
-				statnId: z.string().trim().min(1),
-				statnNm: z.string().trim().min(1),
-				trainNo: z.string().trim().min(1),
-				recptnDt: z.string().trim().min(1),
-				updnLine: z.string().trim().min(1),
-				trainSttus: z.string().trim().min(1),
-			}),
-		)
-		.optional(),
+const upstreamErrorSchema = z.object({
+	status: z.union([z.number(), z.string()]).optional(),
+	code: z.string().min(1),
+	message: z.string().default(""),
 });
 
-type UpstreamPositionRow = NonNullable<
-	z.infer<typeof upstreamSchema>["realtimePositionList"]
->[number];
+const positionRowSchema = z.object({
+	subwayId: z.string().trim().min(1),
+	statnId: z.string().trim().min(1),
+	statnNm: z.string().trim().min(1),
+	trainNo: z.string().trim().min(1),
+	recptnDt: z.string().trim().min(1),
+	updnLine: z.string().trim().min(1),
+	trainSttus: z.string().trim().min(1),
+});
+
+const upstreamSchema = z.union([
+	z.object({
+		errorMessage: upstreamErrorSchema,
+		realtimePositionList: z.array(positionRowSchema).optional(),
+	}),
+	upstreamErrorSchema,
+]);
+
+type UpstreamPositionRow = z.infer<typeof positionRowSchema>;
 
 type UpstreamFetch = (
 	input: string | URL | Request,
@@ -45,6 +50,13 @@ export type SubwayPositionResult = Readonly<{
 	vehicles: readonly SubwayVehicle[];
 	capturedAt: string;
 }>;
+
+export function isSubwayPositionQuotaError(error: unknown) {
+	return (
+		error instanceof UpstreamError &&
+		error.detail.includes(SUBWAY_POSITION_QUOTA_CODE)
+	);
+}
 
 const stationCoordinates = new Map<string, readonly [number, number]>();
 for (const station of loadSubwayNetwork().stations.features) {
@@ -80,24 +92,52 @@ export async function fetchSubwayPositions(
 		headers: UPSTREAM_HEADERS,
 		signal: AbortSignal.timeout(8_000),
 	});
+	let rawPayload: unknown;
+	try {
+		rawPayload = await response.json();
+	} catch (error) {
+		if (!response.ok) {
+			throw new UpstreamError(
+				"Subway positions upstream failed",
+				`Subway positions for ${line} returned ${response.status}`,
+			);
+		}
+		throw error;
+	}
+	const parsedPayload = upstreamSchema.safeParse(rawPayload);
+	const quotaErrorMessage = parsedPayload.success
+		? "errorMessage" in parsedPayload.data
+			? parsedPayload.data.errorMessage
+			: parsedPayload.data
+		: null;
+	if (quotaErrorMessage?.code === SUBWAY_POSITION_QUOTA_CODE) {
+		throw new UpstreamError(
+			"Subway positions upstream failed",
+			describeUpstreamError(line, quotaErrorMessage),
+		);
+	}
 	if (!response.ok) {
 		throw new UpstreamError(
 			"Subway positions upstream failed",
 			`Subway positions for ${line} returned ${response.status}`,
 		);
 	}
-	const payload = upstreamSchema.parse(await response.json());
-	if (payload.errorMessage.code === "INFO-200") {
+	const payload = parsedPayload.success
+		? parsedPayload.data
+		: upstreamSchema.parse(rawPayload);
+	const errorMessage =
+		"errorMessage" in payload ? payload.errorMessage : payload;
+	if (errorMessage.code === "INFO-200") {
 		return Object.freeze({
 			availability: "no-service" as const,
 			vehicles: Object.freeze([]),
 			capturedAt: new Date().toISOString(),
 		});
 	}
-	if (payload.errorMessage.code !== "INFO-000") {
+	if (errorMessage.code !== "INFO-000") {
 		throw new UpstreamError(
 			"Subway positions upstream failed",
-			`Subway positions for ${line} returned ${payload.errorMessage.code}`,
+			describeUpstreamError(line, errorMessage),
 		);
 	}
 	const routeId = normalizeRouteId(line);
@@ -105,7 +145,9 @@ export async function fetchSubwayPositions(
 		string,
 		{ row: UpstreamPositionRow; capturedAt: string }
 	>();
-	for (const row of payload.realtimePositionList ?? []) {
+	const rows =
+		"errorMessage" in payload ? payload.realtimePositionList ?? [] : [];
+	for (const row of rows) {
 		const capturedAt = parseSeoulTimestamp(row.recptnDt);
 		const id = `subway:${row.subwayId}:${row.trainNo}`;
 		const existing = latestRowsById.get(id);
@@ -141,6 +183,16 @@ export async function fetchSubwayPositions(
 		capturedAt:
 			vehicles.length > 0 ? capturedAt : new Date().toISOString(),
 	});
+}
+
+function describeUpstreamError(
+	line: string,
+	errorMessage: z.infer<typeof upstreamErrorSchema>,
+) {
+	const status =
+		errorMessage.status === undefined ? "" : ` (status ${errorMessage.status})`;
+	const message = errorMessage.message ? `: ${errorMessage.message}` : "";
+	return `Subway positions for ${line} returned ${errorMessage.code}${status}${message}`;
 }
 
 function normalizeStationName(value: string) {

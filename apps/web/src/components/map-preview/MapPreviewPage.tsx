@@ -161,6 +161,9 @@ export function MapPreviewPage() {
 					<p className="map-preview-intro">
 						역과 차량은 관측된 역을 기준으로 표시하며 역 사이 이동은 추정 보간합니다.
 					</p>
+					<p className="map-preview-intro map-preview-cadence-note">
+						호선별 순차 조회로 관측 후 90초 이내인 차량만 표시합니다. 모든 열차가 실시간으로 표시되지는 않습니다.
+					</p>
 				</header>
 
 				<section className="map-preview-live" aria-labelledby="live-status-title">

@@ -61,6 +61,39 @@ warming or an upstream source is unavailable. Inspect
 implausible successful replacements below 10,000 bus stops or 100 subway
 station elements, but this does not make process liveness fail.
 
+## Seoul subway request budget
+
+One issued `SEOUL_SUBWAY_API_KEY` serves both subway arrivals and the 3D map's
+position collector, so every official call reserves from a single PostgreSQL
+budget before the upstream request is made.
+
+- The cap is 900 requests per rolling 24 hours, kept below the provider's
+  documented 1,000 daily ceiling: 600 for arrivals, 300 for position turns.
+- Calls are paced: at most one arrival request every 144 seconds and one
+  position request every 288 seconds, with position turns rotating across the
+  configured lines.
+- A reservation is written before the upstream call, so failures and timeouts
+  consume budget exactly like successful calls.
+- `subway_request_budget_scopes` stores only the SHA-256 hash of the key
+  (never the key), the position rotation cursor, and the cooldown deadline.
+  `subway_request_reservations` stores one row per reserved request. Row
+  locking keeps the cap accurate across restarts and concurrent processes.
+- When the provider answers with quota code `ERROR-337`, the API persists a
+  24-hour cooldown and refuses subway requests until it expires. Seoul
+  documents a daily cap but no reset instant, so the cooldown lasts a full day
+  instead of assuming a calendar-midnight reset.
+- `SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL` (ISO instant) seeds that cooldown at
+  startup. Set it when the key is already exhausted so a fresh deploy does not
+  probe the provider and burn another official request.
+- The budget meters only mota's calls. External consumers sharing the same key
+  can still exhaust it; nothing here protects against that.
+
+Migration `0001_subway_request_budget.sql` is additive: two new tables, no
+change to existing rows. Production startup applies pending migrations automatically.
+For an exhausted key, export `SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL` before running
+Compose; the service forwards it to the API without storing the key or deadline
+in a tracked file.
+
 ## Docker deployment
 
 ```bash

@@ -278,6 +278,58 @@ describe("subway position adapter", () => {
 		).rejects.toThrow();
 	});
 
+	it("normalizes the official top-level quota error without exposing the credential", async () => {
+		const fetcher = vi.fn().mockResolvedValue(
+			Response.json({
+				status: 500,
+				code: "ERROR-337",
+				message: "데이터요청은 일일 호출건수 최대 1000건을 넘을 수 없습니다.",
+				link: "",
+				developerMessage: "",
+				total: 0,
+			}),
+		);
+
+		const error = await fetchSubwayPositions(
+			fetcher,
+			officialSubwayPositionTemplate("secret-test-key"),
+			"8호선",
+		).catch((caught) => caught);
+
+		expect(error).toBeInstanceOf(UpstreamError);
+		expect(error.detail).toContain("8호선");
+		expect(error.detail).toContain("500");
+		expect(error.detail).toContain("ERROR-337");
+		expect(error.detail).toContain("1000");
+		expect(error.detail).not.toContain("secret-test-key");
+	});
+
+	it("normalizes a non-2xx quota envelope before generic status handling", async () => {
+		const fetcher = vi.fn().mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					status: 500,
+					code: "ERROR-337",
+					message: "daily quota",
+				}),
+				{
+					status: 500,
+					headers: { "content-type": "application/json" },
+				},
+			),
+		);
+
+		const error = await fetchSubwayPositions(
+			fetcher,
+			officialSubwayPositionTemplate("secret-test-key"),
+			"8호선",
+		).catch((caught) => caught);
+
+		expect(error).toBeInstanceOf(UpstreamError);
+		expect(error.detail).toContain("ERROR-337");
+		expect(error.detail).toContain("daily quota");
+	});
+
 	it("reports the line and status without exposing the credential", async () => {
 		const fetcher = vi.fn().mockResolvedValue(new Response(null, { status: 401 }));
 

@@ -41,7 +41,9 @@ packages/db/          Drizzle Postgres schema, migration, repository
   claims; no per-request gateway call while the access token is valid.
 - Anonymous selections stay under `mota:transit-selections:v1`.
 - Authenticated selections use `GET/PUT /api/settings`.
-- Drizzle table: `user_settings`, keyed by Supabase `sub`.
+- Drizzle tables: `user_settings` keyed by Supabase `sub`, plus
+  `subway_request_budget_scopes` and `subway_request_reservations` for the
+  Seoul subway request budget (key stored only as a hash).
 - Compare-and-swap versions prevent silent multi-tab overwrites.
 
 ## UI

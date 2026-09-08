@@ -51,7 +51,7 @@ the wildcard matters because the gateway appends `?state=` to `callback_to`.
 `home-server-infra` owns PostgreSQL. Mota uses the dedicated `mota` database
 and `mota` login role over the external `home-server` Docker network.
 
-Drizzle owns one table:
+Drizzle owns three tables:
 
 ```text
 user_settings
@@ -59,12 +59,31 @@ user_settings
   version      integer not null
   selections   jsonb not null
   updated_at   timestamptz not null
+
+subway_request_budget_scopes
+  scope_hash          text primary key
+  position_cursor     integer not null default 0
+  quota_blocked_until timestamptz
+  created_at          timestamptz not null
+
+subway_request_reservations
+  id          bigserial primary key
+  scope_hash  text not null references subway_request_budget_scopes(scope_hash)
+  lane        text not null
+  line        text
+  reserved_at timestamptz not null
 ```
 
 `auth_user_id` references the Supabase identity logically; there is no
 cross-database foreign key or local user copy. Rows written under either
 earlier flow keep working because the `sub` value is the same Supabase user
 id in all of them.
+
+The two `subway_request_budget_*` tables back the Seoul subway request budget
+described in [api-and-transit.md](api-and-transit.md). The scope row stores a
+SHA-256 hash of the provider key, never the key itself. Migration
+`0001_subway_request_budget.sql` added them additively and has not been applied
+to the live production database yet.
 
 The canonical `selections` document contains two independent contexts:
 

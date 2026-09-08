@@ -17,7 +17,7 @@ The operational runbook lives in [operations/guides/overview.md](operations/guid
 
 ## Live transit configuration
 
-- `SEOUL_SUBWAY_API_KEY` enables official subway arrivals and live subway positions.
+- `SEOUL_SUBWAY_API_KEY` enables official subway arrivals and live subway positions. Both draw from one persisted rolling 24-hour request budget (900 requests, paced, cooldown-aware). The rules and the `SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL` bootstrap live in [operations/guides/overview.md](operations/guides/overview.md).
 - `SEOUL_BUS_API_KEY` is currently unused by the live transit map, which is subway-only.
 - Missing keys are valid degraded configuration: static subway network remains available and the browser shows `unconfigured` instead of fabricated movement.
 - After changing either key, rebuild/restart the API container. Never print key-bearing upstream URLs.

@@ -51,19 +51,64 @@ const arrivalsResultSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
+export const SUBWAY_QUOTA_ERROR_CODES = [
+  "SUBWAY_REQUEST_RATE_LIMITED",
+  "SUBWAY_QUOTA_COOLDOWN",
+] as const;
+
+export type SubwayQuotaErrorCode = (typeof SUBWAY_QUOTA_ERROR_CODES)[number];
+
+const isoDateTimeSchema = z.string().datetime();
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string | null;
+  readonly retryAt: string | null;
 
-  constructor(status: number, code: string | null) {
+  constructor(status: number, code: string | null, retryAt: string | null = null) {
     super(`Request failed with ${status}${code ? `: ${code}` : ""}`);
     this.status = status;
     this.code = code;
+    this.retryAt = retryAt;
   }
 }
 
 export function isServiceAreaError(error: unknown): boolean {
   return error instanceof ApiError && error.code === "INVALID_LOCATION";
+}
+
+export function isSubwayQuotaError(
+  error: unknown,
+): error is ApiError & { readonly code: SubwayQuotaErrorCode } {
+  return (
+    error instanceof ApiError &&
+    SUBWAY_QUOTA_ERROR_CODES.includes(error.code as SubwayQuotaErrorCode)
+  );
+}
+
+function parseApiErrorPayload(payload: unknown): {
+  readonly code: string | null;
+  readonly retryAt: string | null;
+} {
+  const record =
+    typeof payload === "object" && payload !== null
+      ? (payload as Record<string, unknown>)
+      : null;
+  const code = typeof record?.error === "string" ? record.error : null;
+  const retryAtCandidate = record?.retryAt;
+  const retryAt =
+    typeof retryAtCandidate === "string" &&
+    isoDateTimeSchema.safeParse(retryAtCandidate).success
+      ? retryAtCandidate
+      : null;
+  return { code, retryAt };
+}
+
+async function readApiErrorPayload(response: Response) {
+  return response
+    .json()
+    .then(parseApiErrorPayload)
+    .catch(() => ({ code: null, retryAt: null }));
 }
 
 const subwayArrivalsResultSchema = z.object({
@@ -82,14 +127,8 @@ async function getJson(
     : timeoutSignal;
   const response = await fetch(url, { signal });
   if (!response.ok) {
-    const code = await response
-      .json()
-      .then((payload) => {
-        const parsed = payload as { error?: unknown };
-        return typeof parsed.error === "string" ? parsed.error : null;
-      })
-      .catch(() => null);
-    throw new ApiError(response.status, code);
+    const { code, retryAt } = await readApiErrorPayload(response);
+    throw new ApiError(response.status, code, retryAt);
   }
   return response.json();
 }
@@ -103,14 +142,8 @@ async function putJson(url: string, body: unknown): Promise<unknown> {
     signal: AbortSignal.timeout(8_000),
   });
   if (!response.ok) {
-    const code = await response
-      .json()
-      .then((payload) => {
-        const parsed = payload as { error?: unknown };
-        return typeof parsed.error === "string" ? parsed.error : null;
-      })
-      .catch(() => null);
-    throw new ApiError(response.status, code);
+    const { code, retryAt } = await readApiErrorPayload(response);
+    throw new ApiError(response.status, code, retryAt);
   }
   return response.json();
 }

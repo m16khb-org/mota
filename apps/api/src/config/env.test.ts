@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SUBWAY_ARRIVAL_UPSTREAM_BASE } from "../upstream/subwayArrivals";
-import { loadEnv } from "./env";
+import { hashSubwayApiKey, loadEnv } from "./env";
 
 const SUPABASE_INPUT = {
 	SUPABASE_URL: "https://mionqcczituwkryrjsfh.supabase.co/",
@@ -19,6 +19,8 @@ describe("API environment", () => {
 			port: 3000,
 			subwayArrivalUpstream: SUBWAY_ARRIVAL_UPSTREAM_BASE,
 			subwayPositionTemplate: undefined,
+			subwayApiKeyScope: undefined,
+			subwayQuotaCooldownUntil: undefined,
 			busApiKey: undefined,
 			databaseUrl: "postgres://mota:secret@localhost:5432/mota",
 			webDistPath: "/app/web",
@@ -44,6 +46,60 @@ describe("API environment", () => {
 				"http://swopenAPI.seoul.go.kr/api/subway/official-test-key/json/realtimeStationArrival/0/100/{station}",
 			subwayPositionTemplate:
 				"http://swopenAPI.seoul.go.kr/api/subway/official-test-key/json/realtimePosition/0/100/{line}",
+			subwayApiKeyScope: hashSubwayApiKey("official-test-key"),
+		});
+	});
+
+	it("rejects a direct official arrival template without the authoritative key", () => {
+		expect(() =>
+			loadEnv({
+				...SUPABASE_INPUT,
+				DATABASE_URL: "postgres://mota:secret@localhost:5432/mota",
+				SUBWAY_ARRIVAL_UPSTREAM:
+					"http://swopenAPI.seoul.go.kr/api/subway/embedded-key/json/realtimeStationArrival/0/100/{station}",
+			}),
+		).toThrow(/SEOUL_SUBWAY_API_KEY/);
+	});
+
+	it("uses the authoritative key when a conflicting direct template is supplied", () => {
+		expect(
+			loadEnv({
+				...SUPABASE_INPUT,
+				DATABASE_URL: "postgres://mota:secret@localhost:5432/mota",
+				SEOUL_SUBWAY_API_KEY: "authoritative-key",
+				SUBWAY_ARRIVAL_UPSTREAM:
+					"http://swopenAPI.seoul.go.kr/api/subway/other-key/json/realtimeStationArrival/0/100/{station}",
+			}),
+		).toMatchObject({
+			subwayArrivalUpstream:
+				"http://swopenAPI.seoul.go.kr/api/subway/authoritative-key/json/realtimeStationArrival/0/100/{station}",
+			subwayApiKeyScope: hashSubwayApiKey("authoritative-key"),
+		});
+	});
+
+	it("preserves custom proxy and test upstream origins", () => {
+		expect(
+			loadEnv({
+				...SUPABASE_INPUT,
+				DATABASE_URL: "postgres://mota:secret@localhost:5432/mota",
+				SUBWAY_ARRIVAL_UPSTREAM: "https://subway-arrival.test",
+			}),
+		).toMatchObject({
+			subwayArrivalUpstream: "https://subway-arrival.test",
+			subwayApiKeyScope: undefined,
+		});
+	});
+
+	it("parses an operator-supplied cooldown without retaining the key", () => {
+		expect(
+			loadEnv({
+				...SUPABASE_INPUT,
+				DATABASE_URL: "postgres://mota:secret@localhost:5432/mota",
+				SEOUL_SUBWAY_API_KEY: "official-test-key",
+				SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL: "2026-09-09T12:10:00.000Z",
+			}),
+		).toMatchObject({
+			subwayQuotaCooldownUntil: Date.parse("2026-09-09T12:10:00.000Z"),
 		});
 	});
 

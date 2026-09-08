@@ -8,6 +8,13 @@
       "when": 1787478000000,
       "tag": "0000_user_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788861075823,
+      "tag": "0001_subway_request_budget",
+      "breakpoints": true
     }
   ]
 }

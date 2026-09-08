@@ -242,6 +242,7 @@ export function App() {
 							arrivals={subwayDetail.arrivals}
 							loading={subwayDetail.loading}
 							error={subwayDetail.error}
+							errorCode={subwayDetail.errorCode}
 							updatedAt={subwayDetail.updatedAt}
 							onRefresh={refreshSubwayDetail}
 						/>

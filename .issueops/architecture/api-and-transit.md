@@ -52,6 +52,8 @@ TransitCatalogService warmup/scheduler
 
 Realtime arrival routes
   → Seoul bus/subway arrival adapter on every refresh
+  → the subway arrival route reserves from the shared subway request
+    budget first; a local denial returns 429 (owned by OPEN_API_SPEC.md)
 ```
 
 Nearby searches never call public transit catalogs per map position. The
@@ -78,8 +80,10 @@ React EventSource
   → GET /api/transit-map/events with the same viewport
   ← ready → availability + complete vehicles → heartbeat
 
-SubwayPositionCollector (one process-wide 10 s poll)
-  → official Seoul realtimePosition by line
+SubwayPositionCollector (one process-wide poll, budget-paced to one
+  position request every 288 seconds)
+  → persisted budget reservation, then official Seoul realtimePosition
+    for the round-robin-selected line
   ← station-segment vehicle snapshot shared by every subscriber
 ```
 
@@ -89,7 +93,20 @@ OpenStreetMap route/platform data and is filtered in memory per viewport.
 Live collectors are process-local and single-flight. The subway collector is
 shared across all subscribers. A source poll replaces the complete subway
 snapshot; a failure emits an empty snapshot instead of retaining stale vehicle
-positions. Closing an SSE connection releases the subway subscription.
+positions. Vehicle observations older than 90 seconds are dropped, so a stale
+upstream timestamp presents as unavailable rather than frozen movement.
+Closing an SSE connection releases the subway subscription.
+
+Subway arrivals and position turns share one persisted, rolling 24-hour
+request budget spread across `subway_request_budget_scopes` and
+`subway_request_reservations` (table inventory in
+[identity-and-settings.md](identity-and-settings.md)): 900 requests per
+window, split 600 arrivals and 300 positions, paced at 144 and 288 seconds.
+Reservations happen before the upstream call, so failed requests consume
+budget too. A provider `ERROR-337` response persists a 24-hour cooldown that
+survives restarts; Seoul publishes no reset instant, so the cooldown always
+lasts a full day. The budget meters only mota's calls, so an external
+consumer sharing the same key can still exhaust it.
 
 `GET /api/health` remains non-gating liveness. `transitCatalogs` reports
 nearby catalog state, while `liveTransit` reports bounded bus/subway source

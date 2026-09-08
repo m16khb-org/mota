@@ -10,6 +10,7 @@ interface SubwayArrivalListProps {
 	readonly arrivals: readonly SubwayArrival[];
 	readonly loading: boolean;
 	readonly error: string | null;
+	readonly errorCode?: string | null;
 	readonly updatedAt: string | null;
 	readonly onRefresh: () => void;
 }
@@ -77,6 +78,7 @@ export function SubwayArrivalList({
 	arrivals,
 	loading,
 	error,
+	errorCode,
 	updatedAt,
 	onRefresh,
 }: SubwayArrivalListProps) {
@@ -233,7 +235,11 @@ export function SubwayArrivalList({
 			) : null}
 
 			{error ? (
-				<div className="arrival-error" role="alert">
+				<div
+					className="arrival-error"
+					role="alert"
+					data-error-code={errorCode ?? undefined}
+				>
 					<p>{error}</p>
 					<button type="button" onClick={onRefresh}>
 						다시 시도

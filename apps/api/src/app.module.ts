@@ -3,6 +3,7 @@ import type { DynamicModule } from "@nestjs/common";
 import type { TransitSelections } from "@mota/contracts/transit-settings";
 import type {
   StoredUserSettings,
+  SubwayRequestBudget,
   UserSettingsRepository,
 } from "@mota/db";
 import {
@@ -51,8 +52,7 @@ const LIVE_SUBWAY_LINES = [
   "경춘선",
   "수인분당선",
   "신분당선",
-  "경강선",
-  "서해선",
+  "우이신설선",
   "GTX-A",
 ] as const;
 
@@ -76,6 +76,8 @@ export interface AppModuleOptions {
   readonly oauthConfig?: ApiOptions["oauthConfig"];
   readonly now?: (() => number) | undefined;
   readonly subwayArrivalUpstream?: string | undefined;
+  readonly subwayApiKeyScope?: string | undefined;
+  readonly subwayRequestBudget?: SubwayRequestBudget | undefined;
   readonly transitCatalogRefreshMs?: number | undefined;
   readonly transitCatalogRetryMs?: number | undefined;
   readonly warmTransitCatalogs?: boolean | undefined;
@@ -110,6 +112,8 @@ export class AppModule {
       oauthConfig,
       now: options.now,
       subwayArrivalUpstream: options.subwayArrivalUpstream,
+      subwayApiKeyScope: options.subwayApiKeyScope,
+      subwayRequestBudget: options.subwayRequestBudget,
       transitCatalog: {
         refreshMs:
           options.transitCatalogRefreshMs ?? DEFAULT_CATALOG_REFRESH_MS,
@@ -122,6 +126,14 @@ export class AppModule {
     };
     const scheduler = options.repeatingScheduler ?? new IntervalScheduler();
     const subwayPositionTemplate = options.subwayPositionTemplate;
+    if (
+      subwayPositionTemplate !== undefined &&
+      (!apiOptions.subwayApiKeyScope || !apiOptions.subwayRequestBudget)
+    ) {
+      throw new Error(
+        "Subway position API requires a persistent request budget.",
+      );
+    }
     const subwayPositions = new SubwayPositionCollector({
       lines: LIVE_SUBWAY_LINES,
       loadLine: subwayPositionTemplate
@@ -135,6 +147,12 @@ export class AppModule {
             throw new Error("Subway position API is not configured.");
       },
       scheduler,
+      ...(apiOptions.subwayApiKeyScope && apiOptions.subwayRequestBudget
+        ? {
+            scopeHash: apiOptions.subwayApiKeyScope,
+            requestBudget: apiOptions.subwayRequestBudget,
+          }
+        : {}),
       ...(options.now ? { now: options.now } : {}),
     });
     const busPositions =

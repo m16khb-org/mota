@@ -6,6 +6,7 @@ import {
 } from "@nestjs/platform-fastify";
 import {
   createDatabase,
+  DrizzleSubwayRequestBudget,
   DrizzleUserSettingsRepository,
   migrateDatabase,
 } from "@mota/db";
@@ -17,12 +18,24 @@ async function bootstrap() {
   const { client, database } = createDatabase(env.databaseUrl);
   await migrateDatabase(database, env.migrationsPath);
   const repository = new DrizzleUserSettingsRepository(database);
+  const subwayRequestBudget = env.subwayApiKeyScope
+    ? new DrizzleSubwayRequestBudget(
+        database,
+        env.subwayQuotaCooldownUntil,
+      )
+    : undefined;
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule.register({
       settingsRepository: repository,
       subwayArrivalUpstream: env.subwayArrivalUpstream,
       ...(env.subwayPositionTemplate
         ? { subwayPositionTemplate: env.subwayPositionTemplate }
+        : {}),
+      ...(env.subwayApiKeyScope && subwayRequestBudget
+        ? {
+            subwayApiKeyScope: env.subwayApiKeyScope,
+            subwayRequestBudget,
+          }
         : {}),
       ...(env.busApiKey ? { busApiKey: env.busApiKey } : {}),
       transitCatalogRefreshMs: env.transitCatalogRefreshMs,

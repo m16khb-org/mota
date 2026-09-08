@@ -406,6 +406,27 @@ describe("fetchSubwayArrivals", () => {
 
 		expect(error).toBeInstanceOf(ZodError);
 	});
+
+	it.each([
+		"SUBWAY_REQUEST_RATE_LIMITED",
+		"SUBWAY_QUOTA_COOLDOWN",
+	] as const)("parses %s and an optional retryAt from a quota response", async (code) => {
+		const retryAt = "2026-09-08T12:34:56.000Z";
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue(
+				Response.json({ error: code, retryAt }, { status: 429 }),
+			),
+		);
+
+		const error: unknown = await fetchSubwayArrivals("천호").then(
+			() => null,
+			(reason: unknown) => reason,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 429, code, retryAt });
+	});
 });
 
 describe("fetchArrivals baseline", () => {

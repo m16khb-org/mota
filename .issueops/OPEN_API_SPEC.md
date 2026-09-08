@@ -36,6 +36,24 @@ Both transit-map endpoints require `west`, `south`, `east`, `north`, and `zoom`.
 
 `GET /api/transit-map/events` is `text/event-stream` with named `ready`, `availability`, `vehicles`, and `heartbeat` events. The stream is subway-only: `ready.modes` is always `["subway"]` and `vehicles`/`availability` carry only subway fields. `vehicles` is a complete replacement snapshot, never a patch. `availability` uses `live`, `no-service`, `unavailable`, `unconfigured`, or `zoom-required`. Response headers disable intermediary buffering and transformation. A client disconnect releases its shared subway collector subscription.
 
+## Subway request budget
+
+`GET /api/subway/arrivals` shares one persisted, rolling 24-hour Seoul subway
+budget with the 3D map's position collector: 900 requests per window, split
+into 600 arrival and 300 position requests. A request the budget denies is
+answered locally as `429` without calling upstream.
+
+- `SUBWAY_QUOTA_COOLDOWN`: the provider returned its quota-exhausted code
+  (`ERROR-337`), the key entered a persisted 24-hour cooldown, and `retryAt`
+  carries the ISO instant the cooldown ends.
+- `SUBWAY_REQUEST_RATE_LIMITED`: the rolling cap, lane cap, or pacing interval
+  blocked the request. `retryAt` carries the ISO instant a retry can succeed
+  and is omitted when it cannot be determined.
+
+The SSE stream never returns `429`. A budget denial looks there like any other
+live-source failure: `availability` reports a non-live state and the vehicle
+array is empty.
+
 ## Health response
 
 `GET /api/health` always returns HTTP 200 while the process is live. Its
@@ -61,6 +79,7 @@ Parse query/body/upstream/browser JSON at the boundary with Zod. Keep controller
 - `400`: `return_to` that is not a same-site path; a gateway start or callback the gateway refused (`AUTH_GATEWAY_REJECTED`).
 - `401`: settings endpoint without an authenticated session.
 - `409`: settings version conflict.
+- `429`: subway arrivals denied by the Seoul subway request budget, with `error` set to `SUBWAY_QUOTA_COOLDOWN` or `SUBWAY_REQUEST_RATE_LIMITED`.
 - `502`: transit upstream failure on request/response endpoints.
 - `503`: auth-gateway or Supabase JWKS unreachable (`AUTH_UPSTREAM_UNAVAILABLE`), or auth unconfigured (`AUTH_NOT_CONFIGURED`).
 - `404`: unknown API or non-HTML path.

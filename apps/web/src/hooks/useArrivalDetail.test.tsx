@@ -2,7 +2,7 @@
 
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fetchSubwayArrivals } from "../api/client";
+import { ApiError, fetchSubwayArrivals } from "../api/client";
 import { subwayStationSchema } from "../domain/subway";
 import { useArrivalDetail } from "./useArrivalDetail";
 
@@ -83,5 +83,53 @@ describe("useArrivalDetail", () => {
 		// Then
 		expect(fetchSubwayArrivals).toHaveBeenCalledTimes(3);
 		expect(fetchSubwayArrivals).toHaveBeenLastCalledWith("암사");
+	});
+
+	it.each([
+		"SUBWAY_REQUEST_RATE_LIMITED",
+		"SUBWAY_QUOTA_COOLDOWN",
+	] as const)("keeps the last subway snapshot for %s", async (code) => {
+		const previousArrivals = [
+			{
+				id: "1008-상행-암사행",
+				subwayId: "1008",
+				updnLine: "상행",
+				line: "8호선",
+				direction: "암사행",
+				trainLineNm: "암사행",
+				trainStatus: "일반",
+				seconds: 90,
+				generatedAt: "2026-09-01T00:00:00.000Z",
+				message: "전역 출발",
+				location: "강동구청",
+				isLastTrain: false,
+			},
+		];
+		const updatedAt = "2026-09-01T00:01:19.000Z";
+		const retryAt = "2026-09-08T12:34:56.000Z";
+		vi.mocked(fetchSubwayArrivals)
+			.mockResolvedValueOnce({ arrivals: previousArrivals, updatedAt })
+			.mockRejectedValueOnce(new ApiError(429, code, retryAt));
+
+		const { result } = renderHook(() =>
+			useArrivalDetail({
+				selectedStops: [],
+				selectedStation: amsaStation,
+			}),
+		);
+		await act(async () => undefined);
+
+		await act(async () => {
+			result.current.refreshSubwayDetail();
+			await Promise.resolve();
+		});
+
+		expect(result.current.subwayDetail.arrivals).toEqual(previousArrivals);
+		expect(result.current.subwayDetail.updatedAt).toBe(updatedAt);
+		expect(result.current.subwayDetail.loading).toBe(false);
+		expect(result.current.subwayDetail.errorCode).toBe(code);
+		expect(result.current.subwayDetail.error).toMatch(
+			/\d{4}년 \d{1,2}월 \d{1,2}일 \d{2}:\d{2}/,
+		);
 	});
 });

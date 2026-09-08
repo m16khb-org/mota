@@ -158,6 +158,14 @@ describe("MapPreviewPage subway-only operations board", () => {
 		expect(document.body).not.toHaveTextContent(/버스|정류장/);
 	});
 
+	it("includes a non-realtime cadence note for observed subway positions", () => {
+		render(<MapPreviewPage />);
+
+		const note = document.querySelector(".map-preview-cadence-note");
+		expect(note).toBeInTheDocument();
+		expect(note).not.toBeEmptyDOMElement();
+	});
+
 	it.each([
 		["reconnecting", "live", "재연결 중 · 차량을 숨겼습니다"],
 		["live", "no-service", "지하철 운행 정보 없음"],

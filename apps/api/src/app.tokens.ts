@@ -1,5 +1,8 @@
 import type { AuthUser } from "@mota/contracts/auth";
-import type { UserSettingsRepository } from "@mota/db";
+import type {
+  SubwayRequestBudget,
+  UserSettingsRepository,
+} from "@mota/db";
 
 export type UpstreamFetch = (
   input: string | URL | Request,
@@ -37,6 +40,8 @@ export interface ApiOptions {
   } | null;
   readonly now?: (() => number) | undefined;
   readonly subwayArrivalUpstream?: string | undefined;
+  readonly subwayApiKeyScope?: string | undefined;
+  readonly subwayRequestBudget?: SubwayRequestBudget | undefined;
   readonly transitCatalog: TransitCatalogOptions;
 }
 

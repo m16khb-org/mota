@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check": "biome lint src drizzle.config.ts",
     "test": "vitest run",
-    "test:integration": "vitest run src/repository.integration.test.ts",
+    "test:integration": "vitest run src/repository.integration.test.ts src/quota.integration.test.ts",
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
     "studio": "drizzle-kit studio"
