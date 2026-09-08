@@ -1,7 +1,7 @@
 import type {
 	TransitAvailability,
 	TransitMapHealth,
-	TransitVehicle,
+	SubwayVehicle,
 } from "@mota/contracts/transit-map";
 import type { RepeatingScheduler } from "../app.tokens";
 import type { SubwayPositionResult } from "../upstream/subwayPositions";
@@ -9,7 +9,7 @@ import { LiveSourceMetrics } from "./liveSourceMetrics";
 
 export interface SubwayPositionSnapshot {
 	readonly availability: TransitAvailability;
-	readonly vehicles: readonly TransitVehicle[];
+	readonly vehicles: readonly SubwayVehicle[];
 	readonly capturedAt: string;
 }
 
@@ -21,6 +21,8 @@ interface SubwayPositionCollectorOptions {
 }
 
 type SnapshotListener = (snapshot: SubwayPositionSnapshot) => void;
+
+const MAX_SUBWAY_OBSERVATION_AGE_MS = 90_000;
 
 export class SubwayPositionCollector {
 	private readonly listeners = new Set<SnapshotListener>();
@@ -80,16 +82,23 @@ export class SubwayPositionCollector {
 			const results = await Promise.all(
 				this.options.lines.map((line) => this.options.loadLine(line)),
 			);
-			const vehicles = results.flatMap((result) => result.vehicles);
-			const availability: TransitAvailability = results.some(
+			const now = this.now();
+			const vehicles = results
+				.flatMap((result) => result.vehicles)
+				.filter((vehicle) => isFreshObservation(vehicle.capturedAt, now));
+			const hasLiveResult = results.some(
 				(result) => result.availability === "live",
-			)
-				? "live"
-				: "no-service";
+			);
+			const availability: TransitAvailability =
+				vehicles.length > 0
+					? "live"
+					: hasLiveResult
+						? "unavailable"
+						: "no-service";
 			this.current = freezeSnapshot({
 				availability,
 				vehicles,
-				capturedAt: latestCapture(results, this.now),
+				capturedAt: latestCapture(vehicles, now),
 			});
 			this.metrics.recordSuccess(this.now() - startedAt);
 		} catch {
@@ -104,15 +113,18 @@ export class SubwayPositionCollector {
 	}
 }
 
-function latestCapture(
-	results: readonly SubwayPositionResult[],
-	now: () => number,
-) {
-	const latest = results.reduce(
-		(latest, result) => (result.capturedAt > latest ? result.capturedAt : latest),
+function isFreshObservation(capturedAt: string, now: number) {
+	const capturedAtMs = Date.parse(capturedAt);
+	return Number.isFinite(capturedAtMs) && now - capturedAtMs <= MAX_SUBWAY_OBSERVATION_AGE_MS;
+}
+
+function latestCapture(vehicles: readonly SubwayVehicle[], now: number) {
+	const latest = vehicles.reduce(
+		(latest, vehicle) =>
+			vehicle.capturedAt > latest ? vehicle.capturedAt : latest,
 		"",
 	);
-	return latest || new Date(now()).toISOString();
+	return latest || new Date(now).toISOString();
 }
 
 function freezeSnapshot(snapshot: SubwayPositionSnapshot): SubwayPositionSnapshot {

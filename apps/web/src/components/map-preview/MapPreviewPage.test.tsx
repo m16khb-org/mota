@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { SubwayVehicle } from "@mota/contracts/transit-map";
 import type { LiveTransitMapState } from "./useLiveTransitMap";
 import { useLiveTransitMap } from "./useLiveTransitMap";
 import { MapPreviewPage } from "./MapPreviewPage";
@@ -23,22 +24,23 @@ vi.mock("./MapLibrePreviewMap", () => ({
 		}) => void;
 		onTransitSelect?: (selection: {
 			key: string;
-			mode: "bus" | "subway";
+			mode: "subway";
 			kind: "station";
 			name: string;
 			detail: string;
 			coordinates: [number, number];
 		}) => void;
 		network?: typeof network;
-		vehicles?: LiveTransitMapState["vehicles"];
+		vehicles?: readonly SubwayVehicle[];
 	}) => (
 		<section aria-label="지도 테스트 표면">
-			<output aria-label="지도 버스 수">{props.vehicles?.bus.length ?? 0}</output>
-			<output aria-label="지도 지하철 수">{props.vehicles?.subway.length ?? 0}</output>
-			<output aria-label="지도 버스 노선 수">
-				{props.network?.bus.routes.features.length ?? 0}
+			<output aria-label="지도 지하철 수">{props.vehicles?.length ?? 0}</output>
+			<output aria-label="지도 지하철 노선 수">
+				{props.network?.subway.lines.features.length ?? 0}
 			</output>
-			<button type="button" onClick={props.onReady}>지도 준비</button>
+			<button type="button" onClick={props.onReady}>
+				지도 준비
+			</button>
 			<button
 				type="button"
 				onClick={() =>
@@ -77,19 +79,9 @@ const stationFeature = {
 	properties: { stationId: "station-a", stationName: "천호", routeIds: ["5", "8"] },
 	geometry: { type: "Point" as const, coordinates: [127.123, 37.538] as [number, number] },
 };
-const busStopFeature = {
-	type: "Feature" as const,
-	properties: {
-		stopId: "stop-a",
-		arsId: "25014",
-		stopName: "천호역 정류장",
-		routeIds: ["124100001"],
-	},
-	geometry: { type: "Point" as const, coordinates: [127.125, 37.537] as [number, number] },
-};
 const routeFeature = {
 	type: "Feature" as const,
-	properties: { routeId: "124100001", routeName: "341", color: "#2563eb" },
+	properties: { routeId: "5", routeName: "5호선", color: "#2563eb" },
 	geometry: {
 		type: "LineString" as const,
 		coordinates: [
@@ -106,49 +98,47 @@ const network = {
 		lines: { type: "FeatureCollection" as const, features: [routeFeature] },
 		stations: { type: "FeatureCollection" as const, features: [stationFeature] },
 	},
-	bus: {
-		enabled: true,
-		attribution: "서울특별시 교통정보",
-		routes: { type: "FeatureCollection" as const, features: [routeFeature] },
-		stops: { type: "FeatureCollection" as const, features: [busStopFeature] },
-	},
 };
 const train = {
 	id: "subway:1008:8120",
 	mode: "subway" as const,
 	routeId: "1008",
 	routeName: "8호선",
-	coordinates: [127.11, 37.53] as [number, number],
+	coordinates: [127.12, 37.53] as [number, number],
 	bearing: 0,
 	direction: "상행",
 	capturedAt: "2026-09-05T04:20:15.000Z",
 	positionBasis: "station-segment" as const,
 };
-const bus = {
-	...train,
-	id: "bus:124100001:vehicle-a",
-	mode: "bus" as const,
-	routeId: "124100001",
-	routeName: "341",
-	positionBasis: "gps" as const,
-};
 
 const liveState: LiveTransitMapState = {
 	loading: false,
 	network,
-	availability: { bus: "live", subway: "live" },
-	vehicles: { bus: [bus], subway: [train] },
+	availability: "live",
+	vehicles: [train],
 	connection: "live",
 	lastServerTime: "2026-09-05T04:20:15.000Z",
 	error: null,
 };
 
-describe("MapPreviewPage live operations board", () => {
+function toggleCount(): number | null {
+	const strong = screen
+		.getByRole("button", { name: "지하철 표시" })
+		.querySelector("strong");
+	const digits = strong?.textContent?.match(/\d+/);
+	return digits ? Number(digits[0]) : null;
+}
+
+describe("MapPreviewPage subway-only operations board", () => {
 	beforeEach(() => {
 		vi.mocked(useLiveTransitMap).mockReturnValue(liveState);
 	});
+	afterEach(() => {
+		cleanup();
+		vi.clearAllMocks();
+	});
 
-	it("shows one live status, layer toggles, counts, and a collapsed list alternative", () => {
+	it("shows one live status, the subway toggle, and a collapsed list alternative", () => {
 		render(<MapPreviewPage />);
 
 		expect(screen.getByRole("link", { name: "모타로 돌아가기" })).toHaveAttribute("href", "/");
@@ -156,45 +146,138 @@ describe("MapPreviewPage live operations board", () => {
 			"실시간 연결됨 · 04:20:15",
 		);
 		expect(document.querySelectorAll("[aria-live]")).toHaveLength(1);
-		expect(screen.getByRole("button", { name: "지하철 표시" })).toHaveAttribute("aria-pressed", "true");
-		expect(screen.getByRole("button", { name: "버스 표시" })).toHaveAttribute("aria-pressed", "true");
-		expect(screen.getAllByText("1대 운행 중", { selector: "strong" })).toHaveLength(2);
-		const list = screen.getByText(/전체 지점 목록/).closest("details");
-		expect(list).not.toHaveAttribute("open");
-		expect(document.body).not.toHaveTextContent(/시간표|모의 차량|오래된 위치/);
+		expect(screen.getByRole("button", { name: "지하철 표시" })).toHaveAttribute(
+			"aria-pressed",
+			"true",
+		);
+		expect(screen.queryByRole("button", { name: "버스 표시" })).not.toBeInTheDocument();
+		expect(toggleCount()).toBe(1);
+		expect(screen.getByText(/전체 지점 목록/).closest("details")).not.toHaveAttribute(
+			"open",
+		);
+		expect(document.body).not.toHaveTextContent(/버스|정류장/);
 	});
 
 	it.each([
-		["reconnecting", { bus: "live", subway: "live" }, "재연결 중 · 차량을 숨겼습니다"],
-		["live", { bus: "live", subway: "no-service" }, "지하철 운행 정보 없음"],
-		["live", { bus: "unavailable", subway: "live" }, "버스 실시간 정보를 불러오지 못했습니다"],
-		["live", { bus: "unconfigured", subway: "live" }, "버스 API 설정이 필요합니다"],
-		["live", { bus: "zoom-required", subway: "live" }, "더 확대하면 현재 화면의 버스를 표시합니다"],
-	] as const)("renders %s/%j without stale vehicles", (connection, availability, copy) => {
+		["reconnecting", "live", "재연결 중 · 차량을 숨겼습니다"],
+		["live", "no-service", "지하철 운행 정보 없음"],
+		["live", "unavailable", "지하철 실시간 정보를 불러오지 못했습니다"],
+		["live", "unconfigured", "지하철 API 설정이 필요합니다"],
+		["live", "zoom-required", "더 확대하면 지하철 정보를 표시합니다"],
+	] as const)("renders %s/%s without stale vehicles", (connection, availability, copy) => {
 		vi.mocked(useLiveTransitMap).mockReturnValue({
 			...liveState,
 			connection,
 			availability,
-			vehicles: connection === "reconnecting" ? { bus: [], subway: [] } : liveState.vehicles,
+			vehicles: connection === "reconnecting" ? [] : liveState.vehicles,
 		});
 		render(<MapPreviewPage />);
 		expect(screen.getByText(copy)).toBeVisible();
 	});
 
-	it("toggles rendered sources without changing the stream hook", () => {
+	it("exposes the live subway count as a machine-readable state", () => {
 		render(<MapPreviewPage />);
-		const busToggle = screen.getByRole("button", { name: "버스 표시" });
-		expect(screen.getByLabelText("지도 버스 수")).toHaveTextContent("1");
-		expect(screen.getByLabelText("지도 버스 노선 수")).toHaveTextContent("1");
 
-		fireEvent.click(busToggle);
-		expect(busToggle).toHaveAttribute("aria-pressed", "false");
-		expect(screen.getByLabelText("지도 버스 수")).toHaveTextContent("0");
-		expect(screen.getByLabelText("지도 버스 노선 수")).toHaveTextContent("0");
+		expect(screen.getByRole("button", { name: "지하철 표시" })).toHaveAttribute(
+			"data-vehicle-state",
+			"live",
+		);
+		expect(toggleCount()).toBe(1);
+	});
+
+	it("counts only trains inside the viewport without dropping distant trains from the map", () => {
+		const distantTrain: SubwayVehicle = {
+			...train,
+			id: "subway:1008:distant",
+			coordinates: [127.2, 37.6],
+		};
+		vi.mocked(useLiveTransitMap).mockReturnValue({
+			...liveState,
+			vehicles: [train, distantTrain],
+		});
+		render(<MapPreviewPage />);
+
+		expect(toggleCount()).toBe(1);
+		expect(screen.getByLabelText("지도 지하철 수")).toHaveTextContent("2");
+	});
+
+	it("shows a checking state instead of a zero count while the stream is not established", () => {
+		vi.mocked(useLiveTransitMap).mockReturnValue({
+			...liveState,
+			loading: true,
+			network: null,
+			connection: "loading",
+			availability: "unavailable",
+			vehicles: [],
+			lastServerTime: null,
+		});
+		render(<MapPreviewPage />);
+
+		const subwayToggle = screen.getByRole("button", { name: "지하철 표시" });
+		expect(subwayToggle).toHaveAttribute("data-vehicle-state", "connecting");
+		expect(toggleCount()).toBeNull();
+		expect(document.querySelector(".map-preview-mode-notices")).toBeEmptyDOMElement();
+	});
+
+	it("keeps an authoritative zero for no-service instead of an unknown state", () => {
+		vi.mocked(useLiveTransitMap).mockReturnValue({
+			...liveState,
+			availability: "no-service",
+			vehicles: [],
+		});
+		render(<MapPreviewPage />);
+
+		const subwayToggle = screen.getByRole("button", { name: "지하철 표시" });
+		expect(subwayToggle).toHaveAttribute("data-vehicle-state", "no-service");
+		expect(toggleCount()).toBe(0);
+	});
+
+	it("never counts hidden vehicles while reconnecting or after a failed start", () => {
+		vi.mocked(useLiveTransitMap).mockReturnValue({
+			...liveState,
+			connection: "reconnecting",
+			vehicles: [],
+		});
+		render(<MapPreviewPage />);
+		expect(screen.getByRole("button", { name: "지하철 표시" })).toHaveAttribute(
+			"data-vehicle-state",
+			"reconnecting",
+		);
+		expect(toggleCount()).toBeNull();
+		cleanup();
+
+		vi.mocked(useLiveTransitMap).mockReturnValue({
+			...liveState,
+			network: null,
+			connection: "error",
+			availability: "unavailable",
+			vehicles: [],
+		});
+		render(<MapPreviewPage />);
+		expect(screen.getByRole("button", { name: "지하철 표시" })).toHaveAttribute(
+			"data-vehicle-state",
+			"error",
+		);
+		expect(toggleCount()).toBeNull();
+		expect(document.querySelector(".map-preview-mode-notices")).toBeEmptyDOMElement();
+	});
+
+	it("toggles rendered subway sources without changing the stream hook", () => {
+		render(<MapPreviewPage />);
+		const subwayToggle = screen.getByRole("button", { name: "지하철 표시" });
+		expect(screen.getByLabelText("지도 지하철 수")).toHaveTextContent("1");
+		expect(screen.getByLabelText("지도 지하철 노선 수")).toHaveTextContent("1");
+
+		fireEvent.click(subwayToggle);
+		expect(subwayToggle).toHaveAttribute("aria-pressed", "false");
+		expect(subwayToggle).toHaveAttribute("data-vehicle-state", "live");
+		expect(toggleCount()).toBe(1);
+		expect(screen.getByLabelText("지도 지하철 수")).toHaveTextContent("0");
+		expect(screen.getByLabelText("지도 지하철 노선 수")).toHaveTextContent("0");
 		expect(useLiveTransitMap).toHaveBeenCalled();
 	});
 
-	it("synchronizes map selection with an accessible details panel", () => {
+	it("synchronizes map station selection with an accessible details panel", () => {
 		render(<MapPreviewPage />);
 		fireEvent.click(screen.getByRole("button", { name: "지도 역 선택" }));
 

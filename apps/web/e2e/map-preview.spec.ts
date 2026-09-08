@@ -1,7 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 import {
-	busStop,
-	firstBus,
 	firstTrain,
 	installPreviewFixtures,
 	localBuildingStyle,
@@ -60,8 +58,8 @@ test("renders static subway layers, a live train, controls, and an accessible po
 	await expect(map).toHaveAttribute("data-subway-lines", "1");
 	await expect(map).toHaveAttribute("data-subway-stations", "1");
 	await expect(map).toHaveAttribute("data-subway-vehicles", "1");
-	await expect(map).toHaveAttribute("data-bus-lines", "0");
-	await expect(page.getByText("더 확대하면 현재 화면의 버스를 표시합니다")).toBeVisible();
+	await expect(map).toHaveAttribute("data-subway-vehicle-lod", "far-circle");
+	expect(await page.getByText(/버스|정류장/).count()).toBe(0);
 	await expect(page.getByRole("status", { name: "실시간 운행 상태" })).toContainText(
 		"실시간 연결됨",
 	);
@@ -96,40 +94,44 @@ test("renders static subway layers, a live train, controls, and an accessible po
 	expectCleanAudit(audit);
 });
 
-test("enables viewport-scoped bus layers at zoom 16 without replacing the stream controls", async ({
+test("switches one observed train between complementary LOD layers", async ({
 	page,
 }) => {
 	const audit = observeNetworkAudit(page);
 	const fixture = await installPreviewFixtures(page);
 	await page.goto("/3d-preview", { waitUntil: "domcontentloaded" });
 	const map = await readyMap(page);
-	const beforeConnections = await fixture.connectionCount();
+
+	await expect(map).toHaveAttribute("data-subway-vehicles", "1");
+	await expect(map).toHaveAttribute("data-subway-vehicle-lod", "far-circle");
+	await map.screenshot({ path: test.info().outputPath("subway-lod-far.png") });
 
 	await map.getByRole("button", { name: "확대" }).click();
 	await expect(map).toHaveAttribute("data-zoom", "16.000");
-	await expect(map).toHaveAttribute("data-bus-lines", "1");
-	await expect(map).toHaveAttribute("data-bus-stops", "1");
-	await expect(map).toHaveAttribute("data-bus-vehicles", "1");
-	await expect(page.getByText(busStop.properties.stopName)).toBeAttached();
-	expect(
-		fixture.networkRequests.some(
-			(url) => Number(url.searchParams.get("zoom")) >= 16,
-		),
-	).toBe(true);
-	expect(await fixture.connectionCount()).toBeGreaterThan(beforeConnections);
+	await expect(map).toHaveAttribute("data-subway-vehicles", "1");
+	await expect(map).toHaveAttribute("data-subway-vehicle-lod", "near-model");
+	await fixture.emitVehicles({ subway: [movedTrain] });
+	await expect(map).toHaveAttribute(
+		"data-subway-vehicle-position",
+		movedTrain.coordinates.join(","),
+	);
+	await map.screenshot({ path: test.info().outputPath("subway-lod-near.png") });
 
-	const busToggle = page.getByRole("button", { name: "버스 표시" });
-	await busToggle.focus();
-	await page.keyboard.press("Space");
-	await expect(busToggle).toHaveAttribute("aria-pressed", "false");
-	await expect(map).toHaveAttribute("data-bus-lines", "0");
-	await expect(map).toHaveAttribute("data-bus-vehicles", "0");
+	await map.getByRole("button", { name: "확대" }).click();
+	await map.getByRole("button", { name: "확대" }).click();
+	await map.getByRole("button", { name: "확대" }).click();
+	await map.getByRole("button", { name: "확대" }).click();
+	await expect(map).toHaveAttribute("data-zoom", expect.stringMatching(/^19\./));
+	await map.screenshot({ path: test.info().outputPath("subway-lod-close.png") });
 
+	expect(fixture.networkRequests.some((url) => Number(url.searchParams.get("zoom")) >= 16)).toBe(
+		true,
+	);
 	expect(fixture.unexpectedExternalRequests).toEqual([]);
 	expectCleanAudit(audit);
 });
 
-test("replaces live snapshots, clears a failed mode, and preserves its static network", async ({
+test("replaces live snapshots, clears an unavailable subway mode, and preserves its static network", async ({
 	page,
 }) => {
 	const audit = observeNetworkAudit(page);
@@ -137,20 +139,19 @@ test("replaces live snapshots, clears a failed mode, and preserves its static ne
 	await page.goto("/3d-preview", { waitUntil: "domcontentloaded" });
 	const map = await readyMap(page);
 	await map.getByRole("button", { name: "확대" }).click();
-	await expect(map).toHaveAttribute("data-bus-vehicles", "1");
+	await expect(map).toHaveAttribute("data-subway-vehicle-lod", "near-model");
 
-	await fixture.emitVehicles({ bus: [firstBus], subway: [movedTrain] });
+	await fixture.emitVehicles({ subway: [movedTrain] });
 	await expect(map).toHaveAttribute(
 		"data-subway-vehicle-position",
 		movedTrain.coordinates.join(","),
 	);
 	expect(movedTrain.coordinates).not.toEqual(firstTrain.coordinates);
 
-	await fixture.emitAvailability({ bus: "unavailable", subway: "live" });
-	await expect(page.getByText("버스 실시간 정보를 불러오지 못했습니다")).toBeVisible();
-	await expect(map).toHaveAttribute("data-bus-vehicles", "0");
-	await expect(map).toHaveAttribute("data-subway-vehicles", "1");
-	await expect(map).toHaveAttribute("data-bus-lines", "1");
+	await fixture.emitAvailability({ subway: "unavailable" });
+	await expect(page.getByText("지하철 실시간 정보를 불러오지 못했습니다")).toBeVisible();
+	await expect(map).toHaveAttribute("data-subway-vehicles", "0");
+	await expect(map).toHaveAttribute("data-subway-lines", "1");
 
 	expect(fixture.unexpectedExternalRequests).toEqual([]);
 	expectCleanAudit(audit);
@@ -168,7 +169,6 @@ test("clears all vehicles on disconnect and reconnects without relabelling stale
 
 	await fixture.disconnect();
 	await expect(map).toHaveAttribute("data-subway-vehicles", "0");
-	await expect(map).toHaveAttribute("data-bus-vehicles", "0");
 	await expect(page.getByRole("status", { name: "실시간 운행 상태" })).toContainText(
 		"실시간 연결됨",
 	);
@@ -192,7 +192,16 @@ for (const viewport of [
 		const audit = observeNetworkAudit(page);
 		const fixture = await installPreviewFixtures(page);
 		await page.goto("/3d-preview", { waitUntil: "domcontentloaded" });
-		await readyMap(page);
+		const previewMap = await readyMap(page);
+		await expect(previewMap).toHaveAttribute("data-subway-vehicle-lod", "far-circle");
+		await previewMap.screenshot({
+			path: test.info().outputPath(`subway-lod-${viewport.layout}-${viewport.width}-far.png`),
+		});
+		await previewMap.getByRole("button", { name: "확대" }).click();
+		await expect(previewMap).toHaveAttribute("data-subway-vehicle-lod", "near-model");
+		await previewMap.screenshot({
+			path: test.info().outputPath(`subway-lod-${viewport.layout}-${viewport.width}-near.png`),
+		});
 
 		const rail = await page.locator(".map-preview-rail").boundingBox();
 		const map = await page.locator(".map-preview-map").boundingBox();
@@ -226,7 +235,7 @@ test.describe("reduced motion", () => {
 		await page.goto("/3d-preview", { waitUntil: "domcontentloaded" });
 		const map = await readyMap(page);
 
-		await fixture.emitVehicles({ bus: [], subway: [movedTrain] });
+		await fixture.emitVehicles({ subway: [movedTrain] });
 		await expect(map).toHaveAttribute(
 			"data-subway-vehicle-position",
 			movedTrain.coordinates.join(","),

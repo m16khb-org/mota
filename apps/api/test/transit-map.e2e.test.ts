@@ -41,9 +41,10 @@ describe("transit map SSE", () => {
 			.find((line) => line.startsWith("data: "));
 		expect(dataLine).toBeDefined();
 		if (!dataLine) throw new Error("SSE ready frame did not contain data.");
-		expect(
-			transitMapEventSchema.safeParse(JSON.parse(dataLine.slice(6))).success,
-		).toBe(true);
+		const event = JSON.parse(dataLine.slice(6));
+		expect(transitMapEventSchema.safeParse(event).success).toBe(true);
+		expect(event).toMatchObject({ modes: ["subway"] });
+		expect(event).not.toHaveProperty("bus");
 
 		abortController.abort();
 		await reader.cancel().catch(() => undefined);

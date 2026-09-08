@@ -1,7 +1,10 @@
 // @vitest-environment jsdom
 
 import { StrictMode } from "react";
-import type { TransitMapNetwork, TransitVehicle } from "@mota/contracts/transit-map";
+import type {
+  SubwayVehicle,
+  TransitMapNetwork,
+} from "@mota/contracts/transit-map";
 import { act, render } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MapLibrePreviewMap } from "./MapLibrePreviewMap";
@@ -36,15 +39,9 @@ const network = {
     lines: emptyCollection,
     stations: emptyCollection,
   },
-  bus: {
-    enabled: true,
-    attribution: "서울특별시 교통정보",
-    routes: emptyCollection,
-    stops: emptyCollection,
-  },
 } satisfies TransitMapNetwork;
 
-function train(coordinates: [number, number], capturedAt: string): TransitVehicle {
+function train(coordinates: [number, number], capturedAt: string): SubwayVehicle {
   return {
     id: "subway:1008:8120",
     mode: "subway",
@@ -144,9 +141,13 @@ describe("MapLibrePreviewMap", () => {
     );
     expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-center-lng", "127.125300");
     expect(getByTestId("maplibre-preview-map")).toHaveAttribute("data-zoom", "15.000");
+    expect(getByTestId("maplibre-preview-map")).toHaveAttribute(
+      "data-subway-vehicle-lod",
+      "far-circle",
+    );
   });
 
-  it("reports the loaded viewport and installs bulk transit layers once", () => {
+  it("reports the loaded viewport and installs subway-only transit layers once", () => {
     const { props } = renderMap({ network });
 
     act(() => mapInstances[0]?.emit("load"));
@@ -158,8 +159,14 @@ describe("MapLibrePreviewMap", () => {
       north: 37.5466,
       zoom: 15,
     });
-    expect(mapInstances[0]?.addSource).toHaveBeenCalledTimes(9);
-    expect(mapInstances[0]?.addLayer).toHaveBeenCalledTimes(9);
+    expect(mapInstances[0]?.addSource).toHaveBeenCalledTimes(6);
+    expect(mapInstances[0]?.addLayer).toHaveBeenCalledTimes(6);
+    expect(mapInstances[0]?.addSource.mock.calls.map(([id]) => id)).not.toContain(
+      "mota-bus-vehicles",
+    );
+    expect(mapInstances[0]?.addLayer.mock.calls.map(([layer]) => layer.id)).not.toContain(
+      "mota-bus-vehicles",
+    );
   });
 
   it("interpolates changed vehicles and keeps one accessible selected popup", () => {
@@ -190,14 +197,14 @@ describe("MapLibrePreviewMap", () => {
           },
         },
       },
-      vehicles: { bus: [], subway: [first] },
+      vehicles: [first],
     });
     act(() => mapInstances[0]?.emit("load"));
 
     result.rerender(
       <MapLibrePreviewMap
         {...result.props}
-        vehicles={{ bus: [], subway: [next] }}
+        vehicles={[next]}
         selection={{
           key: next.id,
           mode: "subway",
@@ -251,11 +258,11 @@ describe("MapLibrePreviewMap", () => {
           },
         },
       };
-      const result = renderMap({ network: routeNetwork, vehicles: { bus: [], subway: [first] } });
+      const result = renderMap({ network: routeNetwork, vehicles: [first] });
       act(() => mapInstances[0]?.emit("load"));
       const next = train([127.101, 37.5], "2026-09-05T04:00:10.000Z");
       result.rerender(
-        <MapLibrePreviewMap {...result.props} vehicles={{ bus: [], subway: [next] }} />,
+        <MapLibrePreviewMap {...result.props} vehicles={[next]} />,
       );
       const data = mapInstances[0]?.sources.get("mota-subway-vehicles")?.setData.mock
         .lastCall?.[0] as { features: Array<{ properties: { bearing: number } }> };

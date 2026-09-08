@@ -3,7 +3,7 @@ import type {
 	TransitAvailability,
 	TransitMapEvent,
 	TransitMapNetwork,
-	TransitVehicle,
+	SubwayVehicle,
 } from "@mota/contracts/transit-map";
 import {
 	fetchTransitMapNetwork,
@@ -26,14 +26,8 @@ export interface LiveTransitMapDependencies {
 export interface LiveTransitMapState {
 	readonly loading: boolean;
 	readonly network: TransitMapNetwork | null;
-	readonly availability: {
-		readonly bus: TransitAvailability;
-		readonly subway: TransitAvailability;
-	};
-	readonly vehicles: {
-		readonly bus: readonly TransitVehicle[];
-		readonly subway: readonly TransitVehicle[];
-	};
+	readonly availability: TransitAvailability;
+	readonly vehicles: readonly SubwayVehicle[];
 	readonly connection: "loading" | "connecting" | "live" | "reconnecting" | "error";
 	readonly lastServerTime: string | null;
 	readonly error: unknown;
@@ -49,8 +43,8 @@ type Action =
 const initialState: LiveTransitMapState = {
 	loading: true,
 	network: null,
-	availability: { bus: "unavailable", subway: "unavailable" },
-	vehicles: { bus: [], subway: [] },
+	availability: "unavailable",
+	vehicles: [],
 	connection: "loading",
 	lastServerTime: null,
 	error: null,
@@ -128,7 +122,7 @@ function reducer(
 			return {
 				...state,
 				connection: "reconnecting",
-				vehicles: { bus: [], subway: [] },
+				vehicles: [],
 				error: action.error ?? state.error,
 			};
 		case "load-error":
@@ -136,7 +130,7 @@ function reducer(
 				...state,
 				loading: false,
 				connection: "error",
-				vehicles: { bus: [], subway: [] },
+				vehicles: [],
 				error: action.error,
 			};
 		case "event":
@@ -161,17 +155,14 @@ function reduceEvent(
 		case "vehicles":
 			return {
 				...state,
-				vehicles: { bus: event.bus, subway: event.subway },
+				vehicles: event.subway,
 				lastServerTime: event.capturedAt,
 			};
 		case "availability":
 			return {
 				...state,
-				availability: { bus: event.bus, subway: event.subway },
-				vehicles: {
-					bus: event.bus === "live" ? state.vehicles.bus : [],
-					subway: event.subway === "live" ? state.vehicles.subway : [],
-				},
+				availability: event.subway,
+				vehicles: event.subway === "live" ? state.vehicles : [],
 				lastServerTime: event.observedAt,
 			};
 	}

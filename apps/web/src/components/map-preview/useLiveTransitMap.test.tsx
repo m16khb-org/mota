@@ -25,12 +25,6 @@ const network = {
 		lines: { type: "FeatureCollection" as const, features: [] },
 		stations: { type: "FeatureCollection" as const, features: [] },
 	},
-	bus: {
-		enabled: true,
-		attribution: "서울특별시 교통정보",
-		routes: { type: "FeatureCollection" as const, features: [] },
-		stops: { type: "FeatureCollection" as const, features: [] },
-	},
 } satisfies TransitMapNetwork;
 
 const train = {
@@ -43,15 +37,6 @@ const train = {
 	direction: "상행",
 	capturedAt: "2026-09-05T04:00:00.000Z",
 	positionBasis: "station-segment" as const,
-};
-
-const bus = {
-	...train,
-	id: "bus:124100001:vehicle-a",
-	mode: "bus" as const,
-	routeId: "124100001",
-	routeName: "341",
-	positionBasis: "gps" as const,
 };
 
 function deferred<T>() {
@@ -85,7 +70,7 @@ function fixture(networkPromise: Promise<TransitMapNetwork> = Promise.resolve(ne
 afterEach(cleanup);
 
 describe("useLiveTransitMap", () => {
-	it("loads the network before opening the stream and replaces complete snapshots", async () => {
+	it("loads the network before opening the subway stream and replaces complete snapshots", async () => {
 		const request = deferred<TransitMapNetwork>();
 		const live = fixture(request.promise);
 		const { result } = renderHook(() =>
@@ -102,29 +87,28 @@ describe("useLiveTransitMap", () => {
 			live.emit({
 				kind: "ready",
 				revision: "revision-1",
-				modes: ["bus", "subway"],
+				modes: ["subway"],
 				serverTime: "2026-09-05T04:00:00.000Z",
 			});
 			live.emit({
 				kind: "availability",
-				bus: "live",
 				subway: "live",
 				observedAt: "2026-09-05T04:00:00.000Z",
 			});
 			live.emit({
 				kind: "vehicles",
-				bus: [bus],
 				subway: [train],
 				capturedAt: "2026-09-05T04:00:00.000Z",
 			});
 		});
 
 		expect(result.current.connection).toBe("live");
-		expect(result.current.vehicles).toEqual({ bus: [bus], subway: [train] });
+		expect(result.current.availability).toBe("live");
+		expect(result.current.vehicles).toEqual([train]);
 		expect(result.current.lastServerTime).toBe("2026-09-05T04:00:00.000Z");
 	});
 
-	it("clears one unavailable mode and clears both modes on connection error", async () => {
+	it("clears unavailable subway vehicles and clears them on connection error", async () => {
 		const live = fixture();
 		const { result } = renderHook(() =>
 			useLiveTransitMap(viewport, live.dependencies),
@@ -133,22 +117,20 @@ describe("useLiveTransitMap", () => {
 		act(() => {
 			live.emit({
 				kind: "vehicles",
-				bus: [bus],
 				subway: [train],
 				capturedAt: "2026-09-05T04:00:00.000Z",
 			});
 			live.emit({
 				kind: "availability",
-				bus: "unavailable",
-				subway: "live",
+				subway: "unavailable",
 				observedAt: "2026-09-05T04:00:01.000Z",
 			});
 		});
-		expect(result.current.vehicles).toEqual({ bus: [], subway: [train] });
+		expect(result.current.vehicles).toEqual([]);
 
 		act(() => live.connectionError());
 		expect(result.current.connection).toBe("reconnecting");
-		expect(result.current.vehicles).toEqual({ bus: [], subway: [] });
+		expect(result.current.vehicles).toEqual([]);
 	});
 
 	it("aborts and closes old work on viewport change and unmount", async () => {

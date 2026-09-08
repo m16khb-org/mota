@@ -18,7 +18,7 @@ The operational runbook lives in [operations/guides/overview.md](operations/guid
 ## Live transit configuration
 
 - `SEOUL_SUBWAY_API_KEY` enables official subway arrivals and live subway positions.
-- `SEOUL_BUS_API_KEY` enables viewport-scoped bus routes, stops, and live GPS positions.
+- `SEOUL_BUS_API_KEY` is currently unused by the live transit map, which is subway-only.
 - Missing keys are valid degraded configuration: static subway network remains available and the browser shows `unconfigured` instead of fabricated movement.
 - After changing either key, rebuild/restart the API container. Never print key-bearing upstream URLs.
 

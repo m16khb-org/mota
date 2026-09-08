@@ -9,6 +9,7 @@ import {
 	MAP_PREVIEW_PITCH_LIMITS,
 	MAP_PREVIEW_SOURCE_ID,
 	MAP_PREVIEW_STYLE_URL,
+	MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM,
 	MAP_PREVIEW_ZOOM_LIMITS,
 } from "./mapPreviewConfig";
 
@@ -68,6 +69,19 @@ describe("mapPreviewConfig camera contract", () => {
 		);
 		expect(MAP_PREVIEW_INITIAL_CAMERA.pitch).toBeLessThan(
 			MAP_PREVIEW_PITCH_LIMITS.max,
+		);
+	});
+
+	it("switches train detail at the zoom where a 31m model becomes legible", () => {
+		// At zoom 16 a 31m train projects to ~16px (124088 m-per-deg / 2^16),
+		// the size where its multi-part silhouette resolves; the far circle is
+		// sized to the same ~16px diameter at the handoff.
+		expect(MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM).toBe(16);
+		expect(MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM).toBeGreaterThan(
+			MAP_PREVIEW_INITIAL_CAMERA.zoom,
+		);
+		expect(MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM).toBeLessThan(
+			MAP_PREVIEW_ZOOM_LIMITS.max,
 		);
 	});
 

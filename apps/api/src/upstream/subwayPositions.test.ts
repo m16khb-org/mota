@@ -21,6 +21,21 @@ const payload = {
 	],
 };
 
+const olderMappedObservation = {
+	...payload.realtimePositionList[0],
+	subwayId: "1001",
+	statnId: "1001000127",
+	statnNm: "동묘앞",
+	trainNo: "0098",
+	recptnDt: "2026-09-05 04:00:00",
+};
+const newerUnmappedObservation = {
+	...olderMappedObservation,
+	statnId: "1001000139",
+	statnNm: "소요산",
+	recptnDt: "2026-09-05 04:01:00",
+};
+
 describe("subway position adapter", () => {
 	it("normalizes official rows into stable station-segment vehicles", async () => {
 		const fetcher = vi.fn().mockResolvedValue(Response.json(payload));
@@ -52,6 +67,124 @@ describe("subway position adapter", () => {
 			expect.stringMatching(/realtimePosition\/0\/100\/8%ED%98%B8%EC%84%A0$/),
 			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
+	});
+
+	it("normalizes official numeric direction codes without losing provider semantics", async () => {
+		const fetcher = vi.fn().mockResolvedValue(
+			Response.json({
+				...payload,
+				realtimePositionList: [
+					{ ...payload.realtimePositionList[0], updnLine: "0" },
+					{
+						...payload.realtimePositionList[0],
+						trainNo: "8121",
+						statnNm: "잠실",
+						updnLine: "1",
+					},
+				],
+			}),
+		);
+
+		const result = await fetchSubwayPositions(
+			fetcher,
+			officialSubwayPositionTemplate("secret-test-key"),
+			"8호선",
+		);
+
+		expect(result.vehicles.map((vehicle) => vehicle.direction)).toEqual([
+			"상행/내선",
+			"하행/외선",
+		]);
+	});
+
+	it("keeps only the newest observation when the upstream repeats a train number", async () => {
+		const fetcher = vi.fn().mockResolvedValue(
+			Response.json({
+				...payload,
+				realtimePositionList: [
+					{ ...payload.realtimePositionList[0], recptnDt: "2026-09-05 04:00:00" },
+					{
+						...payload.realtimePositionList[0],
+						statnNm: "잠실",
+						recptnDt: "2026-09-05 03:59:00",
+					},
+				],
+			}),
+		);
+
+		const expected = loadSubwayNetwork().stations.features.find(
+			(feature) =>
+				normalizeStationName(feature.properties.stationName) === "천호" &&
+				feature.properties.routeIds.includes("8"),
+		);
+		if (!expected) throw new Error("Generated network is missing 8호선 천호.");
+
+		const result = await fetchSubwayPositions(
+			fetcher,
+			officialSubwayPositionTemplate("secret-test-key"),
+			"8호선",
+		);
+
+		expect(result.vehicles).toHaveLength(1);
+		expect(result.vehicles[0]).toMatchObject({
+			coordinates: expected.geometry.coordinates,
+			capturedAt: "2026-09-04T19:00:00.000Z",
+		});
+	});
+
+	it("omits a same-name station without an exact line anchor", async () => {
+		const fetcher = vi.fn().mockResolvedValue(
+			Response.json({
+				...payload,
+				realtimePositionList: [
+					{
+						...payload.realtimePositionList[0],
+						subwayId: "1063",
+						statnId: "1063075135",
+						statnNm: "양평",
+						trainNo: "5075",
+						updnLine: "1",
+					},
+				],
+			}),
+		);
+
+		const result = await fetchSubwayPositions(
+			fetcher,
+			officialSubwayPositionTemplate("secret-test-key"),
+			"경의중앙선",
+		);
+
+		expect(result).toMatchObject({
+			availability: "no-service",
+			vehicles: [],
+		});
+	});
+
+	it.each([
+		{
+			label: "older mapped row before newer unmapped row",
+			rows: [olderMappedObservation, newerUnmappedObservation],
+		},
+		{
+			label: "newer unmapped row before older mapped row",
+			rows: [newerUnmappedObservation, olderMappedObservation],
+		},
+	])("omits a train when its newest row is unmapped ($label)", async ({ rows }) => {
+		const fetcher = vi.fn().mockResolvedValue(
+			Response.json({ ...payload, realtimePositionList: rows }),
+		);
+
+		const result = await fetchSubwayPositions(
+			fetcher,
+			officialSubwayPositionTemplate("secret-test-key"),
+			"1호선",
+		);
+
+		expect(result).toMatchObject({
+			availability: "no-service",
+			vehicles: [],
+		});
 	});
 
 	it("maps INFO-200 to an expected no-service empty snapshot", async () => {

@@ -21,13 +21,6 @@ const network = {
 		lines: { type: "FeatureCollection", features: [] },
 		stations: { type: "FeatureCollection", features: [] },
 	},
-	bus: {
-		enabled: false,
-		reason: "unconfigured",
-		attribution: "서울특별시 교통정보",
-		routes: { type: "FeatureCollection", features: [] },
-		stops: { type: "FeatureCollection", features: [] },
-	},
 };
 
 class FakeEventSource implements EventSourceLike {
@@ -48,7 +41,7 @@ class FakeEventSource implements EventSourceLike {
 }
 
 describe("transit map browser client", () => {
-	it("fetches a schema-valid network with canonical six-decimal query values", async () => {
+	it("fetches a subway-only schema-valid network with canonical six-decimal query values", async () => {
 		const fetcher = vi.fn().mockResolvedValue(Response.json(network));
 		const signal = new AbortController().signal;
 
@@ -62,13 +55,15 @@ describe("transit map browser client", () => {
 	});
 
 	it("rejects invalid network responses", async () => {
-		const fetcher = vi.fn().mockResolvedValue(Response.json({ revision: "bad" }));
+		const fetcher = vi.fn().mockResolvedValue(
+			Response.json({ revision: "bad", bus: {} }),
+		);
 		await expect(
 			fetchTransitMapNetwork(viewport, new AbortController().signal, fetcher),
 		).rejects.toThrow();
 	});
 
-	it("parses only named transit events and reports protocol and connection failures", () => {
+	it("parses only subway transit events and reports protocol and connection failures", () => {
 		const source = new FakeEventSource();
 		const onEvent = vi.fn();
 		const onProtocolError = vi.fn();
@@ -91,13 +86,11 @@ describe("transit map browser client", () => {
 			},
 			{
 				kind: "availability",
-				bus: "unconfigured",
 				subway: "live",
 				observedAt: "2026-09-05T04:00:00.000Z",
 			},
 			{
 				kind: "vehicles",
-				bus: [],
 				subway: [],
 				capturedAt: "2026-09-05T04:00:00.000Z",
 			},

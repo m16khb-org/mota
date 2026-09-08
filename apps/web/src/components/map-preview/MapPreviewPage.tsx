@@ -1,5 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { TransitMapNetwork, TransitVehicle } from "@mota/contracts/transit-map";
+import type {
+	TransitAvailability,
+	SubwayVehicle,
+	TransitMapNetwork,
+} from "@mota/contracts/transit-map";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { MapViewport } from "../../api/transitMapClient";
 import { MAP_PREVIEW_INITIAL_CAMERA } from "./mapPreviewConfig";
@@ -22,6 +26,55 @@ const INITIAL_VIEWPORT: MapViewport = {
 
 const EMPTY_COLLECTION = { type: "FeatureCollection" as const, features: [] };
 
+type LiveConnection = ReturnType<typeof useLiveTransitMap>["connection"];
+
+type VehicleDisplayState =
+	| { readonly kind: "live"; readonly count: number }
+	| { readonly kind: "connecting" }
+	| { readonly kind: "reconnecting" }
+	| { readonly kind: "error" }
+	| { readonly kind: "no-service" }
+	| { readonly kind: "unavailable" }
+	| { readonly kind: "unconfigured" }
+	| { readonly kind: "zoom-required" };
+
+// Only a live stream carrying server availability states an authoritative
+// vehicle count; every other connection phase must say so instead of "0대".
+function vehicleDisplayState(
+	connection: LiveConnection,
+	availability: TransitAvailability,
+	count: number,
+): VehicleDisplayState {
+	if (connection === "loading" || connection === "connecting") {
+		return { kind: "connecting" };
+	}
+	if (connection === "reconnecting") return { kind: "reconnecting" };
+	if (connection === "error") return { kind: "error" };
+	if (availability === "live") return { kind: "live", count };
+	if (availability === "no-service") return { kind: "no-service" };
+	return { kind: availability };
+}
+
+function vehicleDisplayCopy(status: VehicleDisplayState): string {
+	switch (status.kind) {
+		case "live":
+			return `현재 화면 ${status.count}대 운행 중`;
+		case "no-service":
+			return "현재 화면 0대 운행 중";
+		case "connecting":
+			return "운행 정보 확인 중";
+		case "reconnecting":
+			return "재연결 중";
+		case "error":
+		case "unavailable":
+			return "정보 없음";
+		case "unconfigured":
+			return "설정 필요";
+		case "zoom-required":
+			return "확대 필요";
+	}
+}
+
 function fatalMessage(failure: MapPreviewFatal) {
 	switch (failure.kind) {
 		case "construction":
@@ -41,7 +94,6 @@ export function MapPreviewPage() {
 	const [fatal, setFatal] = useState<MapPreviewFatal | null>(null);
 	const [degraded, setDegraded] = useState<MapPreviewDegraded | null>(null);
 	const [showSubway, setShowSubway] = useState(true);
-	const [showBus, setShowBus] = useState(true);
 	const [selection, setSelection] = useState<TransitMapSelection | null>(null);
 	const listRef = useRef<HTMLDetailsElement>(null);
 	const selectionOriginRef = useRef<"list" | "map" | null>(null);
@@ -56,8 +108,11 @@ export function MapPreviewPage() {
 			}
 			if (!previousSelection || selectionOriginRef.current !== "list") return;
 			queueMicrotask(() => {
-				const button = [...(listRef.current?.querySelectorAll<HTMLButtonElement>("button") ?? [])]
-					.find((candidate) => candidate.dataset.selectionKey === previousSelection.key);
+				const button = [
+					...(listRef.current?.querySelectorAll<HTMLButtonElement>("button") ?? []),
+				].find(
+					(candidate) => candidate.dataset.selectionKey === previousSelection.key,
+				);
 				button?.focus();
 			});
 		},
@@ -65,38 +120,53 @@ export function MapPreviewPage() {
 	);
 
 	const visibleNetwork = useMemo(
-		() => filterNetwork(live.network, showSubway, showBus),
-		[live.network, showSubway, showBus],
+		() => filterNetwork(live.network, showSubway),
+		[live.network, showSubway],
 	);
 	const visibleVehicles = useMemo(
-		() => ({
-			bus: showBus ? live.vehicles.bus : [],
-			subway: showSubway ? live.vehicles.subway : [],
-		}),
-		[live.vehicles, showBus, showSubway],
+		() =>
+			showSubway
+				? live.vehicles.filter(
+						(vehicle): vehicle is SubwayVehicle => vehicle.mode === "subway",
+					)
+				: [],
+		[live.vehicles, showSubway],
 	);
 	const listSelections = useMemo(
 		() => buildListSelections(visibleNetwork, visibleVehicles),
 		[visibleNetwork, visibleVehicles],
 	);
+	const visibleVehicleCount = useMemo(
+		() => countVehiclesInViewport(live.vehicles, viewport),
+		[live.vehicles, viewport],
+	);
+	const subwayStatus = vehicleDisplayState(
+		live.connection,
+		live.availability,
+		visibleVehicleCount,
+	);
 
 	return (
 		<main className="map-preview-page">
-			<aside className="map-preview-rail" aria-label="실시간 대중교통 제어판">
+			<aside className="map-preview-rail" aria-label="실시간 지하철 제어판">
 				<header className="map-preview-header">
 					<a className="map-preview-back-link" href="/">
 						모타로 돌아가기
 					</a>
-					<p className="map-preview-eyebrow">SEOUL TRANSIT / LIVE</p>
+					<p className="map-preview-eyebrow">SEOUL SUBWAY / LIVE</p>
 					<h1>서울 실시간 3D 지도</h1>
 					<p className="map-preview-intro">
-						도시 위를 움직이는 지하철과 버스를 조용히 바라보세요.
+						도시 아래를 움직이는 지하철을 조용히 바라보세요.
 					</p>
-					<p className="map-preview-intro">역·정류장·차량은 실제 위치를 표시하는 간략한 입체 모형입니다.</p>
+					<p className="map-preview-intro">
+						역과 차량은 관측된 역을 기준으로 표시하며 역 사이 이동은 추정 보간합니다.
+					</p>
 				</header>
 
 				<section className="map-preview-live" aria-labelledby="live-status-title">
-					<h2 id="live-status-title" className="sr-only">실시간 운행 상태</h2>
+					<h2 id="live-status-title" className="sr-only">
+						실시간 운행 상태
+					</h2>
 					<p
 						className={`map-preview-live__status is-${live.connection}`}
 						role="status"
@@ -111,26 +181,24 @@ export function MapPreviewPage() {
 						<ModeToggle
 							label="지하철"
 							pressed={showSubway}
-							count={live.vehicles.subway.length}
+							status={subwayStatus}
 							onClick={() => setShowSubway((shown) => !shown)}
-						/>
-						<ModeToggle
-							label="버스"
-							pressed={showBus}
-							count={live.vehicles.bus.length}
-							onClick={() => setShowBus((shown) => !shown)}
 						/>
 					</fieldset>
 					<div className="map-preview-mode-notices">
-						{availabilityCopy("subway", live.availability.subway)}
-						{availabilityCopy("bus", live.availability.bus)}
+						{availabilityCopy(subwayStatus)}
 					</div>
 				</section>
 
 				<section className="map-preview-viewport" aria-label="현재 화면 요약">
-					<div><span>확대</span><strong>{viewport.zoom.toFixed(1)}</strong></div>
-					<div><span>지하철역</span><strong>{live.network?.subway.stations.features.length ?? 0}</strong></div>
-					<div><span>버스 정류장</span><strong>{live.network?.bus.stops.features.length ?? 0}</strong></div>
+					<div>
+						<span>확대</span>
+						<strong>{viewport.zoom.toFixed(1)}</strong>
+					</div>
+					<div>
+						<span>지하철역</span>
+						<strong>{live.network?.subway.stations.features.length ?? 0}</strong>
+					</div>
 				</section>
 
 				<section className="map-preview-selection" aria-label="선택한 지점">
@@ -141,7 +209,7 @@ export function MapPreviewPage() {
 							<p>{selection.detail || selection.kind}</p>
 						</>
 					) : (
-						<p>지도나 아래 목록에서 역, 정류장, 차량을 선택하세요.</p>
+						<p>지도나 아래 목록에서 역과 차량을 선택하세요.</p>
 					)}
 				</section>
 
@@ -173,7 +241,9 @@ export function MapPreviewPage() {
 			</aside>
 
 			<section className="map-preview-map" aria-labelledby="map-preview-map-title">
-				<h2 id="map-preview-map-title" className="sr-only">서울 실시간 3D 지도</h2>
+				<h2 id="map-preview-map-title" className="sr-only">
+					서울 실시간 3D 지도
+				</h2>
 				<p className="map-preview-map__state" aria-hidden="true">
 					{mapReady ? "3D 지도 준비 완료" : "3D 지도 준비 중"}
 				</p>
@@ -208,12 +278,12 @@ export function MapPreviewPage() {
 function ModeToggle({
 	label,
 	pressed,
-	count,
+	status,
 	onClick,
 }: {
-	readonly label: "버스" | "지하철";
+	readonly label: "지하철";
 	readonly pressed: boolean;
-	readonly count: number;
+	readonly status: VehicleDisplayState;
 	readonly onClick: () => void;
 }) {
 	return (
@@ -222,10 +292,11 @@ function ModeToggle({
 			className="map-preview-mode"
 			aria-label={`${label} 표시`}
 			aria-pressed={pressed}
+			data-vehicle-state={status.kind}
 			onClick={onClick}
 		>
 			<span>{label}</span>
-			<strong>{count}대 운행 중</strong>
+			<strong>{vehicleDisplayCopy(status)}</strong>
 		</button>
 	);
 }
@@ -242,73 +313,78 @@ function connectionCopy(
 	return "실시간 운행 정보를 연결하고 있습니다";
 }
 
-function availabilityCopy(
-	mode: "bus" | "subway",
-	availability: ReturnType<typeof useLiveTransitMap>["availability"][typeof mode],
-) {
-	if (availability === "live") return null;
+function availabilityCopy(status: VehicleDisplayState) {
+	if (
+		status.kind === "live" ||
+		status.kind === "connecting" ||
+		status.kind === "reconnecting" ||
+		status.kind === "error"
+	) {
+		return null;
+	}
 	const copy = {
-		bus: {
-			"no-service": "현재 화면에 운행 중인 버스가 없습니다",
-			unavailable: "버스 실시간 정보를 불러오지 못했습니다",
-			unconfigured: "버스 API 설정이 필요합니다",
-			"zoom-required": "더 확대하면 현재 화면의 버스를 표시합니다",
-		},
-		subway: {
-			"no-service": "지하철 운행 정보 없음",
-			unavailable: "지하철 실시간 정보를 불러오지 못했습니다",
-			unconfigured: "지하철 API 설정이 필요합니다",
-			"zoom-required": "더 확대하면 지하철 정보를 표시합니다",
-		},
+		"no-service": "지하철 운행 정보 없음",
+		unavailable: "지하철 실시간 정보를 불러오지 못했습니다",
+		unconfigured: "지하철 API 설정이 필요합니다",
+		"zoom-required": "더 확대하면 지하철 정보를 표시합니다",
 	} as const;
-	return <p key={mode}>{copy[mode][availability]}</p>;
+	return <p>{copy[status.kind]}</p>;
 }
 
 function filterNetwork(
 	network: TransitMapNetwork | null,
 	showSubway: boolean,
-	showBus: boolean,
 ): TransitMapNetwork | null {
 	if (!network) return null;
-	return {
-		...network,
-		subway: showSubway
-			? network.subway
-			: { ...network.subway, lines: EMPTY_COLLECTION, stations: EMPTY_COLLECTION },
-		bus: showBus
-			? network.bus
-			: { ...network.bus, routes: EMPTY_COLLECTION, stops: EMPTY_COLLECTION },
-	};
+	return showSubway
+		? network
+		: {
+				...network,
+				subway: {
+					...network.subway,
+					lines: EMPTY_COLLECTION,
+					stations: EMPTY_COLLECTION,
+				},
+			};
+}
+
+function countVehiclesInViewport(
+	vehicles: readonly SubwayVehicle[],
+	viewport: MapViewport,
+) {
+	return vehicles.filter((vehicle) => {
+		const [longitude, latitude] = vehicle.coordinates;
+		return (
+			longitude >= viewport.west &&
+			longitude <= viewport.east &&
+			latitude >= viewport.south &&
+			latitude <= viewport.north
+		);
+	}).length;
 }
 
 function buildListSelections(
 	network: TransitMapNetwork | null,
-	vehicles: { readonly bus: readonly TransitVehicle[]; readonly subway: readonly TransitVehicle[] },
+	vehicles: readonly SubwayVehicle[],
 ) {
 	if (!network) return [];
-	const stations: TransitMapSelection[] = network.subway.stations.features.map((feature) => ({
-		key: feature.properties.stationId,
-		mode: "subway",
-		kind: "station",
-		name: feature.properties.stationName,
-		detail: feature.properties.routeIds.join(" · "),
-		coordinates: feature.geometry.coordinates,
-	}));
-	const stops: TransitMapSelection[] = network.bus.stops.features.map((feature) => ({
-		key: feature.properties.stopId,
-		mode: "bus",
-		kind: "stop",
-		name: feature.properties.stopName,
-		detail: feature.properties.arsId ?? "ARS 정보 없음",
-		coordinates: feature.geometry.coordinates,
-	}));
-	const moving: TransitMapSelection[] = [...vehicles.subway, ...vehicles.bus].map((vehicle) => ({
+	const stations: TransitMapSelection[] = network.subway.stations.features.map(
+		(feature) => ({
+			key: feature.properties.stationId,
+			mode: "subway",
+			kind: "station",
+			name: feature.properties.stationName,
+			detail: feature.properties.routeIds.join(" · "),
+			coordinates: feature.geometry.coordinates,
+		}),
+	);
+	const moving: TransitMapSelection[] = vehicles.map((vehicle) => ({
 		key: vehicle.id,
-		mode: vehicle.mode,
-		kind: "vehicle",
+		mode: "subway" as const,
+		kind: "vehicle" as const,
 		name: vehicle.routeName,
 		detail: vehicle.direction,
 		coordinates: vehicle.coordinates,
 	}));
-	return [...moving, ...stations, ...stops];
+	return [...moving, ...stations];
 }

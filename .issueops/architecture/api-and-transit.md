@@ -72,7 +72,7 @@ filtering, after which same-name transfer rows select the nearest element.
 ```text
 React /3d-preview
   → GET /api/transit-map/network with bbox + zoom
-  ← generated OSM subway GeoJSON + eligible Seoul bus topology
+  ← generated OSM subway GeoJSON (subway-only)
 
 React EventSource
   → GET /api/transit-map/events with the same viewport
@@ -81,24 +81,15 @@ React EventSource
 SubwayPositionCollector (one process-wide 10 s poll)
   → official Seoul realtimePosition by line
   ← station-segment vehicle snapshot shared by every subscriber
-
-BusPositionCollectorRegistry (15 s poll per referenced route)
-  → official Seoul route position API
-  ← GPS snapshot shared by matching viewport subscribers
 ```
 
 The subway network is a generated, deterministic TypeScript artifact from
-OpenStreetMap route/platform data and is filtered in memory per viewport. Bus
-topology calls are limited to eight concurrent requests and share 24-hour
-promise caches for stop routes and route path/station data. Bus topology is
-eligible only at zoom 16 or greater, at 4 km² or less, and at 40 routes or less.
+OpenStreetMap route/platform data and is filtered in memory per viewport.
 
 Live collectors are process-local and single-flight. The subway collector is
-shared across all subscribers. The bus registry reference-counts route
-collectors and stops a route poll when its last subscriber leaves. A source
-poll replaces its complete mode snapshot; a failure emits an empty snapshot
-instead of retaining stale vehicle positions. Closing an SSE connection
-releases all associated subscriptions.
+shared across all subscribers. A source poll replaces the complete subway
+snapshot; a failure emits an empty snapshot instead of retaining stale vehicle
+positions. Closing an SSE connection releases the subway subscription.
 
 `GET /api/health` remains non-gating liveness. `transitCatalogs` reports
 nearby catalog state, while `liveTransit` reports bounded bus/subway source

@@ -52,7 +52,7 @@ describe("transitMapQuerySchema", () => {
 		).toThrow();
 	});
 
-	it("accepts a wide viewport so the service can return zoom-required", () => {
+	it("accepts a wide viewport for subway network filtering", () => {
 		expect(
 			transitMapQuerySchema.safeParse({
 				west: 126.9,
@@ -64,7 +64,7 @@ describe("transitMapQuerySchema", () => {
 		).toBe(true);
 	});
 
-	it("accepts the same wide viewport below the bus-live zoom threshold", () => {
+	it("accepts the same wide viewport at lower zoom", () => {
 		expect(
 			transitMapQuerySchema.safeParse({
 				west: 126.9,
@@ -99,35 +99,27 @@ describe("transit map payload schemas", () => {
 				lines: emptyFeatureCollection,
 				stations: emptyFeatureCollection,
 			},
-			bus: {
-				enabled: false,
-				reason: "zoom-required",
-				attribution: "서울특별시 교통정보",
-				routes: emptyFeatureCollection,
-				stops: emptyFeatureCollection,
-			},
 		};
 
 		expect(transitMapNetworkSchema.parse(payload)).toEqual(payload);
+		expect(transitMapNetworkSchema.parse({ ...payload, bus: {} })).toEqual(payload);
 	});
 
-	it("accepts ready, vehicles, availability, and heartbeat events", () => {
+	it("accepts ready, vehicles, availability, and heartbeat events for subway only", () => {
 		const events = [
 			{
 				kind: "ready",
 				revision: "network-2026-09-05",
-				modes: ["bus", "subway"],
+				modes: ["subway"],
 				serverTime: "2026-09-05T04:00:00.000Z",
 			},
 			{
 				kind: "vehicles",
-				bus: [],
 				subway: [vehicle],
 				capturedAt: "2026-09-05T04:00:00.000Z",
 			},
 			{
 				kind: "availability",
-				bus: "zoom-required",
 				subway: "live",
 				observedAt: "2026-09-05T04:00:00.000Z",
 			},
@@ -140,13 +132,25 @@ describe("transit map payload schemas", () => {
 		for (const event of events) {
 			expect(transitMapEventSchema.parse(event)).toEqual(event);
 		}
+			expect(() =>
+			transitMapEventSchema.parse({
+				kind: "vehicles",
+				subway: [
+					{
+						...vehicle,
+						mode: "bus",
+						positionBasis: "gps",
+					},
+				],
+				capturedAt: "2026-09-05T04:00:00.000Z",
+			}),
+		).toThrow();
 	});
 
 	it("rejects latitude-longitude coordinate order", () => {
 		expect(() =>
 			transitMapEventSchema.parse({
 				kind: "vehicles",
-				bus: [],
 				subway: [{ ...vehicle, coordinates: [37.531, 127.111] }],
 				capturedAt: "2026-09-05T04:00:00.000Z",
 			}),

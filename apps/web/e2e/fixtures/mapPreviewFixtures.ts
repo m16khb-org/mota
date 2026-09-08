@@ -1,8 +1,8 @@
 import type { Page, Route } from "@playwright/test";
 import type {
+	SubwayVehicle,
 	TransitAvailability,
 	TransitMapNetwork,
-	TransitVehicle,
 } from "@mota/contracts/transit-map";
 
 export const previewStyleUrl = "https://tiles.openfreemap.org/styles/liberty";
@@ -33,86 +33,33 @@ export const subwayStation = {
 	},
 };
 
-const busRoute = {
-	type: "Feature" as const,
-	properties: { routeId: "124100001", routeName: "341", color: "#2563eb" },
-	geometry: {
-		type: "LineString" as const,
-		coordinates: [
-			[127.121, 37.534] as [number, number],
-			[127.125, 37.537] as [number, number],
-			[127.131, 37.541] as [number, number],
-		],
-	},
-};
-
-export const busStop = {
-	type: "Feature" as const,
-	properties: {
-		stopId: "stop-a",
-		arsId: "25014",
-		stopName: "천호역·풍납시장 장문 정류장 이름",
-		routeIds: ["124100001"],
-	},
-	geometry: {
-		type: "Point" as const,
-		coordinates: [127.125, 37.537] as [number, number],
-	},
-};
-
-export const firstTrain: TransitVehicle = {
+export const firstTrain: SubwayVehicle = {
 	id: "subway:8:8120",
 	mode: "subway",
 	routeId: "8",
 	routeName: "8호선",
-	coordinates: [127.12, 37.534],
+	coordinates: [127.124, 37.539],
 	bearing: 35,
 	direction: "암사행 · 역 구간 기준 실시간 위치",
 	capturedAt: "2026-09-05T04:20:00.000Z",
 	positionBasis: "station-segment",
 };
 
-export const movedTrain: TransitVehicle = {
+export const movedTrain: SubwayVehicle = {
 	...firstTrain,
 	coordinates: [127.126, 37.54],
 	bearing: 48,
 	capturedAt: "2026-09-05T04:20:10.000Z",
 };
 
-export const firstBus: TransitVehicle = {
-	id: "bus:124100001:vehicle-a",
-	mode: "bus",
-	routeId: "124100001",
-	routeName: "341",
-	coordinates: [127.124, 37.536],
-	bearing: 70,
-	direction: "강남역 방향",
-	capturedAt: "2026-09-05T04:20:00.000Z",
-	positionBasis: "gps",
-};
-
-const emptyCollection = { type: "FeatureCollection" as const, features: [] };
-
-export function networkForZoom(zoom: number): TransitMapNetwork {
-	const busEnabled = zoom >= 16;
+export function networkForZoom(_zoom: number): TransitMapNetwork {
 	return {
-		revision: `fixture-${busEnabled ? "bus" : "subway"}`,
+		revision: "fixture-subway",
 		generatedAt: "2026-09-05T04:20:00.000Z",
 		subway: {
 			attribution: "© OpenStreetMap contributors, ODbL",
 			lines: { type: "FeatureCollection", features: [subwayRoute] },
 			stations: { type: "FeatureCollection", features: [subwayStation] },
-		},
-		bus: {
-			enabled: busEnabled,
-			...(busEnabled ? {} : { reason: "zoom-required" as const }),
-			attribution: "서울특별시 교통정보",
-			routes: busEnabled
-				? { type: "FeatureCollection", features: [busRoute] }
-				: emptyCollection,
-			stops: busEnabled
-				? { type: "FeatureCollection", features: [busStop] }
-				: emptyCollection,
 		},
 	};
 }
@@ -178,12 +125,10 @@ export interface PreviewFixtureState {
 	readonly networkRequests: URL[];
 	readonly unexpectedExternalRequests: string[];
 	emitVehicles(payload: {
-		readonly bus: readonly TransitVehicle[];
-		readonly subway: readonly TransitVehicle[];
+		readonly subway: readonly SubwayVehicle[];
 		readonly capturedAt?: string;
 	}): Promise<void>;
 	emitAvailability(payload: {
-		readonly bus: TransitAvailability;
 		readonly subway: TransitAvailability;
 		readonly observedAt?: string;
 	}): Promise<void>;
@@ -202,9 +147,7 @@ export function observeNetworkAudit(page: Page): NetworkAudit {
 	});
 	page.on("pageerror", (error) => audit.pageErrors.push(error.message));
 	page.on("requestfailed", (request) => {
-		audit.requestFailures.push(
-			`${request.url()} :: ${request.failure()?.errorText ?? "unknown"}`,
-		);
+		audit.requestFailures.push(`${request.url()} :: ${request.failure()?.errorText ?? "unknown"}`);
 	});
 	return audit;
 }
@@ -256,41 +199,39 @@ export async function installPreviewFixtures(
 	return {
 		networkRequests,
 		unexpectedExternalRequests,
-		emitVehicles: async ({ bus, subway, capturedAt }) => {
-			await page.evaluate(
-				(payload) => window.__motaTransitFixture.emit("vehicles", payload),
-				{
-					kind: "vehicles",
-					bus,
-					subway,
-					capturedAt: capturedAt ?? "2026-09-05T04:20:10.000Z",
-				},
-			);
+		emitVehicles: async ({ subway, capturedAt }) => {
+			await page.evaluate((payload) => window.__motaTransitFixture.emit("vehicles", payload), {
+				kind: "vehicles",
+				subway,
+				capturedAt: capturedAt ?? "2026-09-05T04:20:10.000Z",
+			});
 		},
-		emitAvailability: async ({ bus, subway, observedAt }) => {
-			await page.evaluate(
-				(payload) => window.__motaTransitFixture.emit("availability", payload),
-				{
-					kind: "availability",
-					bus,
-					subway,
-					observedAt: observedAt ?? "2026-09-05T04:20:10.000Z",
-				},
-			);
+		emitAvailability: async ({ subway, observedAt }) => {
+			await page.evaluate((payload) => window.__motaTransitFixture.emit("availability", payload), {
+				kind: "availability",
+				subway,
+				observedAt: observedAt ?? "2026-09-05T04:20:10.000Z",
+			});
 		},
-		disconnect: () =>
-			page.evaluate(() => window.__motaTransitFixture.disconnect()),
-		connectionCount: () =>
-			page.evaluate(() => window.__motaTransitFixture.connectionCount()),
+		disconnect: () => page.evaluate(() => window.__motaTransitFixture.disconnect()),
+		connectionCount: () => page.evaluate(() => window.__motaTransitFixture.connectionCount()),
 	};
 }
 
 async function installFakeEventSource(page: Page) {
 	await page.addInitScript(
-		({ initialTrain, initialBus }) => {
+		({ initialTrain }) => {
 			type Listener = (event: MessageEvent | Event) => void;
+			type VehiclesPayload = {
+				kind: "vehicles";
+				subway: unknown[];
+				capturedAt: string;
+			};
 			const sources: FakeEventSource[] = [];
 			let connectionAttempts = 0;
+			// A reopened stream replays the latest observed snapshot, mirroring a
+			// real server serving current positions for the new viewport.
+			let lastVehicles: VehiclesPayload | null = null;
 
 			class FakeEventSource {
 				readonly listeners = new Map<string, Set<Listener>>();
@@ -327,31 +268,33 @@ async function installFakeEventSource(page: Page) {
 
 				emitInitial() {
 					if (this.closed) return;
-					const zoom = Number(new URL(this.url, location.href).searchParams.get("zoom"));
-					const busLive = zoom >= 16;
 					this.emit("ready", {
 						kind: "ready",
 						revision: "fixture-live",
-						modes: ["subway", ...(busLive ? ["bus"] : [])],
+						modes: ["subway"],
 						serverTime: "2026-09-05T04:20:00.000Z",
 					});
 					this.emit("availability", {
 						kind: "availability",
-						bus: busLive ? "live" : "zoom-required",
 						subway: "live",
 						observedAt: "2026-09-05T04:20:00.000Z",
 					});
-					this.emit("vehicles", {
-						kind: "vehicles",
-						bus: busLive ? [initialBus] : [],
-						subway: [initialTrain],
-						capturedAt: "2026-09-05T04:20:00.000Z",
-					});
+					this.emit(
+						"vehicles",
+						lastVehicles ?? {
+							kind: "vehicles",
+							subway: [initialTrain],
+							capturedAt: "2026-09-05T04:20:00.000Z",
+						},
+					);
 				}
 			}
 
 			window.__motaTransitFixture = {
 				emit(type, payload) {
+					if (type === "vehicles" && payload && "subway" in payload) {
+						lastVehicles = payload as VehiclesPayload;
+					}
 					for (const source of sources) source.emit(type, payload);
 				},
 				disconnect() {
@@ -363,7 +306,7 @@ async function installFakeEventSource(page: Page) {
 							source.emit("ready", {
 								kind: "ready",
 								revision: "fixture-reconnected",
-								modes: ["bus", "subway"],
+								modes: ["subway"],
 								serverTime: "2026-09-05T04:20:20.000Z",
 							});
 						}
@@ -376,7 +319,7 @@ async function installFakeEventSource(page: Page) {
 				value: FakeEventSource,
 			});
 		},
-		{ initialTrain: firstTrain, initialBus: firstBus },
+		{ initialTrain: firstTrain },
 	);
 }
 

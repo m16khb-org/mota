@@ -68,6 +68,13 @@ export const MAP_PREVIEW_BOUNDS: LngLatBoundsPair = Object.freeze([
 	Object.freeze([127.3, 37.8] as const),
 ]);
 
+/** The zoom where the compact train point hands off to the detailed model.
+ * At zoom 16 a 31m train projects to ~16px (124088/2^16 m/px), the size where
+ * its multi-part silhouette resolves; below that a line-colored circle reads
+ * better. The far circle is sized to ~16px diameter at this zoom so the
+ * handoff swaps representations without a size jump. */
+export const MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM = 16 as const;
+
 /** Allowed camera zoom range for the preview. */
 export const MAP_PREVIEW_ZOOM_LIMITS: MapPreviewRange = Object.freeze({
 	min: 11,

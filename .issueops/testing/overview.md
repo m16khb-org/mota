@@ -33,7 +33,7 @@ Canonical index: [TESTING.md](../TESTING.md).
 
 Subscribe to the exact rendered state or promise before triggering work, then await that signal with a bounded timeout. Do not use fixed sleeps, polling delays, live upstream calls, or timing luck. A mock must preserve the behavior being asserted so the integration can still fail for the target regression.
 
-Live-map browser tests emit named SSE frames only after the expected source/DOM state is subscribed. They assert complete snapshot replacement, mode-specific failure clearing, all-mode disconnect clearing, automatic reconnection, and reduced-motion jumps through observable state.
+Live-map browser tests emit named SSE frames only after the expected source/DOM state is subscribed. They assert complete snapshot replacement, subway failure clearing, subway disconnect clearing, automatic reconnection, and reduced-motion jumps through observable state.
 
 ## Behavior-change sequence
 

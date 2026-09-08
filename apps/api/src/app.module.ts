@@ -23,15 +23,8 @@ import { SettingsController } from "./settings/settings.controller";
 import { TransitController } from "./transit/transit.controller";
 import { TransitCatalogService } from "./transit/transitCatalog.service";
 import { TransitMapController } from "./transit-map/transitMap.controller";
-import {
-  BUS_TOPOLOGY_PORT,
-  EmptyBusTopologyPort,
-  TRANSIT_MAP_NETWORK_OPTIONS,
-  type BusTopologyPort,
-  TransitMapNetworkService,
-} from "./transit-map/transitMapNetwork.service";
+import { TransitMapNetworkService } from "./transit-map/transitMapNetwork.service";
 import { SubwayPositionCollector } from "./transit-map/subwayPositionCollector";
-import { BusPositionCollectorRegistry } from "./transit-map/busPositionCollectorRegistry";
 import {
   BUS_POSITION_SOURCE,
   EmptyBusPositionSource,
@@ -39,10 +32,6 @@ import {
   TransitMapStreamService,
 } from "./transit-map/transitMapStream.service";
 import { fetchSubwayPositions } from "./upstream/subwayPositions";
-import {
-  fetchBusPositions,
-  OfficialBusTopologyPort,
-} from "./upstream/seoulBusPositions";
 import { WebController } from "./web/web.controller";
 
 const DEFAULT_CATALOG_REFRESH_MS = 24 * 60 * 60 * 1_000;
@@ -93,8 +82,6 @@ export interface AppModuleOptions {
   readonly minimumBusCatalogItems?: number | undefined;
   readonly minimumSubwayCatalogItems?: number | undefined;
   readonly random?: (() => number) | undefined;
-  readonly busMapConfigured?: boolean | undefined;
-  readonly busTopology?: BusTopologyPort | undefined;
   readonly busPositionSource?: BusPositionSource | undefined;
   readonly subwayPositionTemplate?: string | undefined;
   readonly repeatingScheduler?: RepeatingScheduler | undefined;
@@ -135,16 +122,6 @@ export class AppModule {
     };
     const scheduler = options.repeatingScheduler ?? new IntervalScheduler();
     const subwayPositionTemplate = options.subwayPositionTemplate;
-    const busApiKey = options.busApiKey;
-    const officialBusTopology = busApiKey
-      ? new OfficialBusTopologyPort(
-          apiOptions.upstreamFetch,
-          busApiKey,
-          options.now ?? Date.now,
-        )
-      : null;
-    const busTopology =
-      options.busTopology ?? officialBusTopology ?? new EmptyBusTopologyPort();
     const subwayPositions = new SubwayPositionCollector({
       lines: LIVE_SUBWAY_LINES,
       loadLine: subwayPositionTemplate
@@ -161,26 +138,7 @@ export class AppModule {
       ...(options.now ? { now: options.now } : {}),
     });
     const busPositions =
-      options.busPositionSource ??
-      (officialBusTopology && busApiKey
-        ? new BusPositionCollectorRegistry({
-            scheduler,
-            ...(options.now ? { now: options.now } : {}),
-            loadRoute: (routeId) => {
-              const route = officialBusTopology.routeSummary(routeId);
-              if (!route) {
-                throw new Error("Bus route was not discovered for this viewport.");
-              }
-              return fetchBusPositions(
-                apiOptions.upstreamFetch,
-                busApiKey,
-                route,
-                { west: 126.7, south: 37.3, east: 127.3, north: 37.8 },
-                options.now ?? Date.now,
-              );
-            },
-          })
-        : new EmptyBusPositionSource());
+      options.busPositionSource ?? new EmptyBusPositionSource();
     return {
       module: AppModule,
       controllers: [
@@ -211,20 +169,9 @@ export class AppModule {
             new TransitMapStreamService(
               networks,
               subwayPositions,
-              busPositions,
               scheduler,
               options.now ?? Date.now,
             ),
-        },
-        {
-          provide: BUS_TOPOLOGY_PORT,
-          useValue: busTopology,
-        },
-        {
-          provide: TRANSIT_MAP_NETWORK_OPTIONS,
-          useValue: {
-            busConfigured: options.busMapConfigured ?? Boolean(options.busApiKey),
-          },
         },
       ],
     };

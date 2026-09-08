@@ -128,18 +128,23 @@ const transitVehicleBaseSchema = z.object({
 	capturedAt: z.string().datetime(),
 });
 
+export const busVehicleSchema = transitVehicleBaseSchema.extend({
+	mode: z.literal("bus"),
+	positionBasis: z.literal("gps"),
+});
+
+export const subwayVehicleSchema = transitVehicleBaseSchema.extend({
+	mode: z.literal("subway"),
+	positionBasis: z.literal("station-segment"),
+});
+
 export const transitVehicleSchema = z.discriminatedUnion("mode", [
-	transitVehicleBaseSchema.extend({
-		mode: z.literal("bus"),
-		positionBasis: z.literal("gps"),
-	}),
-	transitVehicleBaseSchema.extend({
-		mode: z.literal("subway"),
-		positionBasis: z.literal("station-segment"),
-	}),
+	busVehicleSchema,
+	subwayVehicleSchema,
 ]);
 
 export type TransitVehicle = z.infer<typeof transitVehicleSchema>;
+export type SubwayVehicle = z.infer<typeof subwayVehicleSchema>;
 
 export const subwayNetworkSchema = z.object({
 	attribution: z.string().min(1),
@@ -159,7 +164,6 @@ export const transitMapNetworkSchema = z.object({
 	revision: z.string().min(1),
 	generatedAt: z.string().datetime(),
 	subway: subwayNetworkSchema,
-	bus: busNetworkSchema,
 });
 
 export type TransitMapNetwork = z.infer<typeof transitMapNetworkSchema>;
@@ -168,18 +172,16 @@ export const transitMapEventSchema = z.discriminatedUnion("kind", [
 	z.object({
 		kind: z.literal("ready"),
 		revision: z.string().min(1),
-		modes: z.array(z.enum(["bus", "subway"])),
+		modes: z.tuple([z.literal("subway")]),
 		serverTime: z.string().datetime(),
 	}),
 	z.object({
 		kind: z.literal("vehicles"),
-		bus: z.array(transitVehicleSchema),
-		subway: z.array(transitVehicleSchema),
+		subway: z.array(subwayVehicleSchema),
 		capturedAt: z.string().datetime(),
 	}),
 	z.object({
 		kind: z.literal("availability"),
-		bus: transitAvailabilitySchema,
 		subway: transitAvailabilitySchema,
 		observedAt: z.string().datetime(),
 	}),

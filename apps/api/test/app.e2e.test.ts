@@ -26,18 +26,17 @@ const TRANSIT_MAP_QUERY =
 	"west=127.10&south=37.52&east=127.12&north=37.54&zoom=16";
 
 describe("transit map network API", () => {
-	it("returns a schema-valid static network for a valid viewport", async () => {
-		const response = await createApp(vi.fn()).request(
+	it("returns a schema-valid subway-only network without querying bus upstreams", async () => {
+		const upstream = vi.fn().mockRejectedValue(new Error("bus upstream must not run"));
+		const response = await createApp(upstream, { busApiKey: "unused" }).request(
 			`/api/transit-map/network?${TRANSIT_MAP_QUERY}`,
 		);
 		const payload = await response.json();
 
 		expect(response.status, JSON.stringify(payload)).toBe(200);
 		expect(transitMapNetworkSchema.safeParse(payload).success).toBe(true);
-		expect(payload.bus).toMatchObject({
-			enabled: false,
-			reason: "unconfigured",
-		});
+		expect(payload).not.toHaveProperty("bus");
+		expect(upstream).not.toHaveBeenCalled();
 		expect(response.headers.get("cache-control")).toBe("public, max-age=300");
 		expect(response.headers.get("etag")).toMatch(/^".+"$/);
 	});
@@ -98,6 +97,46 @@ function subwayCatalogResponse(input: {
 }
 
 describe("bus API adapter", () => {
+	it("keeps normal bus stop and arrival endpoints available", async () => {
+		const upstream = vi
+			.fn()
+			.mockResolvedValueOnce(
+				Response.json({
+					ResponseVO: {
+						data: {
+							resultList: [
+								{
+									strid: 124000454,
+									strnm: "천호역",
+									strno: "25014",
+									diffMeter: 151,
+									posX: 127.1255385876,
+									posY: 37.5379482005,
+								},
+							],
+						},
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				Response.json({
+					error: { errorMessage: "성공", errorCode: "0000" },
+					resultList: [],
+				}),
+			);
+		const app = createApp(upstream);
+
+		const stops = await app.request(
+			"/api/stops/nearby?lat=37.5366&lng=127.1253&radius=800",
+		);
+		const arrivals = await app.request("/api/arrivals/25014");
+
+		expect(stops.status).toBe(200);
+		expect(arrivals.status).toBe(200);
+		expect(await stops.json()).toMatchObject({ stops: [{ arsId: "25014" }] });
+		expect(await arrivals.json()).toMatchObject({ arrivals: [] });
+	});
+
 	it("normalizes nearby stops from the official Seoul transit response", async () => {
 		const upstream = vi.fn().mockImplementation(() =>
 			Promise.resolve(Response.json({

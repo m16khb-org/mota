@@ -1,4 +1,4 @@
-import type { TransitVehicle } from "@mota/contracts/transit-map";
+import type { SubwayVehicle } from "@mota/contracts/transit-map";
 import {
   compileRoutes,
   distance,
@@ -12,8 +12,8 @@ import {
 
 /** Prepare projections once per snapshot, not once per animation frame. */
 export function prepareVehicleTransition(
-  previous: readonly TransitVehicle[],
-  next: readonly TransitVehicle[],
+  previous: readonly SubwayVehicle[],
+  next: readonly SubwayVehicle[],
   routes: RouteCollection,
 ) {
   const previousById = new Map(previous.map((vehicle) => [vehicle.id, vehicle]));
@@ -23,7 +23,7 @@ export function prepareVehicleTransition(
     const prior = previousById.get(vehicle.id);
     const keys = [routeKey(vehicle.routeId), routeKey(vehicle.routeName)];
     const candidates = paths.filter((path) => path.keys.some((key) => keys.includes(key)));
-    const tolerance = vehicle.mode === "bus" ? 80 : 400;
+    const tolerance = 400;
     let closest = { distance: tolerance, bearing: vehicle.bearing };
     for (const path of candidates) {
       const projection = projectOnPath(vehicle.coordinates, path);
@@ -51,7 +51,7 @@ export function prepareVehicleTransition(
           endPoint: Coordinate;
         }
       | undefined;
-    const motionTolerance = vehicle.mode === "bus" ? 20 : 40;
+    const motionTolerance = 40;
     const elapsed = (Date.parse(vehicle.capturedAt) - Date.parse(prior.capturedAt)) / 1000;
     if (elapsed <= 0 || elapsed > 90) return { vehicle };
     for (const path of candidates) {
@@ -62,7 +62,7 @@ export function prepareVehicleTransition(
       if (
         start.distance > motionTolerance ||
         end.distance > motionTolerance ||
-        travelled > Math.max(300, elapsed * (vehicle.mode === "bus" ? 35 : 55))
+        travelled > Math.max(300, elapsed * 55)
       )
         continue;
       const residual = start.distance + end.distance;
@@ -78,7 +78,7 @@ export function prepareVehicleTransition(
     }
     return { vehicle, prior, best };
   });
-  return (progress: number): readonly TransitVehicle[] =>
+  return (progress: number): readonly SubwayVehicle[] =>
     transitions.map(({ vehicle, prior, best }) => {
       if (!prior || !best) return vehicle;
       const amount = Math.max(0, Math.min(1, progress));

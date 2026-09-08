@@ -10,6 +10,8 @@ import type { RepeatingScheduler } from "../app.tokens";
 import type { SubwayPositionSnapshot } from "./subwayPositionCollector";
 import type { TransitMapNetworkService } from "./transitMapNetwork.service";
 
+// Kept as a health/compatibility seam for the normal app's optional bus source.
+// The 3D stream deliberately has no bus source dependency or subscription.
 export interface BusPositionSnapshot {
 	readonly availability: TransitAvailability;
 	readonly vehicles: readonly TransitVehicle[];
@@ -63,7 +65,6 @@ export class TransitMapStreamService {
 	constructor(
 		private readonly networks: Pick<TransitMapNetworkService, "network">,
 		private readonly subway: SubwayPositionSource,
-		private readonly bus: BusPositionSource,
 		private readonly scheduler: RepeatingScheduler,
 		private readonly now: () => number = Date.now,
 	) {}
@@ -73,13 +74,7 @@ export class TransitMapStreamService {
 			let closed = false;
 			let initialized = false;
 			let subwaySnapshot = this.subway.snapshot();
-			let busSnapshot: BusPositionSnapshot = {
-				availability: "unavailable",
-				vehicles: [],
-				capturedAt: new Date(this.now()).toISOString(),
-			};
 			let stopSubway: (() => void) | null = null;
-			let stopBus: (() => void) | null = null;
 			let stopHeartbeat: (() => void) | null = null;
 
 			const emit = (event: unknown) => {
@@ -95,18 +90,13 @@ export class TransitMapStreamService {
 			const emitSnapshots = () => {
 				emit({
 					kind: "availability",
-					bus: busSnapshot.availability,
 					subway: subwaySnapshot.availability,
 					observedAt: new Date(this.now()).toISOString(),
 				});
 				emit({
 					kind: "vehicles",
-					bus: busSnapshot.vehicles,
 					subway: subwaySnapshot.vehicles,
-					capturedAt: latestTimestamp(
-						busSnapshot.capturedAt,
-						subwaySnapshot.capturedAt,
-					),
+					capturedAt: subwaySnapshot.capturedAt,
 				});
 			};
 
@@ -117,34 +107,13 @@ export class TransitMapStreamService {
 					emit({
 						kind: "ready",
 						revision: network.revision,
-						modes: network.bus.enabled ? ["bus", "subway"] : ["subway"],
+						modes: ["subway"],
 						serverTime: new Date(this.now()).toISOString(),
 					});
-					busSnapshot = {
-						availability: network.bus.enabled
-							? "unavailable"
-							: (network.bus.reason ?? "unavailable"),
-						vehicles: [],
-						capturedAt: new Date(this.now()).toISOString(),
-					};
 					stopSubway = this.subway.subscribe((snapshot) => {
 						subwaySnapshot = snapshot;
 						if (initialized) emitSnapshots();
 					});
-					if (network.bus.enabled) {
-						const routeIds = network.bus.routes.features.map(
-							(feature) => feature.properties.routeId,
-						);
-						stopBus = this.bus.acquire(routeIds, (snapshot) => {
-							busSnapshot = {
-								...snapshot,
-								vehicles: snapshot.vehicles.filter((vehicle) =>
-									vehicleInside(vehicle, query),
-								),
-							};
-							if (initialized) emitSnapshots();
-						});
-					}
 					initialized = true;
 					emitSnapshots();
 					stopHeartbeat = this.scheduler.every(15_000, async () => {
@@ -161,23 +130,8 @@ export class TransitMapStreamService {
 			return () => {
 				closed = true;
 				stopHeartbeat?.();
-				stopBus?.();
 				stopSubway?.();
 			};
 		});
 	}
-}
-
-function latestTimestamp(left: string, right: string) {
-	return left > right ? left : right;
-}
-
-function vehicleInside(vehicle: TransitVehicle, query: TransitMapQuery) {
-	const [longitude, latitude] = vehicle.coordinates;
-	return (
-		longitude >= query.west &&
-		longitude <= query.east &&
-		latitude >= query.south &&
-		latitude <= query.north
-	);
 }

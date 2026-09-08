@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import type { TransitMapNetwork, TransitVehicle } from "@mota/contracts/transit-map";
+import type {
+  SubwayVehicle,
+  TransitMapNetwork,
+} from "@mota/contracts/transit-map";
 import {
   Map as MapLibreMap,
   NavigationControl,
@@ -18,6 +21,7 @@ import {
   MAP_PREVIEW_MOTION_POLICY,
   MAP_PREVIEW_PITCH_LIMITS,
   MAP_PREVIEW_STYLE_URL,
+  MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM,
   MAP_PREVIEW_ZOOM_LIMITS,
 } from "./mapPreviewConfig";
 import { prepareVehicleTransition } from "./trainInterpolation";
@@ -38,10 +42,7 @@ export type MapPreviewDegraded = Readonly<{
   readonly error: Error;
 }>;
 
-interface VehicleSnapshot {
-  readonly bus: readonly TransitVehicle[];
-  readonly subway: readonly TransitVehicle[];
-}
+type VehicleSnapshot = readonly SubwayVehicle[];
 
 export interface MapLibrePreviewMapProps {
   readonly onReady: () => void;
@@ -55,15 +56,12 @@ export interface MapLibrePreviewMapProps {
 }
 
 const LOCAL_IDEOGRAPH_FONT_FAMILY = '"Pretendard Variable", Pretendard, "Noto Sans KR", sans-serif';
-const EMPTY_VEHICLES: VehicleSnapshot = { bus: [], subway: [] };
+const EMPTY_VEHICLES: VehicleSnapshot = [];
 const EMPTY_ROUTES = { type: "FeatureCollection" as const, features: [] };
 const VEHICLE_TRANSITION_MS = 800;
 
 function placeVehicles(vehicles: VehicleSnapshot, network: TransitMapNetwork | null) {
-  return {
-    bus: prepareVehicleTransition([], vehicles.bus, network?.bus.routes ?? EMPTY_ROUTES)(1),
-    subway: prepareVehicleTransition([], vehicles.subway, network?.subway.lines ?? EMPTY_ROUTES)(1),
-  };
+  return prepareVehicleTransition([], vehicles, network?.subway.lines ?? EMPTY_ROUTES)(1);
 }
 
 function syncCameraAttributes(container: HTMLDivElement, map: MapLibreMapInstance) {
@@ -73,6 +71,8 @@ function syncCameraAttributes(container: HTMLDivElement, map: MapLibreMapInstanc
   container.dataset.zoom = map.getZoom().toFixed(3);
   container.dataset.pitch = map.getPitch().toFixed(3);
   container.dataset.bearing = map.getBearing().toFixed(3);
+  container.dataset.subwayVehicleLod =
+    map.getZoom() < MAP_PREVIEW_TRAIN_LOD_SWITCH_ZOOM ? "far-circle" : "near-model";
 }
 
 function eventError(event: { readonly error?: { readonly message?: string } }) {
@@ -260,22 +260,17 @@ export function MapLibrePreviewMap({
       globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     const startedAt = performance.now();
     const currentNetwork = transitDataRef.current.network;
-    const busTransition = prepareVehicleTransition(
-      previous.bus,
-      vehicles.bus,
-      currentNetwork?.bus.routes ?? EMPTY_ROUTES,
-    );
     const subwayTransition = prepareVehicleTransition(
-      previous.subway,
-      vehicles.subway,
+      previous,
+      vehicles,
       currentNetwork?.subway.lines ?? EMPTY_ROUTES,
     );
-    if (reducedMotion || (!previous.bus.length && !previous.subway.length)) {
-      displayedVehiclesRef.current = { bus: busTransition(1), subway: subwayTransition(1) };
+    if (reducedMotion || !previous.length) {
+      displayedVehiclesRef.current = subwayTransition(1);
       layers.setVehicles(displayedVehiclesRef.current);
       return;
     }
-    layers.setVehicles({ bus: busTransition(0), subway: subwayTransition(0) });
+    layers.setVehicles(subwayTransition(0));
     let lastFrame = -Infinity;
     const draw = (time: number) => {
       if (!mountedRef.current) return;
@@ -285,10 +280,7 @@ export function MapLibrePreviewMap({
         return;
       }
       lastFrame = time;
-      const displayed = {
-        bus: busTransition(progress),
-        subway: subwayTransition(progress),
-      };
+      const displayed = subwayTransition(progress);
       displayedVehiclesRef.current = displayed;
       layers.setVehicles(displayed);
       if (progress < 1) {
@@ -353,14 +345,10 @@ export function MapLibrePreviewMap({
       data-testid="maplibre-preview-map"
       data-map-ready={mapReadyData}
       data-building-layer={mapReadyData ? MAP_PREVIEW_BUILDING_LAYER_ID : undefined}
-      data-subway-vehicles={vehicles.subway.length}
-      data-bus-vehicles={vehicles.bus.length}
-      data-subway-vehicle-position={vehicles.subway[0]?.coordinates.join(",")}
-      data-bus-vehicle-position={vehicles.bus[0]?.coordinates.join(",")}
+      data-subway-vehicles={vehicles.length}
+      data-subway-vehicle-position={vehicles[0]?.coordinates.join(",")}
       data-subway-lines={network?.subway.lines.features.length ?? 0}
       data-subway-stations={network?.subway.stations.features.length ?? 0}
-      data-bus-lines={network?.bus.routes.features.length ?? 0}
-      data-bus-stops={network?.bus.stops.features.length ?? 0}
     />
   );
 }

@@ -1,6 +1,6 @@
 import {
-	transitVehicleSchema,
-	type TransitVehicle,
+	subwayVehicleSchema,
+	type SubwayVehicle,
 } from "@mota/contracts/transit-map";
 import { z } from "zod";
 import { loadSubwayNetwork } from "../transit-map/subwayNetworkSource";
@@ -31,6 +31,10 @@ const upstreamSchema = z.object({
 		.optional(),
 });
 
+type UpstreamPositionRow = NonNullable<
+	z.infer<typeof upstreamSchema>["realtimePositionList"]
+>[number];
+
 type UpstreamFetch = (
 	input: string | URL | Request,
 	init?: RequestInit,
@@ -38,7 +42,7 @@ type UpstreamFetch = (
 
 export type SubwayPositionResult = Readonly<{
 	availability: "live" | "no-service";
-	vehicles: readonly TransitVehicle[];
+	vehicles: readonly SubwayVehicle[];
 	capturedAt: string;
 }>;
 
@@ -97,19 +101,31 @@ export async function fetchSubwayPositions(
 		);
 	}
 	const routeId = normalizeRouteId(line);
-	const vehicles = (payload.realtimePositionList ?? []).flatMap((row) => {
-		const coordinates = stationCoordinates.get(stationKey(row.statnNm, routeId));
+	const latestRowsById = new Map<
+		string,
+		{ row: UpstreamPositionRow; capturedAt: string }
+	>();
+	for (const row of payload.realtimePositionList ?? []) {
+		const capturedAt = parseSeoulTimestamp(row.recptnDt);
+		const id = `subway:${row.subwayId}:${row.trainNo}`;
+		const existing = latestRowsById.get(id);
+		if (!existing || capturedAt > existing.capturedAt) {
+			latestRowsById.set(id, { row, capturedAt });
+		}
+	}
+	const vehicles = [...latestRowsById.values()].flatMap(({ row, capturedAt }) => {
+		const coordinates = resolveStationCoordinates(row.statnNm, routeId);
 		if (!coordinates) return [];
 		return [
-			transitVehicleSchema.parse({
+			subwayVehicleSchema.parse({
 				id: `subway:${row.subwayId}:${row.trainNo}`,
 				mode: "subway",
 				routeId: row.subwayId,
 				routeName: line,
 				coordinates,
 				bearing: 0,
-				direction: row.updnLine,
-				capturedAt: parseSeoulTimestamp(row.recptnDt),
+				direction: normalizeDirection(row.updnLine),
+				capturedAt,
 				positionBasis: "station-segment",
 			}),
 		];
@@ -135,11 +151,22 @@ function stationKey(stationName: string, routeId: string) {
 	return `${normalizeStationName(stationName)}:${routeId}`;
 }
 
+function resolveStationCoordinates(stationName: string, routeId: string) {
+	return stationCoordinates.get(stationKey(stationName, routeId));
+}
+
 function normalizeRouteId(line: string) {
 	const withoutLineSuffix = line.replace(/호선$/, "").replace(/선$/, "");
 	if (withoutLineSuffix === "경의중앙") return "경의·중앙";
 	if (withoutLineSuffix === "수인분당") return "수인·분당";
+	if (withoutLineSuffix === "우이신설") return "W";
 	return withoutLineSuffix;
+}
+
+function normalizeDirection(value: string) {
+	if (value === "0") return "상행/내선";
+	if (value === "1") return "하행/외선";
+	return value;
 }
 
 function parseSeoulTimestamp(value: string) {

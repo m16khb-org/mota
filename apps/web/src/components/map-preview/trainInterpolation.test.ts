@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
-import type { TransitVehicle, TransitMapNetwork } from "@mota/contracts/transit-map";
+import type {
+  SubwayVehicle,
+  TransitMapNetwork,
+} from "@mota/contracts/transit-map";
 import { prepareVehicleTransition } from "./trainInterpolation";
 
 function train(
   id: string,
   coordinates: [number, number],
   capturedAt = "2026-09-05T04:00:10.000Z",
-): TransitVehicle {
+): SubwayVehicle {
   return {
     id,
     mode: "subway",
