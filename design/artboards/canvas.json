@@ -1,0 +1,33 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "디자인 시스템" },
+    { "id": "page-2", "name": "화면" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1200, "h": 3320, "page": "page-1", "title": "파운데이션", "print": "flow" },
+    { "file": "Components.dc.html", "x": 1320, "y": 0, "w": 1200, "h": 3240, "page": "page-1", "title": "컴포넌트", "print": "flow" },
+    { "file": "Desktop.dc.html", "x": 0, "y": 0, "w": 1440, "h": 900, "page": "page-2", "title": "데스크톱 1440×900", "print": "fixed" },
+    { "file": "Mobile.dc.html", "x": 1560, "y": 0, "w": 390, "h": 844, "page": "page-2", "title": "모바일 지하철 390×844", "print": "fixed" },
+    { "file": "MobileFind.dc.html", "x": 2030, "y": 0, "w": 390, "h": 844, "page": "page-2", "title": "모바일 정류장 찾기", "print": "fixed" },
+    { "file": "States.dc.html", "x": 0, "y": 1060, "w": 1200, "h": 1080, "page": "page-2", "title": "상태", "print": "flow" }
+  ],
+  "annotations": [
+    {
+      "id": "direction",
+      "x": 0,
+      "y": -200,
+      "w": 620,
+      "page": "page-1",
+      "text": "아트 디렉션: 서울 사인 시스템\n흰 바탕, 잉크 글자, 채도는 노선에서만. 굵은 컬러 밴드와 픽토그램이 무엇을 타는지 먼저 말하고, 남은 시간이 가장 큰 숫자로 답한다.\n\n브랜드가 만든 강조색은 없다. 주요 행동은 잉크 검정, 선택된 방향과 지점만 노선색을 입는다."
+    },
+    {
+      "id": "screens",
+      "x": 0,
+      "y": -200,
+      "w": 620,
+      "page": "page-2",
+      "text": "화면 네 장은 파운데이션과 컴포넌트만으로 조립했다. 새로운 값은 쓰지 않았다.\n\n데이터는 예시다. 역·정류장 이름, 도착 시간, 계정 이름은 실제 값으로 바꿔야 한다."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

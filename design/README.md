@@ -1,0 +1,64 @@
+# 모타 디자인 시스템 — 서울 사인 시스템
+
+`/design` 캔버스로 만든 새 디자인 시스템의 원본이다. 기존 앱 화면을 참고하지
+않고 처음부터 잡았다.
+
+## 아트 디렉션
+
+서울의 역 안내 사인에서 출발한다. 바탕은 희고 글자는 잉크색이며, **채도는 오직
+노선에서만 나온다.** 굵은 컬러 밴드와 픽토그램이 무엇을 타는지 먼저 말하고,
+남은 시간이 가장 큰 숫자로 대답한다.
+
+브랜드가 만든 강조색은 없다. 주요 행동은 잉크 검정이고, 선택된 방향과 지점만
+노선색을 입는다. 노선색은 브랜드가 정하지 않고 운행 기관이 정한 값을 그대로
+싣는다.
+
+- 무채색: `#16181D` `#5A6070` `#8D94A3` `#C4CAD4` `#E1E5EA` `#F2F4F6` `#FFFFFF`
+- 상태색: `#D93025` `#FDECEA` (오류에만)
+- 글자: Archivo(라틴·숫자) + Pretendard(한글)
+- 간격: 4 8 12 16 20 24 32 40 56 · 모서리: 12 16 24 999 · 컨트롤 최소 44px
+
+자세한 값은 `artboards/Main.dc.html`(파운데이션)에 있다.
+
+## 파일
+
+```text
+artboards/Main.dc.html         파운데이션 — 색, 글자, 간격·형태, 픽토그램, 원칙
+artboards/Components.dc.html   컴포넌트 — 버튼, 탭, 노선 표지, 지점 행, 도착 카드
+artboards/Desktop.dc.html      데스크톱 1440x900
+artboards/Mobile.dc.html       모바일 지하철 390x844
+artboards/MobileFind.dc.html   모바일 정류장 찾기 390x844
+artboards/States.dc.html       로딩, 빈 상태, 막차, 오류, 연결 끊김, 긴 이름
+artboards/canvas.json          아트보드 배치와 페이지 구성
+```
+
+각 `.dc.html`은 그 자체로 브라우저에서 열리는 독립 파일이다. 이 파일들을
+하나의 팬·줌 캔버스로 묶은 결과물은 저장소에 넣지 않는다. 편집기 코드까지
+포함해 2.6MB인 생성물이라 원본만 두고 필요할 때 다시 만든다.
+
+## Pretendard
+
+`.dc.html`은 `"Archivo", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo",
+"Malgun Gothic", system-ui` 순서를 쓴다. Archivo가 라틴과 숫자를 맡고, Archivo에
+없는 한글 글리프가 Pretendard로 떨어진다.
+
+앱(`apps/web/src/styles.css`)은 Pretendard를 jsDelivr에서 받지만, 이 파일들은
+Pretendard를 웹폰트로 불러오지 않는다. 캔버스가 실행되는 샌드박스는 스타일시트를
+`fonts.googleapis.com`에서만 허용하고 Pretendard는 Google Fonts에 없다. 따라서
+Pretendard가 **설치된 환경에서만** 의도한 대로 보이고, 그 밖에서는 Apple SD
+Gothic Neo 또는 맑은 고딕으로 대체된다. PNG·PDF로 내보낼 때도 대체 서체가 나온다.
+
+## 기존 DESIGN.md와의 관계
+
+저장소 루트의 `DESIGN.md`는 지금 앱이 쓰는 검정·백색·라임 시스템을 규정하고,
+`AGENTS.md`도 그 시스템을 유지하라고 적고 있다. 이 폴더의 시스템은 그것을
+대체하지 않는다. 아직 제안 단계이며, 채택할지와 `DESIGN.md`를 어떻게 정리할지는
+별도로 결정한다.
+
+제품 계약(출근·퇴근 문맥, 버스·지하철, 정류장·방향별 최대 3건)은 `DESIGN.md`의
+1절을 그대로 따른다. 바뀐 것은 시각 언어뿐이다.
+
+## 데이터
+
+아트보드의 역명, 정류장명, ARS 번호, 도착 시간, 계정 이름은 모두 예시다.
+실제 값이 아니다.

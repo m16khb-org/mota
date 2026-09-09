@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..800&display=swap">
+  <style>
+    body { margin: 0; background: #ffffff; color: #16181d; font-family: "Archivo", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: #0052a4; text-decoration: none; }
+    a:hover { color: #16181d; }
+  </style>
+</helmet>
+<div style="display: flex; flex-direction: column; width: 390px; height: 844px; overflow: hidden; background: #ffffff">
+
+  <div style="display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 16px; border-bottom: 1px solid #16181d; background: #16181d; color: #ffffff">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 20px"><rect x="4" y="3" width="16" height="14" rx="3"></rect><path d="M4 10h16"></path><path d="M7 17v3M17 17v3"></path><circle cx="8" cy="13.8" r="1" fill="currentColor" stroke="none"></circle><circle cx="16" cy="13.8" r="1" fill="currentColor" stroke="none"></circle></svg>
+    <div style="flex: 1; min-width: 0">
+      <strong style="display: block; font-size: 15px; font-weight: 800; line-height: 1.2">버스 정류장 찾는 중</strong>
+      <span style="display: block; font-size: 11px; font-weight: 600; color: #c4cad4">지도를 옮긴 뒤 다시 찾기를 누르세요</span>
+    </div>
+    <div style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px; border-radius: 10px; background: #343841; font-size: 13px; font-weight: 700">취소</div>
+  </div>
+
+  <div style="position: relative; flex: 0 0 456px; overflow: hidden">
+    <svg viewBox="0 0 390 456" width="390" height="456" style="display: block" aria-hidden="true">
+      <rect width="390" height="456" fill="#eef0ea"></rect>
+      <g fill="#e4e8de">
+        <rect x="14" y="24" width="118" height="86" rx="6"></rect>
+        <rect x="162" y="14" width="104" height="96" rx="6"></rect>
+        <rect x="296" y="30" width="88" height="80" rx="6"></rect>
+        <rect x="18" y="168" width="100" height="92" rx="6"></rect>
+        <rect x="152" y="176" width="120" height="76" rx="6"></rect>
+        <rect x="304" y="164" width="80" height="100" rx="6"></rect>
+        <rect x="24" y="318" width="110" height="86" rx="6"></rect>
+        <rect x="170" y="330" width="130" height="72" rx="6"></rect>
+      </g>
+      <g stroke="#ffffff" fill="none" stroke-linecap="round">
+        <path d="M0 140 H390" stroke-width="18"></path>
+        <path d="M0 292 H390" stroke-width="18"></path>
+        <path d="M146 0 V456" stroke-width="16"></path>
+        <path d="M290 0 V456" stroke-width="8"></path>
+      </g>
+      <g>
+        <circle cx="146" cy="140" r="5" fill="#c4cad4"></circle>
+        <circle cx="290" cy="292" r="5" fill="#c4cad4"></circle>
+      </g>
+    </svg>
+
+    <div style="position: absolute; top: 84px; left: 106px; width: 80px; text-align: center">
+      <svg viewBox="0 0 40 60" width="44" height="66" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="none" stroke="#16181d" stroke-width="2.5"></circle><path d="M20 51C20 51 33 36 33 24A13 13 0 1 0 7 24C7 36 20 51 20 51Z" fill="#3d5bab" stroke="#16181d" stroke-width="2.5"></path><circle cx="20" cy="23" r="5.5" fill="#ffffff"></circle></svg>
+      <span style="display: inline-block; margin-top: 2px; padding: 3px 8px; border-radius: 6px; background: #16181d; color: #ffffff; font-size: 11px; font-weight: 800">한양대앞</span>
+    </div>
+    <div style="position: absolute; top: 216px; left: 236px; width: 90px; text-align: center">
+      <svg viewBox="0 0 40 60" width="44" height="66" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="none" stroke="#16181d" stroke-width="2.5"></circle><path d="M20 51C20 51 33 36 33 24A13 13 0 1 0 7 24C7 36 20 51 20 51Z" fill="#3d5bab" stroke="#16181d" stroke-width="2.5"></path><circle cx="20" cy="23" r="5.5" fill="#ffffff"></circle></svg>
+      <span style="display: inline-block; margin-top: 2px; padding: 3px 8px; border-radius: 6px; background: #16181d; color: #ffffff; font-size: 11px; font-weight: 800">성수사거리</span>
+    </div>
+    <div style="position: absolute; top: 300px; left: 60px; width: 84px; text-align: center">
+      <svg viewBox="0 0 40 52" width="38" height="49" aria-hidden="true"><path d="M20 51C20 51 36 33.5 36 20A16 16 0 1 0 4 20C4 33.5 20 51 20 51Z" fill="#ffffff" stroke="#5a6070" stroke-width="2.5" stroke-dasharray="4 3"></path><circle cx="20" cy="20" r="6" fill="none" stroke="#5a6070" stroke-width="2.5"></circle></svg>
+      <span style="display: inline-block; margin-top: 2px; padding: 3px 8px; border-radius: 6px; background: #ffffff; border: 1px solid #c4cad4; font-size: 11px; font-weight: 700; color: #5a6070">뚝섬역</span>
+    </div>
+
+    <div style="position: absolute; top: 16px; left: 50%; margin-left: -84px; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 12px; background: #ffffff; box-shadow: 0 6px 20px rgb(22 24 29 / 14%); font-size: 13px; font-weight: 700">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.5 4.5"></path></svg>이 위치에서 다시 찾기
+    </div>
+    <div style="position: absolute; right: 16px; bottom: 16px; display: grid; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: 0 6px 20px rgb(22 24 29 / 12%)">
+      <div style="display: grid; place-items: center; width: 44px; height: 44px; border-bottom: 1px solid #e1e5ea"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#16181d" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></div>
+      <div style="display: grid; place-items: center; width: 44px; height: 44px"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#16181d" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; flex: 1; min-height: 0; border-top: 1px solid #e1e5ea">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 20px 10px">
+      <strong style="font-size: 15px; font-weight: 800">후보 3곳</strong>
+      <span style="font-size: 12px; font-weight: 600; color: #5a6070">눌러서 함께 볼 정류장을 고르세요</span>
+    </div>
+    <div style="flex: 1; min-height: 0; overflow: hidden; border-top: 1px solid #e1e5ea">
+      <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr) 44px; align-items: center; border-bottom: 1px solid #e1e5ea; background: #eef1f8">
+        <div style="align-self: stretch; background: #3d5bab"></div>
+        <div style="display: grid; align-content: center; gap: 2px; min-height: 62px; padding: 8px 14px">
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="display: inline-flex; align-items: center; height: 20px; flex: 0 0 auto; padding: 0 7px; border-radius: 5px; background: #3d5bab; color: #ffffff; font-size: 11px; font-weight: 800">간선</span><strong style="font-size: 15px; font-weight: 800; overflow-wrap: anywhere">한양대학교앞</strong></span>
+          <span style="font-size: 11px; font-weight: 600; color: #5a6070; font-variant-numeric: tabular-nums">05-142 · 이곳에서 120m</span>
+        </div>
+        <div style="display: grid; place-items: center; padding-right: 12px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#16181d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M8.4 12.2l2.5 2.4 4.7-4.9"></path></svg></div>
+      </div>
+      <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr) 44px; align-items: center; border-bottom: 1px solid #e1e5ea; background: #eef1f8">
+        <div style="align-self: stretch; background: #3d5bab"></div>
+        <div style="display: grid; align-content: center; gap: 2px; min-height: 62px; padding: 8px 14px">
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="display: inline-flex; align-items: center; height: 20px; flex: 0 0 auto; padding: 0 7px; border-radius: 5px; background: #3d5bab; color: #ffffff; font-size: 11px; font-weight: 800">간선</span><strong style="font-size: 15px; font-weight: 800; overflow-wrap: anywhere">성수사거리</strong></span>
+          <span style="font-size: 11px; font-weight: 600; color: #5a6070; font-variant-numeric: tabular-nums">04-186 · 이곳에서 340m</span>
+        </div>
+        <div style="display: grid; place-items: center; padding-right: 12px"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#16181d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M8.4 12.2l2.5 2.4 4.7-4.9"></path></svg></div>
+      </div>
+      <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr) 44px; align-items: center; border-bottom: 1px solid #e1e5ea; background: #ffffff">
+        <div style="align-self: stretch; background: #e1e5ea"></div>
+        <div style="display: grid; align-content: center; gap: 2px; min-height: 62px; padding: 8px 14px">
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="display: inline-flex; align-items: center; height: 20px; flex: 0 0 auto; padding: 0 7px; border: 1px solid #c4cad4; border-radius: 5px; font-size: 11px; font-weight: 800; color: #5a6070">지선</span><strong style="font-size: 15px; font-weight: 700; overflow-wrap: anywhere">뚝섬역</strong></span>
+          <span style="font-size: 11px; font-weight: 600; color: #5a6070; font-variant-numeric: tabular-nums">04-201 · 이곳에서 520m</span>
+        </div>
+        <div style="display: grid; place-items: center; padding-right: 12px"><span style="display: block; width: 20px; height: 20px; border: 2px solid #c4cad4; border-radius: 999px"></span></div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; padding: 12px 20px 16px; border-top: 1px solid #e1e5ea; background: #ffffff">
+      <div style="display: grid; place-items: center; height: 52px; border-radius: 12px; background: #f2f4f6; font-size: 14px; font-weight: 700">취소</div>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px; border-radius: 12px; background: #16181d; color: #ffffff; font-size: 15px; font-weight: 800">2곳 저장</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

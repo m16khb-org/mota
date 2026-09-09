@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..800&display=swap">
+  <style>
+    body { margin: 0; background: #ffffff; color: #16181d; font-family: "Archivo", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: #0052a4; text-decoration: none; }
+    a:hover { color: #16181d; }
+  </style>
+</helmet>
+<div style="width: 1200px; min-height: 1080px; padding: 56px; background: #ffffff">
+
+  <header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-bottom: 24px; border-bottom: 2px solid #16181d">
+    <div>
+      <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: #5a6070">MOTA DESIGN SYSTEM</span>
+      <h1 style="margin: 8px 0 0; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1">상태</h1>
+    </div>
+    <p style="margin: 0; max-width: 470px; font-size: 14px; font-weight: 450; line-height: 1.6; color: #5a6070; text-align: right; text-wrap: pretty">비어 있음, 기다림, 실패도 화면이다. 어떤 상태도 이미 받아둔 도착 정보를 지우지 않고, 다음에 무엇을 하면 되는지 한 문장으로 말한다.</p>
+  </header>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 40px">
+
+    <div>
+      <h3 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">불러오는 중</h3>
+      <div style="padding: 20px; border: 1px solid #e1e5ea; border-radius: 16px">
+        <span style="display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #5a6070">곧 오는 순서</span>
+        <div style="width: 62%; height: 22px; margin-top: 8px; border-radius: 6px; background: #e6e9ed"></div>
+        <p style="margin: 14px 0 12px; font-size: 12px; font-weight: 600; color: #5a6070">도착 정보를 새로 받고 있어요</p>
+        <div style="display: grid; gap: 8px">
+          <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); height: 78px; border: 1px solid #e1e5ea; border-radius: 14px; overflow: hidden"><div style="background: #e6e9ed"></div><div style="background: #f2f4f6"></div></div>
+          <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); height: 62px; border: 1px solid #e1e5ea; border-radius: 14px; overflow: hidden"><div style="background: #eceff2"></div><div style="background: #f6f7f9"></div></div>
+          <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); height: 62px; border: 1px solid #e1e5ea; border-radius: 14px; overflow: hidden"><div style="background: #eceff2"></div><div style="background: #f6f7f9"></div></div>
+        </div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">뼈대는 실제 카드와 같은 높이를 지켜서 도착하는 순간 화면이 뛰지 않는다.</p>
+    </div>
+
+    <div>
+      <h3 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">저장한 지점 없음</h3>
+      <div style="padding: 20px; border: 1px solid #e1e5ea; border-radius: 16px">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+          <div>
+            <span style="display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #5a6070">어디서 탈까요?</span>
+            <h4 style="margin: 4px 0 0; font-size: 18px; font-weight: 800">지하철역</h4>
+          </div>
+          <div style="display: inline-flex; align-items: center; gap: 7px; height: 44px; padding: 0 14px; border-radius: 12px; background: #16181d; color: #ffffff; font-size: 13px; font-weight: 700"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c0 5.4-7 11-7 11s-7-5.6-7-11a7 7 0 1 1 14 0z"></path><path d="M12 7v6M9 10h6"></path></svg>역 찾기</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 14px; align-items: center; margin-top: 18px; padding-top: 18px; border-top: 1px solid #e1e5ea">
+          <div style="display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid #e1e5ea; border-radius: 12px; background: #f2f4f6"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="4"></rect><path d="M5 11h14"></path><path d="M7 17l-2 4M17 17l2 4"></path><circle cx="9" cy="14" r="1" fill="#16181d" stroke="none"></circle><circle cx="15" cy="14" r="1" fill="#16181d" stroke="none"></circle></svg></div>
+          <div>
+            <strong style="display: block; font-size: 14px; font-weight: 700">아직 저장한 역이 없어요</strong>
+            <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">역을 저장하면 방향별로 가장 가까운 세 대를 바로 볼 수 있어요.</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">빈 상태는 사과하지 않는다. 무엇을 얻는지 말하고 행동 하나만 남긴다.</p>
+    </div>
+
+    <div>
+      <h3 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">도착 정보 없음</h3>
+      <div style="padding: 20px; border: 1px solid #e1e5ea; border-radius: 16px">
+        <span style="display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #5a6070">곧 오는 순서</span>
+        <h4 style="margin: 4px 0 0; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">건대입구 다음 열차</h4>
+        <div style="display: flex; gap: 8px; margin-top: 14px">
+          <div style="display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 14px; border: 1px solid #00a84d; border-radius: 999px; background: #00a84d; color: #16181d; font-size: 13px; font-weight: 800"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg>성수 방면</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); margin-top: 14px; border: 1px solid #e1e5ea; border-radius: 14px; overflow: hidden">
+          <div style="background: #c4cad4"></div>
+          <div style="padding: 18px 16px">
+            <strong style="display: block; font-size: 14px; font-weight: 700">이 방향은 오늘 운행이 끝났어요</strong>
+            <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">막차는 00:41에 지나갔습니다. 반대 방향이나 다른 저장 지점을 확인해 보세요.</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">비어 있는 까닭을 말한다. 무채색 밴드는 &ldquo;오류가 아님&rdquo;을 뜻한다.</p>
+    </div>
+
+    <div>
+      <h3 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">네트워크 실패</h3>
+      <div style="padding: 20px; border: 1px solid #e1e5ea; border-radius: 16px">
+        <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); border-radius: 14px; overflow: hidden; background: #fdecea">
+          <div style="background: #d93025"></div>
+          <div style="padding: 16px">
+            <strong style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #b3251c"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 8v4.6"></path><circle cx="12" cy="16.2" r="1" fill="currentColor" stroke="none"></circle></svg>도착 정보를 받지 못했어요</strong>
+            <span style="display: block; margin-top: 5px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #7a2019">저장한 역과 방향은 그대로 있습니다. 잠시 뒤 다시 시도해 주세요.</span>
+            <div style="display: inline-flex; align-items: center; gap: 7px; height: 44px; margin-top: 12px; padding: 0 14px; border: 1px solid #d93025; border-radius: 12px; background: #ffffff; color: #b3251c; font-size: 13px; font-weight: 700"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.6-5.7L20 8"></path><path d="M20 4v4h-4"></path><path d="M20 12a8 8 0 0 1-13.6 5.7L4 16"></path><path d="M4 20v-4h4"></path></svg>다시 시도</div>
+          </div>
+        </div>
+        <p style="margin: 14px 0 10px; font-size: 12px; font-weight: 600; color: #5a6070; font-variant-numeric: tabular-nums">마지막으로 받은 정보 · 23:38:52</p>
+        <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); border: 1px solid #e1e5ea; border-radius: 14px; overflow: hidden; opacity: 0.55">
+          <div style="background: #00a84d"></div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px">
+            <strong style="font-size: 14px; font-weight: 700">성수 방면</strong>
+            <span style="font-size: 22px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">6분</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">실패해도 직전 결과를 지우지 않는다. 흐리게 두고 받은 시각을 밝힌다.</p>
+    </div>
+
+    <div>
+      <h3 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">실시간 연결 끊김</h3>
+      <div style="padding: 20px; border: 1px solid #e1e5ea; border-radius: 16px">
+        <div style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border: 1px solid #c4cad4; border-radius: 12px; background: #f2f4f6">
+          <span style="display: inline-block; width: 9px; height: 9px; border-radius: 999px; background: #8d94a3"></span>
+          <span style="font-size: 13px; font-weight: 700">연결이 끊겼어요 · 다시 잇는 중</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); margin-top: 14px; border: 1px solid #e1e5ea; border-radius: 14px; overflow: hidden">
+          <div style="background: #c4cad4"></div>
+          <div style="padding: 16px">
+            <strong style="display: block; font-size: 14px; font-weight: 700">지도의 열차 표시를 잠시 멈췄어요</strong>
+            <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">노선과 역은 그대로 보입니다. 연결이 돌아오면 열차가 다시 나타납니다.</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: #eef0ea">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#5a6070" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c0 5.4-7 11-7 11s-7-5.6-7-11a7 7 0 1 1 14 0z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+          <span style="font-size: 12px; font-weight: 600; color: #5a6070">저장한 지점과 도착 정보는 영향을 받지 않아요</span>
+        </div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">끊김은 오류가 아니다. 빨강 대신 무채색으로, 무엇이 남아 있는지 말한다.</p>
+    </div>
+
+    <div>
+      <h3 style="margin: 0 0 12px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">아주 긴 이름</h3>
+      <div style="padding: 20px; border: 1px solid #e1e5ea; border-radius: 16px">
+        <span style="display: block; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: #5a6070">곧 오는 순서</span>
+        <h4 style="margin: 4px 0 0; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; overflow-wrap: anywhere">동대문역사문화공원(DDP) 다음 열차</h4>
+        <div style="display: grid; grid-template-columns: 6px minmax(0, 1fr); margin-top: 14px; border: 1px solid #16181d; border-radius: 14px; overflow: hidden">
+          <div style="background: #996cac"></div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 14px 16px">
+            <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="display: inline-grid; place-items: center; width: 24px; height: 24px; flex: 0 0 24px; border-radius: 999px; background: #996cac; color: #ffffff; font-size: 12px; font-weight: 800; line-height: 1">5</span><strong style="font-size: 15px; font-weight: 800; overflow-wrap: anywhere">마천 방면 · 상일동행 급행</strong></span>
+            <span style="grid-row: 1 / span 2; grid-column: 2; font-size: 30px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; text-align: right">1분</span>
+            <span style="font-size: 12px; font-weight: 550; line-height: 1.5; color: #5a6070; overflow-wrap: anywhere">청구역 출발 · 급행 아님 · 전동차 8량</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin: 12px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">긴 이름은 줄바꿈으로 견딘다. 시간 숫자의 자리는 어떤 경우에도 밀리지 않는다.</p>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1200,"height":1080}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

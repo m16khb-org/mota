@@ -1,0 +1,457 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..800&display=swap">
+  <style>
+    body { margin: 0; background: #ffffff; color: #16181d; font-family: "Archivo", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: #0052a4; text-decoration: none; }
+    a:hover { color: #16181d; }
+  </style>
+</helmet>
+<div style="width: 1200px; min-height: 3320px; padding: 56px; background: #ffffff">
+
+  <header style="display: flex; align-items: flex-start; gap: 24px">
+    <div style="flex: 0 0 96px">
+      <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
+        <rect width="96" height="96" rx="24" fill="#16181d"></rect>
+        <rect x="19" y="42" width="37" height="12" rx="6" fill="#ffffff"></rect>
+        <path d="M60 31 L77 48 L60 65" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </div>
+    <div style="flex: 1; min-width: 0">
+      <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: #5a6070">MOTA DESIGN SYSTEM</span>
+      <h1 style="margin: 8px 0 0; font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05">모타 디자인 시스템</h1>
+      <p style="margin: 16px 0 0; max-width: 720px; font-size: 16px; font-weight: 450; line-height: 1.6; color: #5a6070; text-wrap: pretty">서울의 역 안내 사인에서 출발한다. 바탕은 희고 글자는 잉크색이며, 채도는 오직 노선에서만 나온다. 굵은 컬러 밴드와 픽토그램이 &ldquo;무엇을 타는지&rdquo;를 먼저 말하고, 남은 시간이 가장 큰 숫자로 대답한다.</p>
+    </div>
+    <div style="flex: 0 0 auto; text-align: right">
+      <span style="display: block; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: #8d94a3">FOUNDATION</span>
+      <strong style="display: block; margin-top: 6px; font-size: 15px; font-weight: 800">v1</strong>
+    </div>
+  </header>
+
+  <div style="display: flex; height: 12px; margin-top: 32px; border-radius: 999px; overflow: hidden">
+    <div style="flex: 1; background: #0052a4"></div>
+    <div style="flex: 1; background: #00a84d"></div>
+    <div style="flex: 1; background: #ef7c1c"></div>
+    <div style="flex: 1; background: #00a5de"></div>
+    <div style="flex: 1; background: #996cac"></div>
+    <div style="flex: 1; background: #cd7c2f"></div>
+    <div style="flex: 1; background: #747f00"></div>
+    <div style="flex: 1; background: #e6186c"></div>
+  </div>
+
+  <section style="margin-top: 56px; padding-top: 28px; border-top: 2px solid #16181d">
+    <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 28px">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #8d94a3">01</span>
+      <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">색상</h2>
+      <span style="font-size: 14px; font-weight: 500; color: #5a6070">채도는 노선에서만 온다</span>
+    </div>
+
+    <h3 style="margin: 0 0 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">지하철 노선색</h3>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px">
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #0052a4">
+          <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: #ffffff; color: #0052a4; font-size: 14px; font-weight: 800; line-height: 1">1</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">1호선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#0052A4 · 흰 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #00a84d">
+          <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: #ffffff; color: #00752f; font-size: 14px; font-weight: 800; line-height: 1">2</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">2호선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#00A84D · 잉크 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #ef7c1c">
+          <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: #ffffff; color: #a8500a; font-size: 14px; font-weight: 800; line-height: 1">3</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">3호선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#EF7C1C · 잉크 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #00a5de">
+          <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: #ffffff; color: #006c93; font-size: 14px; font-weight: 800; line-height: 1">4</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">4호선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#00A5DE · 잉크 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #996cac">
+          <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: #ffffff; color: #6b4380; font-size: 14px; font-weight: 800; line-height: 1">5</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">5호선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#996CAC · 흰 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #e6186c">
+          <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 999px; background: #ffffff; color: #b30d51; font-size: 14px; font-weight: 800; line-height: 1">8</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">8호선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#E6186C · 흰 글자</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin: 28px 0 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">버스 유형색</h3>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px">
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #3d5bab">
+          <span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 6px; background: #ffffff; color: #3d5bab; font-size: 13px; font-weight: 800">간선</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">간선버스</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#3D5BAB · 흰 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #53b332">
+          <span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 6px; background: #ffffff; color: #2f7a17; font-size: 13px; font-weight: 800">지선</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">지선버스</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#53B332 · 잉크 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #e60012">
+          <span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 6px; background: #ffffff; color: #c1000f; font-size: 13px; font-weight: 800">광역</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">광역버스</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#E60012 · 흰 글자</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="display: flex; align-items: flex-end; height: 76px; padding: 10px; background: #f99d1c">
+          <span style="display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 6px; background: #ffffff; color: #9c5c00; font-size: 13px; font-weight: 800">순환</span>
+        </div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">순환버스</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#F99D1C · 잉크 글자</span>
+        </div>
+      </div>
+      <div style="grid-column: span 2; display: grid; align-content: center; gap: 6px; padding: 16px; border: 1px dashed #c4cad4; border-radius: 12px">
+        <strong style="font-size: 13px; font-weight: 700">노선색은 데이터다</strong>
+        <span style="font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">노선색은 브랜드가 정하지 않고 운행 기관이 정한다. 시스템은 그 값을 그대로 싣고, 대비가 모자라면 글자색만 바꾼다.</span>
+      </div>
+    </div>
+
+    <h3 style="margin: 28px 0 14px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">무채색과 상태색</h3>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px">
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #16181d"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">잉크</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#16181D</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #5a6070"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">보조 글자</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#5A6070</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #8d94a3"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">약한 글자</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#8D94A3</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #c4cad4"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">굵은 괘선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#C4CAD4</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #e1e5ea"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">괘선</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#E1E5EA</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #f2f4f6"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">캔버스</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#F2F4F6</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #ffffff; border-bottom: 1px solid #e1e5ea"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">표면</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#FFFFFF</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #d93025"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">오류</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#D93025</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #e1e5ea; border-radius: 12px; overflow: hidden">
+        <div style="height: 60px; background: #fdecea"></div>
+        <div style="padding: 10px 12px 12px">
+          <strong style="display: block; font-size: 13px; font-weight: 700">오류 바탕</strong>
+          <span style="display: block; margin-top: 2px; font-size: 11px; font-weight: 600; color: #5a6070">#FDECEA</span>
+        </div>
+      </div>
+      <div style="grid-column: span 3; display: grid; align-content: center; gap: 6px; padding: 16px; border: 1px dashed #c4cad4; border-radius: 12px">
+        <strong style="font-size: 13px; font-weight: 700">색은 혼자 뜻을 전하지 않는다</strong>
+        <span style="font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">선택·오류·방향은 항상 글자, 굵기, 아이콘, 밴드 중 최소 하나를 함께 쓴다. 노선 배지 글자색은 대비 4.5:1 이상인 쪽을 고르고, 밝은 노선에는 잉크를 쓴다.</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top: 56px; padding-top: 28px; border-top: 2px solid #16181d">
+    <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #8d94a3">02</span>
+      <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">글자</h2>
+      <span style="font-size: 14px; font-weight: 500; color: #5a6070">Archivo (라틴·숫자) + Pretendard (한글)</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">도착 시간</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">56 / 0.94 / 800 / -0.03em / tabular</span>
+      </div>
+      <div style="font-size: 56px; font-weight: 800; line-height: 0.94; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">3분 12초</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">화면 제목</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">28 / 1.25 / 800 / -0.02em</span>
+      </div>
+      <div style="font-size: 28px; font-weight: 800; line-height: 1.25; letter-spacing: -0.02em">건대입구 다음 열차</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">섹션 제목</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">20 / 1.3 / 800 / -0.01em</span>
+      </div>
+      <div style="font-size: 20px; font-weight: 800; line-height: 1.3; letter-spacing: -0.01em">어디서 탈까요?</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">행 제목</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">17 / 1.45 / 700</span>
+      </div>
+      <div style="font-size: 17px; font-weight: 700; line-height: 1.45">한양대학교앞 · 정류장 05-142</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">본문</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">15 / 1.55 / 450</span>
+      </div>
+      <div style="font-size: 15px; font-weight: 450; line-height: 1.55">역과 정류장은 출근과 퇴근에 따로 저장되고, 각각 가장 가까운 세 대까지만 보여줍니다.</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">보조</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">13 / 1.5 / 550 / #5A6070</span>
+      </div>
+      <div style="font-size: 13px; font-weight: 550; line-height: 1.5; color: #5a6070">전전역 출발 · 23:41 기준</div>
+    </div>
+    <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid #e1e5ea">
+      <div>
+        <strong style="display: block; font-size: 13px; font-weight: 700">라벨</strong>
+        <span style="display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #5a6070">12 / 1.2 / 800 / 0.1em</span>
+      </div>
+      <div style="font-size: 12px; font-weight: 800; line-height: 1.2; letter-spacing: 0.1em; color: #5a6070">곧 오는 순서</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 20px">
+      <div style="padding: 16px; border: 1px dashed #c4cad4; border-radius: 12px">
+        <strong style="display: block; font-size: 13px; font-weight: 700">숫자는 tabular</strong>
+        <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">1초마다 바뀌는 도착 시간이 좌우로 흔들리지 않게 모든 시각·거리 숫자에 tabular-nums를 쓴다.</span>
+      </div>
+      <div style="padding: 16px; border: 1px dashed #c4cad4; border-radius: 12px">
+        <strong style="display: block; font-size: 13px; font-weight: 700">글꼴은 둘까지</strong>
+        <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">Archivo가 라틴과 숫자를, Pretendard가 한글을 맡는다. 대체 스택은 Apple SD Gothic Neo, Malgun Gothic, system-ui.</span>
+      </div>
+      <div style="padding: 16px; border: 1px dashed #c4cad4; border-radius: 12px">
+        <strong style="display: block; font-size: 13px; font-weight: 700">긴 이름을 견딘다</strong>
+        <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">역·정류장·방향 이름은 overflow-wrap: anywhere로 감싸고 셸을 밀어내지 않는다.</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top: 56px; padding-top: 28px; border-top: 2px solid #16181d">
+    <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 28px">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #8d94a3">03</span>
+      <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">간격과 형태</h2>
+      <span style="font-size: 14px; font-weight: 500; color: #5a6070">4px 배수, 손가락 44px</span>
+    </div>
+
+    <h3 style="margin: 0 0 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">간격 눈금</h3>
+    <div style="display: flex; align-items: flex-end; gap: 20px; margin-bottom: 32px">
+      <div style="text-align: center"><div style="width: 4px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">4</span></div>
+      <div style="text-align: center"><div style="width: 8px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">8</span></div>
+      <div style="text-align: center"><div style="width: 12px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">12</span></div>
+      <div style="text-align: center"><div style="width: 16px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">16</span></div>
+      <div style="text-align: center"><div style="width: 20px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">20</span></div>
+      <div style="text-align: center"><div style="width: 24px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">24</span></div>
+      <div style="text-align: center"><div style="width: 32px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">32</span></div>
+      <div style="text-align: center"><div style="width: 40px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">40</span></div>
+      <div style="text-align: center"><div style="width: 56px; height: 64px; margin: 0 auto; border-radius: 2px; background: #16181d"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">56</span></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+      <div>
+        <h3 style="margin: 0 0 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">모서리</h3>
+        <div style="display: flex; gap: 16px">
+          <div style="text-align: center"><div style="width: 96px; height: 72px; border: 2px solid #16181d; border-radius: 12px"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">12 · 컨트롤</span></div>
+          <div style="text-align: center"><div style="width: 96px; height: 72px; border: 2px solid #16181d; border-radius: 16px"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">16 · 카드</span></div>
+          <div style="text-align: center"><div style="width: 96px; height: 72px; border: 2px solid #16181d; border-radius: 24px 24px 0 0"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">24 · 시트</span></div>
+          <div style="text-align: center"><div style="width: 96px; height: 72px; border: 2px solid #16181d; border-radius: 999px"></div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">999 · 배지</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin: 0 0 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #5a6070">컨트롤 높이</h3>
+        <div style="display: flex; align-items: flex-end; gap: 16px">
+          <div style="text-align: center"><div style="display: grid; place-items: center; width: 132px; height: 56px; border-radius: 12px; background: #16181d; color: #ffffff; font-size: 15px; font-weight: 700">56</div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">주요 행동</span></div>
+          <div style="text-align: center"><div style="display: grid; place-items: center; width: 132px; height: 48px; border: 1px solid #16181d; border-radius: 12px; font-size: 15px; font-weight: 700">48</div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">기본</span></div>
+          <div style="text-align: center"><div style="display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid #c4cad4; border-radius: 12px; font-size: 13px; font-weight: 700">44</div><span style="display: block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #5a6070">최소</span></div>
+        </div>
+        <p style="margin: 16px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">누를 수 있는 것은 어떤 화면에서도 44×44px 아래로 내려가지 않는다. 밴드 두께는 6px, 선택 스트립은 4px이다.</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 32px">
+      <div style="padding: 18px; border: 1px solid #e1e5ea; border-radius: 16px; background: #ffffff">
+        <strong style="display: block; font-size: 13px; font-weight: 700">그림자는 떠 있을 때만</strong>
+        <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">지도 위 컨트롤과 모바일 시트만 0 6px 20px rgb(22 24 29 / 10%)를 쓴다.</span>
+      </div>
+      <div style="padding: 18px; border: 1px solid #e1e5ea; border-radius: 16px; box-shadow: 0 6px 20px rgb(22 24 29 / 10%)">
+        <strong style="display: block; font-size: 13px; font-weight: 700">떠 있는 면</strong>
+        <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">이 카드가 허용된 유일한 높이감이다. 그 밖의 구분은 1px 괘선과 컬러 밴드가 맡는다.</span>
+      </div>
+      <div style="padding: 18px; border: 1px dashed #c4cad4; border-radius: 16px">
+        <strong style="display: block; font-size: 13px; font-weight: 700">모션</strong>
+        <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">색·불투명도 160ms까지. 누를 때 scale(0.98). 높이와 위치는 애니메이션하지 않는다.</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top: 56px; padding-top: 28px; border-top: 2px solid #16181d">
+    <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #8d94a3">04</span>
+      <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">픽토그램</h2>
+      <span style="font-size: 14px; font-weight: 500; color: #5a6070">24px 격자 · 2px 획 · 둥근 끝</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px">
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="14" rx="3"></rect><path d="M4 10h16"></path><path d="M7 17v3M17 17v3"></path><circle cx="8" cy="13.8" r="1" fill="#16181d" stroke="none"></circle><circle cx="16" cy="13.8" r="1" fill="#16181d" stroke="none"></circle></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">버스</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="4"></rect><path d="M5 11h14"></path><path d="M7 17l-2 4M17 17l2 4"></path><circle cx="9" cy="14" r="1" fill="#16181d" stroke="none"></circle><circle cx="15" cy="14" r="1" fill="#16181d" stroke="none"></circle></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">지하철</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c0 5.4-7 11-7 11s-7-5.6-7-11a7 7 0 1 1 14 0z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">지점</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 10c0 5.4-7 11-7 11s-7-5.6-7-11a7 7 0 1 1 14 0z"></path><path d="M12 7v6M9 10h6"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">지점 찾기</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.6-5.7L20 8"></path><path d="M20 4v4h-4"></path><path d="M20 12a8 8 0 0 1-13.6 5.7L4 16"></path><path d="M4 20v-4h4"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">새로고침</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.2V12l3.2 2"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">시각</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">상행</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M18 13l-6 6-6-6"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">하행</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M8.4 12.2l2.5 2.4 4.7-4.9"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">지금 보는 곳</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M9.5 7V5h5v2"></path><path d="M6.5 7l.8 12a2 2 0 0 0 2 1.9h5.4a2 2 0 0 0 2-1.9l.8-12"></path><path d="M10.5 11v6M13.5 11v6"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">삭제</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7.5" width="18" height="12.5" rx="2.5"></rect><path d="M9 7.5V5.6A1.6 1.6 0 0 1 10.6 4h2.8A1.6 1.6 0 0 1 15 5.6v1.9"></path><path d="M3 12.5h18"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">출근</span>
+      </div>
+      <div style="display: grid; justify-items: center; gap: 10px; padding: 18px 8px; border: 1px solid #e1e5ea; border-radius: 12px">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#16181d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5L12 4l8.5 6.5"></path><path d="M6 9.6V20h12V9.6"></path><path d="M10 20v-5h4v5"></path></svg>
+        <span style="font-size: 12px; font-weight: 650; color: #5a6070">퇴근</span>
+      </div>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 12px; font-weight: 500; line-height: 1.5; color: #5a6070">아이콘은 혼자 서지 않는다. 짧은 한국어 레이블을 반드시 곁에 둔다. 이모지와 딩벳은 쓰지 않는다.</p>
+  </section>
+
+  <section style="margin-top: 56px; padding-top: 28px; border-top: 2px solid #16181d">
+    <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px">
+      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: #8d94a3">05</span>
+      <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.01em">원칙</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+      <div style="padding: 24px; border: 1px solid #16181d; border-radius: 16px">
+        <h3 style="margin: 0 0 16px; font-size: 13px; font-weight: 800; letter-spacing: 0.06em">지킨다</h3>
+        <div style="display: grid; gap: 12px">
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00752f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.2 5L20 6.5"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5">한 화면에 하나의 질문. 지금 무엇을 타는가.</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00752f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.2 5L20 6.5"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5">노선 밴드가 먼저 보이고, 남은 시간이 가장 크다.</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00752f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.2 5L20 6.5"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5">구분은 여백, 1px 괘선, 컬러 밴드로 한다.</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00752f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.2 5L20 6.5"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5">상태는 글자로도 읽힌다. 색은 거들 뿐이다.</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00752f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.2 5L20 6.5"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5">한 손, 한 눈, 3초. 걸으면서도 읽힌다.</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00752f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5.2 5L20 6.5"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5">실패해도 이전 결과를 지우지 않는다.</span></div>
+        </div>
+      </div>
+      <div style="padding: 24px; border: 1px solid #e1e5ea; border-radius: 16px; background: #f2f4f6">
+        <h3 style="margin: 0 0 16px; font-size: 13px; font-weight: 800; letter-spacing: 0.06em; color: #5a6070">버린다</h3>
+        <div style="display: grid; gap: 12px">
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8d94a3" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5; color: #5a6070">그라디언트, 유리 효과, 장식 일러스트</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8d94a3" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5; color: #5a6070">브랜드가 만든 또 하나의 강조색</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8d94a3" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5; color: #5a6070">중첩된 카드 안의 카드</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8d94a3" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5; color: #5a6070">뜻 없는 숫자, 아이콘, 통계</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8d94a3" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5; color: #5a6070">가짜 상태바와 가짜 키보드</span></div>
+          <div style="display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8d94a3" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 14px; font-weight: 500; line-height: 1.5; color: #5a6070">이모지와 세 번째 글꼴</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":1200,"height":3320}}'>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>
