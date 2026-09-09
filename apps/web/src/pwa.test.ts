@@ -67,6 +67,30 @@ describe("PWA assets", () => {
     ).toBe(false);
   });
 
+  it("provides separate Android maskable and 180px Apple icons", async () => {
+    const manifest = WebManifestSchema.parse(
+      JSON.parse(
+        await readFile(new URL("../public/manifest.webmanifest", import.meta.url), "utf8"),
+      ),
+    );
+    const maskable = manifest.icons.find((icon) => icon.purpose === "maskable");
+    const regular = manifest.icons.find(
+      (icon) => icon.purpose === "any" && icon.sizes === "512x512",
+    );
+    expect(maskable).toBeDefined();
+    expect(regular).toBeDefined();
+    expect(maskable?.src).not.toBe(regular?.src);
+
+    const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+    const appleLink = html.match(/<link\b[^>]*rel="apple-touch-icon"[^>]*>/)?.[0] ?? "";
+    const applePath = appleLink.match(/href="([^"]+)"/)?.[1];
+    expect(appleLink).toContain('sizes="180x180"');
+    if (!applePath) throw new Error("Apple touch icon is missing");
+    const png = await readFile(new URL(`../public${applePath}`, import.meta.url));
+    expect(png.readUInt32BE(16)).toBe(180);
+    expect(png.readUInt32BE(20)).toBe(180);
+  });
+
   it("registers the offline worker after the page loads", async () => {
     const scriptUrl = new URL("../public/register-sw.js", import.meta.url);
     const script = await readFile(scriptUrl, "utf8");
@@ -89,7 +113,7 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js?v=7");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=8");
     expect(registeredWindowEvents).toEqual(["load"]);
   });
 

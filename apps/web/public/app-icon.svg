@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <title>모타</title>
+  <rect width="96" height="96" rx="24" fill="#16181d" />
+  <rect x="28" y="66" width="10" height="14" rx="5" fill="#ffffff" />
+  <rect x="58" y="66" width="10" height="14" rx="5" fill="#ffffff" />
+  <rect x="21" y="16" width="54" height="56" rx="12" fill="#ffffff" />
+  <rect x="28" y="24" width="40" height="18" rx="6" fill="#16181d" />
+  <rect x="28" y="54" width="8" height="8" rx="3" fill="#16181d" />
+  <rect x="60" y="54" width="8" height="8" rx="3" fill="#16181d" />
+</svg>

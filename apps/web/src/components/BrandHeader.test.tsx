@@ -25,7 +25,7 @@ describe("BrandHeader", () => {
     );
 
     const icon = container.querySelector<HTMLImageElement>(".brand-mark img");
-    expect(icon).toHaveAttribute("src", "/pwa-icon.svg");
+    expect(icon).toHaveAttribute("src", "/app-icon.svg");
     expect(icon).toHaveAttribute("width", "48");
     expect(icon).toHaveAttribute("height", "48");
     expect(container.querySelector(".brand-mark .lucide-clock-3")).not.toBeInTheDocument();
