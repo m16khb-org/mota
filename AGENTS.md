@@ -48,7 +48,12 @@ packages/db/          Drizzle Postgres schema, migration, repository
 
 ## UI
 
-- Keep the urban-utility black/white/lime design in `DESIGN.md`.
+- Keep the urban-utility black/white/lime design in `DESIGN.md`. That document
+  governs the shipped app.
+- `design/` holds a separate, unadopted visual proposal built from scratch
+  (Seoul signage: white ground, ink type, chroma only from transit line
+  colors). Start at `design/README.md`; it carries the tokens and the reading
+  order. Read it for context, but do not build against it unless asked.
 - Desktop: 420px control rail plus map.
 - Mobile: map plus scrolling sheet.
 - Keep map and list alternatives, 44px controls, keyboard tabs, and text state.
