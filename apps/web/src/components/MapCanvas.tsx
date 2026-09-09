@@ -36,6 +36,7 @@ interface MapCanvasProps {
 interface AccessibleMarkerProps {
   readonly label: string;
   readonly active: boolean;
+  readonly line?: string | undefined;
   readonly onSelect: () => void;
   readonly children?: ReactNode;
   readonly markerProps: CircleMarkerProps;
@@ -48,6 +49,7 @@ interface AccessibleMarkerProps {
 function AccessibleMarker({
   label,
   active,
+  line,
   onSelect,
   children,
   markerProps,
@@ -84,6 +86,12 @@ function AccessibleMarker({
     element.setAttribute("aria-label", label);
     element.setAttribute("aria-pressed", String(active));
     element.classList.add("map-marker-hit-target");
+    element.setAttribute("data-marker-role", "hit-target");
+    if (line === undefined) {
+      element.removeAttribute("data-line");
+    } else {
+      element.setAttribute("data-line", line);
+    }
     const handleKeydown = (event: Event) => {
       const keyboardEvent = event as KeyboardEvent;
       if (keyboardEvent.key === "Escape") {
@@ -103,7 +111,7 @@ function AccessibleMarker({
     return () => {
       element.removeEventListener("keydown", handleKeydown);
     };
-  }, [label, active]);
+  }, [label, active, line]);
 
   return (
     <CircleMarker
@@ -128,6 +136,8 @@ function MapPointMarker({
   children,
   center,
   visualClassName,
+  line,
+  markerKind,
 }: {
   readonly label: string;
   readonly active: boolean;
@@ -135,10 +145,17 @@ function MapPointMarker({
   readonly children?: ReactNode;
   readonly center: Point;
   readonly visualClassName: string;
+  readonly line?: string | undefined;
+  readonly markerKind: "bus" | "subway";
 }) {
   const visualMarkerRef = useRef<LeafletCircleMarker | null>(null);
   const hitMarkerRef = useRef<LeafletCircleMarker | null>(null);
   const [baseClass, suffix] = visualClassName.split(" ");
+  const markerState = active
+    ? "selected"
+    : visualClassName.includes("pending")
+      ? "candidate"
+      : "saved";
 
   useEffect(() => {
     const visualMarker = visualMarkerRef.current;
@@ -149,12 +166,31 @@ function MapPointMarker({
     if (!element || baseClass === undefined) {
       return;
     }
-    element.classList.add(baseClass);
+    element.classList.add(baseClass, "map-marker-pin");
     element.classList.toggle("is-active", suffix === "is-active");
-  }, [baseClass, suffix]);
+    element.setAttribute("data-marker-kind", markerKind);
+    element.setAttribute("data-marker-state", markerState);
+    if (line === undefined) {
+      element.removeAttribute("data-line");
+    } else {
+      element.setAttribute("data-line", line);
+    }
+  }, [baseClass, line, markerKind, markerState, suffix]);
 
   return (
     <>
+      {active ? (
+        <CircleMarker
+          center={center}
+          radius={19}
+          interactive={false}
+          pathOptions={{
+            className: "map-marker-selection-ring",
+            fill: false,
+            weight: 2,
+          }}
+        />
+      ) : null}
       <CircleMarker
         ref={visualMarkerRef}
         center={center}
@@ -165,6 +201,7 @@ function MapPointMarker({
       <AccessibleMarker
         label={label}
         active={active}
+        line={line}
         onSelect={onSelect}
         markerProps={{
           center,
@@ -471,6 +508,7 @@ export function MapCanvas({
               visualClassName={
                 active ? "map-marker-bus is-active" : "map-marker-bus"
               }
+              markerKind="bus"
             >
               <Popup>
                 <strong>{stop.name}</strong>
@@ -496,6 +534,7 @@ export function MapCanvas({
                     ? "map-marker-pending is-active"
                     : "map-marker-pending"
                 }
+                markerKind="bus"
               >
                 <Popup>
                   <strong>{stop.name}</strong>
@@ -509,10 +548,11 @@ export function MapCanvas({
           .filter((station) => !savedStationIds.has(station.id))
           .map((station) => {
             const active = selectedSubwayStationIds.includes(station.id);
+            const displayLine = stationDisplayLine(station);
             return (
               <MapPointMarker
                 key={`pending-subway-${station.id}`}
-                label={`${station.name} 지하철역, ${stationDisplayLine(station)}, 눌러서 추가`}
+                label={`${station.name} 지하철역, ${displayLine}, 눌러서 추가`}
                 active={active}
                 onSelect={() => onAddPendingSubway?.(station)}
                 center={{ lat: station.lat, lng: station.lng }}
@@ -521,21 +561,24 @@ export function MapCanvas({
                     ? "map-marker-pending-subway is-active"
                     : "map-marker-pending-subway"
                 }
+                line={displayLine}
+                markerKind="subway"
               >
                 <Popup>
                   <strong>{station.name}</strong>
                   <br />
-                  {stationDisplayLine(station)} · 눌러서 선택
+                  {displayLine} · 눌러서 선택
                 </Popup>
               </MapPointMarker>
             );
           })}
         {subwayStations.map((station) => {
           const active = selectedSubwayStationIds.includes(station.id);
+          const displayLine = stationDisplayLine(station);
           return (
             <MapPointMarker
               key={`subway-${station.id}`}
-              label={`${station.name} 지하철역, ${stationDisplayLine(station)}, 중심에서 ${Math.round(
+              label={`${station.name} 지하철역, ${displayLine}, 중심에서 ${Math.round(
                 station.distanceMeters,
               )}미터`}
               active={active}
@@ -544,11 +587,13 @@ export function MapCanvas({
               visualClassName={
                 active ? "map-marker-subway is-active" : "map-marker-subway"
               }
+              line={displayLine}
+              markerKind="subway"
             >
               <Popup>
                 <strong>{station.name}</strong>
                 <br />
-                {stationDisplayLine(station)}
+                {displayLine}
               </Popup>
             </MapPointMarker>
           );

@@ -51,9 +51,9 @@ packages/db/          Drizzle Postgres schema, migration, repository
 - Mota's design system is `design/README.md` — Seoul signage: white ground,
   ink type, chroma only from transit line colors. Start there; it carries the
   tokens, the size scales and the reading order. Build new UI against it.
-- `apps/web` still implements the earlier black/white/lime system recorded in
-  `DESIGN.md`. That is the code's current state, not the target. Porting it is
-  open work; until then expect the two to disagree on color and type.
+- `DESIGN.md` maps the adopted tokens to app components. The previous lime
+  accent is retired; preserve real transit data and existing interactions
+  when translating the example artboards into app screens.
 - `DESIGN.md` remains authoritative for the product contract and the
   responsive structure, which the new visual system does not change.
 - Desktop: 420px control rail plus map.

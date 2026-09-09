@@ -65,6 +65,8 @@ export function MapStage({
       className={`map-stage${
         hasSelection ? " has-selection" : ""
       }${searching ? " is-searching" : ""}`}
+      data-map-state={searching ? "searching" : "browsing"}
+      data-search-mode={searchMode ?? undefined}
       aria-label="선택한 정류장과 역 지도"
     >
       <div className="stage-live-map">

@@ -167,7 +167,7 @@ export async function installPreviewFixtures(
 		unexpectedExternalRequests.push(route.request().url());
 		await route.fulfill({ status: 418, body: "blocked external fixture" });
 	});
-	await page.route("https://cdn.jsdelivr.net/**", (route) =>
+	await page.route(/^https:\/\/(?:cdn\.jsdelivr\.net|fonts\.googleapis\.com)\//, (route) =>
 		route.fulfill({
 			contentType: "text/css; charset=utf-8",
 			body: "/* deterministic empty font fixture */",

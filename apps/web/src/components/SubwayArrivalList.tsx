@@ -174,11 +174,25 @@ export function SubwayArrivalList({
 	};
 
 	return (
-		<section className="arrivals" aria-labelledby="subway-arrival-title">
+		<section
+			className="arrivals"
+			aria-labelledby="subway-arrival-title"
+			data-arrival-state={
+				error
+					? "error"
+					: loading
+						? "loading"
+						: arrivals.length > 0
+							? "ready"
+							: "empty"
+			}
+		>
 			<div className="section-heading">
 				<div>
 					<span className="eyebrow">곧 오는 순서</span>
-					<h2 id="subway-arrival-title">{stationName} 다음 열차</h2>
+					<h2 id="subway-arrival-title">
+						{`${stationName} 다음\u00a0열차`}
+					</h2>
 				</div>
 				<button
 					className="refresh-button"
@@ -207,7 +221,12 @@ export function SubwayArrivalList({
 					aria-label="지하철 방향 선택"
 				>
 					{directionGroups.map(([line, options]) => (
-						<div className="direction-group" role="presentation" key={line}>
+						<div
+							className="direction-group"
+							role="presentation"
+							data-line={line}
+							key={line}
+						>
 							<span className="direction-line">{line}</span>
 							<div className="direction-options" role="presentation">
 								{options.map((direction) => (
@@ -219,6 +238,7 @@ export function SubwayArrivalList({
 										aria-label={`${direction.line} ${direction.updnLine}`}
 										aria-selected={activeDirection === direction.key}
 										tabIndex={activeDirection === direction.key ? 0 : -1}
+										data-line={direction.line}
 										onClick={() => setSelectedDirection(direction.key)}
 										onKeyDown={(event) =>
 											moveDirectionFocus(event, direction.key)
@@ -238,6 +258,7 @@ export function SubwayArrivalList({
 				<div
 					className="arrival-error"
 					role="alert"
+					data-state="error"
 					data-error-code={errorCode ?? undefined}
 				>
 					<p>{error}</p>
@@ -248,13 +269,13 @@ export function SubwayArrivalList({
 			) : null}
 
 			{!loading && !error && arrivals.length === 0 ? (
-				<p className="arrival-empty">
+				<p className="arrival-empty" data-state="empty">
 					지금 도착 예정인 열차가 없어요. 잠시 후 다시 확인해 주세요.
 				</p>
 			) : null}
 
 			{loading && arrivals.length === 0 ? (
-				<div className="arrival-skeleton" aria-hidden="true">
+				<div className="arrival-skeleton" aria-hidden="true" data-state="loading">
 					<span />
 					<span />
 					<span />
@@ -274,32 +295,36 @@ export function SubwayArrivalList({
 					);
 					return (
 						<article
-							className={`arrival-row is-subway${eta.remainingSeconds === null && !usesProviderPosition ? " is-inactive" : ""
+							className={`arrival-row is-subway${index === 0 ? " is-primary" : ""}${eta.remainingSeconds === null && !usesProviderPosition ? " is-inactive" : ""
 								}`}
+							data-line={arrival.line}
 							key={`${arrival.id}-${arrival.direction}-${arrival.message}`}
 						>
-							<div className="route-identity-wrap">
-								<span className="arrival-rank" aria-hidden="true">
-									{index + 1}
-								</span>
-								<span className="sr-only">
-									{index + 1}번째로 빠른 열차
-								</span>
-								<div className="route-identity">
-									<span className="subway-line-badge">{arrival.line}</span>
-									<span className="subway-direction">{arrival.direction}</span>
+							<span className="arrival-route-band" aria-hidden="true" />
+							<div className="arrival-card-content">
+								<div className="route-identity-wrap">
+									<span className="arrival-rank" aria-hidden="true">
+										{index + 1}
+									</span>
+									<span className="sr-only">
+										{index + 1}번째로 빠른 열차
+									</span>
+									<div className="route-identity">
+										<span className="subway-line-badge" data-line={arrival.line}>
+											{arrival.line}
+										</span>
+										<strong className="subway-direction">{arrival.direction}</strong>
+									</div>
 								</div>
-							</div>
-							<div className="arrival-meta">
-								<span>{arrival.trainStatus}</span>
-								{arrival.isLastTrain ? <span>막차</span> : null}
-							</div>
-							<div className="eta-block">
-								<strong>{etaText}</strong>
-								<span>{usesProviderPosition ? "위치 정보" : eta.message}</span>
-								{arrival.location ? (
-									<small>{arrival.location} 부근</small>
-								) : null}
+								<div className="arrival-meta">
+									<span>{usesProviderPosition ? "위치 정보" : eta.message}</span>
+									{arrival.location ? <span>{arrival.location} 부근</span> : null}
+									<span>{arrival.trainStatus}</span>
+									{arrival.isLastTrain ? <span>막차</span> : null}
+								</div>
+								<div className="eta-block">
+									<strong>{etaText}</strong>
+								</div>
 							</div>
 						</article>
 					);

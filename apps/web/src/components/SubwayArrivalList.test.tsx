@@ -334,6 +334,19 @@ describe("SubwayArrivalList", () => {
 		expect(screen.getByText("천호 다음 열차")).toBeInTheDocument();
 		expect(screen.getAllByText("2호선")).toHaveLength(2);
 		expect(screen.getByText("강남방면")).toBeInTheDocument();
+		expect(screen.getByText("2호선", { selector: ".subway-line-badge" })).toHaveAttribute(
+			"data-line",
+			"2호선",
+		);
+		expect(screen.getByText("강남방면").closest(".arrival-row")).toHaveAttribute(
+			"data-line",
+			"2호선",
+		);
+		expect(document.querySelector(".direction-group[data-line='2호선']")).toBeInTheDocument();
+		expect(screen.getByRole("tab", { name: "2호선 하행" })).toHaveAttribute(
+			"data-line",
+			"2호선",
+		);
 
 		fireEvent.click(screen.getByRole("tab", { name: "1호선 상행" }));
 

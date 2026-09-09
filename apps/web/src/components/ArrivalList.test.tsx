@@ -71,6 +71,15 @@ describe("ArrivalList", () => {
     expect(screen.getByText("강동공영차고지")).toBeInTheDocument();
     expect(screen.getByText("5분")).toBeInTheDocument();
     expect(screen.getByText("다음 12분 후[8번째 전]")).toBeInTheDocument();
+    expect(screen.getByText("341")).toHaveClass("route-badge");
+    expect(screen.getByText("341")).toHaveAttribute("data-route-type", "간선");
+    expect(screen.getByText("341").closest(".arrival-row")).toHaveAttribute(
+      "data-route-type",
+      "간선",
+    );
+    expect(screen.getByText("341").closest(".arrival-row")).toHaveClass(
+      "is-primary",
+    );
   });
 
   it("calls refresh from the arrival control", () => {

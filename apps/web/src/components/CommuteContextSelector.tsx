@@ -60,6 +60,7 @@ export function CommuteContextSelector({
               key={context}
               id={`commute-tab-${context}`}
               className="commute-tab"
+              data-commute-context={context}
               type="button"
               role="tab"
               aria-label={label}

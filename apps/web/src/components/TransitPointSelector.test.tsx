@@ -29,6 +29,47 @@ function renderSelector() {
 }
 
 describe("TransitPointSelector", () => {
+  it("exposes the saved subway line for route-band styling without changing controls", () => {
+    const station: SubwayStation = {
+      id: "station-2" as SubwayStation["id"],
+      name: "건대입구",
+      line: "2호선",
+      lat: 37.54,
+      lng: 127.07,
+      distanceMeters: 100,
+    };
+    const onSelectSubwayStation = vi.fn();
+    const onRemoveSubwayStation = vi.fn();
+
+    render(
+      <TransitPointSelector
+        mode="subway"
+        busStops={[]}
+        subwayStations={[station]}
+        selectedBusStopIds={[]}
+        selectedSubwayStationId={station.id}
+        searching={false}
+        onModeChange={vi.fn()}
+        onAdd={vi.fn()}
+        onSelectBusStop={vi.fn()}
+        onSelectSubwayStation={onSelectSubwayStation}
+        onRemoveBusStop={vi.fn()}
+        onRemoveSubwayStation={onRemoveSubwayStation}
+      />,
+    );
+
+    const row = screen.getByRole("button", { name: /2호선 건대입구/ })
+      .parentElement;
+    expect(row).toHaveAttribute("data-line", "2호선");
+    expect(screen.getByLabelText("2호선")).toHaveClass("subway-route-badge");
+
+    fireEvent.click(screen.getByRole("button", { name: /2호선 건대입구/ }));
+    fireEvent.click(screen.getByRole("button", { name: "건대입구역 삭제" }));
+
+    expect(onSelectSubwayStation).toHaveBeenCalledWith(station.id);
+    expect(onRemoveSubwayStation).toHaveBeenCalledWith(station.id);
+  });
+
   it("renders exactly one same-tab 3D preview link after the transit tabs", () => {
     renderSelector();
 

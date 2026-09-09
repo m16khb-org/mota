@@ -1,4 +1,11 @@
-import { BusFront, Check, RefreshCw, TrainFront, X } from "lucide-react";
+import {
+  BusFront,
+  Check,
+  CheckCircle2,
+  RefreshCw,
+  TrainFront,
+  X,
+} from "lucide-react";
 import { useEffect, useRef } from "react";
 import type { BusStop } from "../domain/bus";
 import { stationDisplayLine, type SubwayStation } from "../domain/subway";
@@ -48,6 +55,7 @@ export function InlineMapSearchControls({
     <section
       ref={regionRef}
       className="inline-map-search"
+      data-mode={mode}
       aria-label={isBus ? "버스 정류장 지도 찾기" : "지하철역 지도 찾기"}
       tabIndex={-1}
     >
@@ -85,6 +93,10 @@ export function InlineMapSearchControls({
       </header>
 
       <div className="inline-map-search-results">
+        <div className="inline-map-search-results-heading">
+          <strong>후보 {resultCount}곳</strong>
+          <span>눌러서 함께 볼 {isBus ? "정류장" : "역"}을 고르세요</span>
+        </div>
         <div className="inline-map-search-status">
           <p aria-live="polite">
             {loading
@@ -111,23 +123,48 @@ export function InlineMapSearchControls({
               ? busStops.map((stop) => (
                   <button
                     key={stop.id}
+                    className="inline-map-result"
+                    data-mode="bus"
                     type="button"
                     aria-pressed={selectedBusStopIds.includes(stop.id)}
                     onClick={() => onToggleBusStop(stop)}
                   >
-                    <strong>{stop.name}</strong>
-                    <small>ARS {stop.arsId}</small>
+                    <span className="inline-map-result-band" aria-hidden="true" />
+                    <span className="inline-map-result-content">
+                      <strong>{stop.name}</strong>
+                      <small>
+                        ARS {stop.arsId} · {Math.round(stop.distanceMeters)}m
+                      </small>
+                    </span>
+                    <CheckCircle2
+                      className="inline-map-result-indicator"
+                      aria-hidden="true"
+                    />
                   </button>
                 ))
               : stations.map((station) => (
                   <button
                     key={station.id}
+                    className="inline-map-result"
+                    data-mode="subway"
+                    data-line={stationDisplayLine(station)}
                     type="button"
                     aria-pressed={selectedStationIds.includes(station.id)}
                     onClick={() => onToggleStation(station)}
                   >
-                    <strong>{station.name}</strong>
-                    <small>{stationDisplayLine(station)}</small>
+                    <span className="inline-map-result-band" aria-hidden="true" />
+                    <span className="inline-map-result-content">
+                      <strong>{station.name}</strong>
+                      <small>
+                        {stationDisplayLine(station)} · {Math.round(
+                          station.distanceMeters,
+                        )}m
+                      </small>
+                    </span>
+                    <CheckCircle2
+                      className="inline-map-result-indicator"
+                      aria-hidden="true"
+                    />
                   </button>
                 ))}
           </fieldset>

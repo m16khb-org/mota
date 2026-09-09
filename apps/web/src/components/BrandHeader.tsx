@@ -10,7 +10,7 @@ interface BrandHeaderProps {
 
 export function BrandHeader({ session, syncStatus, onLogout }: BrandHeaderProps) {
   return (
-    <header className="brand-header">
+    <header className="brand-header" data-brand="mota">
       <div className="brand-mark" aria-hidden="true">
         <img
           src="/pwa-icon.svg"
