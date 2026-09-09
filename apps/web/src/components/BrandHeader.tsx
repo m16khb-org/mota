@@ -12,22 +12,13 @@ export function BrandHeader({ session, syncStatus, onLogout }: BrandHeaderProps)
   return (
     <header className="brand-header" data-brand="mota">
       <div className="brand-mark" aria-hidden="true">
-        <img
-          src="/pwa-icon.svg"
-          alt=""
-          width="48"
-          height="48"
-        />
+        <img src="/pwa-icon.svg" alt="" width="48" height="48" />
       </div>
       <div className="brand-copy">
         <h1>모타</h1>
         <p>지금, 뭐 타?</p>
       </div>
-      <GoogleLogin
-        session={session}
-        syncStatus={syncStatus}
-        onLogout={onLogout}
-      />
+      <GoogleLogin session={session} syncStatus={syncStatus} onLogout={onLogout} />
     </header>
   );
 }

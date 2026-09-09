@@ -24,20 +24,13 @@ describe("BrandHeader", () => {
       />,
     );
 
-    const icon = container.querySelector<HTMLImageElement>(
-      ".brand-mark img",
-    );
+    const icon = container.querySelector<HTMLImageElement>(".brand-mark img");
     expect(icon).toHaveAttribute("src", "/pwa-icon.svg");
     expect(icon).toHaveAttribute("width", "48");
     expect(icon).toHaveAttribute("height", "48");
-    expect(
-      container.querySelector(".brand-mark .lucide-clock-3"),
-    ).not.toBeInTheDocument();
+    expect(container.querySelector(".brand-mark .lucide-clock-3")).not.toBeInTheDocument();
 
-    const styles = readFileSync(
-      resolve(process.cwd(), "src/styles.css"),
-      "utf8",
-    );
+    const styles = readFileSync(resolve(process.cwd(), "src/styles.css"), "utf8");
     const brandRules = [...styles.matchAll(/\.brand-mark\s*{([^}]*)}/g)].map(
       ([, declarations]) => declarations ?? "",
     );
@@ -45,10 +38,8 @@ describe("BrandHeader", () => {
     expect(styles).toContain("width: var(--brand-mark-size)");
     expect(styles).toContain("height: var(--brand-mark-size)");
     expect(styles).toContain("flex: 0 0 var(--brand-mark-size)");
-    expect(
-      brandRules.some((rule) =>
-        /\b(?:width|height):\s*(?:40|42|44)px/.test(rule),
-      ),
-    ).toBe(false);
+    expect(brandRules.some((rule) => /\b(?:width|height):\s*(?:40|42|44)px/.test(rule))).toBe(
+      false,
+    );
   });
 });

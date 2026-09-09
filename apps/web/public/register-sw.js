@@ -1,11 +1,11 @@
 if ("serviceWorker" in navigator) {
-	window.addEventListener(
-		"load",
-		() => {
-			navigator.serviceWorker.register("/sw.js?v=7").catch((error) => {
-				console.error("서비스 워커를 등록하지 못했습니다.", error);
-			});
-		},
-		{ once: true },
-	);
+  window.addEventListener(
+    "load",
+    () => {
+      navigator.serviceWorker.register("/sw.js?v=7").catch((error) => {
+        console.error("서비스 워커를 등록하지 못했습니다.", error);
+      });
+    },
+    { once: true },
+  );
 }
