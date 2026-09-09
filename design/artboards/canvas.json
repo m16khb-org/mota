@@ -4,7 +4,7 @@
     { "id": "page-2", "name": "화면" }
   ],
   "artboards": [
-    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1200, "h": 3320, "page": "page-1", "title": "파운데이션", "print": "flow" },
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1200, "h": 3640, "page": "page-1", "title": "파운데이션", "print": "flow" },
     { "file": "Components.dc.html", "x": 1320, "y": 0, "w": 1200, "h": 3240, "page": "page-1", "title": "컴포넌트", "print": "flow" },
     { "file": "Desktop.dc.html", "x": 0, "y": 0, "w": 1440, "h": 900, "page": "page-2", "title": "데스크톱 1440×900", "print": "fixed" },
     { "file": "Mobile.dc.html", "x": 1560, "y": 0, "w": 390, "h": 844, "page": "page-2", "title": "모바일 지하철 390×844", "print": "fixed" },
@@ -26,7 +26,7 @@
       "y": -200,
       "w": 620,
       "page": "page-2",
-      "text": "화면 네 장은 파운데이션과 컴포넌트만으로 조립했다. 새로운 값은 쓰지 않았다.\n\n데이터는 예시다. 역·정류장 이름, 도착 시간, 계정 이름은 실제 값으로 바꿔야 한다."
+      "text": "화면과 상태 시트는 파운데이션이 선언한 색, 크기 눈금, 모서리, 컨트롤 높이만 쓴다. 여기서 새 값이 필요해지면 먼저 파운데이션에 올린다.\n\n데이터는 예시다. 역·정류장 이름, 도착 시간, 계정 이름은 실제 값으로 바꿔야 한다."
     }
   ],
   "launch": { "view": "canvas", "page": "page-1" }
