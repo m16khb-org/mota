@@ -12,8 +12,8 @@ services:
       HOST: 0.0.0.0
       PORT: 3000
       SUPABASE_URL: ${SUPABASE_URL:?run compose with ../home-server-infra/.env}
-      AUTH_GATEWAY_URL: ${AUTH_GATEWAY_URL:-https://auth.m16khb.xyz}
-      PUBLIC_URL: https://mota.m16khb.xyz
+      AUTH_GATEWAY_URL: ${AUTH_GATEWAY_URL:-https://auth.m16khb.dev}
+      PUBLIC_URL: https://mota.m16khb.dev
       DATABASE_HOST: home-server-pg
       DATABASE_PORT: 5432
       DATABASE_NAME: mota

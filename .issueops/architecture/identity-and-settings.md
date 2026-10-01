@@ -43,7 +43,7 @@ unreachable gateway or JWKS surfaces as `503`, never as a signed-out user.
 
 Prerequisites outside this repository: mota's origin must appear in the
 gateway's `AUTH_ALLOWED_REDIRECT_URLS` and `CSRF_ALLOWED_ORIGINS`, and the
-Supabase project must allow `https://mota.m16khb.xyz/**` as a redirect URL —
+Supabase project must allow `https://mota.m16khb.dev/**` as a redirect URL —
 the wildcard matters because the gateway appends `?state=` to `callback_to`.
 
 ## Settings database

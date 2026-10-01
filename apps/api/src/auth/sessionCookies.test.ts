@@ -3,7 +3,7 @@ import { readCookieValue, secureCookies, sessionCookieNames } from "./sessionCoo
 
 describe("session cookies", () => {
   it("prefixes the gateway cookie names with __Host- only for https origins", () => {
-    expect(secureCookies("https://mota.m16khb.xyz")).toBe(true);
+    expect(secureCookies("https://mota.m16khb.dev")).toBe(true);
     expect(secureCookies("http://localhost:5173")).toBe(false);
     expect(sessionCookieNames(true)).toEqual({
       access: "__Host-agw-access",

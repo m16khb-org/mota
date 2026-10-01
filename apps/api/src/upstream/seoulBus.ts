@@ -18,7 +18,7 @@ export const BUS_CATALOG_LOCATION = {
 
 export const UPSTREAM_HEADERS = {
   Accept: "application/json",
-  "User-Agent": "mota/0.1 (+https://mota.m16khb.xyz)",
+  "User-Agent": "mota/0.1 (+https://mota.m16khb.dev)",
 } as const;
 
 type UpstreamFetch = (

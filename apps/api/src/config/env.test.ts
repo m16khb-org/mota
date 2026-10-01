@@ -28,7 +28,7 @@ describe("API environment", () => {
 			transitCatalogRefreshMs: 86_400_000,
 			oauth: {
 				supabaseUrl: "https://mionqcczituwkryrjsfh.supabase.co",
-				gatewayUrl: "https://auth.m16khb.xyz",
+				gatewayUrl: "https://auth.m16khb.dev",
 				publicUrl: "http://localhost:5173",
 			},
 		});
@@ -123,14 +123,14 @@ describe("API environment", () => {
 				DATABASE_NAME: "mota",
 				DATABASE_USER: "mota",
 				DATABASE_PASSWORD: "s/ecret",
-				PUBLIC_URL: "https://mota.m16khb.xyz/",
+				PUBLIC_URL: "https://mota.m16khb.dev/",
 			}),
 		).toMatchObject({
 			host: "127.0.0.1",
 			port: 4100,
 			databaseUrl: "postgres://mota:s%2Fecret@home-server-pg:5432/mota",
 			oauth: {
-				publicUrl: "https://mota.m16khb.xyz",
+				publicUrl: "https://mota.m16khb.dev",
 			},
 		});
 	});
