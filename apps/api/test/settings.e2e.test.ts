@@ -21,11 +21,9 @@ const pointSelections: PointSelections = {
       distanceMeters: 151,
     },
   ],
-  subwayStations: [],
   selectedBusStopIds: [
     "124000454" as PointSelections["selectedBusStopIds"][number],
   ],
-  selectedSubwayStationId: null,
 };
 
 const selections: TransitSelections = {
@@ -163,6 +161,27 @@ describe("authenticated user settings routes", () => {
       version: 1,
       selections,
     });
+  });
+
+  it("strips malformed retired subway settings while preserving buses and versions", async () => {
+    const { app, repository } = createSettingsApp();
+    const legacyPoint = {
+      ...pointSelections,
+      subwayStations: "obsolete malformed value",
+      selectedSubwayStationId: { invalid: true },
+      subwayDirection: 42,
+    };
+    const response = await app.request("/api/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Cookie: "agw-access=user-1" },
+      body: JSON.stringify({
+        version: 0,
+        selections: { commutes: { toWork: legacyPoint, toHome: legacyPoint } },
+      }),
+    });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ version: 1, selections });
+    expect(repository.records.get("user-1")?.selections).toEqual(selections);
   });
 
   it("rejects invalid payloads and stale versions", async () => {

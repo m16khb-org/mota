@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { busStopSchema } from "./bus";
-import { subwayStationSchema } from "./subway";
 
 /** How many saved bus stops can be watched at the same time. */
 export const MAX_SELECTED_BUS_STOPS = 4;
@@ -11,7 +10,6 @@ export type CommuteContext = z.infer<typeof commuteContextSchema>;
 
 const transitPointSelectionsInputSchema = z.object({
   busStops: z.array(busStopSchema),
-  subwayStations: z.array(subwayStationSchema),
   /** Multi-watch selection (v2). Older documents carry the singular
    * `selectedBusStopId` instead and migrate to a one-element list on read. */
   selectedBusStopIds: z
@@ -19,15 +17,11 @@ const transitPointSelectionsInputSchema = z.object({
     .max(MAX_SELECTED_BUS_STOPS)
     .optional(),
   selectedBusStopId: busStopSchema.shape.id.nullable().optional(),
-  selectedSubwayStationId: subwayStationSchema.shape.id
-    .nullable()
-    .optional(),
 });
 
 export const transitPointSelectionsSchema =
   transitPointSelectionsInputSchema.transform((selections) => ({
     busStops: selections.busStops,
-    subwayStations: selections.subwayStations,
     selectedBusStopIds: [
       ...new Set(
         selections.selectedBusStopIds ??
@@ -37,7 +31,6 @@ export const transitPointSelectionsSchema =
             : [selections.selectedBusStopId]),
       ),
     ],
-    selectedSubwayStationId: selections.selectedSubwayStationId ?? null,
   }));
 
 export type TransitPointSelections = Readonly<

@@ -1,5 +1,9 @@
 # Live Transit 3D Map Implementation Plan
 
+> Historical: the 2026-10-03 bus-only conversion retires this subway/3D
+> subsystem. Current product requirements are in the root DESIGN.md.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace Mota's static `/3d-preview` with a trustworthy SSE-driven Seoul subway and zoom-gated viewport bus map that immediately hides vehicles whenever live data is unavailable.

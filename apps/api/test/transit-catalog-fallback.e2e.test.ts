@@ -50,3 +50,27 @@ describe("bus catalog fallback", () => {
     );
   });
 });
+
+describe("bus catalog startup", () => {
+  it("warms only the bus catalog and reports its real readiness", async () => {
+    const upstream = vi.fn().mockImplementation(async () => Response.json(stopPayload));
+    const app = createApp(upstream, { warmTransitCatalogs: true });
+    const server = await app.listen();
+    try {
+      await vi.waitFor(async () => {
+        const response = await app.request("/api/health");
+        const health = await response.json();
+        expect(health.transitCatalogs.bus).toMatchObject({ ready: true, count: 1 });
+        expect(Object.keys(health.transitCatalogs)).toEqual(["bus"]);
+        expect(health).not.toHaveProperty("liveTransit");
+      });
+      expect(upstream).toHaveBeenCalledTimes(1);
+      expect(upstream).toHaveBeenCalledWith(
+        expect.stringContaining("kiloMeter=45"),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+    } finally {
+      await server.close();
+    }
+  });
+});

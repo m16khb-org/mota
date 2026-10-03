@@ -11,9 +11,7 @@ export type TransitSelectionStorage = Pick<Storage, "getItem" | "setItem">;
 
 const EMPTY_POINT_SELECTIONS: TransitPointSelections = {
   busStops: [],
-  subwayStations: [],
   selectedBusStopIds: [],
-  selectedSubwayStationId: null,
 };
 
 const EMPTY_SELECTIONS: TransitSelections = {
@@ -34,35 +32,19 @@ function parseJson(value: string): unknown {
   }
 }
 
-function uniqueById<T extends { readonly id: string }>(
-  values: readonly T[],
-): T[] {
+function uniqueById<T extends { readonly id: string }>(values: readonly T[]): T[] {
   return [...new Map(values.map((value) => [value.id, value])).values()];
 }
 
-function normalizePointSelections(
-  selections: TransitPointSelections,
-): TransitPointSelections {
+function normalizePointSelections(selections: TransitPointSelections): TransitPointSelections {
   const busStops = uniqueById(selections.busStops);
-  const subwayStations = uniqueById(selections.subwayStations);
   const knownIds = new Set(busStops.map((stop) => stop.id));
-  const selectedBusStopIds = [
-    ...new Set(selections.selectedBusStopIds),
-  ].filter((stopId) => knownIds.has(stopId));
+  const selectedBusStopIds = [...new Set(selections.selectedBusStopIds)].filter((stopId) =>
+    knownIds.has(stopId),
+  );
   return {
     busStops,
-    subwayStations,
-    selectedBusStopIds:
-      selectedBusStopIds.length > 0
-        ? selectedBusStopIds.slice(0, MAX_SELECTED_BUS_STOPS)
-        : (busStops[0]
-          ? [busStops[0].id]
-          : []),
-    selectedSubwayStationId: subwayStations.some(
-      (station) => station.id === selections.selectedSubwayStationId,
-    )
-      ? selections.selectedSubwayStationId
-      : (subwayStations[0]?.id ?? null),
+    selectedBusStopIds: selectedBusStopIds.slice(0, MAX_SELECTED_BUS_STOPS),
   };
 }
 
@@ -75,11 +57,8 @@ function normalize(selections: TransitSelections): TransitSelections {
   };
 }
 
-export function loadTransitSelections(
-  storage?: TransitSelectionStorage,
-): TransitSelections {
-  const store =
-    storage ?? (typeof window === "undefined" ? null : window.localStorage);
+export function loadTransitSelections(storage?: TransitSelectionStorage): TransitSelections {
+  const store = storage ?? (typeof window === "undefined" ? null : window.localStorage);
   if (store === null) {
     return EMPTY_SELECTIONS;
   }

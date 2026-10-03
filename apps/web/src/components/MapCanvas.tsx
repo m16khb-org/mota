@@ -10,7 +10,6 @@ import {
   type CircleMarkerProps,
 } from "react-leaflet";
 import type { BusStop } from "../domain/bus";
-import { stationDisplayLine, type SubwayStation } from "../domain/subway";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
 interface Point {
@@ -23,20 +22,14 @@ interface MapCanvasProps {
   readonly selectedStop: BusStop | null;
   readonly selectedStopIds?: readonly BusStop["id"][];
   readonly pendingStops?: readonly BusStop[];
-  readonly subwayStations?: readonly SubwayStation[];
-  readonly pendingSubwayStations?: readonly SubwayStation[];
-  readonly selectedSubwayStationIds?: readonly SubwayStation["id"][];
   readonly onCenterChange: (center: Point) => void;
   readonly onSelect: (stop: BusStop) => void;
   readonly onAddPending?: (stop: BusStop) => void;
-  readonly onSelectSubway?: (station: SubwayStation) => void;
-  readonly onAddPendingSubway?: (station: SubwayStation) => void;
 }
 
 interface AccessibleMarkerProps {
   readonly label: string;
   readonly active: boolean;
-  readonly line?: string | undefined;
   readonly onSelect: () => void;
   readonly children?: ReactNode;
   readonly markerProps: CircleMarkerProps;
@@ -49,7 +42,6 @@ interface AccessibleMarkerProps {
 function AccessibleMarker({
   label,
   active,
-  line,
   onSelect,
   children,
   markerProps,
@@ -87,11 +79,6 @@ function AccessibleMarker({
     element.setAttribute("aria-pressed", String(active));
     element.classList.add("map-marker-hit-target");
     element.setAttribute("data-marker-role", "hit-target");
-    if (line === undefined) {
-      element.removeAttribute("data-line");
-    } else {
-      element.setAttribute("data-line", line);
-    }
     const handleKeydown = (event: Event) => {
       const keyboardEvent = event as KeyboardEvent;
       if (keyboardEvent.key === "Escape") {
@@ -111,13 +98,10 @@ function AccessibleMarker({
     return () => {
       element.removeEventListener("keydown", handleKeydown);
     };
-  }, [label, active, line]);
+  }, [label, active]);
 
   return (
-    <CircleMarker
-      ref={markerRef}
-      {...markerProps}
-    >
+    <CircleMarker ref={markerRef} {...markerProps}>
       {children}
     </CircleMarker>
   );
@@ -136,7 +120,6 @@ function MapPointMarker({
   children,
   center,
   visualClassName,
-  line,
   markerKind,
 }: {
   readonly label: string;
@@ -145,8 +128,7 @@ function MapPointMarker({
   readonly children?: ReactNode;
   readonly center: Point;
   readonly visualClassName: string;
-  readonly line?: string | undefined;
-  readonly markerKind: "bus" | "subway";
+  readonly markerKind: "bus";
 }) {
   const visualMarkerRef = useRef<LeafletCircleMarker | null>(null);
   const hitMarkerRef = useRef<LeafletCircleMarker | null>(null);
@@ -170,12 +152,7 @@ function MapPointMarker({
     element.classList.toggle("is-active", suffix === "is-active");
     element.setAttribute("data-marker-kind", markerKind);
     element.setAttribute("data-marker-state", markerState);
-    if (line === undefined) {
-      element.removeAttribute("data-line");
-    } else {
-      element.setAttribute("data-line", line);
-    }
-  }, [baseClass, line, markerKind, markerState, suffix]);
+  }, [baseClass, markerKind, markerState, suffix]);
 
   return (
     <>
@@ -201,7 +178,6 @@ function MapPointMarker({
       <AccessibleMarker
         label={label}
         active={active}
-        line={line}
         onSelect={onSelect}
         markerProps={{
           center,
@@ -220,7 +196,9 @@ function MapPointMarker({
             },
           },
         }}
-        onMarkerReady={(m) => { hitMarkerRef.current = m; }}
+        onMarkerReady={(m) => {
+          hitMarkerRef.current = m;
+        }}
       >
         {children}
       </AccessibleMarker>
@@ -282,9 +260,7 @@ function CenterObserver({
       );
     },
     popupclose() {
-      map.getContainer().dispatchEvent(
-        new CustomEvent("popupclose", { bubbles: true }),
-      );
+      map.getContainer().dispatchEvent(new CustomEvent("popupclose", { bubbles: true }));
     },
   });
 
@@ -303,9 +279,7 @@ function CenterObserver({
     const container = map.getContainer();
     container.dataset.leafletZoomAnimation = String(map.options.zoomAnimation);
     container.dataset.leafletFadeAnimation = String(map.options.fadeAnimation);
-    container.dataset.leafletMarkerZoomAnimation = String(
-      map.options.markerZoomAnimation,
-    );
+    container.dataset.leafletMarkerZoomAnimation = String(map.options.markerZoomAnimation);
   }, [map]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: primitive deps keep pan position stable across re-renders
@@ -363,17 +337,11 @@ export function MapCanvas({
   selectedStop,
   selectedStopIds = [],
   pendingStops = [],
-  subwayStations = [],
-  pendingSubwayStations = [],
-  selectedSubwayStationIds = [],
   onCenterChange,
   onSelect,
   onAddPending,
-  onSelectSubway,
-  onAddPendingSubway,
 }: MapCanvasProps) {
   const savedStopIds = new Set(stops.map((stop) => stop.id));
-  const savedStationIds = new Set(subwayStations.map((station) => station.id));
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   // Container-level Escape: closes whichever popup is open, regardless of
@@ -419,8 +387,7 @@ export function MapCanvas({
     // Leaflet fires popupopen on the map instance; the DOM container
     // re-dispatches it as a bubbling DOM event we can capture here.
     const handlePopupOpen = (event: Event) => {
-      const detail = (event as CustomEvent<{ popup?: { _source?: unknown } }>)
-        .detail;
+      const detail = (event as CustomEvent<{ popup?: { _source?: unknown } }>).detail;
       const source = detail?.popup?._source as
         | { getElement?: () => HTMLElement | null }
         | undefined;
@@ -444,11 +411,8 @@ export function MapCanvas({
       // marker-focus and container-focus Escape keep their natural target.
       const active = document.activeElement;
       const focusWasInPopup = popupEl.contains(active);
-      const ownerMarkerElement =
-        activePopupSourceRef.current?.getElement?.() ?? null;
-      const closeButton = popupEl.querySelector<HTMLAnchorElement>(
-        ".leaflet-popup-close-button",
-      );
+      const ownerMarkerElement = activePopupSourceRef.current?.getElement?.() ?? null;
+      const closeButton = popupEl.querySelector<HTMLAnchorElement>(".leaflet-popup-close-button");
       closeButton?.click();
       if (focusWasInPopup && ownerMarkerElement) {
         requestAnimationFrame(() => ownerMarkerElement.focus());
@@ -494,8 +458,7 @@ export function MapCanvas({
         <CenterObserver center={center} onCenterChange={onCenterChange} />
         <ContainerSizeObserver />
         {stops.map((stop) => {
-          const active =
-            selectedStop?.id === stop.id || selectedStopIds.includes(stop.id);
+          const active = selectedStop?.id === stop.id || selectedStopIds.includes(stop.id);
           return (
             <MapPointMarker
               key={stop.id}
@@ -505,9 +468,7 @@ export function MapCanvas({
               active={active}
               onSelect={() => onSelect(stop)}
               center={{ lat: stop.lat, lng: stop.lng }}
-              visualClassName={
-                active ? "map-marker-bus is-active" : "map-marker-bus"
-              }
+              visualClassName={active ? "map-marker-bus is-active" : "map-marker-bus"}
               markerKind="bus"
             >
               <Popup>
@@ -529,11 +490,7 @@ export function MapCanvas({
                 active={active}
                 onSelect={() => onAddPending?.(stop)}
                 center={{ lat: stop.lat, lng: stop.lng }}
-                visualClassName={
-                  active
-                    ? "map-marker-pending is-active"
-                    : "map-marker-pending"
-                }
+                visualClassName={active ? "map-marker-pending is-active" : "map-marker-pending"}
                 markerKind="bus"
               >
                 <Popup>
@@ -544,60 +501,6 @@ export function MapCanvas({
               </MapPointMarker>
             );
           })}
-        {pendingSubwayStations
-          .filter((station) => !savedStationIds.has(station.id))
-          .map((station) => {
-            const active = selectedSubwayStationIds.includes(station.id);
-            const displayLine = stationDisplayLine(station);
-            return (
-              <MapPointMarker
-                key={`pending-subway-${station.id}`}
-                label={`${station.name} 지하철역, ${displayLine}, 눌러서 추가`}
-                active={active}
-                onSelect={() => onAddPendingSubway?.(station)}
-                center={{ lat: station.lat, lng: station.lng }}
-                visualClassName={
-                  active
-                    ? "map-marker-pending-subway is-active"
-                    : "map-marker-pending-subway"
-                }
-                line={displayLine}
-                markerKind="subway"
-              >
-                <Popup>
-                  <strong>{station.name}</strong>
-                  <br />
-                  {displayLine} · 눌러서 선택
-                </Popup>
-              </MapPointMarker>
-            );
-          })}
-        {subwayStations.map((station) => {
-          const active = selectedSubwayStationIds.includes(station.id);
-          const displayLine = stationDisplayLine(station);
-          return (
-            <MapPointMarker
-              key={`subway-${station.id}`}
-              label={`${station.name} 지하철역, ${displayLine}, 중심에서 ${Math.round(
-                station.distanceMeters,
-              )}미터`}
-              active={active}
-              onSelect={() => onSelectSubway?.(station)}
-              center={{ lat: station.lat, lng: station.lng }}
-              visualClassName={
-                active ? "map-marker-subway is-active" : "map-marker-subway"
-              }
-              line={displayLine}
-              markerKind="subway"
-            >
-              <Popup>
-                <strong>{station.name}</strong>
-                <br />
-                {displayLine}
-              </Popup>
-            </MapPointMarker>
-          );
-        })}
       </MapContainer>
     </section>
   );

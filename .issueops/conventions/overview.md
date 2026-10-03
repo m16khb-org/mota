@@ -28,7 +28,7 @@ Canonical index: [CONVENTIONS.md](../CONVENTIONS.md).
 Parse, do not cast, at these boundaries:
 
 - Nest query/path/body input.
-- Seoul/Overpass/Supabase responses.
+- Seoul bus and auth-gateway/Supabase responses.
 - Browser `fetch().json()` responses.
 - localStorage and JSONB reads.
 

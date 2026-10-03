@@ -15,7 +15,6 @@
   --signal-ink: #ffffff;
   --on-ink: #ffffff;
   --route-blue: #3d5bab;
-  --subway: #16181d;
   --danger: #d93025;
   --danger-ink: #b3251c;
   --danger-surface: #fdecea;
@@ -384,64 +383,6 @@ select:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
-.transit-tabs {
-  display: flex;
-  gap: var(--space-6);
-  border-bottom: 2px solid var(--line);
-}
-.transit-tab {
-  display: inline-flex;
-  min-width: 0;
-  min-height: 48px;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 0 2px;
-  margin-bottom: -2px;
-  border-bottom: 4px solid transparent;
-  color: var(--muted);
-  background: transparent;
-  font-size: 15px;
-  font-weight: 600;
-  transition:
-    color var(--transition-color),
-    border-color var(--transition-color),
-    transform 120ms ease;
-}
-.transit-tab svg {
-  width: 19px;
-  height: 19px;
-}
-.transit-tab[aria-selected="true"] {
-  border-color: var(--ink);
-  color: var(--ink);
-  font-weight: 800;
-}
-.transit-tab:active {
-  transform: scale(0.98);
-}
-.transit-3d-preview-link {
-  display: flex;
-  min-height: var(--control-min);
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-control);
-  color: var(--ink);
-  background: var(--surface);
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-}
-.transit-3d-preview-link:hover {
-  border-color: var(--ink);
-  background: var(--signal-soft);
-}
-.transit-3d-preview-link svg {
-  width: 17px;
-  height: 17px;
-}
 .point-selector-heading {
   align-items: flex-end;
   margin-top: var(--space-5);
@@ -646,8 +587,6 @@ select:focus-visible {
   width: 18px;
   height: 18px;
 }
-.subway-route-badge,
-.subway-line-badge,
 .route-badge {
   display: inline-flex;
   min-height: 24px;
@@ -660,11 +599,6 @@ select:focus-visible {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-}
-.subway-route-badge,
-.subway-line-badge {
-  background: var(--route-badge-color, var(--subway));
-  color: var(--route-ink, var(--on-ink));
 }
 
 .arrivals {
@@ -856,16 +790,7 @@ select:focus-visible {
   color: var(--route-ink);
   font-size: 14px;
 }
-.subway-line-badge {
-  min-width: 24px;
-  border-radius: var(--radius-badge);
-}
-.subway-direction {
-  display: block;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.35;
-}
+
 .arrival-meta {
   display: flex;
   min-width: 0;
@@ -919,66 +844,6 @@ select:focus-visible {
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
-.direction-tabs {
-  display: grid;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-3);
-}
-.direction-group {
-  --route-color: var(--subway);
-  --route-badge-color: var(--subway);
-  --route-ink: var(--on-ink);
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: var(--space-2);
-  align-items: center;
-}
-.direction-line {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-  overflow-wrap: anywhere;
-}
-.direction-options {
-  display: flex;
-  min-width: 0;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-.direction-tabs button {
-  display: inline-flex;
-  min-height: var(--control-min);
-  min-width: 0;
-  align-items: center;
-  gap: 6px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-badge);
-  color: var(--ink);
-  background: var(--surface);
-  font-size: 13px;
-  font-weight: 650;
-  overflow-wrap: anywhere;
-  transition:
-    color var(--transition-color),
-    border-color var(--transition-color),
-    background-color var(--transition-color),
-    transform 120ms ease;
-}
-.direction-tabs button svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-}
-.direction-tabs button[aria-selected="true"] {
-  border-color: var(--route-badge-color);
-  color: var(--route-ink);
-  background: var(--route-badge-color);
-  font-weight: 800;
-}
-.direction-tabs button:active {
-  transform: scale(0.98);
-}
 
 .map-stage {
   position: sticky;
@@ -992,10 +857,7 @@ select:focus-visible {
   position: absolute;
   inset: 0;
 }
-.map-preview-page {
-  --signal: var(--on-ink);
-  --signal-ink: var(--ink);
-}
+
 .picker-map-frame,
 .picker-map {
   width: 100%;
@@ -1037,74 +899,28 @@ select:focus-visible {
   stroke: var(--route-blue);
   fill: var(--surface);
 }
-.map-marker-subway {
-  --route-color: var(--subway);
-  stroke: var(--subway);
-  fill: var(--surface);
-}
+
 .map-marker-pending {
   stroke: var(--route-blue);
   fill: var(--surface);
   stroke-dasharray: 5 3;
 }
-.map-marker-pending-subway {
-  stroke: var(--subway);
-  fill: var(--surface);
-  stroke-dasharray: 5 3;
-}
+
 .map-marker-bus.is-active {
   stroke: var(--ink);
   fill: var(--route-blue);
 }
-.map-marker-subway.is-active {
-  stroke: var(--subway);
-  stroke-width: 4px;
-  fill: var(--route-color);
-}
-.map-marker-pending.is-active,
-.map-marker-pending-subway.is-active {
+
+.map-marker-pending.is-active {
   stroke: var(--ink);
   stroke-dasharray: none;
-  fill: var(--route-color, var(--route-blue));
+  fill: var(--route-blue);
 }
 .map-marker-selection-ring {
   stroke: var(--ink);
   fill: none;
 }
-.map-marker-pin[data-line="1호선"],
-.map-marker-pin[data-line="2호선"],
-.map-marker-pin[data-line="3호선"],
-.map-marker-pin[data-line="4호선"],
-.map-marker-pin[data-line="5호선"],
-.map-marker-pin[data-line="6호선"],
-.map-marker-pin[data-line="7호선"],
-.map-marker-pin[data-line="8호선"] {
-  stroke: var(--route-color);
-}
-.map-marker-pin[data-line="1호선"] {
-  --route-color: #0052a4;
-}
-.map-marker-pin[data-line="2호선"] {
-  --route-color: #00a84d;
-}
-.map-marker-pin[data-line="3호선"] {
-  --route-color: #ef7c1c;
-}
-.map-marker-pin[data-line="4호선"] {
-  --route-color: #00a5de;
-}
-.map-marker-pin[data-line="5호선"] {
-  --route-color: #996cac;
-}
-.map-marker-pin[data-line="6호선"] {
-  --route-color: #cd7c2f;
-}
-.map-marker-pin[data-line="7호선"] {
-  --route-color: #747f00;
-}
-.map-marker-pin[data-line="8호선"] {
-  --route-color: #e6186c;
-}
+
 .map-marker-hit {
   cursor: pointer;
 }
@@ -1389,7 +1205,6 @@ select:focus-visible {
 }
 
 /* Route data is styled only from the supplied data attributes. */
-[data-line],
 [data-route-type] {
   --route-color: var(--ink-secondary);
   --route-badge-color: var(--ink-secondary);
@@ -1427,86 +1242,6 @@ select:focus-visible {
 [data-route-type="2"] {
   --route-color: #53b332;
   --route-badge-color: #53b332;
-  --route-ink: #16181d;
-}
-[data-line^="1호선"] {
-  --route-color: #0052a4;
-  --route-badge-color: #0052a4;
-  --route-ink: #ffffff;
-}
-[data-line^="2호선"] {
-  --route-color: #00a84d;
-  --route-badge-color: #00a84d;
-  --route-ink: #16181d;
-}
-[data-line^="3호선"] {
-  --route-color: #ef7c1c;
-  --route-badge-color: #ef7c1c;
-  --route-ink: #16181d;
-}
-[data-line^="4호선"] {
-  --route-color: #00a5de;
-  --route-badge-color: #00a5de;
-  --route-ink: #16181d;
-}
-[data-line^="5호선"] {
-  --route-color: #996cac;
-  --route-badge-color: #7e5794;
-  --route-ink: #ffffff;
-}
-[data-line^="6호선"] {
-  --route-color: #cd7c2f;
-  --route-badge-color: #cd7c2f;
-  --route-ink: #16181d;
-}
-[data-line="7호선"] {
-  --route-color: #747f00;
-  --route-badge-color: #707a00;
-  --route-ink: #ffffff;
-}
-[data-line^="8호선"] {
-  --route-color: #e6186c;
-  --route-badge-color: #c31259;
-  --route-ink: #ffffff;
-}
-[data-line="9호선"] {
-  --route-color: #b58600;
-  --route-badge-color: #b58600;
-  --route-ink: #16181d;
-}
-[data-line="경의중앙선"] {
-  --route-color: #77c4a3;
-  --route-badge-color: #77c4a3;
-  --route-ink: #16181d;
-}
-[data-line="공항철도"] {
-  --route-color: #0090d2;
-  --route-badge-color: #0090d2;
-  --route-ink: #16181d;
-}
-[data-line="신분당선"] {
-  --route-color: #d4003b;
-  --route-badge-color: #d4003b;
-  --route-ink: #ffffff;
-}
-[data-line="수인분당선"] {
-  --route-color: #f5a200;
-  --route-badge-color: #f5a200;
-  --route-ink: #16181d;
-}
-[data-line="경춘선"] {
-  --route-color: #0c8e72;
-  --route-badge-color: #0b846a;
-  --route-ink: #ffffff;
-}
-[data-line="우이신설선"] {
-  --route-color: #b7c452;
-  --route-badge-color: #b7c452;
-  --route-ink: #16181d;
-}
-[data-line="서해선"] {
-  --route-color: #8fc31f;
-  --route-badge-color: #8fc31f;
   --route-ink: #16181d;
 }
 
@@ -1610,17 +1345,7 @@ select:focus-visible {
   .commute-tab-title small {
     display: none;
   }
-  .direction-group {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-  .direction-options {
-    gap: 6px;
-  }
-  .direction-tabs button {
-    flex: 1 1 auto;
-    justify-content: center;
-  }
+
   .arrival-card-content {
     padding: var(--space-3);
     gap: 4px var(--space-2);
@@ -1682,17 +1407,16 @@ select:focus-visible {
   html {
     scroll-behavior: auto;
   }
+
   .google-login,
   .account-logout,
   .commute-tab,
-  .transit-tab,
   .add-point-button,
   .primary-button,
   .secondary-button,
   .point-select,
   .point-remove,
   .refresh-button,
-  .direction-tabs button,
   .mobile-map-open,
   .map-close-toggle,
   .map-search-secondary,

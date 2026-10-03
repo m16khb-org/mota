@@ -31,6 +31,8 @@ describe("PWA assets", () => {
 
     const manifest = WebManifestSchema.parse(JSON.parse(manifestText));
 
+    expect(manifest.name).toBe("모타 — 다음 버스 도착");
+    expect(manifest.description).not.toContain("지하철");
     expect(manifest.icons.some((icon) => icon.purpose.split(" ").includes("maskable"))).toBe(true);
   });
 
@@ -113,7 +115,7 @@ describe("PWA assets", () => {
       callback();
     });
 
-    expect(register).toHaveBeenCalledWith("/sw.js?v=8");
+    expect(register).toHaveBeenCalledWith("/sw.js?v=9");
     expect(registeredWindowEvents).toEqual(["load"]);
   });
 

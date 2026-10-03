@@ -6,12 +6,7 @@ import {
   type OnModuleInit,
 } from "@nestjs/common";
 import type { BusStop } from "@mota/contracts/bus";
-import type {
-  SubwayStation,
-  SubwayStationPoint,
-} from "@mota/contracts/subway";
 import { API_OPTIONS, type ApiOptions } from "../app.tokens";
-import { fetchSubwayStationCatalog } from "../upstream/officialSubwayStations";
 import {
   fetchNearbyStops as fetchLiveNearbyStops,
   fetchStopCatalog,
@@ -34,7 +29,6 @@ type BusStopPoint = Omit<BusStop, "distanceMeters">;
 export class TransitCatalogService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TransitCatalogService.name);
   private readonly bus: ManagedCatalog<BusStopPoint>;
-  private readonly subway: ManagedCatalog<SubwayStationPoint>;
 
   constructor(
     @Inject(API_OPTIONS) private readonly options: ApiOptions,
@@ -63,22 +57,15 @@ export class TransitCatalogService implements OnModuleInit, OnModuleDestroy {
         return [...byId.values()];
       },
     });
-    this.subway = new ManagedCatalog({
-      ...common,
-      source: "subway",
-      minimumItems: options.transitCatalog.minimumSubwayItems,
-      loader: () => fetchSubwayStationCatalog(options.upstreamFetch),
-    });
+
   }
 
   onModuleInit() {
     this.bus.start();
-    this.subway.start();
   }
 
   onModuleDestroy() {
     this.bus.stop();
-    this.subway.stop();
   }
 
   async nearbyStops(location: Location): Promise<BusStop[]> {
@@ -108,43 +95,17 @@ export class TransitCatalogService implements OnModuleInit, OnModuleDestroy {
       }));
   }
 
-  async nearbySubway(location: Location): Promise<SubwayStation[]> {
-    const byName = new Map<string, SubwayStation>();
-    for (const point of await this.subway.read()) {
-      const exactDistance = distanceMeters(location, point);
-      if (exactDistance > location.radius) {
-        continue;
-      }
-      const station = {
-        ...point,
-        distanceMeters: Math.round(exactDistance),
-      };
-      const current = byName.get(point.name);
-      if (!current || station.distanceMeters < current.distanceMeters) {
-        byName.set(point.name, station);
-      }
-    }
-    return [...byName.values()].sort(
-      (left, right) =>
-        left.distanceMeters - right.distanceMeters ||
-        left.name.localeCompare(right.name, "ko"),
-    );
-  }
-
   async refreshDueCatalogs() {
     return Promise.allSettled([
       this.bus.refreshIfDue(),
-      this.subway.refreshIfDue(),
     ]);
   }
 
   status(): {
     readonly bus: CatalogStatus;
-    readonly subway: CatalogStatus;
   } {
     return {
       bus: this.bus.status(),
-      subway: this.subway.status(),
     };
   }
 

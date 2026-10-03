@@ -2,10 +2,7 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  fetchTransitSettings,
-  saveTransitSettings,
-} from "../api/client";
+import { fetchTransitSettings, saveTransitSettings } from "../api/client";
 import type { BusStop } from "../domain/bus";
 import type { TransitSelections } from "@mota/contracts/transit-settings";
 import type { AuthSessionState } from "./useAuthSession";
@@ -38,17 +35,13 @@ const serverStop: BusStop = {
 };
 const emptyPointSelections = {
   busStops: [],
-  subwayStations: [],
   selectedBusStopIds: [],
-  selectedSubwayStationId: null,
 };
 const localSelections: TransitSelections = {
   commutes: {
     toWork: {
       busStops: [localStop],
-      subwayStations: [],
       selectedBusStopIds: [localStop.id],
-      selectedSubwayStationId: null,
     },
     toHome: emptyPointSelections,
   },
@@ -57,9 +50,7 @@ const serverSelections: TransitSelections = {
   commutes: {
     toWork: {
       busStops: [serverStop],
-      subwayStations: [],
       selectedBusStopIds: [serverStop.id],
-      selectedSubwayStationId: null,
     },
     toHome: emptyPointSelections,
   },
@@ -80,10 +71,7 @@ const anonymousSession: AuthSessionState = {
 describe("useTransitSelections authenticated synchronization", () => {
   beforeEach(() => {
     localStorage.clear();
-    localStorage.setItem(
-      "mota:transit-selections:v1",
-      JSON.stringify(localSelections),
-    );
+    localStorage.setItem("mota:transit-selections:v1", JSON.stringify(localSelections));
     vi.mocked(fetchTransitSettings).mockReset();
     vi.mocked(saveTransitSettings).mockReset();
   });
@@ -94,13 +82,9 @@ describe("useTransitSelections authenticated synchronization", () => {
       selections: serverSelections,
     });
 
-    const { result } = renderHook(() =>
-      useTransitSelections(authenticatedSession),
-    );
+    const { result } = renderHook(() => useTransitSelections(authenticatedSession));
 
-    await waitFor(() =>
-      expect(result.current.selections).toEqual(serverSelections),
-    );
+    await waitFor(() => expect(result.current.selections).toEqual(serverSelections));
     expect(result.current.syncStatus).toBe("synced");
     expect(JSON.parse(localStorage.getItem("mota:transit-selections:v1") ?? "")).toEqual(
       localSelections,
@@ -117,9 +101,7 @@ describe("useTransitSelections authenticated synchronization", () => {
       selections: localSelections,
     });
 
-    const { result } = renderHook(() =>
-      useTransitSelections(authenticatedSession),
-    );
+    const { result } = renderHook(() => useTransitSelections(authenticatedSession));
 
     await waitFor(() =>
       expect(saveTransitSettings).toHaveBeenCalledWith({
@@ -145,12 +127,8 @@ describe("useTransitSelections authenticated synchronization", () => {
       arsId: "25016" as BusStop["arsId"],
       name: "추가 정류장",
     };
-    const { result } = renderHook(() =>
-      useTransitSelections(authenticatedSession),
-    );
-    await waitFor(() =>
-      expect(result.current.selections).toEqual(serverSelections),
-    );
+    const { result } = renderHook(() => useTransitSelections(authenticatedSession));
+    await waitFor(() => expect(result.current.selections).toEqual(serverSelections));
 
     act(() => result.current.addBusStops("toWork", [nextStop]));
 
@@ -185,37 +163,29 @@ describe("useTransitSelections authenticated synchronization", () => {
       arsId: String(25100 + index) as BusStop["arsId"],
       name: `추가 정류장 ${index}`,
     }));
-    const { result } = renderHook(() =>
-      useTransitSelections(authenticatedSession),
-    );
+    const { result } = renderHook(() => useTransitSelections(authenticatedSession));
     await waitFor(() => expect(result.current.syncStatus).toBe("synced"));
 
-    act(() =>
-      result.current.addBusStops("toHome", extraStops.slice(0, 3)),
-    );
+    act(() => result.current.addBusStops("toHome", extraStops.slice(0, 3)));
     await waitFor(() =>
-      expect(
-        result.current.selections.commutes.toHome.selectedBusStopIds,
-      ).toEqual(extraStops.slice(0, 3).map((stop) => stop.id)),
+      expect(result.current.selections.commutes.toHome.selectedBusStopIds).toEqual(
+        extraStops.slice(0, 3).map((stop) => stop.id),
+      ),
     );
-    expect(
-      result.current.selections.commutes.toWork.selectedBusStopIds,
-    ).toEqual([localStop.id]);
+    expect(result.current.selections.commutes.toWork.selectedBusStopIds).toEqual([localStop.id]);
 
-    act(() =>
-      result.current.toggleBusStop("toHome", extraStops[0]?.id ?? localStop.id),
-    );
+    act(() => result.current.toggleBusStop("toHome", extraStops[0]?.id ?? localStop.id));
     await waitFor(() =>
-      expect(
-        result.current.selections.commutes.toHome.selectedBusStopIds,
-      ).toEqual(extraStops.slice(1, 3).map((stop) => stop.id)),
+      expect(result.current.selections.commutes.toHome.selectedBusStopIds).toEqual(
+        extraStops.slice(1, 3).map((stop) => stop.id),
+      ),
     );
 
     act(() => result.current.addBusStops("toHome", extraStops.slice(3)));
     await waitFor(() =>
-      expect(
-        result.current.selections.commutes.toHome.selectedBusStopIds,
-      ).toEqual(extraStops.slice(1).map((stop) => stop.id)),
+      expect(result.current.selections.commutes.toHome.selectedBusStopIds).toEqual(
+        extraStops.slice(1).map((stop) => stop.id),
+      ),
     );
   });
 
@@ -225,18 +195,29 @@ describe("useTransitSelections authenticated synchronization", () => {
       selections: serverSelections,
     });
     const { result, rerender } = renderHook(
-      ({ session }: { session: AuthSessionState }) =>
-        useTransitSelections(session),
+      ({ session }: { session: AuthSessionState }) => useTransitSelections(session),
       { initialProps: { session: authenticatedSession } },
     );
-    await waitFor(() =>
-      expect(result.current.selections).toEqual(serverSelections),
-    );
+    await waitFor(() => expect(result.current.selections).toEqual(serverSelections));
 
     rerender({ session: anonymousSession });
 
-    await waitFor(() =>
-      expect(result.current.selections).toEqual(localSelections),
+    await waitFor(() => expect(result.current.selections).toEqual(localSelections));
+  });
+  it("stores additional stops but watches at most four without changing the other commute", () => {
+    const stops = Array.from({ length: 5 }, (_, index) => ({
+      ...localStop,
+      id: `cap-${index}` as BusStop["id"],
+      arsId: String(25200 + index) as BusStop["arsId"],
+    }));
+    const { result } = renderHook(() => useTransitSelections(anonymousSession));
+    act(() => result.current.addBusStops("toHome", stops));
+    expect(result.current.selections.commutes.toHome.busStops).toEqual(stops);
+    expect(result.current.selections.commutes.toHome.selectedBusStopIds).toEqual(
+      stops.slice(0, 4).map((stop) => stop.id),
     );
+    act(() => result.current.toggleBusStop("toHome", stops[4]?.id ?? localStop.id));
+    expect(result.current.selections.commutes.toHome.selectedBusStopIds).toHaveLength(4);
+    expect(result.current.selections.commutes.toWork).toEqual(localSelections.commutes.toWork);
   });
 });

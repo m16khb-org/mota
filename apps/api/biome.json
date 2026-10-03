@@ -1,9 +1,6 @@
 {
   "root": false,
   "extends": ["../../biome.json"],
-  "files": {
-    "includes": ["**", "!src/transit-map/data/subwayNetwork.generated.ts"]
-  },
   "linter": {
     "rules": {
       "correctness": {

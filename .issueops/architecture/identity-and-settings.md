@@ -51,7 +51,8 @@ the wildcard matters because the gateway appends `?state=` to `callback_to`.
 `home-server-infra` owns PostgreSQL. Mota uses the dedicated `mota` database
 and `mota` login role over the external `home-server` Docker network.
 
-Drizzle owns three tables:
+The active application uses `user_settings`. Two retired quota tables remain
+in the historical schema and migrations for migration continuity:
 
 ```text
 user_settings
@@ -79,23 +80,23 @@ cross-database foreign key or local user copy. Rows written under either
 earlier flow keep working because the `sub` value is the same Supabase user
 id in all of them.
 
-The two `subway_request_budget_*` tables back the Seoul subway request budget
-described in [api-and-transit.md](api-and-transit.md). The scope row stores a
-SHA-256 hash of the provider key, never the key itself. Migration
-`0001_subway_request_budget.sql` added them additively and has not been applied
-to the live production database yet.
+The historical subway quota tables have no runtime consumer. Existing SQL
+migrations are preserved; this conversion does not drop tables or bulk-rewrite
+user settings. Applying migrations to a new database still creates the
+historical tables before the application starts.
 
 The canonical `selections` document contains two independent contexts:
 
 ```text
-selections.commutes.toWork  -> bus stops, watched stop ids, subway stations, selected station id
-selections.commutes.toHome  -> bus stops, watched stop ids, subway stations, selected station id
+selections.commutes.toWork  -> bus stops, watched stop ids
+selections.commutes.toHome  -> bus stops, watched stop ids
 ```
 
 A mutation targets exactly one context. A legacy flat selection document is
 parsed at the shared Zod boundary and copied into both contexts so existing
-anonymous and authenticated users lose no saved points; the next save writes
-the canonical nested shape. The JSONB column needs no SQL migration.
+anonymous and authenticated users lose no saved bus stops. Obsolete subway
+fields are ignored, including malformed retired values; invalid bus data is
+still rejected. The next save writes the canonical bus-only nested shape. The JSONB column needs no SQL migration.
 
 Writes use compare-and-swap versions:
 

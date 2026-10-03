@@ -1,7 +1,4 @@
-import type {
-  CommuteContext,
-  TransitSelections,
-} from "@mota/contracts/transit-settings";
+import type { CommuteContext, TransitSelections } from "@mota/contracts/transit-settings";
 import { BriefcaseBusiness, House } from "lucide-react";
 import type { KeyboardEvent } from "react";
 
@@ -45,13 +42,9 @@ export function CommuteContextSelector({
     <section className="commute-switcher" aria-label="출퇴근 설정">
       <div className="commute-switcher-heading">
         <span className="eyebrow">이동 구분</span>
-        <span>정류장·역을 따로 저장해요</span>
+        <span>정류장을 따로 저장해요</span>
       </div>
-      <div
-        className="commute-tabs"
-        role="tablist"
-        aria-label="출퇴근 선택"
-      >
+      <div className="commute-tabs" role="tablist" aria-label="출퇴근 선택">
         {COMMUTE_OPTIONS.map(({ context, label, route, Icon }) => {
           const commute = commutes[context];
           const descriptionId = `commute-tab-${context}-summary`;
@@ -75,9 +68,7 @@ export function CommuteContextSelector({
                 }
                 event.preventDefault();
                 onChange(targetContext);
-                document
-                  .getElementById(`commute-tab-${targetContext}`)
-                  ?.focus();
+                document.getElementById(`commute-tab-${targetContext}`)?.focus();
               }}
             >
               <span className="commute-tab-title">
@@ -85,14 +76,8 @@ export function CommuteContextSelector({
                 <strong>{label}</strong>
                 <small>{route}</small>
               </span>
-              <span
-                className="commute-tab-summary"
-                id={descriptionId}
-              >
-                버스 {commute.busStops.length}곳 · 지하철{" "}
-                {commute.selectedSubwayStationId === null
-                  ? "미설정"
-                  : "설정"}
+              <span className="commute-tab-summary" id={descriptionId}>
+                버스 {commute.busStops.length}곳
               </span>
             </button>
           );

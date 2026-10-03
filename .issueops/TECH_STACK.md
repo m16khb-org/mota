@@ -9,7 +9,7 @@ Versions below are manifest constraints, not claims about a globally installed t
 
 | Area | Confirmed stack | Evidence |
 |---|---|---|
-| Workspace | pnpm `11.23.0`, Turbo `^2.5.6` | `package.json`, `turbo.json` |
+| Workspace | pnpm `12.3.4`, Turbo `^2.5.6` | `package.json`, `turbo.json` |
 | Language | TypeScript `^5.9.2` | root/workspace manifests |
 | Web | React `^19.1.1`, Vite `^7.1.2`, Leaflet/React Leaflet | `apps/web/package.json` |
 | API | NestJS `^11.1.6`, Fastify `^5.6.1`, `@fastify/static`, jose `^5.10.0`, cookie `^1.1.1` | `apps/api/package.json` |
@@ -28,4 +28,5 @@ Versions below are manifest constraints, not claims about a globally installed t
 
 ## Not confirmed
 
-No repository GitHub Actions workflow is present. Do not describe an automated CI pipeline until one is added and verified.
+The repository contains an OpenWiki update workflow. It does not run application
+typecheck, lint, test or build gates; no application CI is established by that file.

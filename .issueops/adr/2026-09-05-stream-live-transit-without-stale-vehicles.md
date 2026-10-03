@@ -3,6 +3,10 @@ name: 2026-09-05-stream-live-transit-without-stale-vehicles
 description: Accepted decision record with rationale, alternatives, and consequences.
 ---
 
+> Historical: the 2026-10-03 bus-only conversion retires this subway/3D
+> subsystem. Current product requirements are in the root DESIGN.md.
+
+
 # Stream live transit without stale vehicles
 
 - Date: 2026-09-05
