@@ -1,5 +1,9 @@
 # Live Transit 3D Map Design
 
+> Historical: the 2026-10-03 bus-only conversion retires this subway/3D
+> subsystem. Current product requirements are in the root DESIGN.md.
+
+
 Date: 2026-09-05
 Status: Approved
 

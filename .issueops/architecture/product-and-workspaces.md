@@ -10,8 +10,8 @@ Canonical index: [ARCHITECTURE.md](../ARCHITECTURE.md).
 ## Product boundary
 
 Mota does one job: choose the `출근` or `퇴근` context, select that context's
-Seoul bus stops or subway station/direction, and show at most the next three
-arrivals.
+Seoul bus stops, and show at most the next three bus arrival rows per stop.
+Up to four stops can be watched together. Subway and the 3D preview are retired.
 
 The two contexts separate saved transit points only. The active product still
 does not include ordered commute procedures, named home/company places,
@@ -43,9 +43,12 @@ Dependency direction is normative in [overview.md](overview.md).
 - `useTransitSelections` keeps anonymous selections in localStorage and scopes every mutation to one commute context.
 - Authenticated selections load and save through `/api/settings`.
 - Authenticated settings never overwrite the anonymous localStorage document.
-- `ArrivalList` and `SubwayArrivalList` render at most three rows.
-- `MapStage` owns the one persistent map. `useInlineMapSearch` and `InlineMapSearchControls` add nearby bus/subway candidates to that map without a modal, backdrop, or duplicate map.
+- `ArrivalList` renders at most three rows.
+- `MapStage` owns the one persistent map. `useInlineMapSearch` and `InlineMapSearchControls` add nearby bus-stop candidates to that map without a modal, backdrop, or duplicate map.
 - Entering search performs one request at the current center; panning alone is local and `이 위치 다시 찾기` explicitly requests the new center.
 
 Presentation, responsive behavior, Korean content, and accessibility are
 owned by [DESIGN.md](../../DESIGN.md).
+
+Legacy mixed settings preserve buses while dropping obsolete subway fields.
+`Root` sends old `/3d-preview` links to the bus home screen.

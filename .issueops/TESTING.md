@@ -31,31 +31,19 @@ DATABASE_URL=postgres://... pnpm test:integration
 
 Details, test seams, and anti-flakiness rules: [testing/overview.md](testing/overview.md).
 
-## Browser and live-map coverage
+## Browser and bus coverage
 
 `apps/web/playwright.config.ts` runs the production Vite build in Chromium.
-The deterministic `apps/web/e2e/fixtures/mapPreviewFixtures.ts` blocks
-unexpected external requests, serves a local 3D style, responds to viewport
-network requests, and replaces `EventSource` with explicit
-`emitVehicles`, `emitAvailability`, `disconnect`, and
-`connectionCount` controls.
+The bus browser suite uses controlled arrivals, nearby stops and auth responses.
+It covers bus-only controls, legacy preview navigation, settings reload and
+commute isolation, arrival error/retry and responsive overflow. Keep map/list
+alternatives and keyboard access covered when changing selection behavior.
 
-The suite covers direct/refresh/back navigation, home-route lazy loading,
-static route/station layers, complementary far-circle and train-model LODs,
-live snapshot replacement, reduced-motion snapshot jumps, subway failure
-clearing, complete SSE disconnect clearing and reconnection, keyboard toggles
-and selection,
-accessible popup focus return, long Korean names, responsive overflow, style
-failure, missing 3D buildings, and unsupported WebGL. Tests subscribe to the
-expected DOM/source state before emitting stream events and use no fixed sleep.
+API HTTP tests validate bus endpoints and require retired subway/transit-map
+paths to return 404, even with HTML Accept headers, without upstream calls.
+Catalog warmup and health cover buses only. Settings compatibility tests must
+preserve buses and CAS versions when obsolete subway fields are malformed.
 
-API HTTP tests under `apps/api/test/transit-map.e2e.test.ts` validate real
-SSE framing and network endpoint validation/caching. Focused adapter and
-collector tests cover upstream normalization, single-flight sharing,
-reference-counted teardown, failure-to-empty semantics, and bounded metrics.
-
-## Schematic 3D transit objects
-
-`transitMapLayers.test.ts` checks solid station and train geometry across both train LODs and polygon picking back to geographic anchors. `transitModels.test.ts` checks metre-scaled dimensions, clockwise rotation, centering, closed rings, and complete removal. `trainInterpolation.test.ts` checks route corners, reverse travel, initial track alignment, stationary heading, observation-gap rejection, and snapshot replacement. `MapLibrePreviewMap.test.tsx` exercises the animation frame consumer and selected popup together.
-
-Aside visual evidence must distinguish real upstream data from controlled bus/train fixtures. An unconfigured bus key does not constitute a passed live-bus check. Schematic model dimensions are not surveyed building footprints.
+Browser fixture success is not evidence of live Seoul upstream health. A real
+PostgreSQL integration gate requires an explicit test `DATABASE_URL`; report
+skips accurately. Historical quota tables remain but have no runtime tests.

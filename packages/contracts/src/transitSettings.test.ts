@@ -8,16 +8,12 @@ import {
 
 const legacySelections = {
   busStops: [],
-  subwayStations: [],
   selectedBusStopIds: [],
-  selectedSubwayStationId: null,
 };
 
 const emptyContext = {
   busStops: [],
-  subwayStations: [],
   selectedBusStopIds: [],
-  selectedSubwayStationId: null,
 };
 
 const selections = {
@@ -39,18 +35,14 @@ describe("shared transit settings contracts", () => {
   });
 
   it("migrates a flat selection document into both commute contexts", () => {
-    expect(transitSelectionsSchema.parse(legacySelections)).toEqual(
-      selections,
-    );
+    expect(transitSelectionsSchema.parse(legacySelections)).toEqual(selections);
   });
 
   it("migrates the singular selectedBusStopId document to a one-element list", () => {
     expect(
       transitSelectionsSchema.parse({
         busStops: [],
-        subwayStations: [],
         selectedBusStopId: "124000454",
-        selectedSubwayStationId: null,
       }),
     ).toEqual({
       commutes: {
@@ -64,6 +56,36 @@ describe("shared transit settings contracts", () => {
         },
       },
     });
+  });
+
+  it("preserves buses and versions while ignoring malformed retired subway fields", () => {
+    const busStop = {
+      id: "124000454",
+      arsId: "09123",
+      name: "정류장",
+      lat: 37.5,
+      lng: 127,
+      distanceMeters: 20,
+    };
+    const point = { busStops: [busStop], selectedBusStopIds: [busStop.id] };
+    expect(
+      transitSettingsSnapshotSchema.parse({
+        version: 7,
+        selections: {
+          commutes: {
+            toWork: { ...point, subwayStations: "broken", selectedSubwayStationId: {} },
+            toHome: { ...emptyContext, subwayStations: null, selectedSubwayStationId: 3 },
+          },
+        },
+      }),
+    ).toEqual({ version: 7, selections: { commutes: { toWork: point, toHome: emptyContext } } });
+    expect(
+      transitSelectionsSchema.safeParse({
+        ...point,
+        busStops: [{ ...busStop, lat: "invalid" }],
+        subwayStations: "broken",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects watching more stops than the product cap", () => {

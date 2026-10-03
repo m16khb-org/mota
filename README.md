@@ -1,7 +1,8 @@
 # Mota
 
-React and NestJS application for checking the next Seoul bus or subway
-arrivals.
+React and NestJS application for checking the next Seoul bus arrivals.
+Save independent bus-stop selections for 출근 and 퇴근, watch up to four
+stops together, and see up to three arrival rows per stop.
 
 ## Workspaces
 
@@ -42,8 +43,11 @@ pnpm db:migrate
 pnpm db:studio
 ```
 
-Mota stores only `user_settings`. User identity is the Supabase `sub` claim
-verified from mota's own login; there is no local user table.
+Mota actively reads and writes `user_settings`. User identity is the Supabase
+`sub` claim verified from the auth-gateway session; there is no local user table.
+Historical subway quota tables and migrations are retained but unused.
+Legacy settings preserve bus stops and selected IDs while ignoring subway fields;
+no bulk settings migration or table deletion is needed.
 
 ## Docker
 
@@ -53,15 +57,8 @@ Load the shared PostgreSQL password from home-server-infra:
 docker compose --env-file ../home-server-infra/.env up -d --build
 ```
 
-The production Seoul subway API key is stored in macOS Keychain under account
-`mota` and service `SEOUL_SUBWAY_API_KEY`. Login shells export it from
-`~/.zshrc`. For non-interactive deployment, inject it without writing the key
-to a file:
-
-```bash
-SEOUL_SUBWAY_API_KEY="$(security find-generic-password -a mota -s SEOUL_SUBWAY_API_KEY -w)" \
-  docker compose --env-file ../home-server-infra/.env up -d --build
-```
+No subway API key is required. Subway APIs and the subway-only 3D preview
+have been retired; old `/3d-preview` links open the bus home screen.
 
 The service is published at `127.0.0.1:3100` and joins both the
 `cloudflare-tunnel` and `home-server` networks.

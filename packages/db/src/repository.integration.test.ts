@@ -18,9 +18,7 @@ integration("DrizzleUserSettingsRepository", () => {
   const secondUser = `integration-${crypto.randomUUID()}`;
   const emptyPointSelections = {
     busStops: [],
-    subwayStations: [],
     selectedBusStopIds: [],
-    selectedSubwayStationId: null,
   };
   const emptySelections: TransitSelections = {
     commutes: {

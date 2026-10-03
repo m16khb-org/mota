@@ -1,12 +1,12 @@
-const SHELL_CACHE = "mota-shell-v8";
+const SHELL_CACHE = "mota-shell-v9";
 const REQUIRED_SHELL = [
-  "/manifest.webmanifest?v=8",
+  "/manifest.webmanifest?v=9",
   "/app-icon-192.png",
   "/app-icon-512.png",
   "/app-icon-maskable-512.png",
   "/apple-touch-icon.png",
   "/app-icon.svg",
-  "/register-sw.js?v=8",
+  "/register-sw.js?v=9",
 ];
 
 const appAssetsFrom = async (response) => {

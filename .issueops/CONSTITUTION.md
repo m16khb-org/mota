@@ -18,7 +18,7 @@ When prose and code disagree, verify the current behavior and update the stale o
 
 ## Product invariants
 
-- Mota shows only the next bus or subway arrivals, with at most three results.
+- Mota is bus-only and shows at most three arrival rows per selected stop.
 - Mota logs users in by proxying the central auth-gateway; it runs no OAuth flow of its own and holds no Supabase key.
 - Mota verifies the gateway's access tokens locally (JWKS, ES256, issuer, audience, role) and calls the gateway only to start login, complete the callback, refresh, and log out.
 - Session cookies are host-only (`__Host-agw-access` / `__Host-agw-refresh`), set by the gateway through the proxy; no `Domain` attribute, no cross-service forwarding.

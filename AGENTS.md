@@ -3,8 +3,8 @@
 ## Overview
 
 Mota is a Turborepo containing a React 19/Vite PWA and a NestJS 11/Fastify
-API. It selects a bus stop or subway station/direction and shows at most three
-upcoming arrivals.
+API. It selects Seoul bus stops and shows at most three upcoming bus arrivals
+per stop. Mota is bus-only; subway and the subway-only 3D preview are retired.
 
 ## Structure
 
@@ -41,9 +41,11 @@ packages/db/          Drizzle Postgres schema, migration, repository
   claims; no per-request gateway call while the access token is valid.
 - Anonymous selections stay under `mota:transit-selections:v1`.
 - Authenticated selections use `GET/PUT /api/settings`.
-- Drizzle tables: `user_settings` keyed by Supabase `sub`, plus
-  `subway_request_budget_scopes` and `subway_request_reservations` for the
-  Seoul subway request budget (key stored only as a hash).
+- Active persistence: `user_settings` keyed by Supabase `sub`. Historical
+  subway quota tables and SQL migrations remain for migration continuity but
+  have no runtime consumers. Do not drop them as part of routine cleanup.
+- Legacy mixed transit settings are read as bus-only settings without losing
+  saved bus stops or selected IDs; obsolete subway fields are ignored.
 - Compare-and-swap versions prevent silent multi-tab overwrites.
 
 ## UI

@@ -8,15 +8,11 @@ import { CommuteContextSelector } from "./CommuteContextSelector";
 const commutes: TransitSelections["commutes"] = {
   toWork: {
     busStops: [],
-    subwayStations: [],
     selectedBusStopIds: [],
-    selectedSubwayStationId: null,
   },
   toHome: {
     busStops: [],
-    subwayStations: [],
     selectedBusStopIds: [],
-    selectedSubwayStationId: null,
   },
 };
 
@@ -24,11 +20,7 @@ describe("CommuteContextSelector", () => {
   it("keeps the two commute contexts independently addressable by tabs", () => {
     const onChange = vi.fn();
     render(
-      <CommuteContextSelector
-        activeContext="toWork"
-        commutes={commutes}
-        onChange={onChange}
-      />,
+      <CommuteContextSelector activeContext="toWork" commutes={commutes} onChange={onChange} />,
     );
 
     const work = screen.getByRole("tab", { name: "출근" });

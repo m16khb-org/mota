@@ -1,6 +1,5 @@
 import type { AuthUser } from "@mota/contracts/auth";
 import type {
-  SubwayRequestBudget,
   UserSettingsRepository,
 } from "@mota/db";
 
@@ -14,16 +13,11 @@ export type SessionVerifier = (
   onSetCookie?: (cookies: readonly string[]) => void,
 ) => Promise<AuthUser | null>;
 
-export interface RepeatingScheduler {
-	every(intervalMs: number, task: () => Promise<void>): () => void;
-}
-
 export interface TransitCatalogOptions {
   readonly refreshMs: number;
   readonly retryMs: number;
   readonly warmup: boolean;
   readonly minimumBusItems: number;
-  readonly minimumSubwayItems: number;
   readonly random: () => number;
 }
 
@@ -39,9 +33,6 @@ export interface ApiOptions {
     readonly fetcher: UpstreamFetch;
   } | null;
   readonly now?: (() => number) | undefined;
-  readonly subwayArrivalUpstream?: string | undefined;
-  readonly subwayApiKeyScope?: string | undefined;
-  readonly subwayRequestBudget?: SubwayRequestBudget | undefined;
   readonly transitCatalog: TransitCatalogOptions;
 }
 

@@ -15,26 +15,22 @@ The operational runbook lives in [operations/guides/overview.md](operations/guid
 - Production composition: [../compose.yaml](../compose.yaml)
 - Verification strategy: [TESTING.md](TESTING.md)
 
-## Live transit configuration
+## Bus service configuration
 
-- `SEOUL_SUBWAY_API_KEY` enables official subway arrivals and live subway positions. Both draw from one persisted rolling 24-hour request budget (900 requests, paced, cooldown-aware). The rules and the `SEOUL_SUBWAY_QUOTA_COOLDOWN_UNTIL` bootstrap live in [operations/guides/overview.md](operations/guides/overview.md).
-- `SEOUL_BUS_API_KEY` is currently unused by the live transit map, which is subway-only.
-- Missing keys are valid degraded configuration: static subway network remains available and the browser shows `unconfigured` instead of fabricated movement.
-- After changing either key, rebuild/restart the API container. Never print key-bearing upstream URLs.
+The bus-only app uses the Seoul bus adapter and an in-memory stop catalog.
+No subway key, quota cooldown or live-vehicle configuration is required.
+`TRANSIT_CATALOG_REFRESH_MS` controls catalog refresh; see the runbook above.
 
-## Live transit smoke checks
-
-After the standard Compose deployment, use an API-valid Seoul viewport:
+## Bus smoke checks
 
 ```bash
 curl -fsS http://127.0.0.1:3100/api/health
-curl -fsS 'http://127.0.0.1:3100/api/transit-map/network?west=127.10&south=37.52&east=127.12&north=37.54&zoom=16'
-curl -N --max-time 20 'http://127.0.0.1:3100/api/transit-map/events?west=127.10&south=37.52&east=127.12&north=37.54&zoom=16'
+curl -fsS 'http://127.0.0.1:3100/api/stops/nearby?lat=37.5366&lng=127.1253&radius=800'
 ```
 
-Health stays HTTP 200 and reports `liveTransit.bus` and `liveTransit.subway`.
-The network response must match the shared schema. The stream must emit
-`ready`, `availability`, `vehicles`, and `heartbeat`; an empty vehicle
-array with an honest non-live availability is valid.
+Health stays HTTP 200 and reports `transitCatalogs.bus`. Nearby lookup must
+return validated bus stops; exercise arrivals with an ARS ID from that response.
+Subway and transit-map API paths return 404. Old `/3d-preview` browser links
+open the bus home screen.
 
 Never copy actual secret values into documentation or command output.

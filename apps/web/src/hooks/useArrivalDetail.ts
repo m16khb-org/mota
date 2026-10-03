@@ -1,25 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ApiError,
-  fetchArrivals,
-  fetchSubwayArrivals,
-  isSubwayQuotaError,
-} from "../api/client";
+import { fetchArrivals } from "../api/client";
 import type { BusArrival, BusStop } from "../domain/bus";
-import type { SubwayArrival, SubwayStation } from "../domain/subway";
 
 export interface BusDetailState {
   readonly arrivals: readonly BusArrival[];
   readonly loading: boolean;
   readonly error: string | null;
-  readonly updatedAt: string | null;
-}
-
-export interface SubwayDetailState {
-  readonly arrivals: readonly SubwayArrival[];
-  readonly loading: boolean;
-  readonly error: string | null;
-  readonly errorCode: string | null;
   readonly updatedAt: string | null;
 }
 
@@ -29,97 +15,27 @@ const EMPTY_BUS: BusDetailState = {
   error: null,
   updatedAt: null,
 };
-const EMPTY_SUBWAY: SubwayDetailState = {
-  arrivals: [],
-  loading: false,
-  error: null,
-  errorCode: null,
-  updatedAt: null,
-};
-const BUS_ERROR =
-  "도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.";
-const SUBWAY_ERROR =
-  "지하철 도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.";
-const RETRY_AT_FORMATTER = new Intl.DateTimeFormat("ko-KR", {
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-  timeZone: "Asia/Seoul",
-});
-
-function formatRetryAt(retryAt: string | null): string | null {
-  if (retryAt === null) {
-    return null;
-  }
-  const timestamp = Date.parse(retryAt);
-  if (!Number.isFinite(timestamp)) {
-    return null;
-  }
-  const parts = RETRY_AT_FORMATTER.formatToParts(new Date(timestamp));
-  const year = parts.find(({ type }) => type === "year")?.value;
-  const month = parts.find(({ type }) => type === "month")?.value;
-  const day = parts.find(({ type }) => type === "day")?.value;
-  const hour = parts.find(({ type }) => type === "hour")?.value;
-  const minute = parts.find(({ type }) => type === "minute")?.value;
-  if (!year || !month || !day || !hour || !minute) {
-    return null;
-  }
-  return `${year}년 ${month}월 ${day}일 ${hour}:${minute}`;
-}
-
-function subwayErrorMessage(error: unknown): string {
-  if (!isSubwayQuotaError(error)) {
-    return SUBWAY_ERROR;
-  }
-  const retryAt = formatRetryAt(error.retryAt);
-  if (error.code === "SUBWAY_REQUEST_RATE_LIMITED") {
-    return retryAt === null
-      ? "호출 예산 배분으로 대기 중입니다. 다음 조회 가능 시각을 확인해 주세요."
-      : `호출 예산 배분으로 대기 중입니다. ${retryAt} 이후 다시 확인해 주세요.`;
-  }
-  return retryAt === null
-    ? "지하철 일일 조회 한도가 소진되었습니다. 다음 조회 가능 시각을 확인해 주세요."
-    : `지하철 일일 조회 한도가 소진되어 대기 중입니다. ${retryAt} 이후 다시 확인해 주세요.`;
-}
-
-const SUBWAY_REFRESH_INTERVAL_MS = 60_000;
-
+const BUS_ERROR = "도착 정보를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요.";
 interface ArrivalDetailInput {
   readonly selectedStops: readonly BusStop[];
-  readonly selectedStation: SubwayStation | null;
 }
 
-export function useArrivalDetail({
-  selectedStops,
-  selectedStation,
-}: ArrivalDetailInput) {
-  const [busDetails, setBusDetails] = useState<
-    ReadonlyMap<BusStop["id"], BusDetailState>
-  >(() => new Map());
-  const [subwayDetail, setSubwayDetail] =
-    useState<SubwayDetailState>(EMPTY_SUBWAY);
-  const busDetailsRef = useRef<Map<BusStop["id"], BusDetailState>>(
-    new Map(),
+export function useArrivalDetail({ selectedStops }: ArrivalDetailInput) {
+  const [busDetails, setBusDetails] = useState<ReadonlyMap<BusStop["id"], BusDetailState>>(
+    () => new Map(),
   );
+  const busDetailsRef = useRef<Map<BusStop["id"], BusDetailState>>(new Map());
   const busRequests = useRef(new Map<BusStop["id"], number>());
-  const subwayRequest = useRef(0);
 
   const readBusDetail = useCallback(
-    (stopId: BusStop["id"]): BusDetailState =>
-      busDetailsRef.current.get(stopId) ?? EMPTY_BUS,
+    (stopId: BusStop["id"]): BusDetailState => busDetailsRef.current.get(stopId) ?? EMPTY_BUS,
     [],
   );
 
-  const writeBusDetail = useCallback(
-    (stopId: BusStop["id"], next: BusDetailState) => {
-      busDetailsRef.current.set(stopId, next);
-      setBusDetails(new Map(busDetailsRef.current));
-    },
-    [],
-  );
+  const writeBusDetail = useCallback((stopId: BusStop["id"], next: BusDetailState) => {
+    busDetailsRef.current.set(stopId, next);
+    setBusDetails(new Map(busDetailsRef.current));
+  }, []);
 
   const fetchBusDetail = useCallback(
     async (stop: BusStop) => {
@@ -153,38 +69,6 @@ export function useArrivalDetail({
     [readBusDetail, writeBusDetail],
   );
 
-  const fetchSubwayDetail = useCallback(async (station: SubwayStation) => {
-    const request = subwayRequest.current + 1;
-    subwayRequest.current = request;
-    setSubwayDetail((current) => ({
-      ...current,
-      loading: true,
-      error: null,
-      errorCode: null,
-    }));
-    try {
-      const result = await fetchSubwayArrivals(station.name);
-      if (subwayRequest.current === request) {
-        setSubwayDetail({
-          arrivals: result.arrivals,
-          loading: false,
-          error: null,
-          errorCode: null,
-          updatedAt: result.updatedAt,
-        });
-      }
-    } catch (error) {
-      if (subwayRequest.current === request) {
-        setSubwayDetail((current) => ({
-          ...current,
-          loading: false,
-          error: subwayErrorMessage(error),
-          errorCode: error instanceof ApiError ? error.code : null,
-        }));
-      }
-    }
-  }, []);
-
   useEffect(() => {
     const ids = new Set(selectedStops.map((stop) => stop.id));
     let removed = false;
@@ -205,21 +89,6 @@ export function useArrivalDetail({
     }
   }, [fetchBusDetail, selectedStops]);
 
-  useEffect(() => {
-    if (selectedStation === null) {
-      subwayRequest.current += 1;
-      setSubwayDetail(EMPTY_SUBWAY);
-      return;
-    }
-    void fetchSubwayDetail(selectedStation);
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === "visible") {
-        void fetchSubwayDetail(selectedStation);
-      }
-    }, SUBWAY_REFRESH_INTERVAL_MS);
-    return () => window.clearInterval(interval);
-  }, [fetchSubwayDetail, selectedStation]);
-
   const stopsRef = useRef(selectedStops);
   stopsRef.current = selectedStops;
 
@@ -232,12 +101,6 @@ export function useArrivalDetail({
   return {
     busDetails,
     busDetail: (stopId: BusStop["id"]) => readBusDetail(stopId),
-    subwayDetail,
     refreshBusDetail,
-    refreshSubwayDetail: () => {
-      if (selectedStation !== null) {
-        void fetchSubwayDetail(selectedStation);
-      }
-    },
   } as const;
 }

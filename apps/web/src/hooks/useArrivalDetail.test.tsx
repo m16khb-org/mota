@@ -1,135 +1,69 @@
 // @vitest-environment jsdom
-
-import { act, cleanup, renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError, fetchSubwayArrivals } from "../api/client";
-import { subwayStationSchema } from "../domain/subway";
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { fetchArrivals } from "../api/client";
+import { busStopSchema } from "../domain/bus";
 import { useArrivalDetail } from "./useArrivalDetail";
-
-vi.mock("../api/client", async (importOriginal) => {
-	const original = await importOriginal<typeof import("../api/client")>();
-	return {
-		...original,
-		fetchSubwayArrivals: vi.fn<typeof original.fetchSubwayArrivals>(),
-	};
+vi.mock("../api/client", () => ({ fetchArrivals: vi.fn() }));
+const stop = busStopSchema.parse({
+  id: "stop-1",
+  arsId: "25014",
+  name: "천호역",
+  lat: 37.53,
+  lng: 127.12,
+  distanceMeters: 100,
 });
-
-const amsaStation = subwayStationSchema.parse({
-	id: "seoul-2828",
-	name: "암사",
-	line: "8호선",
-	lat: 37.55021,
-	lng: 127.12756,
-	distanceMeters: 0,
+const snapshot: Awaited<ReturnType<typeof fetchArrivals>> = {
+  arrivals: [
+    {
+      routeId: "route-1" as Awaited<
+        ReturnType<typeof fetchArrivals>
+      >["arrivals"][number]["routeId"],
+      routeName: "341",
+      direction: "강동",
+      routeType: "3",
+      lowFloor: true,
+      first: { message: "3분 후", seconds: 180, remainingStops: 2, congestion: null },
+      second: null,
+    },
+  ],
+  updatedAt: "2026-09-01T00:00:00.000Z",
+};
+beforeEach(() => {
+  vi.mocked(fetchArrivals).mockReset();
 });
-
-describe("useArrivalDetail", () => {
-	beforeEach(() => {
-		vi.useFakeTimers();
-		vi.mocked(fetchSubwayArrivals).mockReset();
-		vi.mocked(fetchSubwayArrivals).mockResolvedValue({
-			arrivals: [],
-			updatedAt: "2026-09-01T00:01:19.000Z",
-		});
-	});
-
-	afterEach(() => {
-		cleanup();
-		vi.useRealTimers();
-	});
-
-	it("refreshes a selected subway station every minute", async () => {
-		// Given
-		renderHook(() =>
-			useArrivalDetail({
-				selectedStops: [],
-				selectedStation: amsaStation,
-			}),
-		);
-		await act(async () => undefined);
-		expect(fetchSubwayArrivals).toHaveBeenCalledTimes(1);
-
-		// When
-		await act(async () => {
-			await vi.advanceTimersByTimeAsync(60_000);
-		});
-
-		// Then
-		expect(fetchSubwayArrivals).toHaveBeenCalledTimes(2);
-		expect(fetchSubwayArrivals).toHaveBeenLastCalledWith("암사");
-	});
-
-	it("requests the selected subway station on every explicit refresh", async () => {
-		// Given
-		const { result } = renderHook(() =>
-			useArrivalDetail({
-				selectedStops: [],
-				selectedStation: amsaStation,
-			}),
-		);
-		await act(async () => undefined);
-		expect(fetchSubwayArrivals).toHaveBeenCalledTimes(1);
-
-		// When
-		await act(async () => {
-			result.current.refreshSubwayDetail();
-			await Promise.resolve();
-		});
-		await act(async () => {
-			result.current.refreshSubwayDetail();
-			await Promise.resolve();
-		});
-
-		// Then
-		expect(fetchSubwayArrivals).toHaveBeenCalledTimes(3);
-		expect(fetchSubwayArrivals).toHaveBeenLastCalledWith("암사");
-	});
-
-	it.each([
-		"SUBWAY_REQUEST_RATE_LIMITED",
-		"SUBWAY_QUOTA_COOLDOWN",
-	] as const)("keeps the last subway snapshot for %s", async (code) => {
-		const previousArrivals = [
-			{
-				id: "1008-상행-암사행",
-				subwayId: "1008",
-				updnLine: "상행",
-				line: "8호선",
-				direction: "암사행",
-				trainLineNm: "암사행",
-				trainStatus: "일반",
-				seconds: 90,
-				generatedAt: "2026-09-01T00:00:00.000Z",
-				message: "전역 출발",
-				location: "강동구청",
-				isLastTrain: false,
-			},
-		];
-		const updatedAt = "2026-09-01T00:01:19.000Z";
-		const retryAt = "2026-09-08T12:34:56.000Z";
-		vi.mocked(fetchSubwayArrivals)
-			.mockResolvedValueOnce({ arrivals: previousArrivals, updatedAt })
-			.mockRejectedValueOnce(new ApiError(429, code, retryAt));
-
-		const { result } = renderHook(() =>
-			useArrivalDetail({
-				selectedStops: [],
-				selectedStation: amsaStation,
-			}),
-		);
-		await act(async () => undefined);
-
-		await act(async () => {
-			result.current.refreshSubwayDetail();
-			await Promise.resolve();
-		});
-
-		expect(result.current.subwayDetail.arrivals).toEqual(previousArrivals);
-		expect(result.current.subwayDetail.updatedAt).toBe(updatedAt);
-		expect(result.current.subwayDetail.loading).toBe(false);
-		expect(result.current.subwayDetail.errorCode).toBe(code);
-		expect(result.current.subwayDetail.error).toMatch(
-			/\d{4}년 \d{1,2}월 \d{1,2}일 \d{2}:\d{2}/,
-		);
-	});
+afterEach(cleanup);
+it("preserves the successful bus snapshot after a refresh failure and recovers on retry", async () => {
+  vi.mocked(fetchArrivals)
+    .mockResolvedValueOnce(snapshot)
+    .mockRejectedValueOnce(new TypeError("offline"))
+    .mockResolvedValueOnce({ ...snapshot, updatedAt: "2026-09-01T00:01:00.000Z" });
+  const { result } = renderHook(() => useArrivalDetail({ selectedStops: [stop] }));
+  await waitFor(() =>
+    expect(result.current.busDetail(stop.id).arrivals).toEqual(snapshot.arrivals),
+  );
+  act(() => result.current.refreshBusDetail());
+  await waitFor(() => expect(result.current.busDetail(stop.id).error).toBeTruthy());
+  expect(result.current.busDetail(stop.id).arrivals).toEqual(snapshot.arrivals);
+  expect(result.current.busDetail(stop.id).updatedAt).toBe(snapshot.updatedAt);
+  act(() => result.current.refreshBusDetail());
+  await waitFor(() =>
+    expect(result.current.busDetail(stop.id).updatedAt).toBe("2026-09-01T00:01:00.000Z"),
+  );
+  expect(result.current.busDetail(stop.id).error).toBeNull();
+});
+it("ignores arrivals completing after a stop is deselected", async () => {
+  let resolve!: (value: typeof snapshot) => void;
+  vi.mocked(fetchArrivals).mockReturnValue(
+    new Promise((done) => {
+      resolve = done;
+    }),
+  );
+  const { result, rerender } = renderHook(
+    ({ selectedStops }) => useArrivalDetail({ selectedStops }),
+    { initialProps: { selectedStops: [stop] } },
+  );
+  rerender({ selectedStops: [] });
+  await act(async () => resolve(snapshot));
+  expect(result.current.busDetails.size).toBe(0);
 });

@@ -18,9 +18,7 @@ integration("settings API with home-server Postgres", () => {
   const secondUser = `api-integration-${crypto.randomUUID()}`;
   const emptyPointSelections = {
     busStops: [],
-    subwayStations: [],
     selectedBusStopIds: [],
-    selectedSubwayStationId: null,
   };
   const selections: TransitSelections = {
     commutes: {
