@@ -60,5 +60,7 @@ docker compose --env-file ../home-server-infra/.env up -d --build
 No subway API key is required. Subway APIs and the subway-only 3D preview
 have been retired; old `/3d-preview` links open the bus home screen.
 
-The service is published at `127.0.0.1:3100` and joins both the
+The public site is `https://mota.m16khb.dev`, with authentication through
+`https://auth.m16khb.dev`. These match the published home-server-infra routes.
+The service is published locally at `127.0.0.1:3100` and joins both the
 `cloudflare-tunnel` and `home-server` networks.

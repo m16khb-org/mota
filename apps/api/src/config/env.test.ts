@@ -21,7 +21,7 @@ describe("API environment", () => {
 			transitCatalogRefreshMs: 86_400_000,
 			oauth: {
 				supabaseUrl: "https://mionqcczituwkryrjsfh.supabase.co",
-				gatewayUrl: "https://auth.m16khb.xyz",
+				gatewayUrl: "https://auth.m16khb.dev",
 				publicUrl: "http://localhost:5173",
 			},
 		});
