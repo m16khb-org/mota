@@ -10,6 +10,7 @@ Only record failures that actually occurred or recurring risks proven by source 
 ## Index
 
 - [Cautions overview](cautions/overview.md)
+- [pnpm add can silently exempt a fresh package from release-age policy](cautions/2026-10-09-pnpm-add-can-silently-exempt-a-fresh-package-from-release-ag.md)
 - Historical, retired subsystem: [Scope subway positions by station and route](cautions/2026-09-05-scope-subway-positions-by-station-and-route.md)
 - [Fastify static fallback route collisions](cautions/2026-08-23-fastify-static-fallback-route-collisions.md)
 - [Docker runtime must include workspace packages](cautions/2026-08-23-docker-runtime-must-include-workspace-packages.md)
