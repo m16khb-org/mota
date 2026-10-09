@@ -62,5 +62,8 @@
     "commit formatting": ".issueops/COMMIT_POLICY.md",
     "constitutional priority and safety": ".issueops/CONSTITUTION.md",
     "technology selection": ".issueops/TECH_STACK.md"
+  },
+  "directories": {
+    ".issueops/plans": "implementation plans without an issue number; historical execution records"
   }
 }

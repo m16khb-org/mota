@@ -26,6 +26,12 @@ these modules:
 Every module links back to the canonical root. Other document families link
 to `.issueops/ARCHITECTURE.md` instead of restating architecture rules.
 
+## Other directories
+
+| Directory | Purpose |
+|---|---|
+| `plans/` | Implementation plans without an issue number. A finished plan stays as a historical record of what was asked and decided; it does not override current docs. |
+
 ## Lifecycle
 
 - Missing document family: `project-docs-bootstrap`.

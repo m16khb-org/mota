@@ -71,3 +71,14 @@ stale external root references: 0
 ```
 
 Every architecture root and module remains below the 250-line manifest budget.
+
+## 2026-10-09 plans directory declaration
+
+Before: `documents_checked: 40`, `families_checked: 6`, 1 violation
+(`undeclared_directory` for `.issueops/plans`).
+
+Inventory: `.issueops/plans/bus-only.md` is the plan for the bus-only conversion.
+It has no issue number, so the plan-without-issue rule keeps it in `plans/`.
+Nothing links to it and no code reads its path. It was declared in
+`manifest.json` `directories` rather than moved or deleted. No files moved and
+no links were rewritten.
