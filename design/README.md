@@ -1,99 +1,67 @@
-# 모타 디자인 시스템 — 서울 사인 시스템
+# 모타 디자인 시스템 — 당근 SEED Design
 
-`/design` 캔버스로 만든 새 디자인 시스템의 원본이다. 기존 앱 화면을 참고하지
-않고 처음부터 잡았다.
+모타는 당근의 디자인 시스템 [SEED Design](https://seed-design.io)을 쓴다.
+색, 글자, 간격, 모서리, 그림자, 모션 값은 모두 공식 패키지
+`@seed-design/css`의 CSS 변수(`--seed-*`)에서 가져온다. 값을 손으로 옮겨
+적지 않는다.
 
 ## 에이전트를 위한 안내
 
-**이것이 모타의 디자인 시스템이다.** 새 화면과 새 컴포넌트는 여기 있는 토큰과
-규격을 따른다.
-
-`apps/web`은 이 시스템을 구현 대상으로 삼는다. 현재 모타는 버스 전용이다.
-지하철을 포함한 아트보드는 과거 시각 참고 자료이며 현재 기능 범위를 정하지 않는다. 루트 `DESIGN.md`는 이 토큰을
-앱 컴포넌트에 대응시키고, 제품 기능과 반응형 동작의 계약을 규정한다.
+**이것이 모타의 디자인 시스템이다.** 새 화면과 새 컴포넌트는 SEED 토큰과
+컴포넌트 규격을 따른다.
 
 읽는 순서:
 
-1. 이 문서 — 아트 디렉션과 토큰 전체
-2. `artboards/Main.dc.html` — 파운데이션. 색, 크기 눈금, 간격·형태, 픽토그램,
-   원칙이 화면으로 그려져 있다
-3. `artboards/Components.dc.html` — 버튼·탭·행·카드의 상태별 규격
-4. 나머지 아트보드 — 위 둘을 조립한 결과
+1. 이 문서 — 적용 방식과 모타가 SEED에 더한 규칙
+2. 루트 `DESIGN.md` — 제품 계약, 토큰을 앱 컴포넌트에 대응시킨 표, 반응형 구조
+3. SEED 원문 — [Foundations](https://seed-design.io/foundations/llms.txt),
+   [Components](https://seed-design.io/components/llms.txt). 정확한 수치는
+   `node_modules/@seed-design/css/recipes/*.css`의 레시피가 원본이다.
 
-읽을 때 알아둘 것:
+## 적용 방식
 
-- `.dc.html`은 인라인 스타일만 쓰는 독립 HTML이다. 빌드도 의존성도 없고,
-  그대로 열거나 읽으면 된다. 클래스 정의를 찾아 헤맬 필요가 없다.
-- 토큰 값 하나가 필요할 뿐이라면 아래 **아트 디렉션** 절의 목록을 쓴다. 그 목록이
-  선언의 원본이고, 아트보드는 그것을 그린 것이다. HTML을 파싱하지 않아도 된다.
-- `artboards/canvas.json`은 아트보드 배치와 페이지 구성일 뿐 디자인 규칙이 아니다.
-- 아트보드의 역명, 정류장명, ARS 번호, 도착 시간은 전부 예시다. 실제 값이 아니다.
+- `apps/web/src/main.tsx`가 `@seed-design/css/base.css`를 앱 스타일보다 먼저
+  불러온다. `base.css`는 토큰과 기반 규칙만 담고, 컴포넌트 클래스는 담지 않는다.
+- `apps/web/index.html`의 `<html data-seed-color-mode="light-only">`로 라이트
+  모드에 고정한다. 지도 타일과 노선색이 라이트 바탕을 전제하기 때문이다.
+- `@seed-design/react` 컴포넌트는 쓰지 않는다. 기존 마크업의 `tablist`,
+  `aria-pressed`, 방향키 이동 계약을 그대로 두고, `apps/web/src/styles.css`가
+  SEED 컴포넌트 규격(Action Button, Segmented Control, List, Badge, Callout,
+  Skeleton)을 토큰으로 재현한다.
+- 글꼴은 `--seed-font-family`(시스템 글꼴 우선)를 `body`에 적용한다. SEED가
+  Windows용으로 지정한 Pretendard는 이름만 나열되므로 jsDelivr에서 직접 받는다.
 
-## 아트 디렉션
+## 모타가 SEED에 더한 규칙
 
-서울의 역 안내 사인에서 출발한다. 바탕은 희고 글자는 잉크색이며, **채도는 오직
-노선에서만 나온다.** 굵은 컬러 밴드와 픽토그램이 무엇을 타는지 먼저 말하고,
-남은 시간이 가장 큰 숫자로 대답한다.
+SEED에 없는 값만 `styles.css` 상단의 `--mota-*`로 둔다.
 
-브랜드가 만든 강조색은 없다. 주요 행동은 잉크 검정이고, 선택된 방향과 지점만
-노선색을 입는다. 노선색은 브랜드가 정하지 않고 운행 기관이 정한 값을 그대로
-싣는다.
+- `--mota-control-min: 44px` — 모든 터치 대상의 하한. SEED Medium 버튼(40px)도
+  44px로 올린다.
+- `--mota-route-band: 6px` — 정류장 행, 도착 카드, 후보 카드의 노선 밴드.
+- 노선색(`--route-color`, `--route-badge-color`, `--route-ink`)은 서울 버스
+  운행 기관이 정한 값이다. 브랜드 색이 아니라 운행 데이터로 취급해 SEED 토큰으로
+  바꾸지 않는다.
 
-- 무채색: `#16181D` `#343841` `#5A6070` `#6E7687` `#C4CAD4` `#E1E5EA` `#F2F4F6` `#FFFFFF`
-  - 글자로 쓰는 무채색은 `#6E7687`까지다. `#C4CAD4`는 선과 아이콘 전용이다.
-- 상태색: `#D93025` `#B3251C` `#FDECEA` (오류에만)
-- 글자: Archivo(라틴·숫자) + Pretendard(한글)
-- 크기 눈금: 표제 36·28·22·20 / 본문 17·15·13 / 컨트롤·라벨 16·14·12·11 /
-  숫자 표시 56·40·30·22
-- 간격: 4 8 12 16 20 24 32 40 56 (컴포넌트 내부 여백은 2px 단계까지)
-- 모서리: 8 칩 · 12 컨트롤 · 16 카드 · 24 시트 · 999 배지
-- 컨트롤 높이: 56 · 48 · 44, 어떤 화면에서도 44px 미만 금지
+## 색을 쓰는 원칙
 
-노선 배지 글자색은 흰색과 잉크 중 대비 4.5:1을 넘는 쪽을 쓴다. 어느 쪽도 넘지
-못하는 5호선과 8호선은 밴드에 원래 노선색(`#996CAC`, `#E6186C`)을 그대로 두고
-배지 바탕만 `#7E5794`, `#C31259`로 낮춘다.
-
-자세한 값은 `artboards/Main.dc.html`(파운데이션)에 있다.
+- 브랜드 색(당근 주황 `--seed-color-bg-brand-solid`)은 화면의 핵심 행동 하나에만
+  쓴다. 기본 화면의 `정류장 찾기`, 찾기 상태의 `저장`이 그 자리다.
+- 선택 상태는 `bg-brand-weak` 면과 `fg-brand-contrast` 체크 아이콘으로 표시하고,
+  `aria-pressed`·굵은 글자·경계를 함께 써서 색 없이도 구분되게 한다.
+- 글자색은 `fg-neutral`과 `fg-neutral-muted`까지 쓴다. `fg-neutral-subtle`과
+  `fg-placeholder`는 4.5:1을 넘지 못하므로 아이콘에만 쓴다.
+- 오류는 SEED Callout의 critical 톤(`bg-critical-weak` +
+  `fg-critical-contrast`)을 쓴다.
+- 그라디언트를 쓰지 않는다. SEED Skeleton의 shimmer 대신 회색 두 단계의
+  펄스를 쓴다.
 
 ## 파일
 
 ```text
-artboards/Main.dc.html         파운데이션 — 색, 글자, 간격·형태, 픽토그램, 원칙
-artboards/Components.dc.html   컴포넌트 — 버튼, 탭, 노선 표지, 지점 행, 도착 카드
-artboards/Desktop.dc.html      데스크톱 1440x900
-artboards/Mobile.dc.html       모바일 지하철 390x844
-artboards/MobileFind.dc.html   모바일 정류장 찾기 390x844
-artboards/States.dc.html       로딩, 빈 상태, 막차, 오류, 연결 끊김, 긴 이름
-artboards/canvas.json          아트보드 배치와 페이지 구성
+README.md                      이 문서
+app-icon-prompt.md             설치 아이콘의 근거와 격자 사양
+artboards/                     이전 서울 사인 시스템의 아트보드(과거 참고 자료)
 ```
 
-각 `.dc.html`은 그 자체로 브라우저에서 열리는 독립 파일이다. 이 파일들을
-하나의 팬·줌 캔버스로 묶은 결과물은 저장소에 넣지 않는다. 편집기 코드까지
-포함해 2.6MB인 생성물이라 원본만 두고 필요할 때 다시 만든다.
-
-## Pretendard
-
-`.dc.html`은 `"Archivo", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo",
-"Malgun Gothic", system-ui` 순서를 쓴다. Archivo가 라틴과 숫자를 맡고, Archivo에
-없는 한글 글리프가 Pretendard로 떨어진다.
-
-앱(`apps/web/src/styles.css`)은 Pretendard를 jsDelivr에서 받지만, 이 파일들은
-Pretendard를 웹폰트로 불러오지 않는다. 캔버스가 실행되는 샌드박스는 스타일시트를
-`fonts.googleapis.com`에서만 허용하고 Pretendard는 Google Fonts에 없다. 따라서
-Pretendard가 **설치된 환경에서만** 의도한 대로 보이고, 그 밖에서는 Apple SD
-Gothic Neo 또는 맑은 고딕으로 대체된다. PNG·PDF로 내보낼 때도 대체 서체가 나온다.
-
-## 기존 DESIGN.md와의 관계
-
-이 시스템을 채택해 이전 검정·백색·라임 체계를 대체한다. `DESIGN.md`의
-2·3절은 앱에서 사용하는 토큰을, 4절은 기존 반응형 동작을 규정한다.
-아트보드의 440px 레일은 앱에서 420px로 적용하고, 모바일 지도 열기·닫기와
-버스 정류장 관리, 인증은 유지한다. 예시 지도를 정적 그림으로 대체하지 않는다.
-
-제품 계약(출근·퇴근 문맥, 버스 전용, 정류장별 최대 3건)은 `DESIGN.md`의
-1절을 따른다. 교통수단 탭과 지하철 전용 3D 프리뷰는 제공하지 않는다.
-
-## 데이터
-
-아트보드의 역명, 정류장명, ARS 번호, 도착 시간, 계정 이름은 모두 예시다.
-실제 값이 아니다.
+`artboards/`는 SEED 채택 전 시스템의 시각 기록이다. 토큰과 컴포넌트 규격의
+원본이 아니며 새 화면을 그 값으로 만들지 않는다.

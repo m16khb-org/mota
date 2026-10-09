@@ -50,14 +50,16 @@ packages/db/          Drizzle Postgres schema, migration, repository
 
 ## UI
 
-- Mota's design system is `design/README.md` — Seoul signage: white ground,
-  ink type, chroma only from transit line colors. Start there; it carries the
-  tokens, the size scales and the reading order. Build new UI against it.
-- `DESIGN.md` maps the adopted tokens to app components. The previous lime
-  accent is retired; preserve real transit data and existing interactions
-  when translating the example artboards into app screens.
-- `DESIGN.md` remains authoritative for the product contract and the
-  responsive structure, which the new visual system does not change.
+- Mota's design system is Karrot's SEED Design. `design/README.md` explains
+  how it is applied; `@seed-design/css` (`base.css`, imported in
+  `apps/web/src/main.tsx`) supplies every `--seed-*` token. Do not hand-copy
+  token values or add `@seed-design/react` without a decision to replace the
+  existing accessible markup.
+- `DESIGN.md` maps SEED role tokens to app components and stays
+  authoritative for the product contract and responsive structure.
+  Brand orange is reserved for the single core action per screen; route
+  colours are operator data, not brand tokens. `design/artboards/` is a
+  historical record of the retired Seoul signage system.
 - Desktop: 420px control rail plus map.
 - Mobile: map plus scrolling sheet.
 - Keep map and list alternatives, 44px controls, keyboard tabs, and text state.

@@ -9,6 +9,7 @@ ADRs record implemented or explicitly accepted decisions, not speculative propos
 
 ## Index
 
+- [Adopt Karrot SEED Design](adr/2026-10-09-adopt-karrot-seed-design.md)
 - [Make Mota bus-only](adr/2026-10-03-make-mota-bus-only.md)
 - [ADR overview](adr/overview.md)
 - [Stream live transit without stale vehicles](adr/2026-09-05-stream-live-transit-without-stale-vehicles.md)
