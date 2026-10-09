@@ -12,9 +12,11 @@ Only record failures that actually occurred or recurring risks proven by source 
 - [Cautions overview](cautions/overview.md)
 - [pnpm add can silently exempt a fresh package from release-age policy](cautions/2026-10-09-pnpm-add-can-silently-exempt-a-fresh-package-from-release-ag.md)
 - Historical, retired subsystem: [Scope subway positions by station and route](cautions/2026-09-05-scope-subway-positions-by-station-and-route.md)
+- [Restart Fastify after rebuilding Vite assets](cautions/2026-08-26-restart-fastify-after-rebuilding-vite-assets.md)
+- [Access-token expiry requires refresh-cookie relay](cautions/2026-08-25-access-token-expiry-requires-refresh-cookie-relay.md)
+- Historical, retired subsystem: [Env defaults must reuse adapter upstream constants](cautions/2026-08-23-env-defaults-must-reuse-adapter-upstream-constants.md)
 - [Fastify static fallback route collisions](cautions/2026-08-23-fastify-static-fallback-route-collisions.md)
 - [Docker runtime must include workspace packages](cautions/2026-08-23-docker-runtime-must-include-workspace-packages.md)
 - [Authenticated settings must not leak to anonymous storage](cautions/2026-08-23-authenticated-settings-must-not-leak-to-anonymous-storage.md)
-- [Access-token expiry requires refresh-cookie relay](cautions/2026-08-25-access-token-expiry-requires-refresh-cookie-relay.md)
 
 Add future solved incidents with MCP `project_docs_append(kind="caution")`; do not put speculative warnings here.

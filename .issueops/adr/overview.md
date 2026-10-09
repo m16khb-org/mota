@@ -1,16 +1,12 @@
 ---
 name: overview
-description: Mota ADR purpose, decision index, and record criteria.
+description: Mota ADR purpose and record criteria.
 ---
 
 # Architecture Decision Records Overview
 
-Canonical index: [ADR.md](../ADR.md).
-
-## Accepted decisions
-
-- [Mota owns its Supabase browser session](2026-08-25-mota-owns-its-supabase-browser-session.md)
-- [Turborepo, Nest/Fastify, and Drizzle topology](2026-08-23-turborepo-nest-fastify-and-drizzle-topology.md)
+Canonical index: [ADR.md](../ADR.md). The decision list lives only there; add
+each new record's link to that index and mark superseded records.
 
 ## Record criteria
 

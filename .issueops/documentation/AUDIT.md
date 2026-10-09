@@ -82,3 +82,18 @@ It has no issue number, so the plan-without-issue rule keeps it in `plans/`.
 Nothing links to it and no code reads its path. It was declared in
 `manifest.json` `directories` rather than moved or deleted. No files moved and
 no links were rewritten.
+
+## 2026-10-09 record index ownership
+
+Before: the checker reported 0 violations, but record lists were duplicated and
+stale. `ADR.md` was missing 3 of 8 ADR records and `adr/overview.md` listed only 2.
+`CAUTIONS.md` was missing 2 of 8 caution records and `cautions/overview.md`
+listed only 4.
+
+Change: `ADR.md` and `CAUTIONS.md` are now the only record lists and include
+every dated record. Superseded ADRs and retired-subsystem cautions are marked.
+The family `overview.md` modules keep only their recording criteria and link to
+the root index. No files moved; dated records were not edited.
+
+After: every `adr/2026-*.md` and `cautions/2026-*.md` record is linked from its
+root index. Checker: 41 documents, 0 violations.
