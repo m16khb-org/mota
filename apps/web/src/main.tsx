@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@seed-design/css/base.css";
 import "leaflet/dist/leaflet.css";
 import { Root } from "./Root";
 import { AppErrorBoundary } from "./components/AppErrorBoundary";

@@ -186,6 +186,9 @@ importers:
       '@mota/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@seed-design/css':
+        specifier: 3.0.1
+        version: 3.0.1
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
@@ -1513,6 +1516,9 @@ packages:
     resolution: {integrity: sha512-zD6NdeWEByGE9QF9vCrlJ5YQB4oq9q91kPZS37Jwj5hOkvR1lTBSpsKhKDw4IJtbQ35LsTS1HD9DZYGKIshU1Q==}
     cpu: [x64]
     os: [win32]
+
+  '@seed-design/css@3.0.1':
+    resolution: {integrity: sha512-l4iy+KIfMAj0QpZGzy7TNGBIpfLBDdMyfT7lxhp1PuPsAc0qH9Va3uCVmOp+dRHXmS5jzvjRYpeW+z25PuujEQ==}
 
   '@sindresorhus/is@5.6.0':
     resolution: {integrity: sha512-TV7t8GKYaJWsn00tFDqBw8+Uqmr8A0fRU1tvTQhyZzGv0sJCGRQL3JGMI3ucuKo3XIZdUP+Lx7/gh2t3lewy7g==}
@@ -4557,6 +4563,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.62.4':
     optional: true
+
+  '@seed-design/css@3.0.1': {}
 
   '@sindresorhus/is@5.6.0': {}
 

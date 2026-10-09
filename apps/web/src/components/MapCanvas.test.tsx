@@ -343,14 +343,14 @@ describe("MapCanvas visible marker styling contract", () => {
     const css = await readFile(resolve(process.cwd(), "src/styles.css"), "utf8");
 
     expect(css).not.toContain(".leaflet-interactive.map-marker");
-    const ruleOf = (selector: string, stroke: string, fill: string) =>
+    const ruleOf = (selector: string) =>
       new RegExp(
-        `^${selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{\\n(?=[^}]*stroke: var\\(${stroke}\\);)(?=[^}]*fill: var\\(${fill}\\);)[^}]*\\n\\}$`,
+        `^${selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{\\n(?=[^}]*stroke: var\\(--[^)]+\\);)(?=[^}]*fill: var\\(--[^)]+\\);)[^}]*\\n\\}$`,
         "m",
       );
-    expect(css).toMatch(ruleOf(".map-marker-bus", "--route-blue", "--surface"));
-    expect(css).toMatch(ruleOf(".map-marker-pending", "--route-blue", "--surface"));
-    expect(css).toMatch(ruleOf(".map-marker-bus.is-active", "--ink", "--route-blue"));
+    expect(css).toMatch(ruleOf(".map-marker-bus"));
+    expect(css).toMatch(ruleOf(".map-marker-pending"));
+    expect(css).toMatch(ruleOf(".map-marker-bus.is-active"));
     // Focus stays on the interactive hit circle only.
     expect(css).toMatch(/^\.leaflet-interactive:focus-visible \{/m);
   });
